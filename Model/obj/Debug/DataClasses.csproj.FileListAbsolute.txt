@@ -1,0 +1,36 @@
+F:\Development\Projects\Source\Worlds5\DataClasses\bin\Debug\DataClasses.dll
+F:\Development\Projects\Source\Worlds5\DataClasses\bin\Debug\DataClasses.pdb
+F:\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\ResolveAssemblyReference.cache
+F:\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\DataClasses.dll
+F:\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\DataClasses.pdb
+C:\Development\Extras\Worlds5\DataClasses\bin\Debug\DataClasses.dll
+C:\Development\Extras\Worlds5\DataClasses\bin\Debug\DataClasses.pdb
+C:\Development\Extras\Worlds5\DataClasses\obj\Debug\ResolveAssemblyReference.cache
+C:\Development\Extras\Worlds5\DataClasses\obj\Debug\DataClasses.dll
+C:\Development\Extras\Worlds5\DataClasses\obj\Debug\DataClasses.pdb
+Z:\Data Files\Development\Projects\Source\Worlds5\DataClasses\bin\Debug\DataClasses.dll
+Z:\Data Files\Development\Projects\Source\Worlds5\DataClasses\bin\Debug\DataClasses.pdb
+Z:\Data Files\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\ResolveAssemblyReference.cache
+Z:\Data Files\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\DataClasses.dll
+Z:\Data Files\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\DataClasses.pdb
+\\169.254.4.168\MyLibrary\Data Files\Development\Projects\Source\Worlds5\DataClasses\bin\Debug\DataClasses.dll
+\\169.254.4.168\MyLibrary\Data Files\Development\Projects\Source\Worlds5\DataClasses\bin\Debug\DataClasses.pdb
+\\169.254.4.168\MyLibrary\Data Files\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\ResolveAssemblyReference.cache
+\\169.254.4.168\MyLibrary\Data Files\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\DataClasses.dll
+\\169.254.4.168\MyLibrary\Data Files\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\DataClasses.pdb
+F:\Now in Stora\Development\Projects\Source\Worlds5\DataClasses\bin\Debug\DataClasses.dll
+F:\Now in Stora\Development\Projects\Source\Worlds5\DataClasses\bin\Debug\DataClasses.pdb
+F:\Now in Stora\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\ResolveAssemblyReference.cache
+F:\Now in Stora\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\DataClasses.dll
+F:\Now in Stora\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\DataClasses.pdb
+D:\Data\Development\Projects\Source\Worlds5\DataClasses\bin\Debug\DataClasses.dll
+D:\Data\Development\Projects\Source\Worlds5\DataClasses\bin\Debug\DataClasses.pdb
+D:\Data\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\ResolveAssemblyReference.cache
+D:\Data\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\DataClasses.dll
+D:\Data\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\DataClasses.pdb
+L:\Data\Development\Projects\Source\Worlds5\DataClasses\bin\Debug\DataClasses.dll
+L:\Data\Development\Projects\Source\Worlds5\DataClasses\bin\Debug\DataClasses.pdb
+L:\Data\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\DataClasses.csprojAssemblyReference.cache
+L:\Data\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\DataClasses.csproj.CoreCompileInputs.cache
+L:\Data\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\DataClasses.dll
+L:\Data\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\DataClasses.pdb

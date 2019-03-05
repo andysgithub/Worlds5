@@ -1,0 +1,10 @@
+bin\Debug\Worlds5.exe
+bin\Debug\Worlds5.pdb
+bin\Debug\DataClasses.dll
+bin\Debug\DataClasses.pdb
+obj\Debug\ResolveAssemblyReference.cache
+obj\Debug\Worlds5.Main.resources
+obj\Debug\Worlds5.Properties.Resources.resources
+obj\Debug\Worlds5.csproj.GenerateResource.Cache
+obj\Debug\Worlds5.exe
+obj\Debug\Worlds5.pdb
