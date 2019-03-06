@@ -9,11 +9,14 @@
 		// Perform raytracing using the background worker thread
 		lineThread[threadIndex].RunWorkerAsync()
 
-		bwThread_DoWork()
+		bwThread_DoWork()       <-- increments Y
+            // Initialise the image rendering sphere
+            RenderThread.InitSphere()
 			// Process this line
 			RenderThread.RenderRays(lineIndex)
-			
-				ProcessLatitudeLine(rayCountY, latitude)
+
+                // Trace each ray for this latitude line and store in the sphere
+				ProcessLatitudeLine(rayCountY, latitude)        <-- increments X
 					// Trace the ray from the sphere radius outwards
 					TraceRay()
 					// Record the fractal value collection for this ray
@@ -21,7 +24,7 @@
 					// Add this ray to the ray map in the sphere
 					sphere.addRay(tracedRay, rayCountX, rayCountY)
 					
-				displayLine(sphere, rayCountY, latitude)
+				displayLine(sphere, rayCountY, latitude)        <-- increments X
 					// For each longitude point on this line, get the ray from the ray map
 					tracedRay = sphere.RayMap[rayCountX++, rayCountY]
 					// Calculate the tilt values from the previous rays

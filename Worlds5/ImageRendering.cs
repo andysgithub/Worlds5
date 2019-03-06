@@ -147,6 +147,7 @@ namespace Worlds5
             displayLine(sphere, rayCountY, latitude);
         }
 
+        // Trace each ray for this latitude line and store in the sphere
         private void ProcessLatitudeLine(int rayCountY, double latitude)
         {
             int rayCountX = 0;
