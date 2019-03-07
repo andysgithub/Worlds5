@@ -75,7 +75,6 @@ namespace Worlds5
 
     public class RenderThread
     {
-        private BackgroundWorker m_bwThread;
         private clsSphere sphere;
 
         [DllImport("Unmanaged.dll")]
@@ -100,10 +99,9 @@ namespace Worlds5
                                           double Latitude, double Longitude,
                                           double Radius, double verticalView, double horizontalView, double[,] PositionMatrix);
 
-        public RenderThread(float Bailout, BackgroundWorker bwThread)
+        public RenderThread(float Bailout)
         {
             sphere = Model.Globals.Sphere;
-            m_bwThread = bwThread;
 
             InitSphere(sphere.ColourDetail[0], sphere.ColourDetail[1],
                        Bailout, sphere.AngularResolution,
@@ -119,17 +117,22 @@ namespace Worlds5
             double latitude = sphere.LatitudeStart - rayCountY * sphere.AngularResolution;
 
             // Process this line of latitude
-            ProcessLatitudeLine(rayCountY, latitude);
+            int rayCountX = 0;
 
-            if (m_bwThread.CancellationPending)
+            // For each longitude point on this line
+            for (double longitude = sphere.LongitudeStart; longitude > sphere.LongitudeEnd; longitude -= sphere.AngularResolution)
             {
-                return;
+                TracedRay tracedRay = ProcessRay(latitude, longitude);
+                // Add this ray to the ray map in the sphere
+                sphere.RecordRay(tracedRay, rayCountX, rayCountY);
+                // Set the colour for this ray
+                tracedRay = SetRayColour(sphere, rayCountX, rayCountY);
+                // Update the ray in the sphere
+                sphere.RecordRay(tracedRay, rayCountX, rayCountY);
+                //ReportProgress(latitude, longitude, tracedRay);
+                rayCountX++;
             }
-
-            // Extend the boundaries across all rays in this row
-            //extendBoundaries(rayCountY);
-
-            displayLine(sphere, rayCountY, latitude);
+            //ReportProgress(rayCountY);
         }
 
         //bool redisplay = false;
@@ -138,94 +141,74 @@ namespace Worlds5
             clsSphere sphere = Model.Globals.Sphere;
             double latitude = sphere.LatitudeStart - rayCountY * sphere.AngularResolution;
 
-            if (m_bwThread.CancellationPending)
-            {
-                return;
-            }
             //redisplay = true;
-            // Display this line of latitude
-            displayLine(sphere, rayCountY, latitude);
-        }
-
-        // Trace each ray for this latitude line and store in the sphere
-        private void ProcessLatitudeLine(int rayCountY, double latitude)
-        {
             int rayCountX = 0;
 
             // For each longitude point on this line
-            for (double longitude = sphere.LongitudeStart;
-                longitude > sphere.LongitudeEnd; longitude -= sphere.AngularResolution)
+            for (double longitude = sphere.LongitudeStart; longitude > sphere.LongitudeEnd; longitude -= sphere.AngularResolution)
             {
-                if (m_bwThread.CancellationPending)
-                {
-                    return;
-                }
-
-                double xFactor = Math.Cos(latitude * Globals.DEG_TO_RAD) * Math.Sin(-longitude * Globals.DEG_TO_RAD);
-                double yFactor = Math.Sin(latitude * Globals.DEG_TO_RAD);
-                double zFactor = Math.Cos(latitude * Globals.DEG_TO_RAD) * Math.Cos(-longitude * Globals.DEG_TO_RAD);
-
-                TracedRay tracedRay;
-                bool[] externalPoints = new bool[100];
-                float[] modulusValues = new float[100];
-                float[] angleValues = new float[100];
-                double[] distanceValues = new double[100];
-
-                // Trace the ray from the sphere radius outwards
-                TraceRay(sphere.Radius, sphere.SamplingInterval, sphere.SurfaceThickness,
-                            xFactor, yFactor, zFactor,
-                            externalPoints, modulusValues, angleValues, distanceValues,
-                            sphere.RayPoints, sphere.MaxSamples, sphere.BoundaryInterval, sphere.BinarySearchSteps,
-                            sphere.ShowSurface, sphere.ShowExterior);
-
-                // Record the fractal value collection for this ray
-                tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);
-
-                if (tracedRay.ModulusValues[1] != 0)
-                {
-                    var x = 0;
-                }
-
-                // Add this ray to the ray map in the sphere
-                sphere.addRay(tracedRay, rayCountX, rayCountY);
-
+                // Display the point on this line of latitude
+                TracedRay tracedRay = SetRayColour(sphere, rayCountX, rayCountY);
+                sphere.RecordRay(tracedRay, rayCountX, rayCountY);
                 rayCountX++;
             }
         }
 
-        private void displayLine(clsSphere sphere, int rayCountY, double latitude)
+        // Trace the ray on this latitude line
+        private TracedRay ProcessRay(double latitude, double longitude)
         {
-            int rayCountX = 0;
+            double xFactor = Math.Cos(latitude * Globals.DEG_TO_RAD) * Math.Sin(-longitude * Globals.DEG_TO_RAD);
+            double yFactor = Math.Sin(latitude * Globals.DEG_TO_RAD);
+            double zFactor = Math.Cos(latitude * Globals.DEG_TO_RAD) * Math.Cos(-longitude * Globals.DEG_TO_RAD);
 
-            // For each longitude point on this line
-            for (double longitude = sphere.LongitudeStart;
-                longitude > sphere.LongitudeEnd; longitude -= sphere.AngularResolution)
+            TracedRay tracedRay;
+            bool[] externalPoints = new bool[100];
+            float[] modulusValues = new float[100];
+            float[] angleValues = new float[100];
+            double[] distanceValues = new double[100];
+
+            // Trace the ray from the sphere radius outwards
+            TraceRay(sphere.Radius, sphere.SamplingInterval, sphere.SurfaceThickness,
+                        xFactor, yFactor, zFactor,
+                        externalPoints, modulusValues, angleValues, distanceValues,
+                        sphere.RayPoints, sphere.MaxSamples, sphere.BoundaryInterval, sphere.BinarySearchSteps,
+                        sphere.ShowSurface, sphere.ShowExterior);
+
+            // Record the fractal value collection for this ray
+            tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);
+
+            if (tracedRay.ModulusValues[1] != 0)
             {
-                if (rayCountX >= sphere.RayMap.GetUpperBound(0))
-                {
-                    break;
-                }
-                // Get the ray from the ray map
-                TracedRay tracedRay = sphere.RayMap[rayCountX++, rayCountY];
-
-                // Calculate the tilt values from the previous rays
-                if (rayCountX > 0)
-                {
-                    tracedRay.XTiltValues = sphere.addTiltValues(tracedRay, rayCountX - 1, rayCountY);
-                }
-                if (rayCountY > 0)
-                {
-                    tracedRay.YTiltValues = sphere.addTiltValues(tracedRay, rayCountX, rayCountY - 1);
-                }
-
-                if (tracedRay != null)
-                {
-                    // Convert the fractal value collection into an rgb colour value
-                    tracedRay.SetColour(sphere.ExposureValue, sphere.Saturation, sphere.StartDistance, sphere.EndDistance);
-                    m_bwThread.ReportProgress(-1, new object[] { latitude, longitude, tracedRay });
-                }
+                var x = 0;
             }
-            m_bwThread.ReportProgress(rayCountY);
+            return tracedRay;
+        }
+
+        private TracedRay SetRayColour(clsSphere sphere, int rayCountX, int rayCountY)
+        {
+            if (rayCountX >= sphere.RayMap.GetUpperBound(0))
+            {
+                break;
+            }
+            // Get the ray from the ray map
+            TracedRay tracedRay = sphere.RayMap[rayCountX++, rayCountY];
+
+            // Calculate the tilt values from the previous rays
+            if (rayCountX > 0)
+            {
+                tracedRay.XTiltValues = sphere.addTiltValues(tracedRay, rayCountX - 1, rayCountY);
+            }
+            if (rayCountY > 0)
+            {
+                tracedRay.YTiltValues = sphere.addTiltValues(tracedRay, rayCountX, rayCountY - 1);
+            }
+
+            if (tracedRay != null)
+            {
+                // Convert the fractal value collection into an rgb colour value
+                tracedRay.SetColour(sphere.ExposureValue, sphere.Saturation, sphere.StartDistance, sphere.EndDistance);
+            }
+            return tracedRay;
         }
 
         //private void extendBoundaries(int row)

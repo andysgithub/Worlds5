@@ -22,9 +22,9 @@
 					// Record the fractal value collection for this ray
 					tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);
 					// Add this ray to the ray map in the sphere
-					sphere.addRay(tracedRay, rayCountX, rayCountY)
+					sphere.RecordRay(tracedRay, rayCountX, rayCountY)
 					
-				displayLine(sphere, rayCountY, latitude)        <-- increments X
+				DisplayLine(sphere, rayCountY, latitude)        <-- increments X
 					// For each longitude point on this line, get the ray from the ray map
 					tracedRay = sphere.RayMap[rayCountX++, rayCountY]
 					// Calculate the tilt values from the previous rays

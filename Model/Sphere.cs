@@ -140,7 +140,7 @@ namespace Model
             incrementFactor = 2 * Math.Sin(AngularResolution / 2);
         }
 
-        public void addRay(TracedRay tracedRay, int xIndex, int yIndex)
+        public void RecordRay(TracedRay tracedRay, int xIndex, int yIndex)
         {
             // Store the new ray in the ray map
             RayMap[xIndex, yIndex] = tracedRay;
