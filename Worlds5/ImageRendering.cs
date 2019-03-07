@@ -111,52 +111,48 @@ namespace Worlds5
                        sphere.Radius, sphere.VerticalView, sphere.HorizontalView, sphere.PositionMatrix);
         }
 
+        // Process this line of latitude
         public void RenderRays(int rayCountY)
         {
             clsSphere sphere = Model.Globals.Sphere;
-            double latitude = sphere.LatitudeStart - rayCountY * sphere.AngularResolution;
-
-            // Process this line of latitude
-            int rayCountX = 0;
-
+            int rayEndX = (sphere.LongitudeStart - sphere.LongitudeEnd) / sphere.AngularResolution;
+            
             // For each longitude point on this line
-            for (double longitude = sphere.LongitudeStart; longitude > sphere.LongitudeEnd; longitude -= sphere.AngularResolution)
+            for (int rayCountX = 0; rayCountX < rayEndX; rayCountX++)
             {
-                TracedRay tracedRay = ProcessRay(latitude, longitude);
+                TracedRay tracedRay = ProcessRay(sphere, rayCountX, rayCountY);
                 // Add this ray to the ray map in the sphere
                 sphere.RecordRay(tracedRay, rayCountX, rayCountY);
                 // Set the colour for this ray
                 tracedRay = SetRayColour(sphere, rayCountX, rayCountY);
                 // Update the ray in the sphere
-                sphere.RecordRay(tracedRay, rayCountX, rayCountY);
-                //ReportProgress(latitude, longitude, tracedRay);
-                rayCountX++;
+                sphere.RecordRay(tracedRay, rayCountX, rayCountY); 
+
+                //ReportProgress(rayCountX, rayCountY, tracedRay);
             }
             //ReportProgress(rayCountY);
         }
 
-        //bool redisplay = false;
         public void Redisplay(int rayCountY)
         {
             clsSphere sphere = Model.Globals.Sphere;
-            double latitude = sphere.LatitudeStart - rayCountY * sphere.AngularResolution;
-
-            //redisplay = true;
-            int rayCountX = 0;
+            int rayEndX = (sphere.LongitudeStart - sphere.LongitudeEnd) / sphere.AngularResolution;
 
             // For each longitude point on this line
-            for (double longitude = sphere.LongitudeStart; longitude > sphere.LongitudeEnd; longitude -= sphere.AngularResolution)
+            for (int rayCountX = 0; rayCountX < rayEndX; rayCountX++)
             {
                 // Display the point on this line of latitude
                 TracedRay tracedRay = SetRayColour(sphere, rayCountX, rayCountY);
                 sphere.RecordRay(tracedRay, rayCountX, rayCountY);
-                rayCountX++;
             }
         }
 
         // Trace the ray on this latitude line
-        private TracedRay ProcessRay(double latitude, double longitude)
+        private TracedRay ProcessRay(clsSphere sphere, int rayCountX, int rayCountY)
         {
+            double latitude = sphere.LatitudeStart - rayCountY * sphere.AngularResolution;
+            double longitude = sphere.LongitudeStart - rayCountX * sphere.AngularResolution;
+
             double xFactor = Math.Cos(latitude * Globals.DEG_TO_RAD) * Math.Sin(-longitude * Globals.DEG_TO_RAD);
             double yFactor = Math.Sin(latitude * Globals.DEG_TO_RAD);
             double zFactor = Math.Cos(latitude * Globals.DEG_TO_RAD) * Math.Cos(-longitude * Globals.DEG_TO_RAD);

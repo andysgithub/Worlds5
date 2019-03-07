@@ -74,7 +74,7 @@ namespace Worlds5
 
             for (int lineIndex = 0; lineIndex < totalLines; lineIndex++)
             {
-                // Perform raytracing using the background worker thread
+                // Perform raytracing
                 if (Model.Globals.Sphere.RayMap == null)
                 {
                     ProcessLine(lineIndex, DisplayOption.Start);
@@ -134,8 +134,8 @@ namespace Worlds5
                 if (redisplayPending)
                 {
                     redisplayPending = false;
-                    // Perform raytracing using the background worker thread
-                    lineThread[threadIndex].RunWorkerAsync(new object[] { threadIndex, DisplayOption.Redisplay });
+                    // Perform raytracing
+                    ProcessLine(lineIndex, DisplayOption.Redisplay);
                     return;
                 }
             }
