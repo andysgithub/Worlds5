@@ -11,9 +11,9 @@
 
 		bwThread_DoWork()       <-- increments Y
             // Initialise the image rendering sphere
-            RenderThread.InitSphere()
+            ImageRendering.InitSphere()
 			// Process this line
-			RenderThread.RenderRays(lineIndex)
+			ImageRendering.RenderRays(lineIndex)
 
                 // Trace each ray for this latitude line and store in the sphere
 				ProcessLatitudeLine(rayCountY, latitude)        <-- increments X

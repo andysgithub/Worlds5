@@ -18,17 +18,19 @@ namespace Worlds5
 	{
         #region Member Variables
 
+        private clsSphere sphere;
+
         //  Image display settings
 		private static Size m_ImageSize;		// Width & Height of image from file
-        private static Size m_SeqSize;			// Width & Height of sequence frames
+        // private static Size m_SeqSize;			// Width & Height of sequence frames
         private static double m_ScaleValue;	    // Overall scaling value for matrix
         
 		//  Image quality settings
         private static float m_Bailout; 
         
 		//  Sequence playback
-        private static int m_CurrentKey;		// Current key frame for sequence
-        private static int m_FrameCount;		// Frame to display for current key
+        // private static int m_CurrentKey;		// Current key frame for sequence
+        // private static int m_FrameCount;		// Frame to display for current key
 
         #endregion
 
@@ -40,11 +42,11 @@ namespace Worlds5
             set { m_ImageSize = value; }
         }
 
-        public static Size SeqSize
-        {
-            get { return m_SeqSize; }
-            set { m_SeqSize = value; }
-        }
+        // public static Size SeqSize
+        // {
+        //     get { return m_SeqSize; }
+        //     set { m_SeqSize = value; }
+        // }
 
         public static double ScaleValue
         {
@@ -58,25 +60,20 @@ namespace Worlds5
             set { m_Bailout = value; }
         }
 
-        public static int CurrentKey
-        {
-            get { return m_CurrentKey; }
-            set { m_CurrentKey = value; }
-        }
+        // public static int CurrentKey
+        // {
+        //     get { return m_CurrentKey; }
+        //     set { m_CurrentKey = value; }
+        // }
 
-        public static int FrameCount
-        {
-            get { return m_FrameCount; }
-            set { m_FrameCount = value; }
-        }
+        // public static int FrameCount
+        // {
+        //     get { return m_FrameCount; }
+        //     set { m_FrameCount = value; }
+        // }
 
         #endregion
-	}
-
-    public class RenderThread
-    {
-        private clsSphere sphere;
-
+        
         [DllImport("Unmanaged.dll")]
         static extern void TraceRay(double startDistance, double increment, double surfaceThickness,
             double xFactor, double yFactor, double zFactor,
@@ -99,10 +96,12 @@ namespace Worlds5
                                           double Latitude, double Longitude,
                                           double Radius, double verticalView, double horizontalView, double[,] PositionMatrix);
 
-        public RenderThread(float Bailout)
+        public ImageRendering()
         {
+            // Set the ImageRendering sphere to the global sphere
             sphere = Model.Globals.Sphere;
 
+            // Initialise the sphere in the dll from the ImageRendering sphere
             InitSphere(sphere.ColourDetail[0], sphere.ColourDetail[1],
                        Bailout, sphere.AngularResolution,
                        sphere.HSL[0, 0], sphere.HSL[1, 0], sphere.HSL[2, 0],
@@ -114,11 +113,10 @@ namespace Worlds5
         // Process this line of latitude
         public void RenderRays(int rayCountY)
         {
-            clsSphere sphere = Model.Globals.Sphere;
-            int rayEndX = (sphere.LongitudeStart - sphere.LongitudeEnd) / sphere.AngularResolution;
+            int totalRays = (sphere.LongitudeStart - sphere.LongitudeEnd) / sphere.AngularResolution;
             
             // For each longitude point on this line
-            for (int rayCountX = 0; rayCountX < rayEndX; rayCountX++)
+            for (int rayCountX = 0; rayCountX < totalRays; rayCountX++)
             {
                 TracedRay tracedRay = ProcessRay(sphere, rayCountX, rayCountY);
                 // Add this ray to the ray map in the sphere

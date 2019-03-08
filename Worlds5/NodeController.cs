@@ -15,8 +15,7 @@ namespace Worlds5
     /// </summary>
     public class NodeController
     {
-        private int nextLineToProcess = 0;
-        BackgroundWorker[] lineThread = new BackgroundWorker[Globals.TOTAL_THREADS];
+        private int linesProcessed = 0;
         private bool redisplayPending = false;
 
         public delegate void RayDataDelegate(double latitude, double longitude, Model.Globals.RGBQUAD rayColors);
@@ -28,21 +27,6 @@ namespace Worlds5
 
         public NodeController()
         {
-            // Initialise all threads for line processing
-            InitialiseThreads();
-        }
-
-        private void InitialiseThreads()
-        {
-            for (int i = 0; i < Globals.TOTAL_THREADS; i++)
-            {
-                lineThread[i] = new BackgroundWorker();
-                lineThread[i].DoWork += new DoWorkEventHandler(bwThread_DoWork);
-                lineThread[i].ProgressChanged += new ProgressChangedEventHandler(bwThread_ProgressChanged);
-                lineThread[i].RunWorkerCompleted += new RunWorkerCompletedEventHandler(bwThread_RunWorkerCompleted);
-                lineThread[i].WorkerReportsProgress = true;
-                lineThread[i].WorkerSupportsCancellation = true;
-            }
         }
 
         public void PerformRayTracing()
@@ -52,13 +36,15 @@ namespace Worlds5
                 // Initialise ray map
                 Model.Globals.Sphere.InitialiseRayMap();
                 clsSphere sphere = Model.Globals.Sphere;
+                ImageRendering rt = new ImageRendering();
+
                 double totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
 
                 for (int lineIndex = 0; lineIndex < totalLines; lineIndex++) {
                     try
                     {
                         // Perform raytracing
-                        ProcessLine(lineIndex, DisplayOption.Start);
+                        rt.RenderRays(lineIndex);
                     }
                     catch (InvalidOperationException ex)
                     { }
@@ -71,24 +57,25 @@ namespace Worlds5
         public void Redisplay()
         {
             //picImage.Image = new Bitmap(picImage.Image.Width, picImage.Image.Height);
-
+            ImageRendering rt = new ImageRendering();
+            
             for (int lineIndex = 0; lineIndex < totalLines; lineIndex++)
             {
                 // Perform raytracing
                 if (Model.Globals.Sphere.RayMap == null)
                 {
-                    ProcessLine(lineIndex, DisplayOption.Start);
+                    rt.RenderRays(lineIndex);
                 }
                 else
                 {
-                    ProcessLine(lineIndex, DisplayOption.Redisplay);
+                    rt.Redisplay(lineIndex);
                 }
             }
         }
 
         private void ProcessLine(int lineIndex, DisplayOption option)
         {
-            RenderThread rt = new RenderThread(ImageRendering.Bailout);
+            ImageRendering rt = new ImageRendering();
 
             if (option == DisplayOption.Start)
             {
@@ -98,32 +85,36 @@ namespace Worlds5
             {
                 rt.Redisplay(lineIndex);
             }
+            RowCompleted(lineIndex, option);
         }
 
-        // private void bwThread_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        // {
-        //     object[] Args = (object[])e.UserState;
-        //     int rowCount = e.ProgressPercentage;
+        private void ProgressChanged(int rayCountX, int rayCountY, TracedRay ray)
+        {
+            clsSphere sphere = Model.Globals.Sphere;
+            int totalRays = (sphere.LongitudeStart - sphere.LongitudeEnd) / sphere.AngularResolution;
 
-        //     if (rowCount == -1)
-        //     {
-        //         // Current ray has been processed
+            // If current row is still being processed
+            if (rayCountX < totalRays)
+            {
+                // Send ray colours to front end
+                if (returnRayData != null) {
+                    // Get lat/long from rayCountX/Y
+                    double latitude = sphere.LatitudeStart - rayCountY * sphere.AngularResolution;
+                    double longitude = sphere.LongitudeStart - rayCountX * sphere.AngularResolution;
 
-        //         double latitude = (double)Args[0];
-        //         double longitude = (double)Args[1];
-        //         TracedRay ray = (TracedRay)Args[2];
-
-        //         // Send ray colours to front end
-        //         if (returnRayData != null)
-        //             returnRayData(latitude, longitude, ray.bmiColors);
-        //     }
-        //     else
-        //     {
-        //         // All rays have has been completed for this row
-        //         if (updateBitmap != null)
-        //             updateBitmap(rowCount);
-        //     }
-        // }
+                    // Call GetRayData in Main via the RayDataDelegate
+                    returnRayData(latitude, longitude, ray.bmiColors);
+                }
+            }
+            else
+            {
+                // All rays have has been completed for this row
+                if (updateBitmap != null) {
+                    // Call UpdateBitmap in Main via the UpdateBitmapDelegate
+                    updateBitmap(rayCountY);
+                }
+            }
+        }
 
         private void RowCompleted(int lineIndex, DisplayOption displayOption)
         {
@@ -140,22 +131,17 @@ namespace Worlds5
                 }
             }
 
-            //clsSphere sphere = Model.Globals.Sphere;
-            //double totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
+            clsSphere sphere = Model.Globals.Sphere;
+            double totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
+            linesProcessed++;
 
-            // If a line is still available to process
-            // if (nextLineToProcess < totalLines)
-            // {
-            //     // Perform raytracing
-            //     ProcessLine(nextLineToProcess, displayOption);
-            // }
-            // else
-            // {
-
+            if (linesProcessed >= totalLines)
+            {
                 // Frame has completed processing
                 if (frameCompleted != null)
+                    // Call SaveFrame in Sequence via the FrameCompletedDelegate
                     frameCompleted();
-            // }
+            }
         }
     }
 }
