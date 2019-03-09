@@ -261,7 +261,6 @@ namespace Worlds5
         private System.Windows.Forms.StatusStrip staStatus;
         private System.Windows.Forms.PictureBox picImage;
         private System.Windows.Forms.OpenFileDialog dlgOpenFile;
-        private System.ComponentModel.BackgroundWorker bwThread;
         private System.Windows.Forms.ToolStripStatusLabel lblPatchStatus;
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mnuRefresh;

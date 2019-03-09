@@ -3,3 +3,9 @@ L:\Data\Development\Projects\Source\Worlds5\DataClasses\bin\Debug\DataClasses.pd
 L:\Data\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\Model.csproj.CoreCompileInputs.cache
 L:\Data\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\DataClasses.dll
 L:\Data\Development\Projects\Source\Worlds5\DataClasses\obj\Debug\DataClasses.pdb
+L:\Data\Development\Projects\Source\worlds5\Model\bin\Debug\DataClasses.dll
+L:\Data\Development\Projects\Source\worlds5\Model\bin\Debug\DataClasses.pdb
+L:\Data\Development\Projects\Source\worlds5\Model\obj\Debug\Model.csprojAssemblyReference.cache
+L:\Data\Development\Projects\Source\worlds5\Model\obj\Debug\Model.csproj.CoreCompileInputs.cache
+L:\Data\Development\Projects\Source\worlds5\Model\obj\Debug\DataClasses.dll
+L:\Data\Development\Projects\Source\worlds5\Model\obj\Debug\DataClasses.pdb

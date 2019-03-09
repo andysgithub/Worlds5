@@ -1,17 +1,10 @@
 using System;
 using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
 using System.Windows.Forms;
-using Microsoft.Win32;
 using Model;
 using AviFile;
 
@@ -33,7 +26,7 @@ namespace Worlds5
         private int iWidth = 0, iHeight = 0, iLeft = 0, iTop = 0;
         private string sState = "Normal";
         private string currentAddress = string.Empty;
-        private NodeController nodeController;
+        private ImageRendering imageRendering;
 
         [DllImport("Unmanaged.dll")]
         static extern void InitBitmap(int Width, int Height);
@@ -67,9 +60,9 @@ namespace Worlds5
             // Instantiate a new sphere before setting properties
             Model.Globals.Sphere = new clsSphere();
 
-            nodeController = new NodeController();
-            nodeController.returnRayData += new NodeController.RayDataDelegate(GetRayData);
-            nodeController.updateBitmap += new NodeController.UpdateBitmapDelegate(UpdateBitmap);
+            imageRendering = new ImageRendering();
+            imageRendering.returnRayData += new ImageRendering.RayDataDelegate(GetRayData);
+            imageRendering.updateBitmap += new ImageRendering.UpdateBitmapDelegate(UpdateBitmap);
 
             Initialisation.LoadSettings(ref iWidth, ref iHeight, ref iLeft, ref iTop, ref sState);
             
@@ -128,7 +121,8 @@ namespace Worlds5
                     {
                         imageDisplay = new ImageDisplay();
 
-                        nodeController.PerformRayTracing();
+                        imageRendering.InitialiseSphere();
+                        imageRendering.PerformRayTracing();
                     }
                 }
             }
@@ -193,7 +187,7 @@ namespace Worlds5
 
         private void mnuRefresh_Click(object sender, EventArgs e)
         {
-            nodeController.Redisplay();
+            imageRendering.Redisplay();
         }
 
         public void mnuClose_Click(object sender, EventArgs e)
@@ -360,7 +354,7 @@ namespace Worlds5
                 form.Dispose();
 
                 // Call the sequence generator to perform the rotation and save the image and navigation files.
-                Sequence sequence = new Sequence(nodeController, picImage, format);
+                Sequence sequence = new Sequence(imageRendering, picImage, format);
                 sequence.PerformRotation(centreCoords, angles, totalFrames, basePath);
             }
         }

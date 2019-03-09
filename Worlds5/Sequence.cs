@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 using Model;
 
@@ -18,7 +14,7 @@ namespace Worlds5
         private PictureBox picImage;
         private ImageFormat format;
         private string extension;
-        private NodeController nodeController;
+        private ImageRendering imageRendering;
         private string PathName;
         private bool frameCompleted = false;
 
@@ -27,10 +23,10 @@ namespace Worlds5
         private clsSphere sphere = Model.Globals.Sphere;
         private int DimTotal = 5;	// Total number of dimensions used
 
-        public Sequence(NodeController nodeController, PictureBox picImage, ImageFormat format)
+        public Sequence(ImageRendering imageRendering, PictureBox picImage, ImageFormat format)
         {
-            this.nodeController = nodeController;
-            nodeController.frameCompleted += new NodeController.FrameCompletedDelegate(SaveFrame);
+            this.imageRendering = imageRendering;
+            imageRendering.frameCompleted += new ImageRendering.FrameCompletedDelegate(SaveFrame);
 
             this.picImage = picImage;
             this.format = format;
@@ -92,7 +88,7 @@ namespace Worlds5
                 PathName = String.Format("{0}_{1:000}.{2}", basePath, frameCount, extension);
                 if (!File.Exists(PathName))
                 {
-                    nodeController.PerformRayTracing();
+                    imageRendering.PerformRayTracing();
                     while (!frameCompleted)
                     {
                         Application.DoEvents();

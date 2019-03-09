@@ -144,6 +144,11 @@ namespace Model
                 }
             }
 
+            if (totalRGB.rgbGreen > 0)
+            {
+                ;
+            }
+
             bmiColors.rgbRed = (byte)totalRGB.rgbRed;
             bmiColors.rgbGreen = (byte)totalRGB.rgbGreen;
             bmiColors.rgbBlue = (byte)totalRGB.rgbBlue;

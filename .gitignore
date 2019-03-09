@@ -1,2 +1,5 @@
 .*
 !.gitignore
+**/bin/x64/
+**/obj/x64/
+**/*.cache

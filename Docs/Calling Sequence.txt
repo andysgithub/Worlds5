@@ -3,7 +3,7 @@
 	Navigation.Navigate(Address)
 		LoadData(Address + ".nav")
 		
-	NodeController.PerformRayTracing()
+	ImageRendering.PerformRayTracing()
 		// Initialise ray map
 		Model.Globals.Sphere.InitialiseRayMap()
 		// Perform raytracing using the background worker thread
@@ -41,4 +41,3 @@ Unmanaged\RayTracer.cpp:
 			sampleDistance = FindSurface(increment, binarySearchSteps, currentDistance, xFactor, yFactor, zFactor)
 			// Determine orbit properties for this point
 			externalPoint = SamplePoint(sampleDistance, &Modulus, &Angle, xFactor, yFactor, zFactor, c)
-
