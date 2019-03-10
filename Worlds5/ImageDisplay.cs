@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using Model;
 
 namespace Worlds5
@@ -41,25 +42,47 @@ namespace Worlds5
             if (Math.Abs(latitude) <= verticalView
                 && Math.Abs(longitude) <= horizontalView)
             {
-                BitmapData bmd = LockBitmap(ref FinalBitmap);
+                BitmapData bitmapData = LockBitmap(ref FinalBitmap);
 
                 double verticalOffset = Math.Sin(latitude);
                 double horizontalOffset = Math.Sin(longitude);
 
-                int heightMidpoint = bmd.Height / 2;
-                int widthMidpoint = bmd.Width / 2;
+                int heightMidpoint = FinalBitmap.Height / 2;
+                int widthMidpoint = FinalBitmap.Width / 2;
 
                 // Determine the pixel position on the bitmap
                 int x = (int)(widthMidpoint * (1 - horizontalOffset / maxHorizontal));
                 int y = (int)(heightMidpoint * (1 - verticalOffset / maxVertical));
 
-                if (x >= 0 && y >= 0 && x < bmd.Width && y < bmd.Height)
-                {
-                    // Plot this colour on the bitmap
-                    byte* row = (byte*)(bmd.Scan0 + y * bmd.Stride);
-                    SetPixel(x, row, colours);
-                }
-                FinalBitmap.UnlockBits(bmd);
+                //if (x >= 0 && y >= 0 && x < bitmapData.Width && y < bitmapData.Height)
+                //{
+                //    // plot this colour on the bitmap
+                //    byte* row = (byte*)(bitmapData.Scan0 + y * bitmapData.Stride);
+                //    // todo: use direct access instead of setpixel
+                //    SetPixel(x, row, colours);
+                //}
+                //FinalBitmap.UnlockBits(bitmapData);
+
+                /////////////////////////////////////////////////
+
+                //BitmapData bitmapData = FinalBitmap.LockBits(new Rectangle(x, y, 1, 1), ImageLockMode.ReadWrite, FinalBitmap.PixelFormat);
+
+                int bytesPerPixel = Bitmap.GetPixelFormatSize(FinalBitmap.PixelFormat) / 8;
+                int byteCount = bitmapData.Stride * FinalBitmap.Height;
+                byte[] pixels = new byte[byteCount];
+                IntPtr ptrFirstPixel = bitmapData.Scan0;
+                Marshal.Copy(ptrFirstPixel, pixels, 0, pixels.Length);
+
+                int currentLine = y * bitmapData.Stride;
+
+                // calculate new pixel value
+                pixels[currentLine + x] = colours.rgbBlue;
+                pixels[currentLine + x + 1] = colours.rgbGreen;
+                pixels[currentLine + x + 2] = colours.rgbRed;
+
+                // copy modified bytes back
+                Marshal.Copy(pixels, 0, ptrFirstPixel, pixels.Length);
+                FinalBitmap.UnlockBits(bitmapData);
             }
         }
 

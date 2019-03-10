@@ -133,12 +133,13 @@ namespace Worlds5
 
                 int totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
 
-                Parallel.For(0, totalLines, lineIndex =>
+                //Parallel.For(0, totalLines, lineIndex =>
+                for (int lineIndex = 0; lineIndex < totalLines; lineIndex++)
                 {
                     // Perform raytracing
                     RenderRays((int)lineIndex);
                     RowCompleted((int)lineIndex, DisplayOption.None);
-                });
+                }
             }
             catch (InvalidOperationException)
             { }
