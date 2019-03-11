@@ -15,8 +15,7 @@ namespace Worlds5
     /// </summary>
     public class NodeController
     {
-        private int nextLineToProcess = 0;
-        BackgroundWorker[] lineThread = new BackgroundWorker[Globals.TOTAL_THREADS];
+        private int linesProcessed = 0;
         private bool redisplayPending = false;
 
         public delegate void RayDataDelegate(double latitude, double longitude, Model.Globals.RGBQUAD rayColors);
@@ -28,21 +27,6 @@ namespace Worlds5
 
         public NodeController()
         {
-            // Initialise all threads for line processing
-            InitialiseThreads();
-        }
-
-        private void InitialiseThreads()
-        {
-            for (int i = 0; i < Globals.TOTAL_THREADS; i++)
-            {
-                lineThread[i] = new BackgroundWorker();
-                lineThread[i].DoWork += new DoWorkEventHandler(bwThread_DoWork);
-                lineThread[i].ProgressChanged += new ProgressChangedEventHandler(bwThread_ProgressChanged);
-                lineThread[i].RunWorkerCompleted += new RunWorkerCompletedEventHandler(bwThread_RunWorkerCompleted);
-                lineThread[i].WorkerReportsProgress = true;
-                lineThread[i].WorkerSupportsCancellation = true;
-            }
         }
 
         public void PerformRayTracing()
@@ -51,14 +35,16 @@ namespace Worlds5
             {
                 // Initialise ray map
                 Model.Globals.Sphere.InitialiseRayMap();
-                nextLineToProcess = 0;
+                clsSphere sphere = Model.Globals.Sphere;
+                ImageRendering rt = new ImageRendering();
 
-                for (int threadIndex = 0; threadIndex < Globals.TOTAL_THREADS; threadIndex++)
-                {
+                double totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
+
+                for (int lineIndex = 0; lineIndex < totalLines; lineIndex++) {
                     try
                     {
-                        // Perform raytracing using the background worker thread
-                        lineThread[threadIndex].RunWorkerAsync(new object[] { threadIndex, DisplayOption.Start });
+                        // Perform raytracing
+                        rt.RenderRays(lineIndex);
                     }
                     catch (InvalidOperationException ex)
                     { }
@@ -70,47 +56,26 @@ namespace Worlds5
 
         public void Redisplay()
         {
-            nextLineToProcess = 0;
             //picImage.Image = new Bitmap(picImage.Image.Width, picImage.Image.Height);
-
-            for (int threadIndex = 0; threadIndex < Globals.TOTAL_THREADS; threadIndex++)
+            ImageRendering rt = new ImageRendering();
+            
+            for (int lineIndex = 0; lineIndex < totalLines; lineIndex++)
             {
-                if (lineThread[threadIndex].IsBusy)
+                // Perform raytracing
+                if (Model.Globals.Sphere.RayMap == null)
                 {
-                    // Cancel any current display process
-                    lineThread[threadIndex].CancelAsync();
-                    redisplayPending = true;
+                    rt.RenderRays(lineIndex);
                 }
                 else
                 {
-                    // Perform raytracing using the background worker thread
-                    if (Model.Globals.Sphere.RayMap == null)
-                    {
-                        lineThread[threadIndex].RunWorkerAsync(new object[] { threadIndex, DisplayOption.Start });
-                    }
-                    else
-                    {
-                        lineThread[threadIndex].RunWorkerAsync(new object[] { threadIndex, DisplayOption.Redisplay });
-                    }
+                    rt.Redisplay(lineIndex);
                 }
             }
         }
 
-        private void bwThread_DoWork(object sender, DoWorkEventArgs e)
+        private void ProcessLine(int lineIndex, DisplayOption option)
         {
-            object[] args = (object[])e.Argument;
-            int threadIndex = (int)args[0];
-
-            // Get next available line to process
-            int lineIndex = nextLineToProcess++;
-
-            DisplayOption option = DisplayOption.Start;
-            if (args[1] != null)
-            {
-                option = (DisplayOption)args[1];
-            }
-
-            RenderThread rt = new RenderThread(ImageRendering.Bailout, lineThread[threadIndex]);
+            ImageRendering rt = new ImageRendering();
 
             if (option == DisplayOption.Start)
             {
@@ -120,46 +85,39 @@ namespace Worlds5
             {
                 rt.Redisplay(lineIndex);
             }
-
-            if (lineThread[threadIndex].CancellationPending)
-            {
-                option = DisplayOption.Cancel;
-            }
-
-            e.Result = new object[] { threadIndex, option };
+            RowCompleted(lineIndex, option);
         }
 
-        private void bwThread_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void ProgressChanged(int rayCountX, int rayCountY, TracedRay ray)
         {
-            object[] Args = (object[])e.UserState;
-            int rowCount = e.ProgressPercentage;
+            clsSphere sphere = Model.Globals.Sphere;
+            int totalRays = (sphere.LongitudeStart - sphere.LongitudeEnd) / sphere.AngularResolution;
 
-            if (rowCount == -1)
+            // If current row is still being processed
+            if (rayCountX < totalRays)
             {
-                // Current ray has been processed
-
-                double latitude = (double)Args[0];
-                double longitude = (double)Args[1];
-                TracedRay ray = (TracedRay)Args[2];
-
                 // Send ray colours to front end
-                if (returnRayData != null)
+                if (returnRayData != null) {
+                    // Get lat/long from rayCountX/Y
+                    double latitude = sphere.LatitudeStart - rayCountY * sphere.AngularResolution;
+                    double longitude = sphere.LongitudeStart - rayCountX * sphere.AngularResolution;
+
+                    // Call GetRayData in Main via the RayDataDelegate
                     returnRayData(latitude, longitude, ray.bmiColors);
+                }
             }
             else
             {
                 // All rays have has been completed for this row
-                if (updateBitmap != null)
-                    updateBitmap(rowCount);
+                if (updateBitmap != null) {
+                    // Call UpdateBitmap in Main via the UpdateBitmapDelegate
+                    updateBitmap(rayCountY);
+                }
             }
         }
 
-        private void bwThread_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void RowCompleted(int lineIndex, DisplayOption displayOption)
         {
-            object[] Args = (object[])e.Result;
-            int threadIndex = (int)Args[0];
-            DisplayOption displayOption = (DisplayOption)Args[1];
-
             if (displayOption == DisplayOption.Cancel)
             {
                 //staStatus.Items[0].Text = "Ray tracing cancelled.";
@@ -167,35 +125,21 @@ namespace Worlds5
                 if (redisplayPending)
                 {
                     redisplayPending = false;
-                    // Perform raytracing using the background worker thread
-                    lineThread[threadIndex].RunWorkerAsync(new object[] { threadIndex, DisplayOption.Redisplay });
+                    // Perform raytracing
+                    ProcessLine(lineIndex, DisplayOption.Redisplay);
                     return;
                 }
             }
 
             clsSphere sphere = Model.Globals.Sphere;
             double totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
+            linesProcessed++;
 
-            // If a line is still available to process
-            if (nextLineToProcess < totalLines)
+            if (linesProcessed >= totalLines)
             {
-                // Perform raytracing using the background worker thread
-                lineThread[threadIndex].RunWorkerAsync(new object[] { threadIndex, displayOption });
-            }
-            else
-            {
-                lineThread[threadIndex].CancelAsync();
-
-                for (int i = 0; i < Globals.TOTAL_THREADS; i++)
-                {
-                    if (!lineThread[i].CancellationPending)
-                    {
-                        return;
-                    }
-                }
-
                 // Frame has completed processing
                 if (frameCompleted != null)
+                    // Call SaveFrame in Sequence via the FrameCompletedDelegate
                     frameCompleted();
             }
         }

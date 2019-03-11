@@ -9,6 +9,7 @@ namespace Worlds5
     public unsafe class ImageDisplay
     {
         private Bitmap FinalBitmap = null;
+        private BitmapData bitmapData;
         private clsSphere sphere = Model.Globals.Sphere;
         private double verticalView = 0;
         private double horizontalView = 0;
@@ -42,7 +43,7 @@ namespace Worlds5
             if (Math.Abs(latitude) <= verticalView
                 && Math.Abs(longitude) <= horizontalView)
             {
-                BitmapData bitmapData = LockBitmap(ref FinalBitmap);
+                //LockBitmap();
 
                 double verticalOffset = Math.Sin(latitude);
                 double horizontalOffset = Math.Sin(longitude);
@@ -61,11 +62,6 @@ namespace Worlds5
                 //    // todo: use direct access instead of setpixel
                 //    SetPixel(x, row, colours);
                 //}
-                //FinalBitmap.UnlockBits(bitmapData);
-
-                /////////////////////////////////////////////////
-
-                //BitmapData bitmapData = FinalBitmap.LockBits(new Rectangle(x, y, 1, 1), ImageLockMode.ReadWrite, FinalBitmap.PixelFormat);
 
                 int bytesPerPixel = Bitmap.GetPixelFormatSize(FinalBitmap.PixelFormat) / 8;
                 int byteCount = bitmapData.Stride * FinalBitmap.Height;
@@ -82,11 +78,11 @@ namespace Worlds5
 
                 // copy modified bytes back
                 Marshal.Copy(pixels, 0, ptrFirstPixel, pixels.Length);
-                FinalBitmap.UnlockBits(bitmapData);
+                //UnlockBitmap();
             }
         }
 
-        public Bitmap getBitmap()
+        public Bitmap GetBitmap()
         {
             return FinalBitmap;
         }
@@ -109,11 +105,16 @@ namespace Worlds5
             }
         }
 
-        private BitmapData LockBitmap(ref Bitmap FinalBitmap)
+        public void LockBitmap()
         {
-            return FinalBitmap.LockBits(
+            bitmapData = FinalBitmap.LockBits(
                             new Rectangle(0, 0, FinalBitmap.Width, FinalBitmap.Height),
                             ImageLockMode.ReadOnly, FinalBitmap.PixelFormat);
+        }
+
+        public void UnlockBitmap()
+        {
+            FinalBitmap.UnlockBits(bitmapData);
         }
     }
 }

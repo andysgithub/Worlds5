@@ -11,6 +11,7 @@ namespace Worlds5
         #region Member Variables
 
         private clsSphere sphere;
+        private ImageDisplay imageDisplay;
         private int linesProcessed = 0;
         private bool redisplayPending = false;
 
@@ -68,17 +69,6 @@ namespace Worlds5
 
         #endregion
 
-        #region Delegates
-
-        public delegate void RayDataDelegate(double latitude, double longitude, Model.Globals.RGBQUAD rayColors);
-        public delegate void UpdateBitmapDelegate(int rowCount);
-        public delegate void FrameCompletedDelegate();
-        public event RayDataDelegate returnRayData;
-        public event UpdateBitmapDelegate updateBitmap;
-        public event FrameCompletedDelegate frameCompleted;
-
-        #endregion
-
         #region DLL Imports
 
         [DllImport("Unmanaged.dll")]
@@ -126,13 +116,15 @@ namespace Worlds5
 
         public void PerformRayTracing()
         {
+            imageDisplay = new ImageDisplay();
             try
             {
                 // Initialise ray map
                 sphere.InitialiseRayMap();
 
                 int totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
-
+                imageDisplay.LockBitmap();
+                
                 //Parallel.For(0, totalLines, lineIndex =>
                 for (int lineIndex = 0; lineIndex < totalLines; lineIndex++)
                 {
@@ -140,6 +132,7 @@ namespace Worlds5
                     RenderRays((int)lineIndex);
                     RowCompleted((int)lineIndex, DisplayOption.None);
                 }
+                imageDisplay.UnlockBitmap();
             }
             catch (InvalidOperationException)
             { }
@@ -173,22 +166,11 @@ namespace Worlds5
             // If current row is still being processed
             if (rayCountX < totalRays-1)
             {
-                // Send ray colours to front end
-                if (returnRayData != null)
-                {
-                    // Get lat/long from rayCountX/Y
-                    double latitude = sphere.LatitudeStart - rayCountY * sphere.AngularResolution;
-                    double longitude = sphere.LongitudeStart - rayCountX * sphere.AngularResolution;
+                // Get lat/long from rayCountX/Y
+                double latitude = sphere.LatitudeStart - rayCountY * sphere.AngularResolution;
+                double longitude = sphere.LongitudeStart - rayCountX * sphere.AngularResolution;
 
-                    // Call GetRayData in Main via the RayDataDelegate
-                    returnRayData(latitude, longitude, ray.bmiColors);
-                }
-            }
-            else
-            {
-                // All rays have has been completed for this row
-                // Call UpdateBitmap in Main via the UpdateBitmapDelegate
-                updateBitmap?.Invoke(rayCountY);
+                imageDisplay.updateImage(latitude, longitude, rayColors);
             }
         }
 
@@ -311,6 +293,11 @@ namespace Worlds5
                 tracedRay.SetColour(sphere.ExposureValue, sphere.Saturation, sphere.StartDistance, sphere.EndDistance);
             }
             return tracedRay;
+        }
+
+        public Bitmap GetBitmap()
+        {
+            return imageDisplay.GetBitmap();
         }
 
         //private void extendBoundaries(int row)

@@ -20,13 +20,12 @@ namespace Worlds5
 
     public partial class Main : Form
     {
-        private ImageDisplay imageDisplay;
         private bool bResizing = false;
         private DisplayStatus m_DisplayStatus = DisplayStatus.None;
         private int iWidth = 0, iHeight = 0, iLeft = 0, iTop = 0;
         private string sState = "Normal";
         private string currentAddress = string.Empty;
-        private ImageRendering imageRendering;
+        private ImageRendering imageRendering = null;
 
         [DllImport("Unmanaged.dll")]
         static extern void InitBitmap(int Width, int Height);
@@ -59,10 +58,7 @@ namespace Worlds5
             
             // Instantiate a new sphere before setting properties
             Model.Globals.Sphere = new clsSphere();
-
             imageRendering = new ImageRendering();
-            imageRendering.returnRayData += new ImageRendering.RayDataDelegate(GetRayData);
-            imageRendering.updateBitmap += new ImageRendering.UpdateBitmapDelegate(UpdateBitmap);
 
             Initialisation.LoadSettings(ref iWidth, ref iHeight, ref iLeft, ref iTop, ref sState);
             
@@ -119,10 +115,11 @@ namespace Worlds5
                     }
                     else
                     {
-                        imageDisplay = new ImageDisplay();
-
                         imageRendering.InitialiseSphere();
                         imageRendering.PerformRayTracing();
+
+                        // Display the bitmap
+                        picImage.Image = imageRendering.GetBitmap();
                     }
                 }
             }
@@ -143,12 +140,12 @@ namespace Worlds5
         /// Callback to display the updated image after a line has been processed.
         /// </summary>
         /// <param name="rowCount"></param>
-        private void UpdateBitmap(int rowCount)
-        {
-            // Display the bitmap
-            picImage.Image = imageDisplay.getBitmap();
-            staStatus.Items[0].Text = "Processing row " + rowCount;
-        }
+        // private void UpdateBitmap(int rowCount)
+        // {
+        //     // Display the bitmap
+        //     picImage.Image = imageRendering.getBitmap();
+        //     staStatus.Items[0].Text = "Processing row " + rowCount;
+        // }
 
         private void mnuSave_Click(object sender, EventArgs e)
         {
@@ -414,7 +411,7 @@ namespace Worlds5
 
         private void settingsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
-            mnuRotation.Enabled = (imageDisplay != null);
+            mnuRotation.Enabled = (imageRendering != null);
         }
 
     }
