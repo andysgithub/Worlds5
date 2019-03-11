@@ -15,6 +15,8 @@ namespace Worlds5
         private double horizontalView = 0;
         private double maxVertical = 0;
         private double maxHorizontal = 0;
+        private int bitmapWidth = 0;
+        private int bitmapHeight = 0;
 
         public ImageDisplay()
         {
@@ -27,11 +29,11 @@ namespace Worlds5
             double stepSize = Math.Sin(sphereResolution);
 
             // Initialise the bitmap
-            int xPixels = (int)(maxHorizontal / stepSize);
-            int yPixels = (int)(maxVertical / stepSize);
+            bitmapWidth = (int)(maxHorizontal / stepSize);
+            bitmapHeight = (int)(maxVertical / stepSize);
 
             // Bitmap resolution is higher than the image plane
-            FinalBitmap = new Bitmap(xPixels, yPixels, PixelFormat.Format32bppRgb);
+            FinalBitmap = new Bitmap(bitmapWidth, bitmapHeight, PixelFormat.Format32bppRgb);
         }
 
         public void updateImage(double degreesLat, double degreesLong, Model.Globals.RGBQUAD colours)
@@ -43,42 +45,29 @@ namespace Worlds5
             if (Math.Abs(latitude) <= verticalView
                 && Math.Abs(longitude) <= horizontalView)
             {
-                //LockBitmap();
-
                 double verticalOffset = Math.Sin(latitude);
                 double horizontalOffset = Math.Sin(longitude);
 
-                int heightMidpoint = FinalBitmap.Height / 2;
-                int widthMidpoint = FinalBitmap.Width / 2;
+                int heightMidpoint = bitmapHeight / 2;
+                int widthMidpoint = bitmapWidth / 2;
 
                 // Determine the pixel position on the bitmap
-                int x = (int)(widthMidpoint * (1 - horizontalOffset / maxHorizontal));
+                int x = (int)(widthMidpoint * (1 - horizontalOffset / maxHorizontal)) * 4;
                 int y = (int)(heightMidpoint * (1 - verticalOffset / maxVertical));
 
-                //if (x >= 0 && y >= 0 && x < bitmapData.Width && y < bitmapData.Height)
-                //{
-                //    // plot this colour on the bitmap
-                //    byte* row = (byte*)(bitmapData.Scan0 + y * bitmapData.Stride);
-                //    // todo: use direct access instead of setpixel
-                //    SetPixel(x, row, colours);
-                //}
-
-                int bytesPerPixel = Bitmap.GetPixelFormatSize(FinalBitmap.PixelFormat) / 8;
-                int byteCount = bitmapData.Stride * FinalBitmap.Height;
-                byte[] pixels = new byte[byteCount];
+                int byteCount = bitmapData.Stride * bitmapHeight;
+                byte[] pixels = new byte[4];
                 IntPtr ptrFirstPixel = bitmapData.Scan0;
-                Marshal.Copy(ptrFirstPixel, pixels, 0, pixels.Length);
 
                 int currentLine = y * bitmapData.Stride;
 
-                // calculate new pixel value
-                pixels[currentLine + x] = colours.rgbBlue;
-                pixels[currentLine + x + 1] = colours.rgbGreen;
-                pixels[currentLine + x + 2] = colours.rgbRed;
+                // Calculate new pixel value
+                pixels[0] = colours.rgbBlue;
+                pixels[1] = colours.rgbGreen;
+                pixels[2] = colours.rgbRed;
 
-                // copy modified bytes back
-                Marshal.Copy(pixels, 0, ptrFirstPixel, pixels.Length);
-                //UnlockBitmap();
+                // Copy modified bytes back
+                Marshal.Copy(pixels, 0, ptrFirstPixel + currentLine + x, 4);
             }
         }
 

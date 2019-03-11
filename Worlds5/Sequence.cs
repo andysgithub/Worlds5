@@ -26,7 +26,7 @@ namespace Worlds5
         public Sequence(ImageRendering imageRendering, PictureBox picImage, ImageFormat format)
         {
             this.imageRendering = imageRendering;
-            imageRendering.frameCompleted += new ImageRendering.FrameCompletedDelegate(SaveFrame);
+            //imageRendering.frameCompleted += new ImageRendering.FrameCompletedDelegate(SaveFrame);
 
             this.picImage = picImage;
             this.format = format;

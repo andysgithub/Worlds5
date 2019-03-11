@@ -130,14 +130,14 @@ namespace Worlds5
 
                 int totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
                 imageDisplay.LockBitmap();
-                
-                //Parallel.For(0, totalLines, lineIndex =>
-                for (int lineIndex = 0; lineIndex < totalLines; lineIndex++)
+
+                Parallel.For(0, totalLines, lineIndex =>
+                //for (int lineIndex = 0; lineIndex < totalLines; lineIndex++)
                 {
                     // Perform raytracing
                     RenderRays((int)lineIndex);
                     RowCompleted((int)lineIndex, DisplayOption.None);
-                }
+                });
                 imageDisplay.UnlockBitmap();
             }
             catch (InvalidOperationException)
@@ -176,7 +176,7 @@ namespace Worlds5
                 double latitude = sphere.LatitudeStart - rayCountY * sphere.AngularResolution;
                 double longitude = sphere.LongitudeStart - rayCountX * sphere.AngularResolution;
 
-                imageDisplay.updateImage(latitude, longitude, rayColors);
+                imageDisplay.updateImage(latitude, longitude, ray.bmiColors);
             }
         }
 
@@ -199,14 +199,15 @@ namespace Worlds5
             double totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
             linesProcessed++;
 
-            if (linesProcessed >= totalLines)
+            if (linesProcessed < totalLines)
+            //{
+            //    // Frame has completed processing
+            //    if (frameCompleted != null)
+            //        // Call SaveFrame in Sequence via the FrameCompletedDelegate
+            //        frameCompleted();
+            //}
+            //else
             {
-                // Frame has completed processing
-                if (frameCompleted != null)
-                    // Call SaveFrame in Sequence via the FrameCompletedDelegate
-                    frameCompleted();
-            }
-            else {
                 // Call the UpdateStatus function in Main
                 updateStatus?.Invoke(linesProcessed);
             }

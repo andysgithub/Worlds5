@@ -59,7 +59,7 @@ namespace Worlds5
             // Instantiate a new sphere before setting properties
             Model.Globals.Sphere = new clsSphere();
             imageRendering = new ImageRendering();
-            imageRendering.updateStatus += new ImageRendering.UpdateBitmapDelegate(UpdateStatus);
+            imageRendering.updateStatus += new ImageRendering.UpdateStatusDelegate(UpdateStatus);
 
             Initialisation.LoadSettings(ref iWidth, ref iHeight, ref iLeft, ref iTop, ref sState);
             
@@ -132,10 +132,10 @@ namespace Worlds5
         /// <param name="latitude"></param>
         /// <param name="longitude"></param>
         /// <param name="rayColors"></param>
-        private void GetRayData(double latitude, double longitude, Model.Globals.RGBQUAD rayColors)
-        {
-            imageDisplay.updateImage(latitude, longitude, rayColors);
-        }
+        //private void GetRayData(double latitude, double longitude, Model.Globals.RGBQUAD rayColors)
+        //{
+        //    imageDisplay.updateImage(latitude, longitude, rayColors);
+        //}
 
         /// <summary>
         /// Callback to update the status after a line has been processed.
