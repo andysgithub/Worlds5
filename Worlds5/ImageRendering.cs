@@ -9,7 +9,7 @@ namespace Worlds5
     sealed public class ImageRendering
 	{
         #region Member Variables
-
+ 
         private clsSphere sphere;
         private ImageDisplay imageDisplay;
         private int linesProcessed = 0;
@@ -26,6 +26,12 @@ namespace Worlds5
 		//  Sequence playback
         // private static int m_CurrentKey;		// Current key frame for sequence
         // private static int m_FrameCount;		// Frame to display for current key
+
+        #endregion
+
+        #region Delegates
+        public delegate void UpdateStatusDelegate(int rowCount);
+        public event UpdateStatusDelegate updateStatus;
 
         #endregion
 
@@ -199,6 +205,10 @@ namespace Worlds5
                 if (frameCompleted != null)
                     // Call SaveFrame in Sequence via the FrameCompletedDelegate
                     frameCompleted();
+            }
+            else {
+                // Call the UpdateStatus function in Main
+                updateStatus?.Invoke(linesProcessed);
             }
         }
 

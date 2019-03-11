@@ -59,6 +59,7 @@ namespace Worlds5
             // Instantiate a new sphere before setting properties
             Model.Globals.Sphere = new clsSphere();
             imageRendering = new ImageRendering();
+            imageRendering.updateStatus += new ImageRendering.UpdateBitmapDelegate(UpdateStatus);
 
             Initialisation.LoadSettings(ref iWidth, ref iHeight, ref iLeft, ref iTop, ref sState);
             
@@ -137,15 +138,13 @@ namespace Worlds5
         }
 
         /// <summary>
-        /// Callback to display the updated image after a line has been processed.
+        /// Callback to update the status after a line has been processed.
         /// </summary>
         /// <param name="rowCount"></param>
-        // private void UpdateBitmap(int rowCount)
-        // {
-        //     // Display the bitmap
-        //     picImage.Image = imageRendering.getBitmap();
-        //     staStatus.Items[0].Text = "Processing row " + rowCount;
-        // }
+        private void UpdateStatus(int rowCount)
+        {
+            staStatus.Items[0].Text = "Rows processed: " + rowCount;
+        }
 
         private void mnuSave_Click(object sender, EventArgs e)
         {
