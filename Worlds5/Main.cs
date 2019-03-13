@@ -183,6 +183,7 @@ namespace Worlds5
 
         private void mnuRefresh_Click(object sender, EventArgs e)
         {
+            imageRendering.InitialiseSphere();
             imageRendering.Redisplay();
         }
 
