@@ -183,13 +183,12 @@ namespace Worlds5
 
         private void mnuRefresh_Click(object sender, EventArgs e)
         {
-            Refresh();
+            RefreshImage();
         }
 
-        private void Refresh()
+        private void RefreshImage()
         {
             imageRendering.Redisplay();
-
             // Display the bitmap
             picImage.Image = imageRendering.GetBitmap();
         }
@@ -328,7 +327,7 @@ namespace Worlds5
         private void mnuSettings_Click(object sender, EventArgs e)
         {
             Settings form = new Settings();
-            form.RefreshImage += new Settings.RefreshDelegate(Refresh);
+            form.RefreshImage += new Settings.RefreshDelegate(RefreshImage);
             form.ShowDialog(this);
         }
 
