@@ -11,6 +11,13 @@ namespace Worlds5
 {
     public partial class Settings : Form
     {
+        #region Delegates
+
+        public delegate void RefreshDelegate();
+        public event RefreshDelegate RefreshImage;
+
+        #endregion
+
         public Settings()
         {
             InitializeComponent();
@@ -206,7 +213,7 @@ namespace Worlds5
         private void btnApply_Click(object sender, EventArgs e)
         {
             SaveRendering();
-            //((Main)this.Owner).Redisplay();
+            RefreshImage();
         }
 
         private void chkShowSurface_CheckedChanged(object sender, EventArgs e)

@@ -30,6 +30,7 @@ namespace Worlds5
         #endregion
 
         #region Delegates
+
         public delegate void UpdateStatusDelegate(int rowCount);
         public event UpdateStatusDelegate updateStatus;
 
@@ -129,10 +130,10 @@ namespace Worlds5
                 sphere.InitialiseRayMap();
 
                 int totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
+                linesProcessed = 0;
                 imageDisplay.LockBitmap();
 
                 Parallel.For(0, totalLines, lineIndex =>
-                //for (int lineIndex = 0; lineIndex < totalLines; lineIndex++)
                 {
                     // Perform raytracing
                     RenderRays((int)lineIndex);
@@ -148,21 +149,22 @@ namespace Worlds5
         {
             //picImage.Image = new Bitmap(picImage.Image.Width, picImage.Image.Height);
 
-            double totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
+            int totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
+            linesProcessed = 0;
 
-            for (int lineIndex = 0; lineIndex < totalLines; lineIndex++)
+            Parallel.For(0, totalLines, lineIndex =>
             {
                 // Perform raytracing
                 if (Model.Globals.Sphere.RayMap == null)
                 {
-                    RenderRays(lineIndex);
+                    RenderRays((int)lineIndex);
                 }
                 else
                 {
-                    Redisplay(lineIndex);
+                    Redisplay((int)lineIndex);
                 }
-                RowCompleted(lineIndex, DisplayOption.None);
-            }
+                RowCompleted((int)lineIndex, DisplayOption.None);
+            });
         }
 
         private void ProgressChanged(int rayCountX, int rayCountY, TracedRay ray)
@@ -242,7 +244,10 @@ namespace Worlds5
             {
                 // Display the point on this line of latitude
                 TracedRay tracedRay = SetRayColour(sphere, rayCountX, rayCountY);
-                sphere.RecordRay(tracedRay, rayCountX, rayCountY);
+                // Update the ray in the sphere
+                //sphere.RecordRay(tracedRay, rayCountX, rayCountY);
+
+                ProgressChanged(rayCountX, rayCountY, tracedRay);
             }
         }
 

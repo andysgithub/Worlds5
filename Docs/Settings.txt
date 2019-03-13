@@ -15,10 +15,10 @@ Maximum Samples		500	1000
 Boundary Interval	0.0005	0.0005
 Binary Search Steps	25	50
 
-Exposure Value		0.6	1
-Saturation		30	30
-Surface Contrast	80	80
-Lighting Angle		45	45
+Exposure Value		0.6	1.5
+Saturation		30	20
+Surface Contrast	80	60
+Lighting Angle		45	46.5
 Start Distance		1	8.5
 End Distance		15	12.5
 Vertical View		600	600
