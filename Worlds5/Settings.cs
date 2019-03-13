@@ -52,6 +52,7 @@ namespace Worlds5
             // Rendering
             SaveRendering();
 
+            RefreshImage();
             this.Close();
         }
 
