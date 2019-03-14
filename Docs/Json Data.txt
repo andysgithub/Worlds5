@@ -1,0 +1,68 @@
+{
+    "Sphere": {
+        "Navigation": {
+            "PositionMatrix": double[6,5]
+        }
+
+        "Viewing": {
+            "Radius": double
+            "CentreLatitude": double
+            "CentreLongitude": double
+            "VerticalView": double
+            "HorizontalView": double
+            "AngularResolution": double
+        }
+
+        "Raytracing": {
+            "RayMap": TracedRay[,]
+            "SamplingInterval": double
+            "RayPoints": int
+            "MaxSamples": int
+            "BoundaryInterval": double
+            "BinarySearchSteps": int
+            "SurfaceThickness": double
+            "ShowSurface": bool
+            "ShowExterior": bool
+        }
+
+        "Rendering": {
+            "ExposureValue": float
+            "Saturation": float
+            "SurfaceContrast": float
+            "LightingAngle": float
+            "StartDistance": double
+            "EndDistance": double
+        }
+    }
+
+    "TracedRay": {
+        "externalPoints": List<bool>
+        "modulusValues": List<float>
+        "angleValues": List<float>
+        "distanceValues": List<double>
+        "xTiltValues": List<float>
+        "yTiltValues": List<float>
+    }
+
+    "NavigationFile": {
+        "Type": {
+            "FileType": int
+            "Dimensions": int
+        }
+
+        "PositionMatrix": double[6,5]
+        "ScaleValue": double
+        "ImageSize": int[2]
+        "Bailout": float
+
+        "Boundary": ImageSettings
+        "Exterior": ImageSettings
+    }
+
+    "ImageSettings": {
+        "ColourDetail": float
+        "ColourOffset": float
+        "ImageQuality": int
+        "HSL": float[3]
+    }
+}

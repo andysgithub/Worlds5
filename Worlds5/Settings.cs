@@ -27,10 +27,6 @@ namespace Worlds5
         {
             clsSphere sphere = Model.Globals.Sphere;
 
-            sphere.AngularResolution = (double)updResolution.Value;
-            sphere.Radius = (double)updSphereRadius.Value;
-            sphere.CentreLatitude = (double)updCentreLatitude.Value;
-
             // Sphere Viewing window
             sphere.AngularResolution = (double)updResolution.Value;
             sphere.Radius = (double)updSphereRadius.Value;
@@ -80,10 +76,6 @@ namespace Worlds5
         private void Settings_Load(object sender, EventArgs e)
         {
             clsSphere sphere = Model.Globals.Sphere;
-
-            updResolution.Value = (decimal)sphere.AngularResolution;
-            updSphereRadius.Value = (decimal)sphere.Radius;
-            updCentreLatitude.Value = (decimal)sphere.CentreLatitude;
 
             // Sphere Viewing window
             updResolution.Value = (decimal)sphere.AngularResolution;
