@@ -1,5 +1,5 @@
-Setting			Veil	Surface
-~~~~~~~			~~~~	~~~~~~~
+Setting			Exterior	Surface
+~~~~~~~			~~~~~~~~	~~~~~~~
 
 Viewport Resolution	0.055	0.03
 Sphere Radius		1	8
