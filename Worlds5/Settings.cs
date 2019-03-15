@@ -58,8 +58,8 @@ namespace Worlds5
 
             Globals.SetUp.ImageJpgQuality = (int)updImageJpgQuality.Value;
             Globals.SetUp.ImageFileFormat = (int)cmbImageFileFormat.SelectedIndex;
-            Globals.SetUp.BitmapWidth = (int)updHorizontalView.Value;
-            Globals.SetUp.BitmapHeight = (int)updVerticalView.Value;
+            Globals.SetUp.BitmapWidth = (int)updBitmapWidth.Value;
+            Globals.SetUp.BitmapHeight = (int)updBitmapHeight.Value;
             sphere.ExposureValue = (float)updExposureValue.Value;
             sphere.Saturation = (float)updSaturation.Value;
             sphere.SurfaceContrast = (float)updSurfaceContrast.Value;
@@ -98,8 +98,8 @@ namespace Worlds5
             // Rendering
             updImageJpgQuality.Value = Globals.SetUp.ImageJpgQuality;
             cmbImageFileFormat.SelectedIndex = Globals.SetUp.ImageFileFormat;
-            updHorizontalView.Value = Globals.SetUp.BitmapWidth;
-            updVerticalView.Value = Globals.SetUp.BitmapHeight;
+            updBitmapWidth.Value = Globals.SetUp.BitmapWidth;
+            updBitmapHeight.Value = Globals.SetUp.BitmapHeight;
             updExposureValue.Value = (decimal)sphere.ExposureValue;
             updSaturation.Value = (decimal)sphere.Saturation;
             updSurfaceContrast.Value = (decimal)sphere.SurfaceContrast;
@@ -120,14 +120,14 @@ namespace Worlds5
             showDetails("Saturation", "");
         }
 
-        private void updVerticalView_HelpRequested(object sender, HelpEventArgs hlpevent)
+        private void updBitmapHeight_HelpRequested(object sender, HelpEventArgs hlpevent)
         {
-            showDetails("Vertical View", "");
+            showDetails("Bitmap Height", "");
         }
 
-        private void updHorizontalView_HelpRequested(object sender, HelpEventArgs hlpevent)
+        private void updBitmapWidth_HelpRequested(object sender, HelpEventArgs hlpevent)
         {
-            showDetails("Horizontal View", "");
+            showDetails("Bitmap Width", "");
         }
 
         private void updImageJpgQuality_HelpRequested(object sender, HelpEventArgs hlpevent)

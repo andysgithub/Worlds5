@@ -21,11 +21,8 @@ namespace Model
         private double incrementFactor;                 
 
         // Image settings
-        public int[] ImageQuality = new int[2];
         public float[,] HSL = new float[3, 2];
         public float[] ColourDetail = new float[2];
-        public float[] ColourOffset = new float[2];
-        public int[] ColourCycle = new int[2];
 
         #endregion
 

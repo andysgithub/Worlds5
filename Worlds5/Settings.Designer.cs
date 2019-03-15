@@ -72,13 +72,13 @@
             this.updStartDistance = new System.Windows.Forms.NumericUpDown();
             this.cmbImageFileFormat = new System.Windows.Forms.ComboBox();
             this.label12 = new System.Windows.Forms.Label();
-            this.updHorizontalView = new System.Windows.Forms.NumericUpDown();
+            this.updBitmapWidth = new System.Windows.Forms.NumericUpDown();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
-            this.updVerticalView = new System.Windows.Forms.NumericUpDown();
+            this.updBitmapHeight = new System.Windows.Forms.NumericUpDown();
             this.updSaturation = new System.Windows.Forms.NumericUpDown();
             this.updExposureValue = new System.Windows.Forms.NumericUpDown();
             this.updImageJpgQuality = new System.Windows.Forms.NumericUpDown();
@@ -103,8 +103,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.updSurfaceContrast)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updEndDistance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updStartDistance)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updHorizontalView)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updVerticalView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updBitmapWidth)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updBitmapHeight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSaturation)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updExposureValue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updImageJpgQuality)).BeginInit();
@@ -635,13 +635,13 @@
             this.tabRendering.Controls.Add(this.updStartDistance);
             this.tabRendering.Controls.Add(this.cmbImageFileFormat);
             this.tabRendering.Controls.Add(this.label12);
-            this.tabRendering.Controls.Add(this.updHorizontalView);
+            this.tabRendering.Controls.Add(this.updBitmapWidth);
             this.tabRendering.Controls.Add(this.label13);
             this.tabRendering.Controls.Add(this.label14);
             this.tabRendering.Controls.Add(this.label15);
             this.tabRendering.Controls.Add(this.label16);
             this.tabRendering.Controls.Add(this.label17);
-            this.tabRendering.Controls.Add(this.updVerticalView);
+            this.tabRendering.Controls.Add(this.updBitmapHeight);
             this.tabRendering.Controls.Add(this.updSaturation);
             this.tabRendering.Controls.Add(this.updExposureValue);
             this.tabRendering.Controls.Add(this.updImageJpgQuality);
@@ -788,30 +788,30 @@
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(80, 13);
             this.label12.TabIndex = 23;
-            this.label12.Text = "Horizontal View";
+            this.label12.Text = "BitmapWidth";
             // 
-            // updHorizontalView
+            // updBitmapWidth
             // 
-            this.updHorizontalView.Increment = new decimal(new int[] {
+            this.updBitmapWidth.Increment = new decimal(new int[] {
             10,
             0,
             0,
             0});
-            this.updHorizontalView.Location = new System.Drawing.Point(142, 208);
-            this.updHorizontalView.Maximum = new decimal(new int[] {
+            this.updBitmapWidth.Location = new System.Drawing.Point(142, 208);
+            this.updBitmapWidth.Maximum = new decimal(new int[] {
             5000,
             0,
             0,
             0});
-            this.updHorizontalView.Name = "updHorizontalView";
-            this.updHorizontalView.Size = new System.Drawing.Size(93, 20);
-            this.updHorizontalView.TabIndex = 22;
-            this.updHorizontalView.Value = new decimal(new int[] {
+            this.updBitmapWidth.Name = "updBitmapWidth";
+            this.updBitmapWidth.Size = new System.Drawing.Size(93, 20);
+            this.updBitmapWidth.TabIndex = 22;
+            this.updBitmapWidth.Value = new decimal(new int[] {
             1280,
             0,
             0,
             0});
-            this.updHorizontalView.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updHorizontalView_HelpRequested);
+            this.updBitmapWidth.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updBitmapWidth_HelpRequested);
             // 
             // label13
             // 
@@ -820,7 +820,7 @@
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(68, 13);
             this.label13.TabIndex = 21;
-            this.label13.Text = "Vertical View";
+            this.label13.Text = "Bitmap Height";
             // 
             // label14
             // 
@@ -860,28 +860,28 @@
             this.label17.Text = "Image File Format";
             this.label17.Visible = false;
             // 
-            // updVerticalView
+            // updBitmapHeight
             // 
-            this.updVerticalView.Increment = new decimal(new int[] {
+            this.updBitmapHeight.Increment = new decimal(new int[] {
             10,
             0,
             0,
             0});
-            this.updVerticalView.Location = new System.Drawing.Point(142, 182);
-            this.updVerticalView.Maximum = new decimal(new int[] {
+            this.updBitmapHeight.Location = new System.Drawing.Point(142, 182);
+            this.updBitmapHeight.Maximum = new decimal(new int[] {
             5000,
             0,
             0,
             0});
-            this.updVerticalView.Name = "updVerticalView";
-            this.updVerticalView.Size = new System.Drawing.Size(93, 20);
-            this.updVerticalView.TabIndex = 16;
-            this.updVerticalView.Value = new decimal(new int[] {
+            this.updBitmapHeight.Name = "updBitmapHeight";
+            this.updBitmapHeight.Size = new System.Drawing.Size(93, 20);
+            this.updBitmapHeight.TabIndex = 16;
+            this.updBitmapHeight.Value = new decimal(new int[] {
             720,
             0,
             0,
             0});
-            this.updVerticalView.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updVerticalView_HelpRequested);
+            this.updBitmapHeight.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updBitmapHeight_HelpRequested);
             // 
             // updSaturation
             // 
@@ -985,8 +985,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.updSurfaceContrast)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updEndDistance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updStartDistance)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updHorizontalView)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updVerticalView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updBitmapWidth)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updBitmapHeight)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSaturation)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updExposureValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updImageJpgQuality)).EndInit();
@@ -1023,11 +1023,11 @@
         private System.Windows.Forms.NumericUpDown updRayPoints;
         private System.Windows.Forms.NumericUpDown updSamplingInterval;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.NumericUpDown updHorizontalView;
+        private System.Windows.Forms.NumericUpDown updBitmapWidth;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.NumericUpDown updVerticalView;
+        private System.Windows.Forms.NumericUpDown updBitmapHeight;
         private System.Windows.Forms.NumericUpDown updSaturation;
         private System.Windows.Forms.NumericUpDown updExposureValue;
         private System.Windows.Forms.NumericUpDown updResolution;

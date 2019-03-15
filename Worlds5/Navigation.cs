@@ -42,9 +42,7 @@ namespace Worlds5
             double MatrixValue = 0;
             int i = 0, j = 0;
 
-            int[] ImageQuality = new int[2];
             float[] ColourDetail = new float[2];
-            float[] ColourOffset = new float[2];
             float[,] HSL = new float[3, 2];
             int Count = 0;
             int ErrorNo = 0;
@@ -55,9 +53,7 @@ namespace Worlds5
                 {
                     for (Count = 0; Count <= 1; Count++)
                     {
-                        ImageQuality[Count] = Model.Globals.Sphere.ImageQuality[Count];
                         ColourDetail[Count] = Model.Globals.Sphere.ColourDetail[Count];
-                        ColourOffset[Count] = Model.Globals.Sphere.ColourOffset[Count];
                         HSL[0, Count] = Model.Globals.Sphere.HSL[0, Count];
                         HSL[1, Count] = Model.Globals.Sphere.HSL[1, Count];
                         HSL[2, Count] = Model.Globals.Sphere.HSL[2, Count];
@@ -90,8 +86,6 @@ namespace Worlds5
                     {
                         tw.WriteLine("{0} {1} {2} {3} {4} {5} {6}",
                                     ColourDetail[Count],
-                                    ColourOffset[Count],
-                                    ImageQuality[Count],
                                     HSL[0, Count],
                                     HSL[1, Count],
                                     HSL[2, Count],
@@ -166,8 +160,6 @@ namespace Worlds5
                     {
                         data = s.ReadLine().Split();
                         Model.Globals.Sphere.ColourDetail[Count] = float.Parse(data[0]);
-                        Model.Globals.Sphere.ColourOffset[Count] = float.Parse(data[1]);
-                        Model.Globals.Sphere.ImageQuality[Count] = int.Parse(data[2]);
                         Model.Globals.Sphere.HSL[0, Count] = float.Parse(data[3]);
                         Model.Globals.Sphere.HSL[1, Count] = float.Parse(data[4]);
                         Model.Globals.Sphere.HSL[2, Count] = float.Parse(data[5]);

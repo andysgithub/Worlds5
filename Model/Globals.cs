@@ -13,17 +13,14 @@ namespace Model
         public const double DEG_TO_RAD = 0.0174532925;
 
         //public struct TransMatrixType 
-        //{ 
-        //    public int[] ImageQuality; 
+        //{  
         //    public float[,] HSL; 
         //    public float[] ColourDetail; 
             
         //    public void Initialize() 
-        //    { 
-        //        ImageQuality = new int[ 2 ]; 
+        //    {  
         //        HSL = new float[ 3, 2 ]; 
         //        ColourDetail = new float[ 2 ]; 
-        //        ColourOffset = new float[ 2 ]; 
         //    } 
         //}
 

@@ -2,8 +2,6 @@
 // Set the ImageRendering sphere parameters
 SetPositionMatrix(double[6,5])
 SetColourDetail(float[2])
-SetColourOffset(float[2])
-SetImageQuality(int[2])
 SetHSL(float[3,2])
 
 // Initialise the dll sphere from the ImageRendering sphere
