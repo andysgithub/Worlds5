@@ -12,7 +12,6 @@ double	m_Trans[6][6],      // Transformation to position the sphere within the 5
     m_horizontalView;       // Horizontal field of view (degrees)
 
     // Transformed reference points
-double centre;              // Centre point of the sphere
 double leftEdge;            // Left edge of the viewing window as seen from the sphere centre
 double rightEdge;           // Right edge of the viewing window
 double topEdge;             // Top edge of the viewing window

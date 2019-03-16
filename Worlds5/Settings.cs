@@ -56,8 +56,6 @@ namespace Worlds5
         {
             clsSphere sphere = Model.Globals.Sphere;
 
-            Globals.SetUp.ImageJpgQuality = (int)updImageJpgQuality.Value;
-            Globals.SetUp.ImageFileFormat = (int)cmbImageFileFormat.SelectedIndex;
             Globals.SetUp.BitmapWidth = (int)updBitmapWidth.Value;
             Globals.SetUp.BitmapHeight = (int)updBitmapHeight.Value;
             sphere.ExposureValue = (float)updExposureValue.Value;
@@ -96,8 +94,6 @@ namespace Worlds5
             chkShowExterior.Checked = sphere.ShowExterior;
 
             // Rendering
-            updImageJpgQuality.Value = Globals.SetUp.ImageJpgQuality;
-            cmbImageFileFormat.SelectedIndex = Globals.SetUp.ImageFileFormat;
             updBitmapWidth.Value = Globals.SetUp.BitmapWidth;
             updBitmapHeight.Value = Globals.SetUp.BitmapHeight;
             updExposureValue.Value = (decimal)sphere.ExposureValue;

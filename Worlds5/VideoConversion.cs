@@ -41,42 +41,6 @@ namespace Worlds5
             get { return (int)numRate.Value; }
         }
 
-        public ImageFormat Format
-        {
-            get
-            {
-                switch (cmbFormat.SelectedIndex)
-                {
-                    case 1:
-                        return ImageFormat.Tiff;
-                    case 2:
-                        return ImageFormat.Bmp;
-                    case 3:
-                        return ImageFormat.Png;
-                    default:
-                        return ImageFormat.Jpeg;
-                }
-            }
-        }
-
-        public string Extension
-        {
-            get
-            {
-                switch (cmbFormat.SelectedIndex)
-                {
-                    case 1:
-                        return "tif";
-                    case 2:
-                        return "bmp";
-                    case 3:
-                        return "png";
-                    default:
-                        return "jpg";
-                }
-            }
-        }
-
         private void btnSource_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog form = new FolderBrowserDialog();

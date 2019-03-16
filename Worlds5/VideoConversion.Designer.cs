@@ -40,8 +40,6 @@
             this.numRate = new System.Windows.Forms.NumericUpDown();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.cmbFormat = new System.Windows.Forms.ComboBox();
-            this.label17 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numRate)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -49,8 +47,8 @@
             // 
             // txtSource
             // 
-            this.txtSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSource.Location = new System.Drawing.Point(15, 38);
             this.txtSource.Name = "txtSource";
             this.txtSource.Size = new System.Drawing.Size(289, 20);
@@ -80,7 +78,7 @@
             // 
             this.btnConvert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnConvert.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnConvert.Location = new System.Drawing.Point(325, 191);
+            this.btnConvert.Location = new System.Drawing.Point(325, 158);
             this.btnConvert.Name = "btnConvert";
             this.btnConvert.Size = new System.Drawing.Size(74, 24);
             this.btnConvert.TabIndex = 3;
@@ -92,7 +90,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(325, 221);
+            this.btnCancel.Location = new System.Drawing.Point(325, 188);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(74, 24);
             this.btnCancel.TabIndex = 4;
@@ -122,8 +120,8 @@
             // 
             // txtTarget
             // 
-            this.txtTarget.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtTarget.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtTarget.Location = new System.Drawing.Point(15, 87);
             this.txtTarget.Name = "txtTarget";
             this.txtTarget.Size = new System.Drawing.Size(289, 20);
@@ -166,7 +164,7 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBox1.Controls.Add(this.numRate);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Location = new System.Drawing.Point(12, 183);
+            this.groupBox1.Location = new System.Drawing.Point(12, 150);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(183, 62);
             this.groupBox1.TabIndex = 10;
@@ -175,10 +173,8 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.cmbFormat);
-            this.groupBox2.Controls.Add(this.label17);
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.txtTarget);
             this.groupBox2.Controls.Add(this.txtSource);
             this.groupBox2.Controls.Add(this.label2);
@@ -187,38 +183,16 @@
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Location = new System.Drawing.Point(12, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(386, 157);
+            this.groupBox2.Size = new System.Drawing.Size(386, 130);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Files";
-            // 
-            // cmbFormat
-            // 
-            this.cmbFormat.FormattingEnabled = true;
-            this.cmbFormat.Items.AddRange(new object[] {
-            "Jpeg (jpg)",
-            "Tiff (tif)",
-            "Bitmap (bmp)",
-            "Png (png)"});
-            this.cmbFormat.Location = new System.Drawing.Point(79, 121);
-            this.cmbFormat.Name = "cmbFormat";
-            this.cmbFormat.Size = new System.Drawing.Size(93, 21);
-            this.cmbFormat.TabIndex = 28;
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(13, 125);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(58, 13);
-            this.label17.TabIndex = 27;
-            this.label17.Text = "File Format";
             // 
             // VideoConversion
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(411, 257);
+            this.ClientSize = new System.Drawing.Size(411, 224);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnCancel);
@@ -251,7 +225,5 @@
         private System.Windows.Forms.NumericUpDown numRate;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.ComboBox cmbFormat;
-        private System.Windows.Forms.Label label17;
     }
 }

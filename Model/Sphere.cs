@@ -11,8 +11,6 @@ namespace Model
 
         // Transformation matrix
         public double[,] PositionMatrix = new double[6, 6];
-        // Centre point of the sphere
-        private double centre;
         // Vertical field of view (degrees)                    
         private double verticalView;
         // Horizontal field of view (degrees)

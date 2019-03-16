@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Model;
-using AviFile;
+using Accord.Video.FFMPEG;
 
 namespace Worlds5
 {
@@ -376,44 +376,34 @@ namespace Worlds5
                 string targetFile = form.targetFile;
                 // Retrieve the frames per second
                 int framesPerSecond = form.FramesPerSecond;
-                // Retrieve the file format
-                string extension = form.Extension;
 
                 // Close the dialog
                 form.Close();
                 form.Dispose();
 
-                writeAVI(sequenceDirectory, targetFile, framesPerSecond, extension, true);
+                writeAVI(sequenceDirectory, targetFile, framesPerSecond);
             }
         }
 
-        private void writeAVI(string sequenceDirectory, string targetFile, int framesPerSecond, string extension, bool compress)
+        private void writeAVI(string sequenceDirectory, string targetFile, int framesPerSecond)
         {
-            string sourceDirectory = sequenceDirectory;
-            string[] files = Directory.GetFiles(sourceDirectory, "*." + extension);
-            AviManager aviManager = new AviManager(targetFile, false);
-            bool firstFrame = true;
-            Bitmap bitmap;
-            VideoStream aviStream = null;
+            int width = 360;
+            int height = 360;
 
-            for (int loop = 0; loop < 5; loop++)
+            // create instance of video writer
+            VideoFileWriter writer = new VideoFileWriter();
+            // create new video file
+            writer.Open(targetFile, width, height, framesPerSecond, VideoCodec.MPEG4);
+            // create a bitmap to save into the video file
+            string[] files = Directory.GetFiles(sequenceDirectory, "*.*");
+            Bitmap bitmap;
+
+            foreach (String filePath in files)
             {
-                foreach (String filePath in files)
-                {
-                    bitmap = (Bitmap)Image.FromFile(filePath);
-                    if (firstFrame)
-                    {
-                        aviStream = aviManager.AddVideoStream(compress, framesPerSecond, bitmap);
-                        firstFrame = false;
-                    }
-                    else
-                    {
-                        aviStream.AddFrame(bitmap);
-                        bitmap.Dispose();
-                    }
-                }
+                bitmap = (Bitmap)Image.FromFile(filePath);
+                writer.WriteVideoFrame(bitmap);
             }
-            aviManager.Close();
+            writer.Close();
         }
 
         private void settingsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)

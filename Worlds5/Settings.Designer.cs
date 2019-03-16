@@ -70,14 +70,12 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
             this.updStartDistance = new System.Windows.Forms.NumericUpDown();
-            this.cmbImageFileFormat = new System.Windows.Forms.ComboBox();
             this.label12 = new System.Windows.Forms.Label();
             this.updBitmapWidth = new System.Windows.Forms.NumericUpDown();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
             this.updBitmapHeight = new System.Windows.Forms.NumericUpDown();
             this.updSaturation = new System.Windows.Forms.NumericUpDown();
             this.updExposureValue = new System.Windows.Forms.NumericUpDown();
@@ -633,14 +631,12 @@
             this.tabRendering.Controls.Add(this.label19);
             this.tabRendering.Controls.Add(this.label18);
             this.tabRendering.Controls.Add(this.updStartDistance);
-            this.tabRendering.Controls.Add(this.cmbImageFileFormat);
             this.tabRendering.Controls.Add(this.label12);
             this.tabRendering.Controls.Add(this.updBitmapWidth);
             this.tabRendering.Controls.Add(this.label13);
             this.tabRendering.Controls.Add(this.label14);
             this.tabRendering.Controls.Add(this.label15);
             this.tabRendering.Controls.Add(this.label16);
-            this.tabRendering.Controls.Add(this.label17);
             this.tabRendering.Controls.Add(this.updBitmapHeight);
             this.tabRendering.Controls.Add(this.updSaturation);
             this.tabRendering.Controls.Add(this.updExposureValue);
@@ -766,27 +762,12 @@
             this.updStartDistance.Size = new System.Drawing.Size(93, 20);
             this.updStartDistance.TabIndex = 25;
             // 
-            // cmbImageFileFormat
-            // 
-            this.cmbImageFileFormat.FormattingEnabled = true;
-            this.cmbImageFileFormat.Items.AddRange(new object[] {
-            "Jpeg (jpg)",
-            "Tiff (tif)",
-            "Bitmap (bmp)",
-            "Png (png)"});
-            this.cmbImageFileFormat.Location = new System.Drawing.Point(360, 25);
-            this.cmbImageFileFormat.Name = "cmbImageFileFormat";
-            this.cmbImageFileFormat.Size = new System.Drawing.Size(93, 21);
-            this.cmbImageFileFormat.TabIndex = 24;
-            this.cmbImageFileFormat.Visible = false;
-            this.cmbImageFileFormat.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.cmbImageFileFormat_HelpRequested);
-            // 
             // label12
             // 
             this.label12.AutoSize = true;
             this.label12.Location = new System.Drawing.Point(35, 210);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(80, 13);
+            this.label12.Size = new System.Drawing.Size(67, 13);
             this.label12.TabIndex = 23;
             this.label12.Text = "BitmapWidth";
             // 
@@ -818,7 +799,7 @@
             this.label13.AutoSize = true;
             this.label13.Location = new System.Drawing.Point(35, 184);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(68, 13);
+            this.label13.Size = new System.Drawing.Size(73, 13);
             this.label13.TabIndex = 21;
             this.label13.Text = "Bitmap Height";
             // 
@@ -849,16 +830,6 @@
             this.label16.TabIndex = 18;
             this.label16.Text = "Jpeg Quality";
             this.label16.Visible = false;
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(253, 29);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(90, 13);
-            this.label17.TabIndex = 17;
-            this.label17.Text = "Image File Format";
-            this.label17.Visible = false;
             // 
             // updBitmapHeight
             // 
@@ -1037,9 +1008,7 @@
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.NumericUpDown updStartDistance;
         private System.Windows.Forms.NumericUpDown updEndDistance;
-        private System.Windows.Forms.ComboBox cmbImageFileFormat;
         private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label label17;
         private System.Windows.Forms.NumericUpDown updImageJpgQuality;
         private System.Windows.Forms.Label lblSurfaceThickness;
         private System.Windows.Forms.NumericUpDown updSurfaceThickness;

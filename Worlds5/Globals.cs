@@ -63,10 +63,6 @@ namespace Worlds5
 			public int      FramesPerSec; 
 			public int      BrowseLimit; 
 			public int      Quality;
-            public int      ImageJpgQuality;
-            public int      FrameJpgQuality;
-			public int      ImageFileFormat;              //  File type for single images (0 = .jpg, 1 = .bmp)
-			public int      FrameFileFormat;              //  File type for sequence frames (0 = .jpg, 1 = .bmp)
             public int      DefaultFrames;
             public string   NavPath; 
 			public string   SeqPath; 

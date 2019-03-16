@@ -36,8 +36,6 @@ namespace Worlds5
 				Globals.SetUp.DefaultFrames = Properties.Settings.Default.DefaultFrames; 
 				Globals.SetUp.FramesPerSec = Properties.Settings.Default.FramesPerSec;
                 Globals.SetUp.AutoRepeat = Properties.Settings.Default.AutoRepeat;
-                Globals.SetUp.FrameJpgQuality = Properties.Settings.Default.FrameJpgQuality;
-                Globals.SetUp.FrameFileFormat = Properties.Settings.Default.FrameFileFormat;
 
                 // Sphere Viewing window
                 sphere.AngularResolution = Properties.Settings.Default.AngularResolution;
@@ -58,8 +56,6 @@ namespace Worlds5
                 sphere.ShowExterior = Properties.Settings.Default.ShowExterior;
 
                 // Rendering
-                Globals.SetUp.ImageJpgQuality = Properties.Settings.Default.ImageJpgQuality;
-                Globals.SetUp.ImageFileFormat = Properties.Settings.Default.ImageFileFormat;
                 Globals.SetUp.BitmapWidth = Properties.Settings.Default.BitmapWidth;
                 Globals.SetUp.BitmapHeight = Properties.Settings.Default.BitmapHeight;
                 sphere.ExposureValue = Properties.Settings.Default.ExposureValue;
@@ -125,8 +121,6 @@ namespace Worlds5
                 Properties.Settings.Default.DefaultFrames = Globals.SetUp.DefaultFrames;
                 Properties.Settings.Default.FramesPerSec = Globals.SetUp.FramesPerSec;
                 Properties.Settings.Default.AutoRepeat = Globals.SetUp.AutoRepeat;
-                Properties.Settings.Default.FrameJpgQuality = Globals.SetUp.FrameJpgQuality;
-                Properties.Settings.Default.FrameFileFormat = Globals.SetUp.FrameFileFormat;
 
                 // Sphere Viewing window
                 Properties.Settings.Default.AngularResolution = sphere.AngularResolution;
@@ -147,8 +141,6 @@ namespace Worlds5
                 Properties.Settings.Default.ShowExterior = sphere.ShowExterior;
 
                 // Rendering
-                Properties.Settings.Default.ImageJpgQuality = Globals.SetUp.ImageJpgQuality;
-                Properties.Settings.Default.ImageFileFormat = Globals.SetUp.ImageFileFormat;
                 Properties.Settings.Default.BitmapWidth = Globals.SetUp.BitmapWidth;
                 Properties.Settings.Default.BitmapHeight = Globals.SetUp.BitmapHeight;
                 Properties.Settings.Default.ExposureValue = sphere.ExposureValue;
