@@ -173,6 +173,7 @@
     <Compile Include="Settings.Designer.cs">
       <DependentUpon>Settings.cs</DependentUpon>
     </Compile>
+    <Compile Include="SettingsData.cs" />
     <Compile Include="VideoConversion.cs">
       <SubType>Form</SubType>
     </Compile>

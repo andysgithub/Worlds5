@@ -49,26 +49,19 @@ namespace Worlds5
             public int      MainLeft;
             public int      MainTop;
             public string   MainState;
-
-            public int      BitmapWidth;
-            public int      BitmapHeight;
             public bool     Toolbar; 
 			public bool     Labels; 
-			public bool     AddressBar; 
 			public bool     StatusBar; 
-			public bool     ToolTips; 
-			public string   HomeAddress; 
+			public bool     ToolTips;
 			public string   Sequence; 
 			public bool     AutoRepeat; 
-			public int      FramesPerSec; 
-			public int      BrowseLimit; 
 			public int      Quality;
-            public int      DefaultFrames;
             public string   NavPath; 
-			public string   SeqPath; 
-			public string   FramesPath;
-            public string   CachePath;
-		} 
+			public string   SeqPath;
+            public int      FramesPerSec;
+            public int      BitmapWidth;
+            public int      BitmapHeight;
+        } 
         
 		public struct POINTL 
 		{ 

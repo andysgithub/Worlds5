@@ -35,37 +35,35 @@ namespace Model
         // Sinusoidal mapping of surface points
         //public SurfacePoint[,] SurfaceMap { get; set; } 
         // The number of boundary points recorded during ray tracing
-        public int RayPoints { get; set; }
+        public int[] RayPoints { get; set; }
         // The maximum number of points examined during ray tracing
-        public int MaxSamples { get; set; }
+        public int[] MaxSamples { get; set; }
         // The number of steps in the binary search for an orbit value boundary
-        public int BinarySearchSteps { get; set; }
+        public int[] BinarySearchSteps { get; set; }
         // Distance between sampling points during ray tracing
-        public double SamplingInterval { get; set; }
+        public double[] SamplingInterval { get; set; }
         // The minimum acceptable thickness of the detected surface, to avoid speckling
-        public double SurfaceThickness { get; set; }
+        public double[] SurfaceThickness { get; set; }
         // The amount that the current orbit value is sufficiently different
         // from the last recorded sample to start a binary search for the boundary
-        public double BoundaryInterval { get; set; }
-        // Flag to indicate display of surface region
-        public bool ShowSurface { get; set; }
-        // Flag to indicate display of external region
-        public bool ShowExterior { get; set; }
+        public double[] BoundaryInterval { get; set; }
+        // Flag to indicate display of surface region / external region
+        public bool[] Active { get; set; }
 
         #endregion
 
         #region Rendering properties
 
-        public float ExposureValue { get; set; }
-        public float Saturation { get; set; }
+        public float[] ExposureValue { get; set; }
+        public float[] Saturation { get; set; }
         // The contrast of the surface shading
-        public float SurfaceContrast { get; set; }
+        public float[] SurfaceContrast { get; set; }
         // The lighting angle for surface shading (0 to 180 degrees)
-        public float LightingAngle { get; set; }
+        public float[] LightingAngle { get; set; }
         // The distance along the ray to start rendering the image
-        public double StartDistance { get; set; }
+        public double[] StartDistance { get; set; }
         // The distance along the ray to finish rendering the image
-        public double EndDistance { get; set; }         
+        public double[] EndDistance { get; set; }         
 
         #endregion
 

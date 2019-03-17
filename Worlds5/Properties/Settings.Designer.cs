@@ -49,18 +49,6 @@ namespace Worlds5.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("%APPDATA%\\Worlds5\\Cache\\")]
-        public string CachePath {
-            get {
-                return ((string)(this["CachePath"]));
-            }
-            set {
-                this["CachePath"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("600")]
         public int BitmapWidth {
             get {
@@ -140,42 +128,6 @@ namespace Worlds5.Properties {
             }
             set {
                 this["StatusBar"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Spiral")]
-        public string HomeAddress {
-            get {
-                return ((string)(this["HomeAddress"]));
-            }
-            set {
-                this["HomeAddress"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("30")]
-        public int BrowseLimit {
-            get {
-                return ((int)(this["BrowseLimit"]));
-            }
-            set {
-                this["BrowseLimit"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("50")]
-        public int DefaultFrames {
-            get {
-                return ((int)(this["DefaultFrames"]));
-            }
-            set {
-                this["DefaultFrames"] = value;
             }
         }
         

@@ -8,9 +8,6 @@
     <Setting Name="SeqPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">%APPSTART%\Sequence\</Value>
     </Setting>
-    <Setting Name="CachePath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">%APPDATA%\Worlds5\Cache\</Value>
-    </Setting>
     <Setting Name="BitmapWidth" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">600</Value>
     </Setting>
@@ -31,15 +28,6 @@
     </Setting>
     <Setting Name="StatusBar" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="HomeAddress" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Spiral</Value>
-    </Setting>
-    <Setting Name="BrowseLimit" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">30</Value>
-    </Setting>
-    <Setting Name="DefaultFrames" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">50</Value>
     </Setting>
     <Setting Name="FramesPerSec" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">25</Value>
