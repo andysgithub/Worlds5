@@ -91,7 +91,7 @@ EXPORT void __stdcall TraceRay(double startDistance, double increment, double su
 							   double XFactor, double YFactor, double ZFactor,
                                bool externalPoints[], float modulusValues[], float angles[], double distances[],
 							   int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
-							   bool showSurface, bool showExterior)
+							   int activeIndex)
 {
 	float	Modulus, Angle;
 	double	currentDistance = startDistance;
@@ -124,7 +124,7 @@ EXPORT void __stdcall TraceRay(double startDistance, double increment, double su
 		externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, xFactor, yFactor, zFactor, c);
 
 		// If this is an internal point and previous point is external
-		if (showSurface && !externalPoint && externalPoints[recordedPoints - 1])
+		if (activeIndex == 0 && !externalPoint && externalPoints[recordedPoints - 1])
 		{
             ///// Set value for surface point /////
 
@@ -148,7 +148,7 @@ EXPORT void __stdcall TraceRay(double startDistance, double increment, double su
 			distances[recordedPoints] = sampleDistance;
 			recordedPoints++;
 		}
-		else if (showExterior)
+		else if (activeIndex == 1)
 		{
             ///// Set value for external point /////
 

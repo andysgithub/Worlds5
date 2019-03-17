@@ -31,7 +31,7 @@ namespace Model
             this.sampleCount = externalPoints.Length;
         }
 
-        public void SetColour(float exposureValue, float saturation, double startDistance, double endDistance)
+        public void SetColour()
         {
             byte r, g, b;
             Globals.RGBTRIPLE totalRGB;
@@ -43,6 +43,13 @@ namespace Model
 
             clsSphere sphere = Model.Globals.Sphere;
 
+            int activeIndex = sphere.ActiveIndex;
+
+            double startDistance = sphere.StartDistance[activeIndex];
+            double endDistance = sphere.EndDistance[activeIndex];
+            float exposureValue = sphere.ExposureValue[activeIndex];
+            float saturation = sphere.Saturation[activeIndex];
+
             // For each point on the ray
             for (int i = 0; i < modulusValues.Count - 1; i++)
             {
@@ -51,7 +58,7 @@ namespace Model
 
                 if (Math.Abs(modulusValues[i]) < 10)
                 {
-                    if (sphere.ShowSurface && isSurfacePoint(i) && xTiltValues != null && yTiltValues != null)
+                    if (activeIndex == 0 && isSurfacePoint(i) && xTiltValues != null && yTiltValues != null)
                     {
                         ///// Set colour for surface point /////
 
@@ -66,14 +73,14 @@ namespace Model
                         double yTilt = yTiltValues != null && yTiltValues.Count > 0 ? yTiltValues[i] : 0;
                         double tiltX = xTilt + lightingAngle;
                         double tiltY = yTilt + lightingAngle;
-                        exposureValue = (float)(Math.Cos(tiltX) * Math.Cos(tiltY));
+                        sphere.ExposureValue[i] = (float)(Math.Cos(tiltX) * Math.Cos(tiltY));
 
                         float surfaceContrast = sphere.SurfaceContrast / 10;
 
                         //// Increase contrast of the exposure value
                         exposureValue = (exposureValue * surfaceContrast * 2) - surfaceContrast;
 
-                        exposureValue *= sphere.ExposureValue;
+                        exposureValue *= sphere.ExposureValue[0];
 
                         if (exposureValue < 0) exposureValue = 0;
                         if (exposureValue > 1) exposureValue = 1;
@@ -109,7 +116,7 @@ namespace Model
                         totalRGB.rgbGreen = totalRGB.rgbGreen > 255 ? 255 : totalRGB.rgbGreen;
                         totalRGB.rgbBlue = totalRGB.rgbBlue > 255 ? 255 : totalRGB.rgbBlue;
                     }
-                    else if (sphere.ShowExterior)
+                    else if (activeIndex == 1)
                     {
                         ///// Set colour for external point /////
 

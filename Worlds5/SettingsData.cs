@@ -31,8 +31,6 @@ namespace Worlds5
         {
             public static int FramesPerSec;
             public static bool AutoRepeat;
-            public static int BitmapHeight;
-            public static int BitmapWidth;
         }
 
         public struct Viewing
@@ -45,25 +43,27 @@ namespace Worlds5
             public static double HorizontalView;
         }
 
-        public class Raytracing
+        public struct Raytracing
         {
             public static double[] SamplingInterval = new double[2];
-            public static double[] SurfaceThickness = new double[2];
             public static int[] RayPoints = new int[2];
             public static int[] MaxSamples = new int[2];
-            public static double[] BoundaryInterval = new double[2];
             public static int[] BinarySearchSteps = new int[2];
-            public static bool[] Active = new bool[2];
+            public static double SurfaceThickness;
+            public static double BoundaryInterval;
+            public static int ActiveIndex;
         }
 
-        public class Rendering
+        public struct Rendering
         {
             public static float[] ExposureValue = new float[2];
             public static float[] Saturation = new float[2];
-            public static float[] SurfaceContrast = new float[2];
-            public static float[] LightingAngle = new float[2];
             public static double[] StartDistance = new double[2];
             public static double[] EndDistance = new double[2];
+            public static float SurfaceContrast;
+            public static float LightingAngle;
+            public static int BitmapHeight;
+            public static int BitmapWidth;
         }
     }
 }

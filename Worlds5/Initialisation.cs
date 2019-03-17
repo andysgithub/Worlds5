@@ -32,8 +32,6 @@ namespace Worlds5
                 // Animation settings
 				Globals.SetUp.FramesPerSec = SettingsData.Animation.FramesPerSec;
                 Globals.SetUp.AutoRepeat = SettingsData.Animation.AutoRepeat;
-                Globals.SetUp.BitmapWidth = SettingsData.Animation.BitmapWidth;
-                Globals.SetUp.BitmapHeight = SettingsData.Animation.BitmapHeight;
 
                 // Sphere Viewing window
                 sphere.AngularResolution = SettingsData.Viewing.ViewportResolution;
@@ -50,7 +48,7 @@ namespace Worlds5
                 sphere.MaxSamples = SettingsData.Raytracing.MaxSamples;
                 sphere.BoundaryInterval = SettingsData.Raytracing.BoundaryInterval;
                 sphere.BinarySearchSteps = SettingsData.Raytracing.BinarySearchSteps;
-                sphere.Active = SettingsData.Raytracing.Active;
+                sphere.ActiveIndex = SettingsData.Raytracing.ActiveIndex;
 
                 // Rendering
                 sphere.ExposureValue = SettingsData.Rendering.ExposureValue;
@@ -59,6 +57,8 @@ namespace Worlds5
                 sphere.EndDistance = SettingsData.Rendering.EndDistance;
                 sphere.SurfaceContrast = SettingsData.Rendering.SurfaceContrast;
                 sphere.LightingAngle = SettingsData.Rendering.LightingAngle;
+                Globals.SetUp.BitmapWidth = SettingsData.Rendering.BitmapWidth;
+                Globals.SetUp.BitmapHeight = SettingsData.Rendering.BitmapHeight;
 
                 sState = SettingsData.MainWindow.MainState;
                 iWidth = SettingsData.MainWindow.MainWidth;
@@ -103,8 +103,6 @@ namespace Worlds5
                 // Animation settings
                 SettingsData.Animation.FramesPerSec = Globals.SetUp.FramesPerSec;
                 SettingsData.Animation.AutoRepeat = Globals.SetUp.AutoRepeat;
-                SettingsData.Animation.BitmapWidth = Globals.SetUp.BitmapWidth;
-                SettingsData.Animation.BitmapHeight = Globals.SetUp.BitmapHeight;
 
                 // Sphere Viewing window
                 SettingsData.Viewing.ViewportResolution = sphere.AngularResolution;
@@ -121,7 +119,7 @@ namespace Worlds5
                 SettingsData.Raytracing.MaxSamples = sphere.MaxSamples;
                 SettingsData.Raytracing.BoundaryInterval = sphere.BoundaryInterval;
                 SettingsData.Raytracing.BinarySearchSteps = sphere.BinarySearchSteps;
-                SettingsData.Raytracing.Active = sphere.Active;
+                SettingsData.Raytracing.ActiveIndex = sphere.ActiveIndex;
 
                 // Rendering
                 SettingsData.Rendering.ExposureValue = sphere.ExposureValue;
@@ -130,8 +128,10 @@ namespace Worlds5
                 SettingsData.Rendering.StartDistance = sphere.StartDistance;
                 SettingsData.Rendering.EndDistance = sphere.EndDistance;
                 SettingsData.Rendering.LightingAngle = sphere.LightingAngle;
+                SettingsData.Rendering.BitmapWidth = Globals.SetUp.BitmapWidth;
+                SettingsData.Rendering.BitmapHeight = Globals.SetUp.BitmapHeight;
 
-				if (fwsState != FormWindowState.Minimized) 
+                if (fwsState != FormWindowState.Minimized) 
 				{
                     SettingsData.MainWindow.MainState = fwsState.ToString();
 					if (fwsState != FormWindowState.Maximized) 

@@ -79,12 +79,12 @@ namespace Worlds5
         #region DLL Imports
 
         [DllImport("Unmanaged.dll")]
-        static extern void TraceRay(double startDistance, double increment, double surfaceThickness,
+        static extern void TraceRay(double startDistance, double[] increment, double surfaceThickness,
             double xFactor, double yFactor, double zFactor,
             [Out, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.I1)] bool[] externalsArray,
             float[] valuesArray, float[] anglesArray, double[] distancesArray,
-            int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
-            bool showSurface, bool showExterior);
+            int[] rayPoints, int[] maxSamples, double boundaryInterval, int[] binarySearchSteps,
+            int activeIndex);
 
         //[DllImport("Unmanaged.dll")]
         //static extern void TraceSurface(double startDistance, double increment, double surfaceThickness, 
@@ -272,7 +272,7 @@ namespace Worlds5
                         xFactor, yFactor, zFactor,
                         externalPoints, modulusValues, angleValues, distanceValues,
                         sphere.RayPoints, sphere.MaxSamples, sphere.BoundaryInterval, sphere.BinarySearchSteps,
-                        sphere.ShowSurface, sphere.ShowExterior);
+                        sphere.ActiveIndex);
 
             // Record the fractal value collection for this ray
             tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);
@@ -306,7 +306,7 @@ namespace Worlds5
             if (tracedRay != null)
             {
                 // Convert the fractal value collection into an rgb colour value
-                tracedRay.SetColour(sphere.ExposureValue, sphere.Saturation, sphere.StartDistance, sphere.EndDistance);
+                tracedRay.SetColour();
             }
             return tracedRay;
         }

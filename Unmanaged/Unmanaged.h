@@ -61,7 +61,7 @@ EXPORT void __stdcall TraceRay(double startDistance, double increment, double su
 								   double XFactor, double YFactor, double ZFactor,
                                    bool *externalsArray, float *valuesArray, float *anglesArray, double *distancesArray,
 							       int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
-								   bool showSurface, bool showExterior);
+								   int activeIndex);
 
 EXPORT double __stdcall FindSurface(double increment, int binarySearchSteps, double currentDistance,
 									double xFactor, double yFactor, double zFactor);

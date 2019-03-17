@@ -43,12 +43,12 @@ namespace Model
         // Distance between sampling points during ray tracing
         public double[] SamplingInterval { get; set; }
         // The minimum acceptable thickness of the detected surface, to avoid speckling
-        public double[] SurfaceThickness { get; set; }
+        public double SurfaceThickness { get; set; }
         // The amount that the current orbit value is sufficiently different
         // from the last recorded sample to start a binary search for the boundary
-        public double[] BoundaryInterval { get; set; }
+        public double BoundaryInterval { get; set; }
         // Flag to indicate display of surface region / external region
-        public bool[] Active { get; set; }
+        public int ActiveIndex { get; set; }
 
         #endregion
 
@@ -57,9 +57,9 @@ namespace Model
         public float[] ExposureValue { get; set; }
         public float[] Saturation { get; set; }
         // The contrast of the surface shading
-        public float[] SurfaceContrast { get; set; }
+        public float SurfaceContrast { get; set; }
         // The lighting angle for surface shading (0 to 180 degrees)
-        public float[] LightingAngle { get; set; }
+        public float LightingAngle { get; set; }
         // The distance along the ray to start rendering the image
         public double[] StartDistance { get; set; }
         // The distance along the ray to finish rendering the image
@@ -170,7 +170,7 @@ namespace Model
                                 double lastDistance = lastRay.Boundary(testCount);
 
                                 // If the distance on the previous ray has overshot the current ray
-                                if (lastDistance > currentDistance + SurfaceThickness * 10)
+                                if (lastDistance > currentDistance + SurfaceThickness * 10.0)
                                 {
                                     // Go on to the next current ray surface distance
                                     break;

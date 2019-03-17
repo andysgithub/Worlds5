@@ -36,14 +36,13 @@ namespace Worlds5
             sphere.HorizontalView = (double)updViewportWidth.Value;
 
             // Raytracing
-            sphere.SamplingInterval = (double)updSamplingInterval.Value;
-            sphere.RayPoints = (int)updRayPoints.Value;
-            sphere.MaxSamples = (int)updMaxSamples.Value;
+            sphere.SamplingInterval[0] = (double)updSamplingInterval.Value;
+            sphere.RayPoints[0] = (int)updRayPoints.Value;
+            sphere.MaxSamples[0] = (int)updMaxSamples.Value;
+            sphere.BinarySearchSteps[0] = (int)updBinarySearchSteps.Value;
             sphere.BoundaryInterval = (double)updBoundaryInterval.Value;
-            sphere.BinarySearchSteps = (int)updBinarySearchSteps.Value;
             sphere.SurfaceThickness = (double)updSurfaceThickness.Value;
-            sphere.ShowSurface = chkShowSurface.Checked;
-            sphere.ShowExterior = chkShowExterior.Checked;
+            sphere.ActiveIndex = chkShowSurface.Checked ? 0 : 1;
 
             // Rendering
             SaveRendering();
@@ -56,14 +55,14 @@ namespace Worlds5
         {
             clsSphere sphere = Model.Globals.Sphere;
 
-            Globals.SetUp.BitmapWidth = (int)updBitmapWidth.Value;
-            Globals.SetUp.BitmapHeight = (int)updBitmapHeight.Value;
-            sphere.ExposureValue = (float)updExposureValue.Value;
-            sphere.Saturation = (float)updSaturation.Value;
+            sphere.ExposureValue[0] = (float)updExposureValue.Value;
+            sphere.Saturation[0] = (float)updSaturation.Value;
+            sphere.StartDistance[0] = (double)updStartDistance.Value;
+            sphere.EndDistance[0] = (double)updEndDistance.Value;
             sphere.SurfaceContrast = (float)updSurfaceContrast.Value;
             sphere.LightingAngle = (float)updLightingAngle.Value;
-            sphere.StartDistance = (double)updStartDistance.Value;
-            sphere.EndDistance = (double)updEndDistance.Value;
+            Globals.SetUp.BitmapWidth = (int)updBitmapWidth.Value;
+            Globals.SetUp.BitmapHeight = (int)updBitmapHeight.Value;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -84,24 +83,24 @@ namespace Worlds5
             updViewportWidth.Value = (decimal)sphere.HorizontalView;
 
             // Raytracing
-            updSamplingInterval.Value = (decimal)sphere.SamplingInterval;
+            updSamplingInterval.Value = (decimal)sphere.SamplingInterval[0];
             updSurfaceThickness.Value = (decimal)sphere.SurfaceThickness;
-            updRayPoints.Value = sphere.RayPoints;
-            updMaxSamples.Value = sphere.MaxSamples;
+            updRayPoints.Value = sphere.RayPoints[0];
+            updMaxSamples.Value = sphere.MaxSamples[0];
             updBoundaryInterval.Value = (decimal)sphere.BoundaryInterval;
-            updBinarySearchSteps.Value = (decimal)sphere.BinarySearchSteps;
-            chkShowSurface.Checked = sphere.ShowSurface;
-            chkShowExterior.Checked = sphere.ShowExterior;
+            updBinarySearchSteps.Value = (decimal)sphere.BinarySearchSteps[0];
+            chkShowSurface.Checked = sphere.ActiveIndex == 0;
+            chkShowExterior.Checked = sphere.ActiveIndex == 1;
 
             // Rendering
-            updBitmapWidth.Value = Globals.SetUp.BitmapWidth;
-            updBitmapHeight.Value = Globals.SetUp.BitmapHeight;
-            updExposureValue.Value = (decimal)sphere.ExposureValue;
-            updSaturation.Value = (decimal)sphere.Saturation;
+            updExposureValue.Value = (decimal)sphere.ExposureValue[0];
+            updSaturation.Value = (decimal)sphere.Saturation[0];
+            updStartDistance.Value = (decimal)sphere.StartDistance[0];
+            updEndDistance.Value = (decimal)sphere.EndDistance[0];
             updSurfaceContrast.Value = (decimal)sphere.SurfaceContrast;
             updLightingAngle.Value = (decimal)sphere.LightingAngle;
-            updStartDistance.Value = (decimal)sphere.StartDistance;
-            updEndDistance.Value = (decimal)sphere.EndDistance;
+            updBitmapWidth.Value = Globals.SetUp.BitmapWidth;
+            updBitmapHeight.Value = Globals.SetUp.BitmapHeight;
         }
 
         #region Help functions
