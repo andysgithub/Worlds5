@@ -82,11 +82,7 @@ void	SetLine(double xLeft, double xRight, double zLeft, double zRight, double yL
 void	MatRotate(int Axis1,int Axis2,double Angle);
 
 //////  COLOUR  //////
-//EXPORT void __stdcall GetColour(bool externalPoint, float Modulus, float Angle, BYTE *r, BYTE *g, BYTE *b);
-//void	RGBtoHSV(BYTE rval, BYTE gval, BYTE bval, float *h, float *s, float *v);
 EXPORT void __stdcall HSVtoRGB(float h, float s, float v, BYTE *rval, BYTE *gval, BYTE *bval);
-//void	RGBtoHSL(BYTE rval, BYTE gval, BYTE bval, float *h, float *s, float *l);
-//void	HSLtoRGB(float h, float s, float l, BYTE *rval, BYTE *gval, BYTE *bval, float Lightness);
 float	Maximum(float r, float g, float b);
 float	Minimum(float r, float g, float b);
 float	Value(float n1, float n2, float hue);

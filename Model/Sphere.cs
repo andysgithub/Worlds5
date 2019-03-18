@@ -19,7 +19,6 @@ namespace Model
         private double incrementFactor;                 
 
         // Image settings
-        public float[,] HSL = new float[3, 2];
         public float[] ColourDetail = new float[2];
 
         #endregion

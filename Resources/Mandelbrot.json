@@ -1,0 +1,42 @@
+{
+    "Type": {
+        "FileType": 3,
+        "Dimensions": 5
+    },
+    "PositionMatrix": [
+        [1.0, 0.0, 0.0, 0.0, 0.0 ],
+        [0.0, 1.0, 0.0, 0.0, 0.0 ],
+        [0.0, 0.0, 1.0, 0.0, 0.0 ],
+        [0.0, 0.0, 0.0, 1.0, 0.0 ],
+        [0.0, 0.0, 0.0, 0.0, 1.0 ],
+        [0.0, -0.05, -10, 0.0, 0.0]
+    ],
+    "ScaleValue": 1.0,
+    "Bailout": 3.0,
+    "Viewing": {
+        "ViewportResolution": 0.055,
+        "SphereRadius": 1.0,
+        "CentreLatitude": 0.0,
+        "CentreLongitude": 0.0,
+        "VerticalView": 20.0,
+        "HorizontalView": 20.0
+    },
+    "Raytracing": {
+        "SamplingInterval": [ 0.02, 0.005 ],
+        "RayPoints": [ 90, 90 ],
+        "MaxSamples": [ 500, 1000 ],
+        "BinarySearchSteps": [ 25, 50 ],
+        "SurfaceThickness": 0.004,
+        "BoundaryInterval": 0.0005,
+        "ActiveIndex": 0
+    },
+    "Rendering": {
+        "ExposureValue": [ 0.6, 1.5 ],
+        "Saturation": [ 30, 20 ],
+        "StartDistance": [ 1.0, 8.5 ],
+        "EndDistance": [ 15.0, 12.5 ],
+        "ColourDetail": [ 1.0, 9.88],
+        "SurfaceContrast": 80.0,
+        "LightingAngle": 45.0
+    }
+}

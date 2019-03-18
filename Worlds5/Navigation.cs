@@ -43,7 +43,6 @@ namespace Worlds5
             int i = 0, j = 0;
 
             float[] ColourDetail = new float[2];
-            float[,] HSL = new float[3, 2];
             int Count = 0;
             int ErrorNo = 0;
 
@@ -54,9 +53,6 @@ namespace Worlds5
                     for (Count = 0; Count <= 1; Count++)
                     {
                         ColourDetail[Count] = Model.Globals.Sphere.ColourDetail[Count];
-                        HSL[0, Count] = Model.Globals.Sphere.HSL[0, Count];
-                        HSL[1, Count] = Model.Globals.Sphere.HSL[1, Count];
-                        HSL[2, Count] = Model.Globals.Sphere.HSL[2, Count];
                     }
 
                     //  Open file
@@ -80,16 +76,11 @@ namespace Worlds5
                     tw.WriteLine("");
 
                     //  Save Options settings
-                    tw.WriteLine("{0} {1} {2}", ImageRendering.ImageSize.Width, ImageRendering.ImageSize.Height, ImageRendering.Bailout);
+                    tw.WriteLine(ImageRendering.Bailout);
 
                     for (Count = 0; Count <= 1; Count++)
                     {
-                        tw.WriteLine("{0} {1} {2} {3} {4} {5} {6}",
-                                    ColourDetail[Count],
-                                    HSL[0, Count],
-                                    HSL[1, Count],
-                                    HSL[2, Count],
-                                    "");
+                        tw.WriteLine(ColourDetail[Count], "");
                     }
                     //  Close file
                     tw.Close();
@@ -124,6 +115,7 @@ namespace Worlds5
 
             try
             {
+                clsSphere sphere = Model.Globals.Sphere;
                 //  Open file
                 StreamReader s = File.OpenText(FileName);
 
@@ -134,7 +126,7 @@ namespace Worlds5
                 // Redimension the transformation matrix
                 int iDimensions = Convert.ToInt16(data[1]);
                 Model.Globals.Dimensions = iDimensions;
-                Model.Globals.Sphere.PositionMatrix = new double[iDimensions + 1, iDimensions]; 
+                sphere.PositionMatrix = new double[iDimensions + 1, iDimensions]; 
 
                 Linefeed = s.ReadLine();
 
@@ -144,7 +136,7 @@ namespace Worlds5
                     data = s.ReadLine().Split();
 
                     for (j = 0; j <= iDimensions - 1; j++)
-                        Model.Globals.Sphere.PositionMatrix[i, j] = double.Parse(data[j]);
+                        sphere.PositionMatrix[i, j] = double.Parse(data[j]);
                 }
 
                 ImageRendering.ScaleValue = double.Parse(s.ReadLine());
@@ -154,16 +146,38 @@ namespace Worlds5
                 if (FileType == 3)
                 {
                     data = s.ReadLine().Split();
-                    ImageRendering.ImageSize = new Size(int.Parse(data[0]), int.Parse(data[1]));
                     ImageRendering.Bailout = float.Parse(data[2]);
                     for (Count = 0; Count <= 1; Count++)
                     {
                         data = s.ReadLine().Split();
-                        Model.Globals.Sphere.ColourDetail[Count] = float.Parse(data[0]);
-                        Model.Globals.Sphere.HSL[0, Count] = float.Parse(data[3]);
-                        Model.Globals.Sphere.HSL[1, Count] = float.Parse(data[4]);
-                        Model.Globals.Sphere.HSL[2, Count] = float.Parse(data[5]);
+                        sphere.ColourDetail[Count] = float.Parse(data[0]);
                     }
+
+                    // Sphere Viewing window
+                    sphere.AngularResolution = viewing.ViewportResolution;
+                    sphere.Radius = viewing.SphereRadius;
+                    sphere.CentreLatitude = viewing.CentreLatitude;
+                    sphere.CentreLongitude = viewing.CentreLongitude;
+                    sphere.VerticalView = viewing.VerticalView;
+                    sphere.HorizontalView = viewing.HorizontalView;
+
+                    // Raytracing
+                    sphere.SamplingInterval = raytracing.SamplingInterval;
+                    sphere.SurfaceThickness = raytracing.SurfaceThickness;
+                    sphere.RayPoints = raytracing.RayPoints;
+                    sphere.MaxSamples = raytracing.MaxSamples;
+                    sphere.BoundaryInterval = raytracing.BoundaryInterval;
+                    sphere.BinarySearchSteps = raytracing.BinarySearchSteps;
+                    sphere.ActiveIndex = raytracing.ActiveIndex;
+
+                    // Rendering
+                    sphere.ExposureValue = rendering.ExposureValue;
+                    sphere.Saturation = rendering.Saturation;
+                    sphere.StartDistance = rendering.StartDistance;
+                    sphere.EndDistance = rendering.EndDistance;
+                    sphere.SurfaceContrast = rendering.SurfaceContrast;
+                    sphere.LightingAngle = rendering.LightingAngle;
+
                     //  Close file
                     s.Close();
                 }

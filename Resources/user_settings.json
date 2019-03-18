@@ -1,0 +1,23 @@
+{
+  "MainWindow": {
+    "MainState": "NORMAL",
+    "MainWidth": 840,
+    "MainHeight": 690,
+    "MainLeft": 300,
+    "MainTop": 300
+  },
+  "User": {
+    "NavPath": "%APPSTART%\\Album\\",
+    "SeqPath": "%APPSTART%\\Sequence\\",
+    "Toolbar": true,
+    "Labels": true,
+    "ToolTips": false,
+    "StatusBar": true
+  },
+  "Imaging": {
+    "FramesPerSec": 25,
+    "AutoRepeat": false,
+    "BitmapHeight": 600,
+    "BitmapWidth": 600
+  }
+}

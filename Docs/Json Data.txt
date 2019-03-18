@@ -52,7 +52,6 @@
 
         "PositionMatrix": double[6,5]
         "ScaleValue": double
-        "ImageSize": int[2]
         "Bailout": float
 
         "Boundary": ImageSettings
@@ -61,6 +60,5 @@
 
     "ImageSettings": {
         "ColourDetail": float
-        "HSL": float[3]
     }
 }

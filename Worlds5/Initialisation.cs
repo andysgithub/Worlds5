@@ -13,13 +13,22 @@ using System.Collections.Generic;
 
 namespace Worlds5 
 {
+    private struct WindowState {
+        private int width;
+        private int height;
+        private int left;
+        private int top;
+        private string state;
+    }
+
 	sealed public class Initialisation 
 	{ 
 		//  Initialise settings from property settings
-		public static void LoadSettings(ref int iWidth, ref int iHeight, ref int iLeft, ref int iTop, ref string sState) 
+		public static WindowState LoadSettings() 
 		{
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string settingsPath = Path.Combine(appDataPath, "Worlds5", "settings.json");
+            WindowState windowState;
 
             if (!File.Exists(settingsPath))
             {
@@ -38,21 +47,10 @@ namespace Worlds5
             }
 
             clsSphere sphere = Model.Globals.Sphere;
-
-            // SettingsData.User user = new settingsData.User();
-            // SettingsData.Animation animation = new settingsData.Animation();
-            // SettingsData.Viewing viewing = new settingsData.Viewing();
-            // SettingsData.Raytracing raytracing = new settingsData.Raytracing();
-            // SettingsData.Rendering rendering = new settingsData.Rendering();
-            // SettingsData.MainWindow mainWindow = new settingsData.MainWindow();
-
             SettingsData.RootObject settingsRoot = new settingsData.RootObject();
 
             SettingsData.User user = settingsRoot.User;
-            SettingsData.Animation animation = settingsRoot.Animation;
-            SettingsData.Viewing viewing = settingsRoot.Viewing;
-            SettingsData.Raytracing raytracing = settingsRoot.Raytracing;
-            SettingsData.Rendering rendering = settingsRoot.Rendering;
+            SettingsData.Imaging imaging = settingsRoot.Imaging;
             SettingsData.MainWindow mainWindow = settingsRoot.MainWindow;
 
             try
@@ -65,50 +63,26 @@ namespace Worlds5
                 Globals.SetUp.ToolTips = user.ToolTips;
                 Globals.SetUp.StatusBar = user.StatusBar; 
 
-                // Animation settings
-				Globals.SetUp.FramesPerSec = animation.FramesPerSec;
-                Globals.SetUp.AutoRepeat = animation.AutoRepeat;
+                // Imaging settings
+				Globals.SetUp.FramesPerSec = imaging.FramesPerSec;
+                Globals.SetUp.AutoRepeat = imaging.AutoRepeat;
+                Globals.SetUp.BitmapWidth = imaging.BitmapWidth;
+                Globals.SetUp.BitmapHeight = imaging.BitmapHeight;
 
-                // Sphere Viewing window
-                sphere.AngularResolution = viewing.ViewportResolution;
-                sphere.Radius = viewing.SphereRadius;
-                sphere.CentreLatitude = viewing.CentreLatitude;
-                sphere.CentreLongitude = viewing.CentreLongitude;
-                sphere.VerticalView = viewing.VerticalView;
-                sphere.HorizontalView = viewing.HorizontalView;
-
-                // Raytracing
-                sphere.SamplingInterval = raytracing.SamplingInterval;
-                sphere.SurfaceThickness = raytracing.SurfaceThickness;
-                sphere.RayPoints = raytracing.RayPoints;
-                sphere.MaxSamples = raytracing.MaxSamples;
-                sphere.BoundaryInterval = raytracing.BoundaryInterval;
-                sphere.BinarySearchSteps = raytracing.BinarySearchSteps;
-                sphere.ActiveIndex = raytracing.ActiveIndex;
-
-                // Rendering
-                sphere.ExposureValue = rendering.ExposureValue;
-                sphere.Saturation = rendering.Saturation;
-                sphere.StartDistance = rendering.StartDistance;
-                sphere.EndDistance = rendering.EndDistance;
-                sphere.SurfaceContrast = rendering.SurfaceContrast;
-                sphere.LightingAngle = rendering.LightingAngle;
-                Globals.SetUp.BitmapWidth = rendering.BitmapWidth;
-                Globals.SetUp.BitmapHeight = rendering.BitmapHeight;
-
-                sState = mainWindow.MainState;
-                iWidth = mainWindow.MainWidth;
-                iHeight = mainWindow.MainHeight;
-                iLeft = mainWindow.MainLeft;
+                windowState.state = mainWindow.MainState;
+                windowState.width = mainWindow.MainWidth;
+                windowState.height = mainWindow.MainHeight;
+                windowState.left = mainWindow.MainLeft;
                 if (Screen.AllScreens.GetUpperBound(0) == 0 && iLeft > Screen.PrimaryScreen.Bounds.Width)
                 {
                     iLeft = Screen.PrimaryScreen.Bounds.Width - iWidth;
                 }
-				iTop = mainWindow.MainTop; 
+				windowState.top = mainWindow.MainTop; 
 			}
 			catch  
 			{ 
-			} 
+			}
+            return windowState; 
 		}
 
         private static string DecodeTag(string setting)
@@ -126,21 +100,10 @@ namespace Worlds5
 		{
             clsSphere sphere = Model.Globals.Sphere;
             SettingsData settingsData = new SettingsData();
-
-            // SettingsData.User user = new settingsData.User();
-            // SettingsData.Animation animation = new settingsData.Animation();
-            // SettingsData.Viewing viewing = new settingsData.Viewing();
-            // SettingsData.Raytracing raytracing = new settingsData.Raytracing();
-            // SettingsData.Rendering rendering = new settingsData.Rendering();
-            // SettingsData.MainWindow mainWindow = new settingsData.MainWindow();
-
             SettingsData.RootObject settingsRoot = new settingsData.RootObject();
 
             SettingsData.User user = settingsRoot.User;
-            SettingsData.Animation animation = settingsRoot.Animation;
-            SettingsData.Viewing viewing = settingsRoot.Viewing;
-            SettingsData.Raytracing raytracing = settingsRoot.Raytracing;
-            SettingsData.Rendering rendering = settingsRoot.Rendering;
+            SettingsData.Imaging imaging = settingsRoot.Imaging;
             SettingsData.MainWindow mainWindow = settingsRoot.MainWindow;
 
             try
@@ -153,36 +116,11 @@ namespace Worlds5
                 user.ToolTips = Globals.SetUp.ToolTips;
                 user.StatusBar = Globals.SetUp.StatusBar;
 
-                // Animation settings
-                animation.FramesPerSec = Globals.SetUp.FramesPerSec;
-                animation.AutoRepeat = Globals.SetUp.AutoRepeat;
-
-                // Sphere Viewing window
-                viewing.ViewportResolution = sphere.AngularResolution;
-                viewing.SphereRadius = sphere.Radius;
-                viewing.CentreLatitude = sphere.CentreLatitude;
-                viewing.CentreLongitude = sphere.CentreLongitude;
-                viewing.VerticalView = sphere.VerticalView;
-                viewing.HorizontalView = sphere.HorizontalView;
-
-                // Raytracing
-                raytracing.SamplingInterval = sphere.SamplingInterval;
-                raytracing.SurfaceThickness = sphere.SurfaceThickness;
-                raytracing.RayPoints = sphere.RayPoints;
-                raytracing.MaxSamples = sphere.MaxSamples;
-                raytracing.BoundaryInterval = sphere.BoundaryInterval;
-                raytracing.BinarySearchSteps = sphere.BinarySearchSteps;
-                raytracing.ActiveIndex = sphere.ActiveIndex;
-
-                // Rendering
-                rendering.ExposureValue = sphere.ExposureValue;
-                rendering.Saturation = sphere.Saturation;
-                rendering.SurfaceContrast = sphere.SurfaceContrast;
-                rendering.StartDistance = sphere.StartDistance;
-                rendering.EndDistance = sphere.EndDistance;
-                rendering.LightingAngle = sphere.LightingAngle;
-                rendering.BitmapWidth = Globals.SetUp.BitmapWidth;
-                rendering.BitmapHeight = Globals.SetUp.BitmapHeight;
+                // Imaging settings
+                imaging.FramesPerSec = Globals.SetUp.FramesPerSec;
+                imaging.AutoRepeat = Globals.SetUp.AutoRepeat;
+                imaging.BitmapWidth = Globals.SetUp.BitmapWidth;
+                imaging.BitmapHeight = Globals.SetUp.BitmapHeight;
 
                 if (fwsState != FormWindowState.Minimized) 
 				{

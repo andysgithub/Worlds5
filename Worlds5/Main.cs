@@ -104,24 +104,11 @@ namespace Worlds5
 
                 if (Navigation.Navigate(currentAddress))
                 {
-                    if (File.Exists(currentAddress + ".jpg"))
-                    {
-                        // Display the existing image for this location
-                        picImage.Image = Image.FromFile(currentAddress + ".jpg");
-                    }
-                    else if (File.Exists(currentAddress + ".png"))
-                    {
-                        // Display the existing image for this location
-                        picImage.Image = Image.FromFile(currentAddress + ".png");
-                    }
-                    else
-                    {
-                        imageRendering.InitialiseSphere();
-                        imageRendering.PerformRayTracing();
+                    imageRendering.InitialiseSphere();
+                    imageRendering.PerformRayTracing();
 
-                        // Display the bitmap
-                        picImage.Image = imageRendering.GetBitmap();
-                    }
+                    // Display the bitmap
+                    picImage.Image = imageRendering.GetBitmap();
                 }
             }
         }

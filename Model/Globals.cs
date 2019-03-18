@@ -12,18 +12,6 @@ namespace Model
         public static clsSphere Sphere = null;
         public const double DEG_TO_RAD = 0.0174532925;
 
-        //public struct TransMatrixType 
-        //{  
-        //    public float[,] HSL; 
-        //    public float[] ColourDetail; 
-            
-        //    public void Initialize() 
-        //    {  
-        //        HSL = new float[ 3, 2 ]; 
-        //        ColourDetail = new float[ 2 ]; 
-        //    } 
-        //}
-
         public struct PixelData
         {
             public byte blue;

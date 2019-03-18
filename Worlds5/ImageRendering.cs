@@ -16,7 +16,6 @@ namespace Worlds5
         private bool redisplayPending = false;
 
         //  Image display settings
-        private static Size m_ImageSize;		// Width & Height of image from file
         // private static Size m_SeqSize;			// Width & Height of sequence frames
         private static double m_ScaleValue;	    // Overall scaling value for matrix
         
@@ -37,12 +36,6 @@ namespace Worlds5
         #endregion
 
         #region Class Properties
-
-        public static Size ImageSize
-        {
-            get { return m_ImageSize; }
-            set { m_ImageSize = value; }
-        }
 
         // public static Size SeqSize
         // {
@@ -115,8 +108,6 @@ namespace Worlds5
             // Initialise the sphere in the dll from the ImageRendering sphere
             InitSphere(sphere.ColourDetail[0], sphere.ColourDetail[1],
                        Bailout, sphere.AngularResolution,
-                       sphere.HSL[0, 0], sphere.HSL[1, 0], sphere.HSL[2, 0],
-                       sphere.HSL[0, 1], sphere.HSL[1, 1], sphere.HSL[2, 1],
                        sphere.CentreLatitude, sphere.CentreLongitude,
                        sphere.Radius, sphere.VerticalView, sphere.HorizontalView, sphere.PositionMatrix);
         }
