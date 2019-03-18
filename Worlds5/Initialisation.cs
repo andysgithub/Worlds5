@@ -24,24 +24,36 @@ namespace Worlds5
             if (!File.Exists(settingsPath))
             {
                 // Save the default settings file to the app data path
-
+                string sourceSettings = Path.Combine(Application.StartupPath, "default_settings.json");
+                File.Copy(sourceSettings, settingsPath);
             }
+
+            SettingsData settingsData = new SettingsData();
 
             // Load the json settings file
             using (StreamReader r = new StreamReader(settingsPath))
             {
                 string jsonSettings = r.ReadToEnd();
-                SettingsData items = JsonConvert.DeserializeObject<SettingsData>(jsonSettings);
+                settingsData = JsonConvert.DeserializeObject<SettingsData>(jsonSettings);
             }
 
             clsSphere sphere = Model.Globals.Sphere;
 
-            SettingsData.User user = new SettingsData.User();
-            SettingsData.Animation animation = new SettingsData.Animation();
-            SettingsData.Viewing viewing = new SettingsData.Viewing();
-            SettingsData.Raytracing raytracing = new SettingsData.Raytracing();
-            SettingsData.Rendering rendering = new SettingsData.Rendering();
-            SettingsData.MainWindow mainWindow = new SettingsData.MainWindow();
+            // SettingsData.User user = new settingsData.User();
+            // SettingsData.Animation animation = new settingsData.Animation();
+            // SettingsData.Viewing viewing = new settingsData.Viewing();
+            // SettingsData.Raytracing raytracing = new settingsData.Raytracing();
+            // SettingsData.Rendering rendering = new settingsData.Rendering();
+            // SettingsData.MainWindow mainWindow = new settingsData.MainWindow();
+
+            SettingsData.RootObject settingsRoot = new settingsData.RootObject();
+
+            SettingsData.User user = settingsRoot.User;
+            SettingsData.Animation animation = settingsRoot.Animation;
+            SettingsData.Viewing viewing = settingsRoot.Viewing;
+            SettingsData.Raytracing raytracing = settingsRoot.Raytracing;
+            SettingsData.Rendering rendering = settingsRoot.Rendering;
+            SettingsData.MainWindow mainWindow = settingsRoot.MainWindow;
 
             try
             {
@@ -113,13 +125,23 @@ namespace Worlds5
 		public static void SaveSettings(int iWidth, int iHeight, int iLeft, int iTop, FormWindowState fwsState) 
 		{
             clsSphere sphere = Model.Globals.Sphere;
+            SettingsData settingsData = new SettingsData();
 
-            SettingsData.User user = new SettingsData.User();
-            SettingsData.Animation animation = new SettingsData.Animation();
-            SettingsData.Viewing viewing = new SettingsData.Viewing();
-            SettingsData.Raytracing raytracing = new SettingsData.Raytracing();
-            SettingsData.Rendering rendering = new SettingsData.Rendering();
-            SettingsData.MainWindow mainWindow = new SettingsData.MainWindow();
+            // SettingsData.User user = new settingsData.User();
+            // SettingsData.Animation animation = new settingsData.Animation();
+            // SettingsData.Viewing viewing = new settingsData.Viewing();
+            // SettingsData.Raytracing raytracing = new settingsData.Raytracing();
+            // SettingsData.Rendering rendering = new settingsData.Rendering();
+            // SettingsData.MainWindow mainWindow = new settingsData.MainWindow();
+
+            SettingsData.RootObject settingsRoot = new settingsData.RootObject();
+
+            SettingsData.User user = settingsRoot.User;
+            SettingsData.Animation animation = settingsRoot.Animation;
+            SettingsData.Viewing viewing = settingsRoot.Viewing;
+            SettingsData.Raytracing raytracing = settingsRoot.Raytracing;
+            SettingsData.Rendering rendering = settingsRoot.Rendering;
+            SettingsData.MainWindow mainWindow = settingsRoot.MainWindow;
 
             try
 			{
@@ -178,7 +200,16 @@ namespace Worlds5
 			{
 			}
 
-            // TODO: Save the json file
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string settingsPath = Path.Combine(appDataPath, "Worlds5", "settings.json");
+
+            // Save the json file
+            using (StreamWriter w = new StreamWriter(settingsPath))
+            {
+                string settingsJson = JsonConvert.SerializeObject<SettingsData>(jsonSettings);
+                w.Write(settingsJson);
+                
+            }
 		} 
 	} 
 }

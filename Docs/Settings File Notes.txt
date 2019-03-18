@@ -1,0 +1,25 @@
+Start:
+  Read json settings file
+  Transfer settings to SettingsData object
+
+Run:
+  Update SettingsData from settings dialog
+  Use SettingsData to generate new spheres
+
+Load saved sphere:
+  No change to SettingsData
+  Rendering performed from sphere data
+
+Close:
+  Save json settings file from SettingsData
+
+---------------------------------------
+
+Need default sphere containing settings, location and ray map
+Starts up from default sphere
+Ability to load selected sphere
+Settings changed when defining/modifying sphere
+
+Need dialogs for standard settings and sphere settings
+User settings stored separately
+Changed with standard settings dialog
