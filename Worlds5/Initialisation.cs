@@ -3,10 +3,13 @@ using System.Collections;
 using System.Configuration;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Model;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Worlds5 
 {
@@ -15,60 +18,81 @@ namespace Worlds5
 		//  Initialise settings from property settings
 		public static void LoadSettings(ref int iWidth, ref int iHeight, ref int iLeft, ref int iTop, ref string sState) 
 		{
-            // TODO: Load the json file
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string settingsPath = Path.Combine(appDataPath, "Worlds5", "settings.json");
+
+            if (!File.Exists(settingsPath))
+            {
+                // Save the default settings file to the app data path
+
+            }
+
+            // Load the json settings file
+            using (StreamReader r = new StreamReader(settingsPath))
+            {
+                string jsonSettings = r.ReadToEnd();
+                SettingsData items = JsonConvert.DeserializeObject<SettingsData>(jsonSettings);
+            }
 
             clsSphere sphere = Model.Globals.Sphere;
 
+            SettingsData.User user = new SettingsData.User();
+            SettingsData.Animation animation = new SettingsData.Animation();
+            SettingsData.Viewing viewing = new SettingsData.Viewing();
+            SettingsData.Raytracing raytracing = new SettingsData.Raytracing();
+            SettingsData.Rendering rendering = new SettingsData.Rendering();
+            SettingsData.MainWindow mainWindow = new SettingsData.MainWindow();
+
             try
-			{
+            {
                 // User settings
-                Globals.SetUp.NavPath = DecodeTag(SettingsData.User.NavPath);
-                Globals.SetUp.SeqPath = DecodeTag(SettingsData.User.SeqPath);
-                Globals.SetUp.Toolbar = SettingsData.User.Toolbar;
-                Globals.SetUp.Labels = SettingsData.User.Labels; 
-                Globals.SetUp.ToolTips = SettingsData.User.ToolTips;
-                Globals.SetUp.StatusBar = SettingsData.User.StatusBar; 
+                Globals.SetUp.NavPath = DecodeTag(user.NavPath);
+                Globals.SetUp.SeqPath = DecodeTag(user.SeqPath);
+                Globals.SetUp.Toolbar = user.Toolbar;
+                Globals.SetUp.Labels = user.Labels; 
+                Globals.SetUp.ToolTips = user.ToolTips;
+                Globals.SetUp.StatusBar = user.StatusBar; 
 
                 // Animation settings
-				Globals.SetUp.FramesPerSec = SettingsData.Animation.FramesPerSec;
-                Globals.SetUp.AutoRepeat = SettingsData.Animation.AutoRepeat;
+				Globals.SetUp.FramesPerSec = animation.FramesPerSec;
+                Globals.SetUp.AutoRepeat = animation.AutoRepeat;
 
                 // Sphere Viewing window
-                sphere.AngularResolution = SettingsData.Viewing.ViewportResolution;
-                sphere.Radius = SettingsData.Viewing.SphereRadius;
-                sphere.CentreLatitude = SettingsData.Viewing.CentreLatitude;
-                sphere.CentreLongitude = SettingsData.Viewing.CentreLongitude;
-                sphere.VerticalView = SettingsData.Viewing.VerticalView;
-                sphere.HorizontalView = SettingsData.Viewing.HorizontalView;
+                sphere.AngularResolution = viewing.ViewportResolution;
+                sphere.Radius = viewing.SphereRadius;
+                sphere.CentreLatitude = viewing.CentreLatitude;
+                sphere.CentreLongitude = viewing.CentreLongitude;
+                sphere.VerticalView = viewing.VerticalView;
+                sphere.HorizontalView = viewing.HorizontalView;
 
                 // Raytracing
-                sphere.SamplingInterval = SettingsData.Raytracing.SamplingInterval;
-                sphere.SurfaceThickness = SettingsData.Raytracing.SurfaceThickness;
-                sphere.RayPoints = SettingsData.Raytracing.RayPoints;
-                sphere.MaxSamples = SettingsData.Raytracing.MaxSamples;
-                sphere.BoundaryInterval = SettingsData.Raytracing.BoundaryInterval;
-                sphere.BinarySearchSteps = SettingsData.Raytracing.BinarySearchSteps;
-                sphere.ActiveIndex = SettingsData.Raytracing.ActiveIndex;
+                sphere.SamplingInterval = raytracing.SamplingInterval;
+                sphere.SurfaceThickness = raytracing.SurfaceThickness;
+                sphere.RayPoints = raytracing.RayPoints;
+                sphere.MaxSamples = raytracing.MaxSamples;
+                sphere.BoundaryInterval = raytracing.BoundaryInterval;
+                sphere.BinarySearchSteps = raytracing.BinarySearchSteps;
+                sphere.ActiveIndex = raytracing.ActiveIndex;
 
                 // Rendering
-                sphere.ExposureValue = SettingsData.Rendering.ExposureValue;
-                sphere.Saturation = SettingsData.Rendering.Saturation;
-                sphere.StartDistance = SettingsData.Rendering.StartDistance;
-                sphere.EndDistance = SettingsData.Rendering.EndDistance;
-                sphere.SurfaceContrast = SettingsData.Rendering.SurfaceContrast;
-                sphere.LightingAngle = SettingsData.Rendering.LightingAngle;
-                Globals.SetUp.BitmapWidth = SettingsData.Rendering.BitmapWidth;
-                Globals.SetUp.BitmapHeight = SettingsData.Rendering.BitmapHeight;
+                sphere.ExposureValue = rendering.ExposureValue;
+                sphere.Saturation = rendering.Saturation;
+                sphere.StartDistance = rendering.StartDistance;
+                sphere.EndDistance = rendering.EndDistance;
+                sphere.SurfaceContrast = rendering.SurfaceContrast;
+                sphere.LightingAngle = rendering.LightingAngle;
+                Globals.SetUp.BitmapWidth = rendering.BitmapWidth;
+                Globals.SetUp.BitmapHeight = rendering.BitmapHeight;
 
-                sState = SettingsData.MainWindow.MainState;
-                iWidth = SettingsData.MainWindow.MainWidth;
-                iHeight = SettingsData.MainWindow.MainHeight;
-                iLeft = SettingsData.MainWindow.MainLeft;
+                sState = mainWindow.MainState;
+                iWidth = mainWindow.MainWidth;
+                iHeight = mainWindow.MainHeight;
+                iLeft = mainWindow.MainLeft;
                 if (Screen.AllScreens.GetUpperBound(0) == 0 && iLeft > Screen.PrimaryScreen.Bounds.Width)
                 {
                     iLeft = Screen.PrimaryScreen.Bounds.Width - iWidth;
                 }
-				iTop = SettingsData.MainWindow.MainTop; 
+				iTop = mainWindow.MainTop; 
 			}
 			catch  
 			{ 
@@ -90,56 +114,63 @@ namespace Worlds5
 		{
             clsSphere sphere = Model.Globals.Sphere;
 
+            SettingsData.User user = new SettingsData.User();
+            SettingsData.Animation animation = new SettingsData.Animation();
+            SettingsData.Viewing viewing = new SettingsData.Viewing();
+            SettingsData.Raytracing raytracing = new SettingsData.Raytracing();
+            SettingsData.Rendering rendering = new SettingsData.Rendering();
+            SettingsData.MainWindow mainWindow = new SettingsData.MainWindow();
+
             try
 			{
-                SettingsData.User.NavPath = Globals.SetUp.NavPath;
-                SettingsData.User.SeqPath = Globals.SetUp.SeqPath;
+                user.NavPath = Globals.SetUp.NavPath;
+                user.SeqPath = Globals.SetUp.SeqPath;
 
-                SettingsData.User.Toolbar = Globals.SetUp.Toolbar;
-                SettingsData.User.Labels = Globals.SetUp.Labels;
-                SettingsData.User.ToolTips = Globals.SetUp.ToolTips;
-                SettingsData.User.StatusBar = Globals.SetUp.StatusBar;
+                user.Toolbar = Globals.SetUp.Toolbar;
+                user.Labels = Globals.SetUp.Labels;
+                user.ToolTips = Globals.SetUp.ToolTips;
+                user.StatusBar = Globals.SetUp.StatusBar;
 
                 // Animation settings
-                SettingsData.Animation.FramesPerSec = Globals.SetUp.FramesPerSec;
-                SettingsData.Animation.AutoRepeat = Globals.SetUp.AutoRepeat;
+                animation.FramesPerSec = Globals.SetUp.FramesPerSec;
+                animation.AutoRepeat = Globals.SetUp.AutoRepeat;
 
                 // Sphere Viewing window
-                SettingsData.Viewing.ViewportResolution = sphere.AngularResolution;
-                SettingsData.Viewing.SphereRadius = sphere.Radius;
-                SettingsData.Viewing.CentreLatitude = sphere.CentreLatitude;
-                SettingsData.Viewing.CentreLongitude = sphere.CentreLongitude;
-                SettingsData.Viewing.VerticalView = sphere.VerticalView;
-                SettingsData.Viewing.HorizontalView = sphere.HorizontalView;
+                viewing.ViewportResolution = sphere.AngularResolution;
+                viewing.SphereRadius = sphere.Radius;
+                viewing.CentreLatitude = sphere.CentreLatitude;
+                viewing.CentreLongitude = sphere.CentreLongitude;
+                viewing.VerticalView = sphere.VerticalView;
+                viewing.HorizontalView = sphere.HorizontalView;
 
                 // Raytracing
-                SettingsData.Raytracing.SamplingInterval = sphere.SamplingInterval;
-                SettingsData.Raytracing.SurfaceThickness = sphere.SurfaceThickness;
-                SettingsData.Raytracing.RayPoints = sphere.RayPoints;
-                SettingsData.Raytracing.MaxSamples = sphere.MaxSamples;
-                SettingsData.Raytracing.BoundaryInterval = sphere.BoundaryInterval;
-                SettingsData.Raytracing.BinarySearchSteps = sphere.BinarySearchSteps;
-                SettingsData.Raytracing.ActiveIndex = sphere.ActiveIndex;
+                raytracing.SamplingInterval = sphere.SamplingInterval;
+                raytracing.SurfaceThickness = sphere.SurfaceThickness;
+                raytracing.RayPoints = sphere.RayPoints;
+                raytracing.MaxSamples = sphere.MaxSamples;
+                raytracing.BoundaryInterval = sphere.BoundaryInterval;
+                raytracing.BinarySearchSteps = sphere.BinarySearchSteps;
+                raytracing.ActiveIndex = sphere.ActiveIndex;
 
                 // Rendering
-                SettingsData.Rendering.ExposureValue = sphere.ExposureValue;
-                SettingsData.Rendering.Saturation = sphere.Saturation;
-                SettingsData.Rendering.SurfaceContrast = sphere.SurfaceContrast;
-                SettingsData.Rendering.StartDistance = sphere.StartDistance;
-                SettingsData.Rendering.EndDistance = sphere.EndDistance;
-                SettingsData.Rendering.LightingAngle = sphere.LightingAngle;
-                SettingsData.Rendering.BitmapWidth = Globals.SetUp.BitmapWidth;
-                SettingsData.Rendering.BitmapHeight = Globals.SetUp.BitmapHeight;
+                rendering.ExposureValue = sphere.ExposureValue;
+                rendering.Saturation = sphere.Saturation;
+                rendering.SurfaceContrast = sphere.SurfaceContrast;
+                rendering.StartDistance = sphere.StartDistance;
+                rendering.EndDistance = sphere.EndDistance;
+                rendering.LightingAngle = sphere.LightingAngle;
+                rendering.BitmapWidth = Globals.SetUp.BitmapWidth;
+                rendering.BitmapHeight = Globals.SetUp.BitmapHeight;
 
                 if (fwsState != FormWindowState.Minimized) 
 				{
-                    SettingsData.MainWindow.MainState = fwsState.ToString();
+                    mainWindow.MainState = fwsState.ToString();
 					if (fwsState != FormWindowState.Maximized) 
 					{
-                        SettingsData.MainWindow.MainWidth = iWidth;
-                        SettingsData.MainWindow.MainHeight = iHeight;
-                        SettingsData.MainWindow.MainLeft = iLeft;
-                        SettingsData.MainWindow.MainTop = iTop;
+                        mainWindow.MainWidth = iWidth;
+                        mainWindow.MainHeight = iHeight;
+                        mainWindow.MainLeft = iLeft;
+                        mainWindow.MainTop = iTop;
 					} 
 				} 
 			}

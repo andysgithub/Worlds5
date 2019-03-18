@@ -6,64 +6,74 @@ using System.Threading.Tasks;
 
 namespace Worlds5
 {
-    public static class SettingsData
+    public class SettingsData
     {
-        public struct MainWindow
+        public class MainWindow
         {
-            public static string MainState;
-            public static int MainWidth;
-            public static int MainHeight;
-            public static int MainLeft;
-            public static int MainTop;
+            public string MainState { get; set; }
+            public int MainWidth { get; set; }
+            public int MainHeight { get; set; }
+            public int MainLeft { get; set; }
+            public int MainTop { get; set; }
         }
 
-        public struct User
+        public class User
         {
-            public static string NavPath;
-            public static string SeqPath;
-            public static bool Toolbar;
-            public static bool Labels;
-            public static bool ToolTips;
-            public static bool StatusBar;
+            public string NavPath { get; set; }
+            public string SeqPath { get; set; }
+            public bool Toolbar { get; set; }
+            public bool Labels { get; set; }
+            public bool ToolTips { get; set; }
+            public bool StatusBar { get; set; }
         }
 
-        public struct Animation
+        public class Animation
         {
-            public static int FramesPerSec;
-            public static bool AutoRepeat;
+            public int FramesPerSec { get; set; }
+            public bool AutoRepeat { get; set; }
         }
 
-        public struct Viewing
+        public class Viewing
         {
-            public static double ViewportResolution;
-            public static double SphereRadius;
-            public static double CentreLatitude;
-            public static double CentreLongitude;
-            public static double VerticalView;
-            public static double HorizontalView;
+            public double ViewportResolution { get; set; }
+            public double SphereRadius { get; set; }
+            public double CentreLatitude { get; set; }
+            public double CentreLongitude { get; set; }
+            public double VerticalView { get; set; }
+            public double HorizontalView { get; set; }
         }
 
-        public struct Raytracing
+        public class Raytracing
         {
-            public static double[] SamplingInterval = new double[2];
-            public static int[] RayPoints = new int[2];
-            public static int[] MaxSamples = new int[2];
-            public static int[] BinarySearchSteps = new int[2];
-            public static double SurfaceThickness;
-            public static double BoundaryInterval;
-            public static int ActiveIndex;
+            public double[] SamplingInterval { get; set; }
+            public int[] RayPoints { get; set; }
+            public int[] MaxSamples { get; set; }
+            public int[] BinarySearchSteps { get; set; }
+            public double SurfaceThickness { get; set; }
+            public double BoundaryInterval { get; set; }
+            public int ActiveIndex { get; set; }
         }
 
-        public struct Rendering
+        public class Rendering
         {
-            public static float[] ExposureValue = new float[2];
-            public static float[] Saturation = new float[2];
-            public static double[] StartDistance = new double[2];
-            public static double[] EndDistance = new double[2];
-            public static float SurfaceContrast;
-            public static float LightingAngle;
-            public static int BitmapHeight;
-            public static int BitmapWidth;
+            public float[] ExposureValue { get; set; }
+            public float[] Saturation { get; set; }
+            public double[] StartDistance { get; set; }
+            public double[] EndDistance { get; set; }
+            public float SurfaceContrast { get; set; }
+            public float LightingAngle { get; set; }
+            public int BitmapHeight { get; set; }
+            public int BitmapWidth { get; set; }
+        }
+
+        public class RootObject
+        {
+            public MainWindow MainWindow { get; set; }
+            public User User { get; set; }
+            public Animation Animation { get; set; }
+            public Viewing Viewing { get; set; }
+            public Raytracing Raytracing { get; set; }
+            public Rendering Rendering { get; set; }
         }
     }
 }

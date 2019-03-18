@@ -12,6 +12,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E2BD548D-2F1F-492E-B15F-BF2E67302551}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		Worlds5\settings.json = Worlds5\settings.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{03D43517-C5EC-4D19-A2D4-5EE2BBCE3FEB}"
