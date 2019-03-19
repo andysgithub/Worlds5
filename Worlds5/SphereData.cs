@@ -37,20 +37,20 @@ namespace Worlds5
 
         public class Rendering
         {
-            public double[] ExposureValue { get; set; }
-            public int[] Saturation { get; set; }
+            public float[] ExposureValue { get; set; }
+            public float[] Saturation { get; set; }
             public double[] StartDistance { get; set; }
             public double[] EndDistance { get; set; }
-            public double[] ColourDetail { get; set; }
-            public double SurfaceContrast { get; set; }
-            public double LightingAngle { get; set; }
+            public float[] ColourDetail { get; set; }
+            public float SurfaceContrast { get; set; }
+            public float LightingAngle { get; set; }
         }
 
         public class RootObject
         {
-            public double[][] PositionMatrix { get; set; }
+            public double[,] PositionMatrix { get; set; }
             public double ScaleValue { get; set; }
-            public double Bailout { get; set; }
+            public float Bailout { get; set; }
 
             public Type Type { get; set; }
             public Viewing Viewing { get; set; }

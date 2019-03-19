@@ -22,8 +22,6 @@ namespace Worlds5
     {
         private bool bResizing = false;
         private DisplayStatus m_DisplayStatus = DisplayStatus.None;
-        private int iWidth = 0, iHeight = 0, iLeft = 0, iTop = 0;
-        private string sState = "Normal";
         private string currentAddress = string.Empty;
         private ImageRendering imageRendering = null;
 
@@ -61,21 +59,14 @@ namespace Worlds5
             imageRendering = new ImageRendering();
             imageRendering.updateStatus += new ImageRendering.UpdateStatusDelegate(UpdateStatus);
 
-            Initialisation.LoadSettings(ref iWidth, ref iHeight, ref iLeft, ref iTop, ref sState);
-            
-            if (sState == "Normal")
-            {
-                this.WindowState = FormWindowState.Normal;
-            }
-            else
-            {
-                this.WindowState = FormWindowState.Maximized;
-            }
+            WindowState state = Initialisation.LoadSettings();
 
-            if (iWidth > 0) this.Width = iWidth;
-            if (iHeight > 0) this.Height = iHeight;
-            if (iLeft > 0) this.Left = iLeft;
-            if (iTop > 0) this.Top = iTop;
+            this.WindowState = (state.State == "NORMAL" ? FormWindowState.Normal : FormWindowState.Maximized);
+
+            if (state.Width > 0) this.Width = state.Width;
+            if (state.Height > 0) this.Height = state.Height;
+            if (state.Left > 0) this.Left = state.Left;
+            if (state.Top > 0) this.Top = state.Top;
         }
 
         private void Main_FormClosed(object sender, FormClosedEventArgs e)

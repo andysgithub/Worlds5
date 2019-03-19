@@ -36,8 +36,6 @@ extern RectangleF
 //////  SPHERE  //////
 EXPORT	void __stdcall InitSphere(float fDetail0, float fDetail1,
 										  float fBailout, double dResolution,
-										  float fHue0, float fSaturation0, float fLightness0,
-										  float fHue1, float fSaturation1, float fLightness1,
 										  double dLatitude, double dLongitude,
 										  double Radius, double verticalView, double horizontalView, double *pTransMatrix);
 EXPORT	void __stdcall SetViewingAngle(double dLatitude, double dLongitude);

@@ -88,8 +88,6 @@ namespace Worlds5
         [DllImport("Unmanaged.dll")]
         static extern void InitSphere(float fDetail0, float fDetail1,
                                           float fBailout, double Resolution,
-                                          float fHue0, float fSaturation0, float fLightness0,
-                                          float fHue1, float fSaturation1, float fLightness1,
                                           double Latitude, double Longitude,
                                           double Radius, double verticalView, double horizontalView, double[,] PositionMatrix);
 

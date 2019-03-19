@@ -13,12 +13,12 @@ using System.Collections.Generic;
 
 namespace Worlds5 
 {
-    private struct WindowState {
-        private int width;
-        private int height;
-        private int left;
-        private int top;
-        private string state;
+    public struct WindowState {
+        public int Width;
+        public int Height;
+        public int Left;
+        public int Top;
+        public string State;
     }
 
 	sealed public class Initialisation 
@@ -28,7 +28,7 @@ namespace Worlds5
 		{
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string settingsPath = Path.Combine(appDataPath, "Worlds5", "settings.json");
-            WindowState windowState;
+            WindowState windowState = new WindowState();
 
             if (!File.Exists(settingsPath))
             {
@@ -37,17 +37,15 @@ namespace Worlds5
                 File.Copy(sourceSettings, settingsPath);
             }
 
-            SettingsData settingsData = new SettingsData();
+            clsSphere sphere = Model.Globals.Sphere;
+            SettingsData.RootObject settingsRoot = new SettingsData.RootObject();
 
             // Load the json settings file
             using (StreamReader r = new StreamReader(settingsPath))
             {
                 string jsonSettings = r.ReadToEnd();
-                settingsData = JsonConvert.DeserializeObject<SettingsData>(jsonSettings);
+                settingsRoot = JsonConvert.DeserializeObject<SettingsData.RootObject>(jsonSettings);
             }
-
-            clsSphere sphere = Model.Globals.Sphere;
-            SettingsData.RootObject settingsRoot = new settingsData.RootObject();
 
             SettingsData.Preferences prefs = settingsRoot.Preferences;
             SettingsData.Imaging imaging = settingsRoot.Imaging;
@@ -70,15 +68,15 @@ namespace Worlds5
                 Globals.SetUp.BitmapHeight = imaging.BitmapHeight;
 
                 // Main window
-                windowState.state = mainWindow.MainState;
-                windowState.width = mainWindow.MainWidth;
-                windowState.height = mainWindow.MainHeight;
-                windowState.left = mainWindow.MainLeft;
-                if (Screen.AllScreens.GetUpperBound(0) == 0 && windowLeft > Screen.PrimaryScreen.Bounds.Width)
+                windowState.State = mainWindow.MainState;
+                windowState.Width = mainWindow.MainWidth;
+                windowState.Height = mainWindow.MainHeight;
+                windowState.Left = mainWindow.MainLeft;
+                if (Screen.AllScreens.GetUpperBound(0) == 0 && windowState.Left > Screen.PrimaryScreen.Bounds.Width)
                 {
-                    windowLeft = Screen.PrimaryScreen.Bounds.Width - windowWidth;
+                    windowState.Left = Screen.PrimaryScreen.Bounds.Width - windowState.Width;
                 }
-				windowState.top = mainWindow.MainTop; 
+				windowState.Top = mainWindow.MainTop; 
 			}
 			catch  
 			{ 
@@ -100,8 +98,7 @@ namespace Worlds5
 		public static void SaveSettings(int windowWidth, int windowHeight, int windowLeft, int windowTop, FormWindowState windowState) 
 		{
             clsSphere sphere = Model.Globals.Sphere;
-            SettingsData settingsData = new SettingsData();
-            SettingsData.RootObject settingsRoot = new settingsData.RootObject();
+            SettingsData.RootObject settingsRoot = new SettingsData.RootObject();
 
             SettingsData.Preferences prefs = settingsRoot.Preferences;
             SettingsData.Imaging imaging = settingsRoot.Imaging;
@@ -146,7 +143,7 @@ namespace Worlds5
             // Save the json file
             using (StreamWriter w = new StreamWriter(settingsPath))
             {
-                string settingsJson = JsonConvert.SerializeObject<SettingsData>(jsonSettings);
+                string settingsJson = JsonConvert.SerializeObject(settingsRoot);
                 w.Write(settingsJson);
                 
             }

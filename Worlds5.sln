@@ -25,6 +25,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{03D43517-C
 		Docs\Settings.txt = Docs\Settings.txt
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{E453010C-79BD-470C-B387-02F9C65E742A}"
+	ProjectSection(SolutionItems) = preProject
+		Resources\Mandelbrot.json = Resources\Mandelbrot.json
+		Resources\user_settings.json = Resources\user_settings.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

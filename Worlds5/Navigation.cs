@@ -7,10 +7,11 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
 using Model;
+using Newtonsoft.Json;
 
 namespace Worlds5
 {
-    sealed public class Navigation
+    public static class Navigation
     {
         public static string LocationName;
 
@@ -44,15 +45,14 @@ namespace Worlds5
             {
                 clsSphere sphere = Model.Globals.Sphere;
                 SphereData sphereData = new SphereData();
+                SphereData.RootObject sphereRoot = new SphereData.RootObject();
 
                 // Load the json sphere file
                 using (StreamReader r = new StreamReader(spherePath))
                 {
                     string jsonSettings = r.ReadToEnd();
-                    sphereData = JsonConvert.DeserializeObject<SphereData>(jsonSettings);
+                    sphereRoot = JsonConvert.DeserializeObject<SphereData.RootObject>(jsonSettings);
                 }
-
-                SphereData.RootObject sphereRoot = new sphereData.RootObject();
 
                 SphereData.Type fileInfo = sphereRoot.Type;
                 SphereData.Viewing viewing = sphereRoot.Viewing;
@@ -87,7 +87,7 @@ namespace Worlds5
                     }
 
                     // Viewing window
-                    sphere.AngularResolution = sphereRoot.AngularResolution;
+                    sphere.AngularResolution = viewing.AngularResolution;
                     sphere.Radius = viewing.Radius;
                     sphere.CentreLatitude = viewing.CentreLatitude;
                     sphere.CentreLongitude = viewing.CentreLongitude;
@@ -114,7 +114,7 @@ namespace Worlds5
                 else
                 {
                     MessageBox.Show(
-                        "File type not recognised:\n" + FileName + "\n",
+                        "File type not recognised:\n" + spherePath + "\n",
                         "Navigation Error",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Exclamation);
@@ -124,7 +124,7 @@ namespace Worlds5
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Error reading navigation file:\n" + FileName + "\n" + ex.Message,
+                    "Error reading navigation file:\n" + spherePath + "\n" + ex.Message,
                     "Navigation Error",
                     MessageBoxButtons.RetryCancel,
                     MessageBoxIcon.Exclamation);
@@ -138,8 +138,7 @@ namespace Worlds5
             float[] ColourDetail = new float[2];
 
             clsSphere sphere = Model.Globals.Sphere;
-            SphereData sphereData = new SphereData();
-            SphereData.RootObject sphereRoot = new sphereData.RootObject();
+            SphereData.RootObject sphereRoot = new SphereData.RootObject();
 
             SphereData.Type fileInfo = sphereRoot.Type;
             SphereData.Viewing viewing = sphereRoot.Viewing;
@@ -169,7 +168,7 @@ namespace Worlds5
                 }
 
                 // Viewing window
-                sphereRoot.AngularResolution = sphere.AngularResolution;
+                viewing.AngularResolution = sphere.AngularResolution;
                 viewing.Radius = sphere.Radius;
                 viewing.CentreLatitude = sphere.CentreLatitude;
                 viewing.CentreLongitude = sphere.CentreLongitude;
@@ -196,7 +195,7 @@ namespace Worlds5
                 // Save the json file
                 using (StreamWriter w = new StreamWriter(spherePath))
                 {
-                    string jsonSettings = JsonConvert.SerializeObject<SphereData>(sphereData);
+                    string jsonSettings = JsonConvert.SerializeObject(sphereRoot);
                     w.Write(jsonSettings);
                     
                 }

@@ -164,13 +164,13 @@
       <DependentUpon>Settings.cs</DependentUpon>
     </Compile>
     <Compile Include="SettingsData.cs" />
+    <Compile Include="SphereData.cs" />
     <Compile Include="VideoConversion.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="VideoConversion.Designer.cs">
       <DependentUpon>VideoConversion.cs</DependentUpon>
     </Compile>
-    <None Include="settings.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Model\Model.csproj">
