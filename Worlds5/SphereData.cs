@@ -48,10 +48,11 @@ namespace Worlds5
 
         public class RootObject
         {
-            public Type Type { get; set; }
             public double[][] PositionMatrix { get; set; }
             public double ScaleValue { get; set; }
             public double Bailout { get; set; }
+
+            public Type Type { get; set; }
             public Viewing Viewing { get; set; }
             public Raytracing Raytracing { get; set; }
             public Rendering Rendering { get; set; }

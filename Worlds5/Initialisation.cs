@@ -49,19 +49,19 @@ namespace Worlds5
             clsSphere sphere = Model.Globals.Sphere;
             SettingsData.RootObject settingsRoot = new settingsData.RootObject();
 
-            SettingsData.User user = settingsRoot.User;
+            SettingsData.Preferences prefs = settingsRoot.Preferences;
             SettingsData.Imaging imaging = settingsRoot.Imaging;
             SettingsData.MainWindow mainWindow = settingsRoot.MainWindow;
 
             try
             {
-                // User settings
-                Globals.SetUp.NavPath = DecodeTag(user.NavPath);
-                Globals.SetUp.SeqPath = DecodeTag(user.SeqPath);
-                Globals.SetUp.Toolbar = user.Toolbar;
-                Globals.SetUp.Labels = user.Labels; 
-                Globals.SetUp.ToolTips = user.ToolTips;
-                Globals.SetUp.StatusBar = user.StatusBar; 
+                // Preferences
+                Globals.SetUp.NavPath = DecodeTag(prefs.NavPath);
+                Globals.SetUp.SeqPath = DecodeTag(prefs.SeqPath);
+                Globals.SetUp.Toolbar = prefs.Toolbar;
+                Globals.SetUp.Labels = prefs.Labels; 
+                Globals.SetUp.ToolTips = prefs.ToolTips;
+                Globals.SetUp.StatusBar = prefs.StatusBar; 
 
                 // Imaging settings
 				Globals.SetUp.FramesPerSec = imaging.FramesPerSec;
@@ -69,6 +69,7 @@ namespace Worlds5
                 Globals.SetUp.BitmapWidth = imaging.BitmapWidth;
                 Globals.SetUp.BitmapHeight = imaging.BitmapHeight;
 
+                // Main window
                 windowState.state = mainWindow.MainState;
                 windowState.width = mainWindow.MainWidth;
                 windowState.height = mainWindow.MainHeight;
@@ -102,19 +103,20 @@ namespace Worlds5
             SettingsData settingsData = new SettingsData();
             SettingsData.RootObject settingsRoot = new settingsData.RootObject();
 
-            SettingsData.User user = settingsRoot.User;
+            SettingsData.Preferences prefs = settingsRoot.Preferences;
             SettingsData.Imaging imaging = settingsRoot.Imaging;
             SettingsData.MainWindow mainWindow = settingsRoot.MainWindow;
 
             try
 			{
-                user.NavPath = Globals.SetUp.NavPath;
-                user.SeqPath = Globals.SetUp.SeqPath;
+                // Preferences
+                prefs.NavPath = Globals.SetUp.NavPath;
+                prefs.SeqPath = Globals.SetUp.SeqPath;
 
-                user.Toolbar = Globals.SetUp.Toolbar;
-                user.Labels = Globals.SetUp.Labels;
-                user.ToolTips = Globals.SetUp.ToolTips;
-                user.StatusBar = Globals.SetUp.StatusBar;
+                prefs.Toolbar = Globals.SetUp.Toolbar;
+                prefs.Labels = Globals.SetUp.Labels;
+                prefs.ToolTips = Globals.SetUp.ToolTips;
+                prefs.StatusBar = Globals.SetUp.StatusBar;
 
                 // Imaging settings
                 imaging.FramesPerSec = Globals.SetUp.FramesPerSec;
@@ -122,6 +124,7 @@ namespace Worlds5
                 imaging.BitmapWidth = Globals.SetUp.BitmapWidth;
                 imaging.BitmapHeight = Globals.SetUp.BitmapHeight;
 
+                // Main window
                 if (fwsState != FormWindowState.Minimized) 
 				{
                     mainWindow.MainState = fwsState.ToString();

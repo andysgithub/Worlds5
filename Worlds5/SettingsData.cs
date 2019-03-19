@@ -17,7 +17,7 @@ namespace Worlds5
             public int MainTop { get; set; }
         }
 
-        public class User
+        public class Preferences
         {
             public string NavPath { get; set; }
             public string SeqPath { get; set; }
@@ -38,7 +38,7 @@ namespace Worlds5
         public class RootObject
         {
             public MainWindow MainWindow { get; set; }
-            public User User { get; set; }
+            public Preferences Preferences { get; set; }
             public Imaging Imaging { get; set; }
         }
     }

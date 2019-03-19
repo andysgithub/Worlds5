@@ -6,7 +6,7 @@
     "MainLeft": 300,
     "MainTop": 300
   },
-  "User": {
+  "Preferences": {
     "NavPath": "%APPSTART%\\Album\\",
     "SeqPath": "%APPSTART%\\Sequence\\",
     "Toolbar": true,

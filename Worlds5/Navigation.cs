@@ -37,124 +37,57 @@ namespace Worlds5
             return false;
         }
 
-        public static bool SaveData(ref string FileName)
-        {
-            double MatrixValue = 0;
-            int i = 0, j = 0;
-
-            float[] ColourDetail = new float[2];
-            int Count = 0;
-            int ErrorNo = 0;
-
-            do
-            {
-                try
-                {
-                    for (Count = 0; Count <= 1; Count++)
-                    {
-                        ColourDetail[Count] = Model.Globals.Sphere.ColourDetail[Count];
-                    }
-
-                    //  Open file
-                    TextWriter tw = new StreamWriter(FileName);
-
-                    //  Save file-type reference
-                    tw.WriteLine("{0}", 2);
-                    tw.WriteLine("");
-
-                    //  Save transformation matrix
-                    for (i = 0; i <= Model.Globals.Dimensions; i++)
-                    {
-                        for (j = 0; j <= Model.Globals.Dimensions - 1; j++)
-                        {
-                            MatrixValue = Model.Globals.Sphere.PositionMatrix[i, j];
-                            tw.Write("{0}", MatrixValue);
-                        }
-                        tw.WriteLine("");
-                    }
-                    tw.WriteLine("{0}", ImageRendering.ScaleValue);
-                    tw.WriteLine("");
-
-                    //  Save Options settings
-                    tw.WriteLine(ImageRendering.Bailout);
-
-                    for (Count = 0; Count <= 1; Count++)
-                    {
-                        tw.WriteLine(ColourDetail[Count], "");
-                    }
-                    //  Close file
-                    tw.Close();
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    ErrorNo = (int)(MessageBox.Show(
-                                        "Couldn't write data to the file:\n" + FileName +
-                                        "\n\nError reported: " + ex.Message + "\n",
-                                        "Save Data Error",
-                                        MessageBoxButtons.RetryCancel,
-                                        MessageBoxIcon.Exclamation));
-
-                    if (ErrorNo == (int)DialogResult.Cancel)
-                    {
-                        return false;
-                    }
-                }
-            }
-            while (true);
-        }
-
         //  Read navigation data into RenderImage class
-        private static bool LoadData(string FileName)
+        private static bool LoadData(string spherePath)
         {
-            int i = 0, j = 0;
-            int FileType = 0;
-            string Linefeed = null;
-            int Count = 0;
-            string[] data;
-
             try
             {
                 clsSphere sphere = Model.Globals.Sphere;
-                //  Open file
-                StreamReader s = File.OpenText(FileName);
+                SphereData sphereData = new SphereData();
 
-                //  Load file-type reference and total dimensions
-                data = s.ReadLine().Split();
-                FileType = Convert.ToInt16(data[0]);
-
-                // Redimension the transformation matrix
-                int iDimensions = Convert.ToInt16(data[1]);
-                Model.Globals.Dimensions = iDimensions;
-                sphere.PositionMatrix = new double[iDimensions + 1, iDimensions]; 
-
-                Linefeed = s.ReadLine();
-
-                //  Load transformation matrix
-                for (i = 0; i <= iDimensions; i++)
+                // Load the json sphere file
+                using (StreamReader r = new StreamReader(spherePath))
                 {
-                    data = s.ReadLine().Split();
-
-                    for (j = 0; j <= iDimensions - 1; j++)
-                        sphere.PositionMatrix[i, j] = double.Parse(data[j]);
+                    string jsonSettings = r.ReadToEnd();
+                    sphereData = JsonConvert.DeserializeObject<SphereData>(jsonSettings);
                 }
 
-                ImageRendering.ScaleValue = double.Parse(s.ReadLine());
-                Linefeed = s.ReadLine();
+                SphereData.RootObject sphereRoot = new sphereData.RootObject();
 
-                //  Load Rendering settings
+                SphereData.Type fileInfo = sphereRoot.Type;
+                SphereData.Viewing viewing = sphereRoot.Viewing;
+                SphereData.Raytracing raytracing = sphereRoot.Raytracing;
+                SphereData.Rendering rendering = sphereRoot.Rendering;
+
+                // Load file-type reference and total dimensions
+                int FileType = fileInfo.FileType;
+
+                // Redimension the transformation matrix
+                int dimensions = Convert.ToInt16(fileInfo.Dimensions);
+                Model.Globals.Dimensions = dimensions;
+                sphere.PositionMatrix = new double[dimensions + 1, dimensions]; 
+
+                // Load transformation matrix
+                for (int i = 0; i <= dimensions; i++)
+                {
+                    for (int j = 0; j <= dimensions - 1; j++) {
+                        sphere.PositionMatrix[i, j] = sphereRoot.PositionMatrix[i, j];
+                    }
+                }
+
+                ImageRendering.ScaleValue = sphereRoot.ScaleValue;
+
+                // Load Rendering settings
                 if (FileType == 3)
                 {
-                    data = s.ReadLine().Split();
-                    ImageRendering.Bailout = float.Parse(data[2]);
-                    for (Count = 0; Count <= 1; Count++)
+                    ImageRendering.Bailout = sphereRoot.Bailout;
+                    for (int count = 0; count <= 1; count++)
                     {
-                        data = s.ReadLine().Split();
-                        sphere.ColourDetail[Count] = float.Parse(data[0]);
+                        sphere.ColourDetail[count] = sphereRoot.Rendering.ColourDetail[count];
                     }
 
                     // Sphere Viewing window
-                    sphere.AngularResolution = viewing.ViewportResolution;
+                    sphere.AngularResolution = sphereRoot.ViewportResolution;
                     sphere.Radius = viewing.SphereRadius;
                     sphere.CentreLatitude = viewing.CentreLatitude;
                     sphere.CentreLongitude = viewing.CentreLongitude;
@@ -177,9 +110,6 @@ namespace Worlds5
                     sphere.EndDistance = rendering.EndDistance;
                     sphere.SurfaceContrast = rendering.SurfaceContrast;
                     sphere.LightingAngle = rendering.LightingAngle;
-
-                    //  Close file
-                    s.Close();
                 }
                 else
                 {
@@ -199,6 +129,91 @@ namespace Worlds5
                     MessageBoxButtons.RetryCancel,
                     MessageBoxIcon.Exclamation);
                 return false;
+            }
+            return true;
+        }
+        
+        public static bool SaveData(string spherePath)
+        {
+            float[] ColourDetail = new float[2];
+
+            clsSphere sphere = Model.Globals.Sphere;
+            SphereData sphereData = new SphereData();
+            SphereData.RootObject sphereRoot = new sphereData.RootObject();
+
+            SphereData.Type fileInfo = sphereRoot.Type;
+            SphereData.Viewing viewing = sphereRoot.Viewing;
+            SphereData.Raytracing raytracing = sphereRoot.Raytracing;
+            SphereData.Rendering rendering = sphereRoot.Rendering;
+
+            try
+            {
+                fileInfo.FileType = 3;
+
+                int dimensions = Model.Globals.Dimensions;
+
+                // Save transformation matrix
+                for (int i = 0; i <= dimensions; i++)
+                {
+                    for (int j = 0; j <= dimensions - 1; j++) {
+                        sphereRoot.PositionMatrix[i, j] = sphere.PositionMatrix[i, j];
+                    }
+                }
+
+                sphereRoot.ScaleValue = ImageRendering.ScaleValue;
+                ImageRendering.Bailout = sphereRoot.Bailout;
+                
+                for (int count = 0; count <= 1; count++)
+                {
+                    sphereRoot.Rendering.ColourDetail[count] = sphere.ColourDetail[count];
+                }
+
+                // Sphere Viewing window
+                sphereRoot.AngularResolution = sphere.ViewportResolution;
+                viewing.Radius = sphere.SphereRadius;
+                viewing.CentreLatitude = sphere.CentreLatitude;
+                viewing.CentreLongitude = sphere.CentreLongitude;
+                viewing.VerticalView = sphere.VerticalView;
+                viewing.HorizontalView = sphere.HorizontalView;
+
+                // Raytracing
+                raytracing.SamplingInterval = sphere.SamplingInterval;
+                raytracing.SurfaceThickness = sphere.SurfaceThickness;
+                raytracing.RayPoints = sphere.RayPoints;
+                raytracing.MaxSamples = sphere.MaxSamples;
+                raytracing.BoundaryInterval = sphere.BoundaryInterval;
+                raytracing.BinarySearchSteps = sphere.BinarySearchSteps;
+                raytracing.ActiveIndex = sphere.ActiveIndex;
+
+                // Rendering
+                rendering.ExposureValue = sphere.ExposureValue;
+                rendering.Saturation = sphere.Saturation;
+                rendering.StartDistance = sphere.StartDistance;
+                rendering.EndDistance = sphere.EndDistance;
+                rendering.SurfaceContrast = sphere.SurfaceContrast;
+                rendering.LightingAngle = sphere.LightingAngle;
+
+                // Save the json file
+                using (StreamWriter w = new StreamWriter(spherePath))
+                {
+                    string jsonSettings = JsonConvert.SerializeObject<SphereData>(sphereData);
+                    w.Write(jsonSettings);
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                int ErrorNo = (int)(MessageBox.Show(
+                                    "Couldn't write data to the file:\n" + spherePath +
+                                    "\n\nError reported: " + ex.Message + "\n",
+                                    "Save Data Error",
+                                    MessageBoxButtons.RetryCancel,
+                                    MessageBoxIcon.Exclamation));
+
+                if (ErrorNo == (int)DialogResult.Cancel)
+                {
+                    return false;
+                }
             }
             return true;
         }
