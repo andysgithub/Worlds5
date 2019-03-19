@@ -74,9 +74,9 @@ namespace Worlds5
                 windowState.width = mainWindow.MainWidth;
                 windowState.height = mainWindow.MainHeight;
                 windowState.left = mainWindow.MainLeft;
-                if (Screen.AllScreens.GetUpperBound(0) == 0 && iLeft > Screen.PrimaryScreen.Bounds.Width)
+                if (Screen.AllScreens.GetUpperBound(0) == 0 && windowLeft > Screen.PrimaryScreen.Bounds.Width)
                 {
-                    iLeft = Screen.PrimaryScreen.Bounds.Width - iWidth;
+                    windowLeft = Screen.PrimaryScreen.Bounds.Width - windowWidth;
                 }
 				windowState.top = mainWindow.MainTop; 
 			}
@@ -97,7 +97,7 @@ namespace Worlds5
         }
         
 		//  Save settings to property settings
-		public static void SaveSettings(int iWidth, int iHeight, int iLeft, int iTop, FormWindowState fwsState) 
+		public static void SaveSettings(int windowWidth, int windowHeight, int windowLeft, int windowTop, FormWindowState windowState) 
 		{
             clsSphere sphere = Model.Globals.Sphere;
             SettingsData settingsData = new SettingsData();
@@ -112,7 +112,6 @@ namespace Worlds5
                 // Preferences
                 prefs.NavPath = Globals.SetUp.NavPath;
                 prefs.SeqPath = Globals.SetUp.SeqPath;
-
                 prefs.Toolbar = Globals.SetUp.Toolbar;
                 prefs.Labels = Globals.SetUp.Labels;
                 prefs.ToolTips = Globals.SetUp.ToolTips;
@@ -125,15 +124,15 @@ namespace Worlds5
                 imaging.BitmapHeight = Globals.SetUp.BitmapHeight;
 
                 // Main window
-                if (fwsState != FormWindowState.Minimized) 
+                if (windowState != FormWindowState.Minimized) 
 				{
-                    mainWindow.MainState = fwsState.ToString();
-					if (fwsState != FormWindowState.Maximized) 
+                    mainWindow.MainState = windowState.ToString();
+					if (windowState != FormWindowState.Maximized) 
 					{
-                        mainWindow.MainWidth = iWidth;
-                        mainWindow.MainHeight = iHeight;
-                        mainWindow.MainLeft = iLeft;
-                        mainWindow.MainTop = iTop;
+                        mainWindow.MainWidth = windowWidth;
+                        mainWindow.MainHeight = windowHeight;
+                        mainWindow.MainLeft = windowLeft;
+                        mainWindow.MainTop = windowTop;
 					} 
 				} 
 			}

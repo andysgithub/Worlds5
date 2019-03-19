@@ -14,8 +14,8 @@
     "ScaleValue": 1.0,
     "Bailout": 3.0,
     "Viewing": {
-        "ViewportResolution": 0.055,
-        "SphereRadius": 1.0,
+        "AngularResolution": 0.055,
+        "Radius": 1.0,
         "CentreLatitude": 0.0,
         "CentreLongitude": 0.0,
         "VerticalView": 20.0,

@@ -206,12 +206,12 @@ namespace Worlds5.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public double SphereRadius {
+        public double Radius {
             get {
-                return ((double)(this["SphereRadius"]));
+                return ((double)(this["Radius"]));
             }
             set {
-                this["SphereRadius"] = value;
+                this["Radius"] = value;
             }
         }
         

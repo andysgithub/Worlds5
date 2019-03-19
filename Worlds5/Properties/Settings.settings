@@ -47,7 +47,7 @@
     <Setting Name="MainTop" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">300</Value>
     </Setting>
-    <Setting Name="SphereRadius" Type="System.Double" Scope="User">
+    <Setting Name="Radius" Type="System.Double" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="CentreLatitude" Type="System.Double" Scope="User">

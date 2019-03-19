@@ -16,8 +16,8 @@ namespace Worlds5
 
         public class Viewing
         {
-            public double ViewportResolution { get; set; }
-            public double SphereRadius { get; set; }
+            public double AngularResolution { get; set; }
+            public double Radius { get; set; }
             public double CentreLatitude { get; set; }
             public double CentreLongitude { get; set; }
             public double VerticalView { get; set; }

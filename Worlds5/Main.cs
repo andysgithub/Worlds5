@@ -100,7 +100,7 @@ namespace Worlds5
             {
                 // Extract address from pathname
                 Globals.SetUp.NavPath = Path.GetDirectoryName(PathName);
-                currentAddress = Globals.SetUp.NavPath + "\\" + Path.GetFileNameWithoutExtension(PathName);
+                currentAddress = Globals.SetUp.NavPath + "\\" + Path.GetFileName(PathName);
 
                 if (Navigation.Navigate(currentAddress))
                 {

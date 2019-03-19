@@ -17,13 +17,13 @@ namespace Worlds5
         public static bool Navigate(string Address)
         {
             // Check that address is available if attempting to load file
-            if (Address != "" && !Address.StartsWith("seq:"))
+            if (Address != "")
             {
                 // Load navigation file from Address if known
-                if (File.Exists(Address + ".nav"))
+                if (File.Exists(Address))
                 {
                     // Load navigation parameters
-                    if (LoadData(Address + ".nav"))
+                    if (LoadData(Address))
                     {
                         return true;
                     }
@@ -86,9 +86,9 @@ namespace Worlds5
                         sphere.ColourDetail[count] = sphereRoot.Rendering.ColourDetail[count];
                     }
 
-                    // Sphere Viewing window
-                    sphere.AngularResolution = sphereRoot.ViewportResolution;
-                    sphere.Radius = viewing.SphereRadius;
+                    // Viewing window
+                    sphere.AngularResolution = sphereRoot.AngularResolution;
+                    sphere.Radius = viewing.Radius;
                     sphere.CentreLatitude = viewing.CentreLatitude;
                     sphere.CentreLongitude = viewing.CentreLongitude;
                     sphere.VerticalView = viewing.VerticalView;
@@ -168,9 +168,9 @@ namespace Worlds5
                     sphereRoot.Rendering.ColourDetail[count] = sphere.ColourDetail[count];
                 }
 
-                // Sphere Viewing window
-                sphereRoot.AngularResolution = sphere.ViewportResolution;
-                viewing.Radius = sphere.SphereRadius;
+                // Viewing window
+                sphereRoot.AngularResolution = sphere.AngularResolution;
+                viewing.Radius = sphere.Radius;
                 viewing.CentreLatitude = sphere.CentreLatitude;
                 viewing.CentreLongitude = sphere.CentreLongitude;
                 viewing.VerticalView = sphere.VerticalView;
