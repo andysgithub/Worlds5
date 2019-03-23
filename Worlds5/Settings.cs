@@ -61,8 +61,6 @@ namespace Worlds5
             sphere.EndDistance[0] = (double)updEndDistance.Value;
             sphere.SurfaceContrast = (float)updSurfaceContrast.Value;
             sphere.LightingAngle = (float)updLightingAngle.Value;
-            Globals.SetUp.BitmapWidth = (int)updBitmapWidth.Value;
-            Globals.SetUp.BitmapHeight = (int)updBitmapHeight.Value;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -99,8 +97,6 @@ namespace Worlds5
             updEndDistance.Value = (decimal)sphere.EndDistance[0];
             updSurfaceContrast.Value = (decimal)sphere.SurfaceContrast;
             updLightingAngle.Value = (decimal)sphere.LightingAngle;
-            updBitmapWidth.Value = Globals.SetUp.BitmapWidth;
-            updBitmapHeight.Value = Globals.SetUp.BitmapHeight;
         }
 
         #region Help functions

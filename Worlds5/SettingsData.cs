@@ -31,8 +31,6 @@ namespace Worlds5
         {
             public int FramesPerSec { get; set; }
             public bool AutoRepeat { get; set; }
-            public int BitmapHeight { get; set; }
-            public int BitmapWidth { get; set; }
         }
 
         public class RootObject

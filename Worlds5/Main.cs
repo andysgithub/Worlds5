@@ -47,13 +47,6 @@ namespace Worlds5
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            string VersionNumber = FileVersionInfo.GetVersionInfo
-                                                (System.Reflection.Assembly.GetExecutingAssembly().Location)
-                                            .FileMajorPart.ToString().Trim() + "." +
-                                   FileVersionInfo.GetVersionInfo
-                                                (System.Reflection.Assembly.GetExecutingAssembly().Location)
-                                            .FileMinorPart.ToString().Trim();
-            
             // Instantiate a new sphere before setting properties
             Model.Globals.Sphere = new clsSphere();
             imageRendering = new ImageRendering();
@@ -61,7 +54,7 @@ namespace Worlds5
 
             WindowState state = Initialisation.LoadSettings();
 
-            this.WindowState = (state.State == "NORMAL" ? FormWindowState.Normal : FormWindowState.Maximized);
+            this.WindowState = (state.State == "Normal" ? FormWindowState.Normal : FormWindowState.Maximized);
 
             if (state.Width > 0) this.Width = state.Width;
             if (state.Height > 0) this.Height = state.Height;
@@ -79,6 +72,10 @@ namespace Worlds5
             string PathName = null;
 
             OpenFileDialog dlg = new OpenFileDialog();
+            if (Directory.Exists(Globals.SetUp.NavPath))
+            {
+                dlg.InitialDirectory = Globals.SetUp.NavPath;
+            }
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {
@@ -103,17 +100,6 @@ namespace Worlds5
                 }
             }
         }
-
-        /// <summary>
-        /// Callback to update the image from a line processing node.
-        /// </summary>
-        /// <param name="latitude"></param>
-        /// <param name="longitude"></param>
-        /// <param name="rayColors"></param>
-        //private void GetRayData(double latitude, double longitude, Model.Globals.RGBQUAD rayColors)
-        //{
-        //    imageDisplay.updateImage(latitude, longitude, rayColors);
-        //}
 
         /// <summary>
         /// Callback to update the status after a line has been processed.
@@ -166,9 +152,12 @@ namespace Worlds5
 
         private void RefreshImage()
         {
-            imageRendering.Redisplay();
-            // Display the bitmap
-            picImage.Image = imageRendering.GetBitmap();
+            if (Model.Globals.Sphere.RayMap != null)
+            {
+                imageRendering.Redisplay();
+                // Display the bitmap
+                picImage.Image = imageRendering.GetBitmap();
+            }
         }
 
         public void mnuClose_Click(object sender, EventArgs e)
@@ -180,20 +169,20 @@ namespace Worlds5
         {
             int ClientHeight = this.pnlImage.Height;
             int ClientWidth = this.pnlImage.Width;
-            int BitmapWidth = Globals.SetUp.BitmapWidth;
-            int BitmapHeight = Globals.SetUp.BitmapHeight;
-            float ImageFormat = (float)BitmapWidth / (float)BitmapHeight;
+
+            Globals.BitmapSizeType bitmapSize = getBitmapSize();
+            float ImageRatio = (float)bitmapSize.Width / (float)bitmapSize.Height;
 
             if (bResizing) return;
             bResizing = true;
 
             // If the working area is wider format than the bitmap
-            if ((float)ClientWidth / (float)ClientHeight > ImageFormat)
+            if ((float)ClientWidth / (float)ClientHeight > ImageRatio)
             {
                 // Restrict the image height
                 picImage.Height = ClientHeight;
                 // Scale the image width
-                picImage.Width = (int)(picImage.Height * ImageFormat);
+                picImage.Width = (int)(picImage.Height * ImageRatio);
 
                 picImage.Top = 0;
                 picImage.Left = (ClientWidth - picImage.Width) / 2;
@@ -203,13 +192,43 @@ namespace Worlds5
                 // Restrict the image width
                 picImage.Width = ClientWidth;
                 // Scale the image height
-                picImage.Height = (int)(picImage.Width / ImageFormat);
+                picImage.Height = (int)(picImage.Width / ImageRatio);
 
                 picImage.Top = (ClientHeight - picImage.Height) / 2;
                 picImage.Left = 0;
             }
 
             bResizing = false;
+        }
+
+        private Globals.BitmapSizeType getBitmapSize()
+        {
+            clsSphere sphere = Model.Globals.Sphere;
+            double sphereResolution = sphere.AngularResolution * Globals.DEG_TO_RAD / 2;
+            double stepSize = Math.Sin(sphereResolution);
+
+            double verticalView = sphere.VerticalView * Globals.DEG_TO_RAD / 2;
+            double maxVertical = Math.Sin(verticalView);
+
+            double horizontalView = sphere.HorizontalView * Globals.DEG_TO_RAD / 2;
+            double maxHorizontal = Math.Sin(horizontalView);
+
+            Globals.BitmapSize.Height = (int)(maxVertical / stepSize);
+            Globals.BitmapSize.Width = (int)(maxHorizontal / stepSize);
+
+            return Globals.BitmapSize;
+        }
+
+        private int getBitmapWidth()
+        {
+            clsSphere sphere = Model.Globals.Sphere;
+            double sphereResolution = sphere.AngularResolution * Globals.DEG_TO_RAD / 2;
+            double stepSize = Math.Sin(sphereResolution);
+
+            double horizontalView = sphere.HorizontalView * Globals.DEG_TO_RAD / 2;
+            double maxHorizontal = Math.Sin(horizontalView);
+
+            return (int)(maxHorizontal / stepSize);
         }
 
         private void mnuReset_Click(object sender, EventArgs e)
@@ -245,22 +264,22 @@ namespace Worlds5
                     if (e.Alt)
                     {
                         double UnitsPerPixel = Model.Globals.Sphere.AngularResolution;
-                        fHeight = Globals.SetUp.BitmapHeight * UnitsPerPixel;
-                        fWidth = Globals.SetUp.BitmapWidth * UnitsPerPixel;
+                        //fHeight = Globals.SetUp.BitmapHeight * UnitsPerPixel;
+                       //fWidth = Globals.SetUp.BitmapWidth * UnitsPerPixel;
                     }
                     else
                     {
-                        float dRatio = (float)Globals.SetUp.BitmapWidth / Globals.SetUp.BitmapHeight;
-                        if (dRatio > 1)
-                        {
-                            fHeight = 2;
-                            fWidth = fHeight * dRatio;
-                        }
-                        else
-                        {
-                            fWidth = 2;
-                            fHeight = fWidth * dRatio;
-                        }
+                        //float dRatio = (float)Globals.SetUp.BitmapWidth / Globals.SetUp.BitmapHeight;
+                        //if (dRatio > 1)
+                        //{
+                        //    fHeight = 2;
+                        //    fWidth = fHeight * dRatio;
+                        //}
+                        //else
+                        //{
+                        //    fWidth = 2;
+                        //    fHeight = fWidth * dRatio;
+                        //}
                     }
 
                     bScaleChanged = true;

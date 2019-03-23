@@ -73,7 +73,7 @@ namespace Model
                         double yTilt = yTiltValues != null && yTiltValues.Count > 0 ? yTiltValues[i] : 0;
                         double tiltX = xTilt + lightingAngle;
                         double tiltY = yTilt + lightingAngle;
-                        sphere.ExposureValue[i] = (float)(Math.Cos(tiltX) * Math.Cos(tiltY));
+                        exposureValue = (float)(Math.Cos(tiltX) * Math.Cos(tiltY));
 
                         float surfaceContrast = sphere.SurfaceContrast / 10;
 

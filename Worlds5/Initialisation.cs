@@ -64,8 +64,6 @@ namespace Worlds5
                 // Imaging settings
 				Globals.SetUp.FramesPerSec = imaging.FramesPerSec;
                 Globals.SetUp.AutoRepeat = imaging.AutoRepeat;
-                Globals.SetUp.BitmapWidth = imaging.BitmapWidth;
-                Globals.SetUp.BitmapHeight = imaging.BitmapHeight;
 
                 // Main window
                 windowState.State = mainWindow.MainState;
@@ -100,9 +98,9 @@ namespace Worlds5
             clsSphere sphere = Model.Globals.Sphere;
             SettingsData.RootObject settingsRoot = new SettingsData.RootObject();
 
-            SettingsData.Preferences prefs = settingsRoot.Preferences;
-            SettingsData.Imaging imaging = settingsRoot.Imaging;
-            SettingsData.MainWindow mainWindow = settingsRoot.MainWindow;
+            SettingsData.Preferences prefs = new SettingsData.Preferences();
+            SettingsData.Imaging imaging = new SettingsData.Imaging();
+            SettingsData.MainWindow mainWindow = new SettingsData.MainWindow();
 
             try
 			{
@@ -117,8 +115,6 @@ namespace Worlds5
                 // Imaging settings
                 imaging.FramesPerSec = Globals.SetUp.FramesPerSec;
                 imaging.AutoRepeat = Globals.SetUp.AutoRepeat;
-                imaging.BitmapWidth = Globals.SetUp.BitmapWidth;
-                imaging.BitmapHeight = Globals.SetUp.BitmapHeight;
 
                 // Main window
                 if (windowState != FormWindowState.Minimized) 
@@ -136,6 +132,10 @@ namespace Worlds5
 			catch
 			{
 			}
+
+            settingsRoot.Preferences = prefs;
+            settingsRoot.Imaging = imaging;
+            settingsRoot.MainWindow = mainWindow;
 
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string settingsPath = Path.Combine(appDataPath, "Worlds5", "settings.json");

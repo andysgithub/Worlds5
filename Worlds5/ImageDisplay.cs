@@ -9,7 +9,7 @@ namespace Worlds5
     public unsafe class ImageDisplay
     {
         private Bitmap FinalBitmap = null;
-        private BitmapData bitmapData;
+        private BitmapData bitmapData = null;
         private clsSphere sphere = Model.Globals.Sphere;
         private double verticalView = 0;
         private double horizontalView = 0;
@@ -36,10 +36,14 @@ namespace Worlds5
             FinalBitmap = new Bitmap(bitmapWidth, bitmapHeight, PixelFormat.Format32bppRgb);
         }
 
-        public void updateImage(double degreesLat, double degreesLong, Model.Globals.RGBQUAD colours)
+        public void updateImage(double rayCountX, double rayCountY, Model.Globals.RGBQUAD colours)
         {
-            double latitude = degreesLat * Globals.DEG_TO_RAD;
-            double longitude = degreesLong * Globals.DEG_TO_RAD;
+            // Get lat/long from rayCountX/Y
+            double latitude = sphere.LatitudeStart - rayCountY * sphere.AngularResolution;
+            double longitude = sphere.LongitudeStart - rayCountX * sphere.AngularResolution;
+
+            latitude = latitude * Globals.DEG_TO_RAD;
+            longitude = longitude * Globals.DEG_TO_RAD;
 
             // If latitude and longitude are within the field of view
             if (Math.Abs(latitude) <= verticalView
@@ -74,24 +78,6 @@ namespace Worlds5
         public Bitmap GetBitmap()
         {
             return FinalBitmap;
-        }
-
-        private void SetPixel(int x, byte* row, Model.Globals.RGBQUAD colours)
-        {
-            int iIndex = x * 4;
-
-            try
-            {
-                //if (row[iIndex] == 0)
-                {
-                    row[iIndex++] = colours.rgbBlue;
-                    row[iIndex++] = colours.rgbGreen;
-                    row[iIndex++] = colours.rgbRed;
-                }
-            }
-            catch
-            {
-            }
         }
 
         public void LockBitmap()

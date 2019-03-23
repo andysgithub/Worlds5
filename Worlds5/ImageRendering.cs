@@ -1,7 +1,9 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Model;
 
 namespace Worlds5
@@ -13,7 +15,6 @@ namespace Worlds5
         private clsSphere sphere;
         private ImageDisplay imageDisplay;
         private int linesProcessed = 0;
-        private bool redisplayPending = false;
 
         //  Image display settings
         // private static Size m_SeqSize;			// Width & Height of sequence frames
@@ -72,11 +73,11 @@ namespace Worlds5
         #region DLL Imports
 
         [DllImport("Unmanaged.dll")]
-        static extern void TraceRay(double startDistance, double[] increment, double surfaceThickness,
+        static extern void TraceRay(double startDistance, double increment, double surfaceThickness,
             double xFactor, double yFactor, double zFactor,
             [Out, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.I1)] bool[] externalsArray,
             float[] valuesArray, float[] anglesArray, double[] distancesArray,
-            int[] rayPoints, int[] maxSamples, double boundaryInterval, int[] binarySearchSteps,
+            int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
             int activeIndex);
 
         //[DllImport("Unmanaged.dll")]
@@ -113,129 +114,116 @@ namespace Worlds5
         public void PerformRayTracing()
         {
             imageDisplay = new ImageDisplay();
+            imageDisplay.LockBitmap();
+
             try
             {
                 // Initialise ray map
                 sphere.InitialiseRayMap();
 
                 int totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
-                linesProcessed = 0;
-                imageDisplay.LockBitmap();
+                int totalRays = (int)(sphere.HorizontalView / sphere.AngularResolution);
 
-                Parallel.For(0, totalLines, lineIndex =>
+                linesProcessed = 0;
+
+                //for (int rayCountY = 0; rayCountY < totalLines; rayCountY++)
+                Parallel.For(0, totalLines, rayCountY =>
                 {
-                    // Perform raytracing
-                    RenderRays((int)lineIndex);
-                    RowCompleted((int)lineIndex, DisplayOption.None);
+                    // For each longitude point on this line
+                    //for (int rayCountX = 0; rayCountX < totalRays; rayCountX++)
+                    Parallel.For(0, totalRays, rayCountX =>
+                    {
+                        try
+                        {
+                            // Perform raytracing
+                            TracedRay tracedRay = ProcessRay(sphere, rayCountX, rayCountY);
+                            // Add this ray to the ray map in the sphere
+                            sphere.RecordRay(tracedRay, rayCountX, rayCountY);
+                            ProgressChanged(rayCountX, rayCountY, tracedRay);
+                        }
+                        catch
+                        { }
+                    });
+                    RowCompleted((int)rayCountY, DisplayOption.None);
                 });
-                imageDisplay.UnlockBitmap();
+                
+                Parallel.For(0, totalLines, rayCountY =>
+                {
+                    // For each longitude point on this line
+                    //for (int rayCountX = 0; rayCountX < totalRays; rayCountX++)
+                    Parallel.For(0, totalRays, rayCountX =>
+                    {
+                        try
+                        {
+                            // Set the colour and display the point
+                            TracedRay tracedRay = SetRayColour(sphere, rayCountX, rayCountY);
+                            imageDisplay.updateImage(rayCountX, rayCountY, tracedRay.bmiColors);
+                        }
+                        catch
+                        { }
+                    });
+                });
             }
-            catch (InvalidOperationException)
-            { }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error: " + e.Message, "Raytracing Error");
+            }
+
+            imageDisplay.UnlockBitmap();
         }
 
         public void Redisplay()
         {
             //picImage.Image = new Bitmap(picImage.Image.Width, picImage.Image.Height);
-
-            int totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
-            linesProcessed = 0;
-
-            Parallel.For(0, totalLines, lineIndex =>
+            if (Model.Globals.Sphere.RayMap != null)
             {
-                // Perform raytracing
-                if (Model.Globals.Sphere.RayMap == null)
+                int totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
+                linesProcessed = 0;
+
+                try
                 {
-                    RenderRays((int)lineIndex);
+                    // for (int lineIndex = 0; lineIndex < totalLines; lineIndex++)
+                    Parallel.For(0, totalLines, lineIndex =>
+                    {
+                        // Perform raytracing
+                        Redisplay(lineIndex);
+                        RowCompleted((int)lineIndex, DisplayOption.None);
+                    });
                 }
-                else
+                catch (Exception e)
                 {
-                    Redisplay((int)lineIndex);
+                    MessageBox.Show("Error: " + e.Message, "Redisplay Error");
                 }
-                RowCompleted((int)lineIndex, DisplayOption.None);
-            });
+            }
         }
 
         private void ProgressChanged(int rayCountX, int rayCountY, TracedRay ray)
         {
-            int totalRays = (int)((sphere.LongitudeStart - sphere.LongitudeEnd) / sphere.AngularResolution);
+            int totalRays = (int)(sphere.HorizontalView / sphere.AngularResolution);
 
             // If current row is still being processed
             if (rayCountX < totalRays-1)
             {
-                // Get lat/long from rayCountX/Y
-                double latitude = sphere.LatitudeStart - rayCountY * sphere.AngularResolution;
-                double longitude = sphere.LongitudeStart - rayCountX * sphere.AngularResolution;
-
-                imageDisplay.updateImage(latitude, longitude, ray.bmiColors);
+                imageDisplay.updateImage(rayCountX, rayCountY, ray.bmiColors);
             }
         }
 
         private void RowCompleted(int lineIndex, DisplayOption displayOption)
         {
-            if (displayOption == DisplayOption.Cancel)
-            {
-                //staStatus.Items[0].Text = "Ray tracing cancelled.";
-
-                if (redisplayPending)
-                {
-                    redisplayPending = false;
-                    // Perform raytracing
-                    Redisplay(lineIndex);
-                    RowCompleted(lineIndex, DisplayOption.None);
-                    return;
-                }
-            }
-
-            double totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
             linesProcessed++;
-
-            if (linesProcessed < totalLines)
-            //{
-            //    // Frame has completed processing
-            //    if (frameCompleted != null)
-            //        // Call SaveFrame in Sequence via the FrameCompletedDelegate
-            //        frameCompleted();
-            //}
-            //else
-            {
-                // Call the UpdateStatus function in Main
-                updateStatus?.Invoke(linesProcessed);
-            }
-        }
-
-        // Process this line of latitude
-        public void RenderRays(int rayCountY)
-        {
-            int totalRays = (int)((sphere.LongitudeStart - sphere.LongitudeEnd) / sphere.AngularResolution);
-            
-            // For each longitude point on this line
-            for (int rayCountX = 0; rayCountX < totalRays; rayCountX++)
-            {
-                TracedRay tracedRay = ProcessRay(sphere, rayCountX, rayCountY);
-                // Add this ray to the ray map in the sphere
-                sphere.RecordRay(tracedRay, rayCountX, rayCountY);
-                // Set the colour for this ray
-                tracedRay = SetRayColour(sphere, rayCountX, rayCountY);
-                // Update the ray in the sphere
-                sphere.RecordRay(tracedRay, rayCountX, rayCountY);
-
-                ProgressChanged(rayCountX, rayCountY, tracedRay);
-            }
+            // Call the UpdateStatus function in Main
+            updateStatus?.Invoke(linesProcessed);
         }
 
         public void Redisplay(int rayCountY)
         {
-            int rayEndX = (int)((sphere.LongitudeStart - sphere.LongitudeEnd) / sphere.AngularResolution);
+            int totalRays = (int)(sphere.HorizontalView / sphere.AngularResolution);
 
             // For each longitude point on this line
-            for (int rayCountX = 0; rayCountX < rayEndX; rayCountX++)
+            for (int rayCountX = 0; rayCountX < totalRays; rayCountX++)
             {
                 // Display the point on this line of latitude
                 TracedRay tracedRay = SetRayColour(sphere, rayCountX, rayCountY);
-                // Update the ray in the sphere
-                //sphere.RecordRay(tracedRay, rayCountX, rayCountY);
-
                 ProgressChanged(rayCountX, rayCountY, tracedRay);
             }
         }
@@ -255,13 +243,14 @@ namespace Worlds5
             float[] modulusValues = new float[100];
             float[] angleValues = new float[100];
             double[] distanceValues = new double[100];
+            int i = sphere.ActiveIndex;
 
             // Trace the ray from the sphere radius outwards
-            TraceRay(sphere.Radius, sphere.SamplingInterval, sphere.SurfaceThickness,
+            TraceRay(sphere.Radius, sphere.SamplingInterval[i], sphere.SurfaceThickness,
                         xFactor, yFactor, zFactor,
                         externalPoints, modulusValues, angleValues, distanceValues,
-                        sphere.RayPoints, sphere.MaxSamples, sphere.BoundaryInterval, sphere.BinarySearchSteps,
-                        sphere.ActiveIndex);
+                        sphere.RayPoints[i], sphere.MaxSamples[i], sphere.BoundaryInterval, sphere.BinarySearchSteps[i],
+                        i);
 
             // Record the fractal value collection for this ray
             tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);

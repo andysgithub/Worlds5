@@ -59,14 +59,12 @@ namespace Worlds5
             public string   NavPath; 
 			public string   SeqPath;
             public int      FramesPerSec;
-            public int      BitmapWidth;
-            public int      BitmapHeight;
         } 
         
-		public struct POINTL 
-		{ 
-			public int X; 
-			public int Y; 
+		public struct BitmapSizeType
+        { 
+			public int Width; 
+			public int Height; 
 		}
 
         public struct BITMAPFILEHEADER 
@@ -125,8 +123,9 @@ namespace Worlds5
 			public RGBQUAD bmiColors; 
 		} 
         
-		public static SetUpType SetUp; 
-		public static BITMAPFILEHEADER FileHeader; 
+		public static SetUpType SetUp;
+        public static BitmapSizeType BitmapSize;
+        public static BITMAPFILEHEADER FileHeader; 
 		public static BITMAPINFOHEADER InfoHeader;
         public static BITMAPINFO_24 BitmapInfo24;
     } 

@@ -16,7 +16,6 @@ namespace Worlds5
         private string extension;
         private ImageRendering imageRendering;
         private string PathName;
-        private bool frameCompleted = false;
 
         // Matric containing a single transformation
         private double[,] manip = new double[6, 6];
@@ -26,7 +25,6 @@ namespace Worlds5
         public Sequence(ImageRendering imageRendering, PictureBox picImage, ImageFormat format)
         {
             this.imageRendering = imageRendering;
-            //imageRendering.frameCompleted += new ImageRendering.FrameCompletedDelegate(SaveFrame);
 
             this.picImage = picImage;
             this.format = format;
@@ -54,7 +52,6 @@ namespace Worlds5
             // For each frame in the sequence
             for (int frameCount = 0; frameCount < totalFrames; frameCount++)
             {
-                frameCompleted = false;
                 // Translate to the centre coords
                 for (int col = 0; col < DimTotal; ++col)
                 {
@@ -89,10 +86,8 @@ namespace Worlds5
                 if (!File.Exists(PathName))
                 {
                     imageRendering.PerformRayTracing();
-                    while (!frameCompleted)
-                    {
-                        Application.DoEvents();
-                    }
+                    SaveFrame();
+                    Application.DoEvents();
                 }
                 else
                 {
@@ -110,7 +105,6 @@ namespace Worlds5
         {
             // File this image
             picImage.Image.Save(PathName, format);
-            frameCompleted = true;
         }
 
         /// <summary>

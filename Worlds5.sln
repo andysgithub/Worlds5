@@ -21,7 +21,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{03D43517-C
 		Docs\API.txt = Docs\API.txt
 		Docs\Calling Sequence.txt = Docs\Calling Sequence.txt
 		Docs\Json Data.txt = Docs\Json Data.txt
-		Docs\settings.json = Docs\settings.json
 		Docs\Settings.txt = Docs\Settings.txt
 	EndProjectSection
 EndProject
