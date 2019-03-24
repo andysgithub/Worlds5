@@ -82,6 +82,8 @@ namespace Worlds5
                 SetTranslation(2, Position);
                 PreMulT();
 
+                imageRendering.InitialiseSphere();
+
                 PathName = String.Format("{0}_{1:000}.{2}", basePath, frameCount, extension);
                 if (!File.Exists(PathName))
                 {
@@ -103,6 +105,7 @@ namespace Worlds5
         /// <param name="rowCount"></param>
         private void SaveFrame()
         {
+            picImage.Image = imageRendering.GetBitmap();
             // File this image
             picImage.Image.Save(PathName, format);
         }

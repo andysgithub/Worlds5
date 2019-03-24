@@ -127,18 +127,19 @@ namespace Worlds5
                 linesProcessed = 0;
 
                 //for (int rayCountY = 0; rayCountY < totalLines; rayCountY++)
+                //for (int rayCountY = totalLines/2; rayCountY < totalLines; rayCountY++)
                 Parallel.For(0, totalLines, rayCountY =>
                 {
                     // For each longitude point on this line
-                    //for (int rayCountX = 0; rayCountX < totalRays; rayCountX++)
+                    //for (int rayCountX = totalRays/2; rayCountX < totalRays; rayCountX++)
                     Parallel.For(0, totalRays, rayCountX =>
                     {
                         try
                         {
-                            // Perform raytracing
-                            TracedRay tracedRay = ProcessRay(sphere, rayCountX, rayCountY);
-                            // Add this ray to the ray map in the sphere
-                            sphere.RecordRay(tracedRay, rayCountX, rayCountY);
+                        // Perform raytracing
+                        TracedRay tracedRay = ProcessRay(sphere, rayCountX, rayCountY);
+                        // Add this ray to the ray map in the sphere
+                        sphere.RecordRay(tracedRay, rayCountX, rayCountY);
                             ProgressChanged(rayCountX, rayCountY, tracedRay);
                         }
                         catch
@@ -146,11 +147,12 @@ namespace Worlds5
                     });
                     RowCompleted((int)rayCountY, DisplayOption.None);
                 });
-                
+
+                //for (int rayCountY = totalLines/2; rayCountY < totalLines; rayCountY++)
                 Parallel.For(0, totalLines, rayCountY =>
                 {
                     // For each longitude point on this line
-                    //for (int rayCountX = 0; rayCountX < totalRays; rayCountX++)
+                    //for (int rayCountX = totalRays/2; rayCountX < totalRays; rayCountX++)
                     Parallel.For(0, totalRays, rayCountX =>
                     {
                         try
