@@ -76,6 +76,8 @@ namespace Worlds5
                 }
 
                 ImageRendering.ScaleValue = sphereRoot.ScaleValue;
+                sphere.RayMap = sphereRoot.RayMap;
+                sphere.ViewportImage = sphereRoot.ViewportImage;
 
                 // Load Rendering settings
                 if (FileType == 3)

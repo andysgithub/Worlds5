@@ -1,0 +1,11 @@
+Menu item to save current sphere
+Includes populated ray map
+Includes current image
+
+Menu item to perform raytrace
+
+When loading sphere:
+  Display image if available
+  Generate new image from ray map on redisplay
+  Generate new ray map when perform raytrace selected
+

@@ -86,17 +86,27 @@ namespace Worlds5
 
             if (PathName != "" && PathName != null)
             {
+                clsSphere sphere = Model.Globals.Sphere;
+
                 // Extract address from pathname
                 Globals.SetUp.NavPath = Path.GetDirectoryName(PathName);
                 currentAddress = Globals.SetUp.NavPath + "\\" + Path.GetFileName(PathName);
 
                 if (Navigation.Navigate(currentAddress))
                 {
-                    imageRendering.InitialiseSphere();
-                    imageRendering.PerformRayTracing();
-
+                    if (sphere.ViewportImage == null) {
+                        if (sphere.RayMap != null)
+                        {
+                            imageRendering.Redisplay();
+                        }
+                        else 
+                        {
+                            imageRendering.InitialiseSphere();
+                            imageRendering.PerformRayTracing();
+                        }
+                    }
                     // Display the bitmap
-                    picImage.Image = imageRendering.GetBitmap();
+                    picImage.Image = sphere.ViewportImage;
                 }
             }
         }
@@ -110,6 +120,7 @@ namespace Worlds5
             staStatus.Items[0].Text = "Rows processed: " + rowCount;
         }
 
+        // Save current image
         private void mnuSave_Click(object sender, EventArgs e)
         {
             string PathName = null;
@@ -142,6 +153,27 @@ namespace Worlds5
                 }
 
                 picImage.Image.Save(PathName, format);
+            }
+        }
+
+        // TODO: Save sphere data
+        private void SaveSphere()
+        {
+            clsSphere sphere = Model.Globals.Sphere;
+
+            string PathName = null;
+
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.Filter =  "Json files (*.json)";
+            dlg.FileName = Path.GetFileNameWithoutExtension(currentAddress);
+
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                PathName = dlg.FileName;
+                int filter = dlg.FilterIndex;
+
+                // Save sphere as json data
+                Navigation.SaveData(PathName);
             }
         }
 

@@ -48,6 +48,8 @@ namespace Model
         public double BoundaryInterval { get; set; }
         // Flag to indicate display of surface region / external region
         public int ActiveIndex { get; set; }
+        // Last generated image
+        public Bitmap ViewportImage { get; set; }
 
         #endregion
 

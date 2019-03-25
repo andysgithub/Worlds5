@@ -51,6 +51,8 @@ namespace Worlds5
             public double[,] PositionMatrix { get; set; }
             public double ScaleValue { get; set; }
             public float Bailout { get; set; }
+            public TracedRay[,] RayMap { get; set; }
+            public Bitmap ViewportImage { get; set; }
 
             public Type Type { get; set; }
             public Viewing Viewing { get; set; }

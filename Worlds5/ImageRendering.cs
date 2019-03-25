@@ -172,6 +172,8 @@ namespace Worlds5
             }
 
             imageDisplay.UnlockBitmap();
+            // Store the image in the sphere
+            sphere.ViewportImage = imageDisplay.GetBitmap();
         }
 
         public void Redisplay()
@@ -187,10 +189,11 @@ namespace Worlds5
                     // for (int lineIndex = 0; lineIndex < totalLines; lineIndex++)
                     Parallel.For(0, totalLines, lineIndex =>
                     {
-                        // Perform raytracing
+                        // Set pixel colours for this line
                         Redisplay(lineIndex);
                         RowCompleted((int)lineIndex, DisplayOption.None);
                     });
+                    sphere.ViewportImage = imageRendering.GetBitmap();
                 }
                 catch (Exception e)
                 {
