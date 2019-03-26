@@ -22,6 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{03D43517-C
 		Docs\Calling Sequence.txt = Docs\Calling Sequence.txt
 		Docs\Json Data.txt = Docs\Json Data.txt
 		Docs\Settings.txt = Docs\Settings.txt
+		Docs\Sphere Notes.txt = Docs\Sphere Notes.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{E453010C-79BD-470C-B387-02F9C65E742A}"

@@ -31,8 +31,9 @@ namespace Worlds5
             this.components = new System.ComponentModel.Container();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.mnuFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuLoad = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuSave = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuLoadSphere = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuSaveSphere = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuSaveImage = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuClose = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -72,37 +73,45 @@ namespace Worlds5
             // mnuFile
             // 
             this.mnuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuLoad,
-            this.mnuSave,
+            this.mnuLoadSphere,
+            this.mnuSaveSphere,
+            this.mnuSaveImage,
             this.toolStripMenuItem1,
             this.mnuClose});
             this.mnuFile.Name = "mnuFile";
             this.mnuFile.Size = new System.Drawing.Size(37, 20);
             this.mnuFile.Text = "File";
             // 
-            // mnuLoad
+            // mnuLoadSphere
             // 
-            this.mnuLoad.Name = "mnuLoad";
-            this.mnuLoad.Size = new System.Drawing.Size(109, 22);
-            this.mnuLoad.Text = "Load...";
-            this.mnuLoad.Click += new System.EventHandler(this.mnuLoad_Click);
+            this.mnuLoadSphere.Name = "mnuLoadSphere";
+            this.mnuLoadSphere.Size = new System.Drawing.Size(180, 22);
+            this.mnuLoadSphere.Text = "Load Sphere...";
+            this.mnuLoadSphere.Click += new System.EventHandler(this.mnuLoadSphere_Click);
             // 
-            // mnuSave
+            // mnuSaveSphere
             // 
-            this.mnuSave.Name = "mnuSave";
-            this.mnuSave.Size = new System.Drawing.Size(109, 22);
-            this.mnuSave.Text = "Save...";
-            this.mnuSave.Click += new System.EventHandler(this.mnuSave_Click);
+            this.mnuSaveSphere.Name = "mnuSaveSphere";
+            this.mnuSaveSphere.Size = new System.Drawing.Size(180, 22);
+            this.mnuSaveSphere.Text = "Save Sphere...";
+            this.mnuSaveSphere.Click += new System.EventHandler(this.mnuSaveSphere_Click);
+            // 
+            // mnuSaveImage
+            // 
+            this.mnuSaveImage.Name = "mnuSaveImage";
+            this.mnuSaveImage.Size = new System.Drawing.Size(180, 22);
+            this.mnuSaveImage.Text = "Save Image...";
+            this.mnuSaveImage.Click += new System.EventHandler(this.mnuSaveImage_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(106, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
             // 
             // mnuClose
             // 
             this.mnuClose.Name = "mnuClose";
-            this.mnuClose.Size = new System.Drawing.Size(109, 22);
+            this.mnuClose.Size = new System.Drawing.Size(180, 22);
             this.mnuClose.Text = "Close";
             this.mnuClose.Click += new System.EventHandler(this.mnuClose_Click);
             // 
@@ -112,21 +121,21 @@ namespace Worlds5
             this.mnuSettings,
             this.mnuRotation});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.settingsToolStripMenuItem.Text = "Tools";
             this.settingsToolStripMenuItem.DropDownOpening += new System.EventHandler(this.settingsToolStripMenuItem_DropDownOpening);
             // 
             // mnuSettings
             // 
             this.mnuSettings.Name = "mnuSettings";
-            this.mnuSettings.Size = new System.Drawing.Size(152, 22);
+            this.mnuSettings.Size = new System.Drawing.Size(128, 22);
             this.mnuSettings.Text = "Settings...";
             this.mnuSettings.Click += new System.EventHandler(this.mnuSettings_Click);
             // 
             // mnuRotation
             // 
             this.mnuRotation.Name = "mnuRotation";
-            this.mnuRotation.Size = new System.Drawing.Size(152, 22);
+            this.mnuRotation.Size = new System.Drawing.Size(128, 22);
             this.mnuRotation.Text = "Rotation...";
             this.mnuRotation.Click += new System.EventHandler(this.mnuRotation_Click);
             // 
@@ -256,7 +265,7 @@ namespace Worlds5
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem mnuFile;
-        private System.Windows.Forms.ToolStripMenuItem mnuLoad;
+        private System.Windows.Forms.ToolStripMenuItem mnuLoadSphere;
         private System.Windows.Forms.ToolStripMenuItem mnuClose;
         private System.Windows.Forms.StatusStrip staStatus;
         private System.Windows.Forms.PictureBox picImage;
@@ -271,10 +280,11 @@ namespace Worlds5
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mnuSettings;
-        private System.Windows.Forms.ToolStripMenuItem mnuSave;
+        private System.Windows.Forms.ToolStripMenuItem mnuSaveImage;
         private System.Windows.Forms.ToolStripMenuItem mnuRotation;
         private System.Windows.Forms.ToolStripMenuItem sequenceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mnuVideoConversion;
+        private System.Windows.Forms.ToolStripMenuItem mnuSaveSphere;
     }
 }
 

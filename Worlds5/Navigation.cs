@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Model;
 using Newtonsoft.Json;
+using System.IO.Compression;
 
 namespace Worlds5
 {
@@ -44,7 +45,6 @@ namespace Worlds5
             try
             {
                 clsSphere sphere = Model.Globals.Sphere;
-                SphereData sphereData = new SphereData();
                 SphereData.RootObject sphereRoot = new SphereData.RootObject();
 
                 // Load the json sphere file
@@ -55,6 +55,7 @@ namespace Worlds5
                 }
 
                 SphereData.Type fileInfo = sphereRoot.Type;
+                SphereData.Navigation navigation = sphereRoot.Navigation;
                 SphereData.Viewing viewing = sphereRoot.Viewing;
                 SphereData.Raytracing raytracing = sphereRoot.Raytracing;
                 SphereData.Rendering rendering = sphereRoot.Rendering;
@@ -65,28 +66,25 @@ namespace Worlds5
                 // Redimension the transformation matrix
                 int dimensions = Convert.ToInt16(fileInfo.Dimensions);
                 Model.Globals.Dimensions = dimensions;
-                sphere.PositionMatrix = new double[dimensions + 1, dimensions]; 
 
-                // Load transformation matrix
-                for (int i = 0; i <= dimensions; i++)
+                // Load Navigation settings
+                sphere.PositionMatrix = navigation.PositionMatrix;
+                //sphere.RayMap = navigation.RayMap;
+
+                // Convert base64 string to compressed byte array
+                byte[] compressedData = Convert.FromBase64String(navigation.ViewportImage);
+                // Uncompress byte array
+                byte[] imageData = Decompress(compressedData);
+                // Convert byte array to image
+                if (imageData.Length > 0)
                 {
-                    for (int j = 0; j <= dimensions - 1; j++) {
-                        sphere.PositionMatrix[i, j] = sphereRoot.PositionMatrix[i, j];
-                    }
+                    sphere.ViewportImage = (Bitmap)Image.FromStream(new MemoryStream(imageData));
                 }
-
-                ImageRendering.ScaleValue = sphereRoot.ScaleValue;
-                sphere.RayMap = sphereRoot.RayMap;
-                sphere.ViewportImage = sphereRoot.ViewportImage;
 
                 // Load Rendering settings
                 if (FileType == 3)
                 {
-                    ImageRendering.Bailout = sphereRoot.Bailout;
-                    for (int count = 0; count <= 1; count++)
-                    {
-                        sphere.ColourDetail[count] = sphereRoot.Rendering.ColourDetail[count];
-                    }
+                    ImageRendering.Bailout = raytracing.Bailout;
 
                     // Viewing window
                     sphere.AngularResolution = viewing.AngularResolution;
@@ -110,6 +108,7 @@ namespace Worlds5
                     sphere.Saturation = rendering.Saturation;
                     sphere.StartDistance = rendering.StartDistance;
                     sphere.EndDistance = rendering.EndDistance;
+                    sphere.ColourDetail = rendering.ColourDetail;
                     sphere.SurfaceContrast = rendering.SurfaceContrast;
                     sphere.LightingAngle = rendering.LightingAngle;
                 }
@@ -134,18 +133,18 @@ namespace Worlds5
             }
             return true;
         }
-        
+
         public static bool SaveData(string spherePath)
         {
             float[] ColourDetail = new float[2];
 
             clsSphere sphere = Model.Globals.Sphere;
-            SphereData.RootObject sphereRoot = new SphereData.RootObject();
 
-            SphereData.Type fileInfo = sphereRoot.Type;
-            SphereData.Viewing viewing = sphereRoot.Viewing;
-            SphereData.Raytracing raytracing = sphereRoot.Raytracing;
-            SphereData.Rendering rendering = sphereRoot.Rendering;
+            SphereData.Type fileInfo = new SphereData.Type();
+            SphereData.Navigation navigation = new SphereData.Navigation();
+            SphereData.Viewing viewing = new SphereData.Viewing();
+            SphereData.Raytracing raytracing = new SphereData.Raytracing();
+            SphereData.Rendering rendering = new SphereData.Rendering();
 
             try
             {
@@ -153,21 +152,19 @@ namespace Worlds5
 
                 int dimensions = Model.Globals.Dimensions;
 
-                // Save transformation matrix
-                for (int i = 0; i <= dimensions; i++)
-                {
-                    for (int j = 0; j <= dimensions - 1; j++) {
-                        sphereRoot.PositionMatrix[i, j] = sphere.PositionMatrix[i, j];
-                    }
-                }
+                navigation.PositionMatrix = sphere.PositionMatrix;
+                //navigation.RayMap = sphere.RayMap;
+                navigation.RayMap = "";
 
-                sphereRoot.ScaleValue = ImageRendering.ScaleValue;
-                ImageRendering.Bailout = sphereRoot.Bailout;
-                
-                for (int count = 0; count <= 1; count++)
-                {
-                    sphereRoot.Rendering.ColourDetail[count] = sphere.ColourDetail[count];
-                }
+                ImageConverter converter = new ImageConverter();
+                // Convert image to byte array
+                byte[] imageData = (byte[])converter.ConvertTo(sphere.ViewportImage, typeof(byte[]));
+                // Compress byte array
+                byte[] compressedData = Compress(imageData);
+                // Convert compressed data to base64 string
+                navigation.ViewportImage = Convert.ToBase64String(compressedData);
+
+                raytracing.Bailout = ImageRendering.Bailout;
 
                 // Viewing window
                 viewing.AngularResolution = sphere.AngularResolution;
@@ -191,25 +188,33 @@ namespace Worlds5
                 rendering.Saturation = sphere.Saturation;
                 rendering.StartDistance = sphere.StartDistance;
                 rendering.EndDistance = sphere.EndDistance;
+                rendering.ColourDetail = sphere.ColourDetail;
                 rendering.SurfaceContrast = sphere.SurfaceContrast;
                 rendering.LightingAngle = sphere.LightingAngle;
+
+                SphereData.RootObject sphereRoot = new SphereData.RootObject();
+                sphereRoot.Type = fileInfo;
+                sphereRoot.Navigation = navigation;
+                sphereRoot.Viewing = viewing;
+                sphereRoot.Raytracing = raytracing;
+                sphereRoot.Rendering = rendering;
 
                 // Save the json file
                 using (StreamWriter w = new StreamWriter(spherePath))
                 {
                     string jsonSettings = JsonConvert.SerializeObject(sphereRoot);
                     w.Write(jsonSettings);
-                    
+
                 }
             }
             catch (Exception ex)
             {
-                int ErrorNo = (int)(MessageBox.Show(
-                                    "Couldn't write data to the file:\n" + spherePath +
-                                    "\n\nError reported: " + ex.Message + "\n",
-                                    "Save Data Error",
-                                    MessageBoxButtons.RetryCancel,
-                                    MessageBoxIcon.Exclamation));
+                int ErrorNo = (int)(
+                    MessageBox.Show(
+                        "Couldn't write data to the file:\n" + spherePath + "\n\nError reported: " + ex.Message + "\n",
+                        "Save Data Error",
+                        MessageBoxButtons.RetryCancel,
+                        MessageBoxIcon.Exclamation));
 
                 if (ErrorNo == (int)DialogResult.Cancel)
                 {
@@ -217,6 +222,27 @@ namespace Worlds5
                 }
             }
             return true;
+        }
+
+        public static byte[] Compress(byte[] data)
+        {
+            MemoryStream output = new MemoryStream();
+            using (DeflateStream dstream = new DeflateStream(output, CompressionLevel.Optimal))
+            {
+                dstream.Write(data, 0, data.Length);
+            }
+            return output.ToArray();
+        }
+
+        public static byte[] Decompress(byte[] data)
+        {
+            MemoryStream input = new MemoryStream(data);
+            MemoryStream output = new MemoryStream();
+            using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
+            {
+                dstream.CopyTo(output);
+            }
+            return output.ToArray();
         }
     }
 }

@@ -14,7 +14,7 @@
         }
 
         "Raytracing": {
-            "RayMap": TracedRay[,]
+			"Bailout": float
             "SamplingInterval": double
             "RayPoints": int
             "MaxSamples": int
@@ -51,9 +51,7 @@
         }
 
         "PositionMatrix": double[6,5]
-        "ScaleValue": double
-        "Bailout": float
-
+		"RayMap": TracedRay[,]
         "Boundary": ImageSettings
         "Exterior": ImageSettings
     }

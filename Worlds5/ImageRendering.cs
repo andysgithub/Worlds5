@@ -44,11 +44,11 @@ namespace Worlds5
         //     set { m_SeqSize = value; }
         // }
 
-        public static double ScaleValue
-        {
-            get { return m_ScaleValue; }
-            set { m_ScaleValue = value; }
-        }
+        //public static double ScaleValue
+        //{
+        //    get { return m_ScaleValue; }
+        //    set { m_ScaleValue = value; }
+        //}
 
         public static float Bailout
         {
@@ -193,7 +193,7 @@ namespace Worlds5
                         Redisplay(lineIndex);
                         RowCompleted((int)lineIndex, DisplayOption.None);
                     });
-                    sphere.ViewportImage = imageRendering.GetBitmap();
+                    sphere.ViewportImage = imageDisplay.GetBitmap();
                 }
                 catch (Exception e)
                 {

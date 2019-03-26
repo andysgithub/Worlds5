@@ -67,7 +67,7 @@ namespace Worlds5
             Initialisation.SaveSettings(this.Width, this.Height, this.Left, this.Top, this.WindowState);
         }
 
-        public void mnuLoad_Click(object sender, EventArgs e)
+        public void mnuLoadSphere_Click(object sender, EventArgs e)
         {
             string PathName = null;
 
@@ -121,7 +121,7 @@ namespace Worlds5
         }
 
         // Save current image
-        private void mnuSave_Click(object sender, EventArgs e)
+        private void mnuSaveImage_Click(object sender, EventArgs e)
         {
             string PathName = null;
 
@@ -157,14 +157,14 @@ namespace Worlds5
         }
 
         // TODO: Save sphere data
-        private void SaveSphere()
+        private void mnuSaveSphere_Click(object sender, EventArgs e)
         {
             clsSphere sphere = Model.Globals.Sphere;
 
             string PathName = null;
 
             SaveFileDialog dlg = new SaveFileDialog();
-            dlg.Filter =  "Json files (*.json)";
+            dlg.Filter = "Json files (*.json)|*.json";
             dlg.FileName = Path.GetFileNameWithoutExtension(currentAddress);
 
             if (dlg.ShowDialog() == DialogResult.OK)
@@ -439,6 +439,5 @@ namespace Worlds5
         {
             mnuRotation.Enabled = (imageRendering != null);
         }
-
     }
 }

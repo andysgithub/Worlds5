@@ -17,5 +17,7 @@
   "Imaging": {
     "FramesPerSec": 25,
     "AutoRepeat": false,
+    "SaveRays": false,
+    "SaveImage": true
   }
 }

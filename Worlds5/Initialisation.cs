@@ -95,9 +95,6 @@ namespace Worlds5
 		//  Save settings to property settings
 		public static void SaveSettings(int windowWidth, int windowHeight, int windowLeft, int windowTop, FormWindowState windowState) 
 		{
-            clsSphere sphere = Model.Globals.Sphere;
-            SettingsData.RootObject settingsRoot = new SettingsData.RootObject();
-
             SettingsData.Preferences prefs = new SettingsData.Preferences();
             SettingsData.Imaging imaging = new SettingsData.Imaging();
             SettingsData.MainWindow mainWindow = new SettingsData.MainWindow();
@@ -133,6 +130,7 @@ namespace Worlds5
 			{
 			}
 
+            SettingsData.RootObject settingsRoot = new SettingsData.RootObject();
             settingsRoot.Preferences = prefs;
             settingsRoot.Imaging = imaging;
             settingsRoot.MainWindow = mainWindow;
@@ -145,7 +143,6 @@ namespace Worlds5
             {
                 string settingsJson = JsonConvert.SerializeObject(settingsRoot);
                 w.Write(settingsJson);
-                
             }
 		} 
 	} 

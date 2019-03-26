@@ -9,3 +9,53 @@ When loading sphere:
   Generate new image from ray map on redisplay
   Generate new ray map when perform raytrace selected
 
+----------------------------------------------------------------------------
+
+Settings
+~~~~~~~~
+Add options in user settings to save RayMap (default false) and Bitmap (default true).
+
+Store image as compressed Base64 string
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ImageConverter converter = new ImageConverter();
+// Convert image to byte array
+byte[] imageData = (byte[])converter.ConvertTo(img, typeof(byte[]));
+// Compress byte array
+byte[] compressedData = Compress(imageData);
+// Convert compressed data to base64 string
+String base64String = Convert.ToBase64String(compressedData);
+
+------------------------------------------------
+
+Load image from compressed Base64 string
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Convert base64 string to compressed byte array
+byte[] compressedData = Convert.FromBase64String(base64String);
+// Uncompress byte array
+byte[] imageData = Decompress(compressedData);
+// Convert byte array to image
+Bitmap bmp = Image.FromStream(new MemoryStream(imageData));
+
+------------------------------------------------
+
+public static byte[] Compress(byte[] data)
+{
+    MemoryStream output = new MemoryStream();
+    using (DeflateStream dstream = new DeflateStream(output, CompressionLevel.Optimal))
+    {
+        dstream.Write(data, 0, data.Length);
+    }
+    return output.ToArray();
+}
+
+public static byte[] Decompress(byte[] data)
+{
+    MemoryStream input = new MemoryStream(data);
+    MemoryStream output = new MemoryStream();
+    using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
+    {
+        dstream.CopyTo(output);
+    }
+    return output.ToArray();
+}
+

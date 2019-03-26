@@ -1,8 +1,10 @@
 using System;
+using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Model;
 
 namespace Worlds5
 {
@@ -12,6 +14,13 @@ namespace Worlds5
         {
             public int FileType { get; set; }
             public int Dimensions { get; set; }
+        }
+
+        public class Navigation
+        {
+            public double[,] PositionMatrix { get; set; }
+            public String RayMap { get; set; }
+            public String ViewportImage { get; set; }
         }
 
         public class Viewing
@@ -26,6 +35,7 @@ namespace Worlds5
 
         public class Raytracing
         {
+            public float Bailout { get; set; }
             public double[] SamplingInterval { get; set; }
             public int[] RayPoints { get; set; }
             public int[] MaxSamples { get; set; }
@@ -48,13 +58,8 @@ namespace Worlds5
 
         public class RootObject
         {
-            public double[,] PositionMatrix { get; set; }
-            public double ScaleValue { get; set; }
-            public float Bailout { get; set; }
-            public TracedRay[,] RayMap { get; set; }
-            public Bitmap ViewportImage { get; set; }
-
             public Type Type { get; set; }
+            public Navigation Navigation { get; set; }
             public Viewing Viewing { get; set; }
             public Raytracing Raytracing { get; set; }
             public Rendering Rendering { get; set; }
