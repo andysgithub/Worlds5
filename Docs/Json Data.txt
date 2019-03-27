@@ -22,7 +22,7 @@
             "BinarySearchSteps": int
             "SurfaceThickness": double
             "ShowSurface": bool
-            "ShowExterior": bool
+            "ShowVolume": bool
         }
 
         "Rendering": {
@@ -53,7 +53,7 @@
         "PositionMatrix": double[6,5]
 		"RayMap": TracedRay[,]
         "Boundary": ImageSettings
-        "Exterior": ImageSettings
+        "Volume": ImageSettings
     }
 
     "ImageSettings": {

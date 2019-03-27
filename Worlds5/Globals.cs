@@ -33,7 +33,7 @@ namespace Worlds5
 
 		public static string ReleaseNumber; //  Major, minor & revision
         
-		public static byte bRegion; //  Interior/exterior region of fractal selected
+		public static byte bRegion; //  Surface/volume of fractal selected
 		public static RGBTRIPLE[] RGBValues; //  Array to hold true colour bitmap (3 bytes per pixel)
 		public static Bitmap bmpImage;	// Bitmap object to hold true colour image
 		public static bool UpdatingBitmap = false;

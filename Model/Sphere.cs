@@ -30,7 +30,7 @@ namespace Model
         #region Ray tracing properties
 
         // Sinusoidal mapping of traced rays
-        public TracedRay[,] RayMap { get; set; }
+        public TracedRay.RayDataType[,] RayMap { get; set; }
         // Sinusoidal mapping of surface points
         //public SurfacePoint[,] SurfaceMap { get; set; } 
         // The number of boundary points recorded during ray tracing
@@ -130,23 +130,23 @@ namespace Model
         public void InitialiseRayMap()
         {
             // Initialise the ray trace mapping to correspond to the viewport
-            RayMap = new TracedRay[(int)(HorizontalView / AngularResolution) + 1, (int)(VerticalView / AngularResolution) + 1];
+            RayMap = new TracedRay.RayDataType[(int)(HorizontalView / AngularResolution) + 1, (int)(VerticalView / AngularResolution) + 1];
             incrementFactor = 2 * Math.Sin(AngularResolution / 2);
         }
 
         public void RecordRay(TracedRay tracedRay, int xIndex, int yIndex)
         {
             // Store the new ray in the ray map
-            RayMap[xIndex, yIndex] = tracedRay;
+            RayMap[xIndex, yIndex] = tracedRay.RayData;
         }
 
         public List<float> addTiltValues(TracedRay tracedRay, int xIndex, int yIndex)
         {
             // Initialise the tilt values list
             List<float> tiltValues = new List<float>();
-            TracedRay lastRay = RayMap[xIndex, yIndex];
-
-            if (lastRay != null)
+            TracedRay.RayDataType rayData = RayMap[xIndex, yIndex];
+            TracedRay lastRay = new TracedRay(rayData.ExternalPoints, rayData.ModulusValues, rayData.AngleValues, rayData.DistanceValues);
+            //if (lastRay != null)
             {
                 int lastRayStart = 0;
 
@@ -168,7 +168,7 @@ namespace Model
                             if (lastRay.isSurfacePoint(testCount))
                             {
                                 // Get the distance to the surface
-                                double lastDistance = lastRay.Boundary(testCount);
+                                double lastDistance = lastRay.RayData.DistanceValues[testCount];
 
                                 // If the distance on the previous ray has overshot the current ray
                                 if (lastDistance > currentDistance + SurfaceThickness * 10.0)

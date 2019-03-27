@@ -16,10 +16,6 @@ namespace Worlds5
         private ImageDisplay imageDisplay;
         private int linesProcessed = 0;
 
-        //  Image display settings
-        // private static Size m_SeqSize;			// Width & Height of sequence frames
-        private static double m_ScaleValue;	    // Overall scaling value for matrix
-        
 		//  Image quality settings
         private static float m_Bailout; 
         
@@ -274,16 +270,17 @@ namespace Worlds5
                 return null;
             }
             // Get the ray from the ray map
-            TracedRay tracedRay = sphere.RayMap[rayCountX++, rayCountY];
+            TracedRay.RayDataType rayData = sphere.RayMap[rayCountX++, rayCountY];
+            TracedRay tracedRay = new TracedRay(rayData.ExternalPoints, rayData.ModulusValues, rayData.AngleValues, rayData.DistanceValues);
 
             // Calculate the tilt values from the previous rays
             if (rayCountX > 0)
             {
-                tracedRay.XTiltValues = sphere.addTiltValues(tracedRay, rayCountX - 1, rayCountY);
+                tracedRay.xTiltValues = sphere.addTiltValues(tracedRay, rayCountX - 1, rayCountY);
             }
             if (rayCountY > 0)
             {
-                tracedRay.YTiltValues = sphere.addTiltValues(tracedRay, rayCountX, rayCountY - 1);
+                tracedRay.yTiltValues = sphere.addTiltValues(tracedRay, rayCountX, rayCountY - 1);
             }
 
             if (tracedRay != null)

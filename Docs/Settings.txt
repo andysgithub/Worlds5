@@ -1,5 +1,5 @@
-Setting			Exterior	Surface
-~~~~~~~			~~~~~~~~	~~~~~~~
+Setting			Volume		Surface
+~~~~~~~			~~~~~~		~~~~~~~
 
 Viewport Resolution	0.055	0.03
 Sphere Radius		1	8

@@ -46,7 +46,7 @@
             this.updResolution = new System.Windows.Forms.NumericUpDown();
             this.tabRaytracing = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.chkShowExterior = new System.Windows.Forms.CheckBox();
+            this.chkShowVolume = new System.Windows.Forms.CheckBox();
             this.chkShowSurface = new System.Windows.Forms.CheckBox();
             this.lblSurfaceThickness = new System.Windows.Forms.Label();
             this.updSurfaceThickness = new System.Windows.Forms.NumericUpDown();
@@ -380,7 +380,7 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.chkShowExterior);
+            this.groupBox1.Controls.Add(this.chkShowVolume);
             this.groupBox1.Controls.Add(this.chkShowSurface);
             this.groupBox1.Location = new System.Drawing.Point(264, 20);
             this.groupBox1.Name = "groupBox1";
@@ -388,16 +388,16 @@
             this.groupBox1.TabIndex = 22;
             this.groupBox1.TabStop = false;
             // 
-            // chkShowExterior
+            // chkShowVolume
             // 
-            this.chkShowExterior.AutoSize = true;
-            this.chkShowExterior.Location = new System.Drawing.Point(16, 45);
-            this.chkShowExterior.Name = "chkShowExterior";
-            this.chkShowExterior.Size = new System.Drawing.Size(90, 17);
-            this.chkShowExterior.TabIndex = 1;
-            this.chkShowExterior.Text = "Show exterior";
-            this.chkShowExterior.UseVisualStyleBackColor = true;
-            this.chkShowExterior.CheckedChanged += new System.EventHandler(this.chkShowExterior_CheckedChanged);
+            this.chkShowVolume.AutoSize = true;
+            this.chkShowVolume.Location = new System.Drawing.Point(16, 45);
+            this.chkShowVolume.Name = "chkShowVolume";
+            this.chkShowVolume.Size = new System.Drawing.Size(90, 17);
+            this.chkShowVolume.TabIndex = 1;
+            this.chkShowVolume.Text = "Show volume";
+            this.chkShowVolume.UseVisualStyleBackColor = true;
+            this.chkShowVolume.CheckedChanged += new System.EventHandler(this.chkShowVolume_CheckedChanged);
             // 
             // chkShowSurface
             // 
@@ -937,7 +937,7 @@
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.NumericUpDown updLightingAngle;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.CheckBox chkShowExterior;
+        private System.Windows.Forms.CheckBox chkShowVolume;
         private System.Windows.Forms.CheckBox chkShowSurface;
     }
 }

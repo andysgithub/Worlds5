@@ -88,7 +88,7 @@ namespace Worlds5
             updBoundaryInterval.Value = (decimal)sphere.BoundaryInterval;
             updBinarySearchSteps.Value = (decimal)sphere.BinarySearchSteps[0];
             chkShowSurface.Checked = sphere.ActiveIndex == 0;
-            chkShowExterior.Checked = sphere.ActiveIndex == 1;
+            chkShowVolume.Checked = sphere.ActiveIndex == 1;
 
             // Rendering
             updExposureValue.Value = (decimal)sphere.ExposureValue[0];
@@ -207,13 +207,13 @@ namespace Worlds5
 
             if (!chkShowSurface.Checked)
             {
-                chkShowExterior.Checked = true;
+                chkShowVolume.Checked = true;
             }
         }
 
-        private void chkShowExterior_CheckedChanged(object sender, EventArgs e)
+        private void chkShowVolume_CheckedChanged(object sender, EventArgs e)
         {
-            if (!chkShowExterior.Checked)
+            if (!chkShowVolume.Checked)
             {
                 chkShowSurface.Checked = true;
             }

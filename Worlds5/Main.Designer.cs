@@ -51,6 +51,7 @@ namespace Worlds5
             this.dlgOpenFile = new System.Windows.Forms.OpenFileDialog();
             this.pnlImage = new System.Windows.Forms.Panel();
             this.tmrRedraw = new System.Windows.Forms.Timer(this.components);
+            this.mnuRender = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.staStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picImage)).BeginInit();
@@ -128,14 +129,14 @@ namespace Worlds5
             // mnuSettings
             // 
             this.mnuSettings.Name = "mnuSettings";
-            this.mnuSettings.Size = new System.Drawing.Size(128, 22);
+            this.mnuSettings.Size = new System.Drawing.Size(180, 22);
             this.mnuSettings.Text = "Settings...";
             this.mnuSettings.Click += new System.EventHandler(this.mnuSettings_Click);
             // 
             // mnuRotation
             // 
             this.mnuRotation.Name = "mnuRotation";
-            this.mnuRotation.Size = new System.Drawing.Size(128, 22);
+            this.mnuRotation.Size = new System.Drawing.Size(180, 22);
             this.mnuRotation.Text = "Rotation...";
             this.mnuRotation.Click += new System.EventHandler(this.mnuRotation_Click);
             // 
@@ -143,7 +144,8 @@ namespace Worlds5
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuRefresh,
-            this.mnuReset});
+            this.mnuReset,
+            this.mnuRender});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
@@ -151,14 +153,14 @@ namespace Worlds5
             // mnuRefresh
             // 
             this.mnuRefresh.Name = "mnuRefresh";
-            this.mnuRefresh.Size = new System.Drawing.Size(113, 22);
+            this.mnuRefresh.Size = new System.Drawing.Size(180, 22);
             this.mnuRefresh.Text = "Refresh";
             this.mnuRefresh.Click += new System.EventHandler(this.mnuRefresh_Click);
             // 
             // mnuReset
             // 
             this.mnuReset.Name = "mnuReset";
-            this.mnuReset.Size = new System.Drawing.Size(113, 22);
+            this.mnuReset.Size = new System.Drawing.Size(180, 22);
             this.mnuReset.Text = "Reset";
             this.mnuReset.Click += new System.EventHandler(this.mnuReset_Click);
             // 
@@ -235,6 +237,13 @@ namespace Worlds5
             this.tmrRedraw.Interval = 200;
             this.tmrRedraw.Tick += new System.EventHandler(this.tmrRedraw_Tick);
             // 
+            // mnuRender
+            // 
+            this.mnuRender.Name = "mnuRender";
+            this.mnuRender.Size = new System.Drawing.Size(180, 22);
+            this.mnuRender.Text = "Render";
+            this.mnuRender.Click += new System.EventHandler(this.mnuRender_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -285,6 +294,7 @@ namespace Worlds5
         private System.Windows.Forms.ToolStripMenuItem sequenceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mnuVideoConversion;
         private System.Windows.Forms.ToolStripMenuItem mnuSaveSphere;
+        private System.Windows.Forms.ToolStripMenuItem mnuRender;
     }
 }
 

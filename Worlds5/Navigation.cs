@@ -153,7 +153,7 @@ namespace Worlds5
                 int dimensions = Model.Globals.Dimensions;
 
                 navigation.PositionMatrix = sphere.PositionMatrix;
-                //navigation.RayMap = sphere.RayMap;
+                TracedRay.RayDataType[,] rayMap = sphere.RayMap;
                 navigation.RayMap = "";
 
                 ImageConverter converter = new ImageConverter();

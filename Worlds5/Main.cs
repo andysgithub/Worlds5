@@ -267,6 +267,14 @@ namespace Worlds5
         {
         }
 
+        private void mnuRender_Click(object sender, EventArgs e)
+        {
+            imageRendering.InitialiseSphere();
+            imageRendering.PerformRayTracing();
+            // Display the bitmap
+            picImage.Image = Model.Globals.Sphere.ViewportImage;
+        }
+
         private void Main_KeyUp(object sender, KeyEventArgs e)
         {
             bool bScaleChanged = false;
