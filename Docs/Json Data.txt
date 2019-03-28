@@ -36,7 +36,7 @@
     }
 
     "TracedRay": {
-        "externalPoints": List<bool>
+        "externalPoints": List<int>
         "modulusValues": List<float>
         "angleValues": List<float>
         "distanceValues": List<double>

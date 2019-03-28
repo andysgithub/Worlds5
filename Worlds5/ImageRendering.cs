@@ -240,7 +240,7 @@ namespace Worlds5
             double zFactor = Math.Cos(latitude * Globals.DEG_TO_RAD) * Math.Cos(-longitude * Globals.DEG_TO_RAD);
 
             TracedRay tracedRay;
-            bool[] externalPoints = new bool[100];
+            int[] externalPoints = new int[100];
             float[] modulusValues = new float[100];
             float[] angleValues = new float[100];
             double[] distanceValues = new double[100];

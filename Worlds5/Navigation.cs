@@ -69,7 +69,22 @@ namespace Worlds5
 
                 // Load Navigation settings
                 sphere.PositionMatrix = navigation.PositionMatrix;
-                //sphere.RayMap = navigation.RayMap;
+
+                // Calculate size of ray map
+                int raysX = (int)(viewing.HorizontalView / viewing.AngularResolution) + 1;
+                int raysY = (int)(viewing.VerticalView / viewing.AngularResolution) + 1;
+                // Convert base64 string to compressed byte array
+                byte[] compressedData = Convert.FromBase64String(navigation.RayMap);
+                // Uncompress byte array
+                byte[] rawData = Decompress(compressedData);
+                // Initialise the ray map size to correspond to the viewport
+                sphere.RayMap = new TracedRay.RayDataType[raysX, raysY];
+                // Copy raw data to the ray map
+                for(int x = 0; x < raysX; x++) {
+                    for(int x = 0; x < raysX; x++) {
+                        sphere.RayMap[x,y] = ((TracedRay.RayDataType*)rawData)[i++];
+                    }
+                }
 
                 // Convert base64 string to compressed byte array
                 byte[] compressedData = Convert.FromBase64String(navigation.ViewportImage);
@@ -153,8 +168,33 @@ namespace Worlds5
                 int dimensions = Model.Globals.Dimensions;
 
                 navigation.PositionMatrix = sphere.PositionMatrix;
+
+/////////////////////////////////////////////////////////
+
                 TracedRay.RayDataType[,] rayMap = sphere.RayMap;
-                navigation.RayMap = "";
+
+                // Size a byte array to store the ray map data
+                int structSize = Marshal.SizeOf(typeof(TracedRay.RayDataType));
+                List<byte> rawData = new List<byte>();
+
+                // Copy the ray map data to the byte array
+                for(int x = 0; x < sphere.RayMap.GetLength(0); x++) {
+                    for(int y = 0; y < sphere.RayMap.GetLength(1); y++) {
+                        rawData.Add(sphere.RayMap[x,y]);
+                    }
+                }
+
+                // // Obtain a GCHandle instance
+                // gchnd = GCHandle.Alloc(rayMap, GCHandleType.Pinned);
+                // // Copy to the byte array
+                // Marshal.Copy(gchnd.AddrOfPinnedObject, rawData, 0, rawData.Length);
+
+                // Compress byte array
+                byte[] compressedData = Compress(rawData.ToArray());
+                // Convert compressed data to base64 string
+                navigation.RayMap = Convert.ToBase64String(compressedData);
+
+/////////////////////////////////////////////////////////
 
                 ImageConverter converter = new ImageConverter();
                 // Convert image to byte array

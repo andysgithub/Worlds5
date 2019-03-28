@@ -25,7 +25,7 @@ const BYTE	MAX_RAY_POINTS = 100;
 //	vector5Double	c = {0,0,0,0,0};							// 5D vector for ray point coordinates
 //
 //	// Determine whether the starting point is within the set
-//	bool externalPoint = SamplePoint(currentDistance, xFactor, yFactor, zFactor, c);
+//	int externalPoint = SamplePoint(currentDistance, xFactor, yFactor, zFactor, c);
 //
 //	// If so, search for the first point outside the set
 //	while (!externalPoint && sampleCount < maxSamples)
@@ -78,7 +78,7 @@ bool gapFound(double currentDistance, double surfaceThickness, double xFactor, d
 	{
 		testDistance = currentDistance + surfaceThickness * factor / 4;
 
-		if (SamplePoint(testDistance, xFactor, yFactor, zFactor, c))
+		if (SamplePoint(testDistance, xFactor, yFactor, zFactor, c) == 1)
 		{
 			return true;
 		}
@@ -89,7 +89,7 @@ bool gapFound(double currentDistance, double surfaceThickness, double xFactor, d
 // Produce the collection of fractal point values for the given vector
 EXPORT void __stdcall TraceRay(double startDistance, double increment, double surfaceThickness, 
 							   double XFactor, double YFactor, double ZFactor,
-                               bool externalPoints[], float modulusValues[], float angles[], double distances[],
+                               int externalPoints[], float modulusValues[], float angles[], double distances[],
 							   int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
 							   int activeIndex)
 {
@@ -104,7 +104,7 @@ EXPORT void __stdcall TraceRay(double startDistance, double increment, double su
 	vector5Double	c = {0,0,0,0,0};							// 5D vector for ray point coordinates
 
 	// Determine orbit value for the starting point
-	bool externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, xFactor, yFactor, zFactor, c);
+	int externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, xFactor, yFactor, zFactor, c);
 
 	// Record this point as the first sample
 	externalPoints[recordedPoints] = externalPoint;
@@ -124,7 +124,7 @@ EXPORT void __stdcall TraceRay(double startDistance, double increment, double su
 		externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, xFactor, yFactor, zFactor, c);
 
 		// If this is an internal point and previous point is external
-		if (activeIndex == 0 && !externalPoint && externalPoints[recordedPoints - 1])
+		if (activeIndex == 0 && externalPoint == 0 && externalPoints[recordedPoints - 1] == 1)
 		{
             ///// Set value for surface point /////
 
@@ -188,7 +188,7 @@ EXPORT double __stdcall FindSurface(double increment, int binarySearchSteps, dou
 		sampleDistance = currentDistance + stepSize;
 
 		// If this point is internal to the set
-		if (!SamplePoint(sampleDistance, xFactor, yFactor, zFactor, c))
+		if (SamplePoint(sampleDistance, xFactor, yFactor, zFactor, c) == 0)
 		{
 			// Step back next time
 			stepSize = -fabs(stepSize) / 2;
@@ -235,7 +235,7 @@ EXPORT double __stdcall FindBoundary(double increment, int binarySearchSteps, do
 	return sampleDistance;
 }
 
-bool SamplePoint(double distance, double xFactor, double yFactor, double zFactor, vector5Double c)
+int SamplePoint(double distance, double xFactor, double yFactor, double zFactor, vector5Double c)
 {
   // Determine the x,y,z coord for this point
   double XPos = distance * xFactor;
@@ -246,10 +246,10 @@ bool SamplePoint(double distance, double xFactor, double yFactor, double zFactor
   VectorTrans(XPos, YPos, ZPos, &c);
 
   // Determine orbit value for this point
-  return ExternalPoint(c);
+  return ExternalPoint(c) ? 1 : 0;
 }
 
-bool SamplePoint(double distance, float *Modulus, float *Angle, double xFactor, double yFactor, double zFactor, vector5Double c)
+int SamplePoint(double distance, float *Modulus, float *Angle, double xFactor, double yFactor, double zFactor, vector5Double c)
 {
   // Determine the x,y,z coord for this point
   double XPos = distance * xFactor;
@@ -260,7 +260,7 @@ bool SamplePoint(double distance, float *Modulus, float *Angle, double xFactor, 
   VectorTrans(XPos, YPos, ZPos, &c);
 
   // Determine orbit value for this point
-  return ProcessPoint(Modulus, Angle, c);
+  return ProcessPoint(Modulus, Angle, c) ? 1 : 0;
 }
 
 //	Determine whether nD point c[] in within the set

@@ -20,7 +20,7 @@ namespace Model
 
         public struct RayDataType
         {
-            public List<bool> ExternalPoints;
+            public List<int> ExternalPoints;
             public List<float> ModulusValues;
             public List<float> AngleValues;
             public List<double> DistanceValues;
@@ -29,16 +29,16 @@ namespace Model
 
         public RayDataType RayData;
 
-        public TracedRay(bool[] externalPoints, float[] modulusValues, float[] angleValues, double[] distanceValues)
+        public TracedRay(int[] externalPoints, float[] modulusValues, float[] angleValues, double[] distanceValues)
         {
-            RayData.ExternalPoints = new List<bool>(externalPoints);
+            RayData.ExternalPoints = new List<int>(externalPoints);
             RayData.ModulusValues = new List<float>(modulusValues);
             RayData.AngleValues = new List<float>(angleValues);
             RayData.DistanceValues = new List<double>(distanceValues);
             RayData.BoundaryTotal = distanceValues.Length;
         }
 
-        public TracedRay(List<bool> externalPoints, List<float> modulusValues, List<float> angleValues, List<double> distanceValues)
+        public TracedRay(List<int> externalPoints, List<float> modulusValues, List<float> angleValues, List<double> distanceValues)
         {
             RayData.ExternalPoints = externalPoints;
             RayData.ModulusValues = modulusValues;
@@ -207,7 +207,7 @@ namespace Model
         /// <summary>
         /// Return external points for boundary positions.
         /// </summary>
-        public List<bool> ExternalPoints
+        public List<int> ExternalPoints
         {
             get { return RayData.ExternalPoints; }
         }
@@ -249,7 +249,7 @@ namespace Model
         {
             if (index > 0 && index < BoundaryTotal && !double.IsPositiveInfinity(RayData.DistanceValues[index]))
             {
-                return RayData.ExternalPoints[index - 1] && !RayData.ExternalPoints[index];
+                return RayData.ExternalPoints[index - 1] == 1 && RayData.ExternalPoints[index] == 0;
             }
             return false;
         }
