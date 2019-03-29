@@ -70,8 +70,7 @@ namespace Worlds5
 
         [DllImport("Unmanaged.dll")]
         static extern void TraceRay(double startDistance, double increment, double surfaceThickness,
-            double xFactor, double yFactor, double zFactor,
-            [Out, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.I1)] bool[] externalsArray,
+            double xFactor, double yFactor, double zFactor, int[] externalsArray,
             float[] valuesArray, float[] anglesArray, double[] distancesArray,
             int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
             int activeIndex);

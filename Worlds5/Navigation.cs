@@ -9,6 +9,9 @@ using System.Windows.Forms;
 using Model;
 using Newtonsoft.Json;
 using System.IO.Compression;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Worlds5
 {
@@ -69,27 +72,26 @@ namespace Worlds5
 
                 // Load Navigation settings
                 sphere.PositionMatrix = navigation.PositionMatrix;
+                byte[] compressedData;
 
-                // Calculate size of ray map
-                int raysX = (int)(viewing.HorizontalView / viewing.AngularResolution) + 1;
-                int raysY = (int)(viewing.VerticalView / viewing.AngularResolution) + 1;
+                /////////////////////////////////////////////////////////////
+
                 // Convert base64 string to compressed byte array
-                byte[] compressedData = Convert.FromBase64String(navigation.RayMap);
-                // Uncompress byte array
-                byte[] rawData = Decompress(compressedData);
-                // Initialise the ray map size to correspond to the viewport
-                sphere.RayMap = new TracedRay.RayDataType[raysX, raysY];
-                // Copy raw data to the ray map
-                for(int x = 0; x < raysX; x++) {
-                    for(int x = 0; x < raysX; x++) {
-                        sphere.RayMap[x,y] = ((TracedRay.RayDataType*)rawData)[i++];
-                    }
+                compressedData = Convert.FromBase64String(navigation.RayMap);
+                // Decompress byte array
+                byte[] rayData = Helpers.Decompress(compressedData);
+                // Convert byte array to ray map
+                if (rayData.Length > 0)
+                {
+                    sphere.RayMap = Helpers.ConvertToRayMap(rayData);
                 }
 
+                /////////////////////////////////////////////////////////////
+
                 // Convert base64 string to compressed byte array
-                byte[] compressedData = Convert.FromBase64String(navigation.ViewportImage);
-                // Uncompress byte array
-                byte[] imageData = Decompress(compressedData);
+                compressedData = Convert.FromBase64String(navigation.ViewportImage);
+                // Decompress byte array
+                byte[] imageData = Helpers.Decompress(compressedData);
                 // Convert byte array to image
                 if (imageData.Length > 0)
                 {
@@ -166,41 +168,26 @@ namespace Worlds5
                 fileInfo.FileType = 3;
 
                 int dimensions = Model.Globals.Dimensions;
+                byte[] compressedData;
 
                 navigation.PositionMatrix = sphere.PositionMatrix;
 
-/////////////////////////////////////////////////////////
-
-                TracedRay.RayDataType[,] rayMap = sphere.RayMap;
-
-                // Size a byte array to store the ray map data
-                int structSize = Marshal.SizeOf(typeof(TracedRay.RayDataType));
-                List<byte> rawData = new List<byte>();
-
-                // Copy the ray map data to the byte array
-                for(int x = 0; x < sphere.RayMap.GetLength(0); x++) {
-                    for(int y = 0; y < sphere.RayMap.GetLength(1); y++) {
-                        rawData.Add(sphere.RayMap[x,y]);
-                    }
-                }
-
-                // // Obtain a GCHandle instance
-                // gchnd = GCHandle.Alloc(rayMap, GCHandleType.Pinned);
-                // // Copy to the byte array
-                // Marshal.Copy(gchnd.AddrOfPinnedObject, rawData, 0, rawData.Length);
-
+                BinaryFormatter formatter = new BinaryFormatter();
+                // Convert ray map to byte array
+                MemoryStream mStream = new MemoryStream();
+                formatter.Serialize(mStream, sphere.RayMap);
+                byte[] buffer = mStream.ToArray();
+                mStream.Close();
                 // Compress byte array
-                byte[] compressedData = Compress(rawData.ToArray());
+                compressedData = Helpers.Compress(buffer);
                 // Convert compressed data to base64 string
                 navigation.RayMap = Convert.ToBase64String(compressedData);
-
-/////////////////////////////////////////////////////////
 
                 ImageConverter converter = new ImageConverter();
                 // Convert image to byte array
                 byte[] imageData = (byte[])converter.ConvertTo(sphere.ViewportImage, typeof(byte[]));
                 // Compress byte array
-                byte[] compressedData = Compress(imageData);
+                compressedData = Helpers.Compress(imageData);
                 // Convert compressed data to base64 string
                 navigation.ViewportImage = Convert.ToBase64String(compressedData);
 
@@ -262,27 +249,6 @@ namespace Worlds5
                 }
             }
             return true;
-        }
-
-        public static byte[] Compress(byte[] data)
-        {
-            MemoryStream output = new MemoryStream();
-            using (DeflateStream dstream = new DeflateStream(output, CompressionLevel.Optimal))
-            {
-                dstream.Write(data, 0, data.Length);
-            }
-            return output.ToArray();
-        }
-
-        public static byte[] Decompress(byte[] data)
-        {
-            MemoryStream input = new MemoryStream(data);
-            MemoryStream output = new MemoryStream();
-            using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
-            {
-                dstream.CopyTo(output);
-            }
-            return output.ToArray();
         }
     }
 }

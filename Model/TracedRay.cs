@@ -18,32 +18,46 @@ namespace Model
         // Overall RGB colour for this ray
         public Globals.RGBQUAD bmiColors;
 
+        [StructLayout(LayoutKind.Sequential)]
         public struct RayDataType
         {
-            public List<int> ExternalPoints;
-            public List<float> ModulusValues;
-            public List<float> AngleValues;
-            public List<double> DistanceValues;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
+            public int[] ExternalPoints;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
+            public float[] ModulusValues;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
+            public float[] AngleValues;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
+            public double[] DistanceValues;
             public int BoundaryTotal;
         }
 
         public RayDataType RayData;
 
-        public TracedRay(int[] externalPoints, float[] modulusValues, float[] angleValues, double[] distanceValues)
+        public TracedRay()
         {
-            RayData.ExternalPoints = new List<int>(externalPoints);
-            RayData.ModulusValues = new List<float>(modulusValues);
-            RayData.AngleValues = new List<float>(angleValues);
-            RayData.DistanceValues = new List<double>(distanceValues);
-            RayData.BoundaryTotal = distanceValues.Length;
+            RayData.ExternalPoints = new int[100];
+            RayData.ModulusValues = new float[100];
+            RayData.AngleValues = new float[100];
+            RayData.DistanceValues = new double[100];
+            RayData.BoundaryTotal = 100;
         }
 
-        public TracedRay(List<int> externalPoints, List<float> modulusValues, List<float> angleValues, List<double> distanceValues)
+        public TracedRay(int[] externalPoints, float[] modulusValues, float[] angleValues, double[] distanceValues)
         {
             RayData.ExternalPoints = externalPoints;
             RayData.ModulusValues = modulusValues;
             RayData.AngleValues = angleValues;
             RayData.DistanceValues = distanceValues;
+            RayData.BoundaryTotal = distanceValues.Length;
+        }
+
+        public TracedRay(List<int> externalPoints, List<float> modulusValues, List<float> angleValues, List<double> distanceValues)
+        {
+            RayData.ExternalPoints = externalPoints.ToArray();
+            RayData.ModulusValues = modulusValues.ToArray();
+            RayData.AngleValues = angleValues.ToArray();
+            RayData.DistanceValues = distanceValues.ToArray();
             RayData.BoundaryTotal = distanceValues.Count;
         }
 
@@ -67,7 +81,7 @@ namespace Model
             float saturation = sphere.Saturation[activeIndex];
 
             // For each point on the ray
-            for (int i = 0; i < RayData.ModulusValues.Count - 1; i++)
+            for (int i = 0; i < RayData.ModulusValues.Length - 1; i++)
             {
                 if (RayData.DistanceValues[i] < startDistance)
                     continue;
@@ -177,13 +191,13 @@ namespace Model
         /// </summary>
         public int Length
         {
-            get { return RayData.ExternalPoints.Count; }
+            get { return RayData.ExternalPoints.Length; }
         }
 
         /// <summary>
         /// Return distance values for boundary positions.
         /// </summary>
-        public List<double> Boundaries
+        public double[] Boundaries
         {
             get { return RayData.DistanceValues; }
         }
@@ -191,7 +205,7 @@ namespace Model
         /// <summary>
         /// Return angle values for boundary positions.
         /// </summary>
-        public List<float> AngleValues
+        public float[] AngleValues
         {
             get { return RayData.AngleValues; }
         }
@@ -199,7 +213,7 @@ namespace Model
         /// <summary>
         /// Return modulus values for boundary positions.
         /// </summary>
-        public List<float> ModulusValues
+        public float[] ModulusValues
         {
             get { return RayData.ModulusValues; }
         }
@@ -207,7 +221,7 @@ namespace Model
         /// <summary>
         /// Return external points for boundary positions.
         /// </summary>
-        public List<int> ExternalPoints
+        public int[] ExternalPoints
         {
             get { return RayData.ExternalPoints; }
         }
@@ -217,7 +231,7 @@ namespace Model
         /// </summary>
         public int BoundaryTotal
         {
-            get { return RayData.DistanceValues.Count; }
+            get { return RayData.DistanceValues.Length; }
         }
 
         /// <summary>
