@@ -55,7 +55,7 @@ void	SetRot(int,int,double);
 //								   float *modulus, float *angle, double *distance,
 //								   int rayPoints, int maxSamples, int binarySearchSteps);
 
-EXPORT void __stdcall TraceRay(double startDistance, double increment, double surfaceThickness, 
+EXPORT int __stdcall TraceRay(double startDistance, double increment, double surfaceThickness, 
 								   double XFactor, double YFactor, double ZFactor,
                                    int *externalsArray, float *valuesArray, float *anglesArray, double *distancesArray,
 							       int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,

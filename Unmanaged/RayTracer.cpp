@@ -87,7 +87,7 @@ bool gapFound(double currentDistance, double surfaceThickness, double xFactor, d
 }
 
 // Produce the collection of fractal point values for the given vector
-EXPORT void __stdcall TraceRay(double startDistance, double increment, double surfaceThickness, 
+EXPORT int __stdcall TraceRay(double startDistance, double increment, double surfaceThickness, 
 							   double XFactor, double YFactor, double ZFactor,
                                int externalPoints[], float modulusValues[], float angles[], double distances[],
 							   int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
@@ -173,6 +173,7 @@ EXPORT void __stdcall TraceRay(double startDistance, double increment, double su
 	}
 
 	distances[recordedPoints] = HUGE_VAL;
+    return recordedPoints+1;
 }
 
 EXPORT double __stdcall FindSurface(double increment, int binarySearchSteps, double currentDistance, double xFactor, double yFactor, double zFactor)

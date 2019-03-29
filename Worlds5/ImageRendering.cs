@@ -69,7 +69,7 @@ namespace Worlds5
         #region DLL Imports
 
         [DllImport("Unmanaged.dll")]
-        static extern void TraceRay(double startDistance, double increment, double surfaceThickness,
+        static extern int TraceRay(double startDistance, double increment, double surfaceThickness,
             double xFactor, double yFactor, double zFactor, int[] externalsArray,
             float[] valuesArray, float[] anglesArray, double[] distancesArray,
             int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
@@ -246,11 +246,17 @@ namespace Worlds5
             int i = sphere.ActiveIndex;
 
             // Trace the ray from the sphere radius outwards
-            TraceRay(sphere.Radius, sphere.SamplingInterval[i], sphere.SurfaceThickness,
+            int points = TraceRay(sphere.Radius, sphere.SamplingInterval[i], sphere.SurfaceThickness,
                         xFactor, yFactor, zFactor,
                         externalPoints, modulusValues, angleValues, distanceValues,
                         sphere.RayPoints[i], sphere.MaxSamples[i], sphere.BoundaryInterval, sphere.BinarySearchSteps[i],
                         i);
+
+            // TODO: Resize arrays to the recordedPoints value
+            Array.Resize(ref externalPoints, points);
+            Array.Resize(ref modulusValues, points);
+            Array.Resize(ref angleValues, points);
+            Array.Resize(ref distanceValues, points);
 
             // Record the fractal value collection for this ray
             tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);

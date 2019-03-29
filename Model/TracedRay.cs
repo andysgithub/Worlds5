@@ -21,27 +21,14 @@ namespace Model
         [StructLayout(LayoutKind.Sequential)]
         public struct RayDataType
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
             public int[] ExternalPoints;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
             public float[] ModulusValues;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
             public float[] AngleValues;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
             public double[] DistanceValues;
             public int BoundaryTotal;
         }
 
         public RayDataType RayData;
-
-        public TracedRay()
-        {
-            RayData.ExternalPoints = new int[100];
-            RayData.ModulusValues = new float[100];
-            RayData.AngleValues = new float[100];
-            RayData.DistanceValues = new double[100];
-            RayData.BoundaryTotal = 100;
-        }
 
         public TracedRay(int[] externalPoints, float[] modulusValues, float[] angleValues, double[] distanceValues)
         {
