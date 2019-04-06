@@ -72,8 +72,8 @@ bool	gapFound(double currentDistance, double surfaceThickness, double xFactor, d
 double	findBoundary(double increment, int binarySearchSteps, double distance, float previousAngle,
 					 double boundaryInterval, bool *externalPoint, float *Modulus, float *Angle,
 					 double xFactor, double yFactor, double zFactor);
-int	    SamplePoint(double distance, double xFactor, double yFactor, double zFactor, vector5Double c);
-int	    SamplePoint(double distance, float *Modulus, float *Angle, double xFactor, double yFactor, double zFactor, vector5Double c);
+bool	SamplePoint(double distance, double xFactor, double yFactor, double zFactor, vector5Double c);
+bool	SamplePoint(double distance, float *Modulus, float *Angle, double xFactor, double yFactor, double zFactor, vector5Double c);
 void	VectorTrans(double x, double y, double z, vector5Double *c);
 void	SetLine(double xLeft, double xRight, double zLeft, double zRight, double yLeft, double yRight);
 //vertex	VertexTrans(double x, double y, double z);

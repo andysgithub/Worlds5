@@ -25,7 +25,7 @@ const BYTE	MAX_RAY_POINTS = 100;
 //	vector5Double	c = {0,0,0,0,0};							// 5D vector for ray point coordinates
 //
 //	// Determine whether the starting point is within the set
-//	int externalPoint = SamplePoint(currentDistance, xFactor, yFactor, zFactor, c);
+//	bool externalPoint = SamplePoint(currentDistance, xFactor, yFactor, zFactor, c);
 //
 //	// If so, search for the first point outside the set
 //	while (!externalPoint && sampleCount < maxSamples)
@@ -104,7 +104,7 @@ EXPORT int __stdcall TraceRay(double startDistance, double increment, double sur
 	vector5Double	c = {0,0,0,0,0};							// 5D vector for ray point coordinates
 
 	// Determine orbit value for the starting point
-	int externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, xFactor, yFactor, zFactor, c);
+	bool externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, xFactor, yFactor, zFactor, c);
 
 	// Record this point as the first sample
 	externalPoints[recordedPoints] = externalPoint;
@@ -236,7 +236,7 @@ EXPORT double __stdcall FindBoundary(double increment, int binarySearchSteps, do
 	return sampleDistance;
 }
 
-int SamplePoint(double distance, double xFactor, double yFactor, double zFactor, vector5Double c)
+bool SamplePoint(double distance, double xFactor, double yFactor, double zFactor, vector5Double c)
 {
   // Determine the x,y,z coord for this point
   double XPos = distance * xFactor;
@@ -250,7 +250,7 @@ int SamplePoint(double distance, double xFactor, double yFactor, double zFactor,
   return ExternalPoint(c) ? 1 : 0;
 }
 
-int SamplePoint(double distance, float *Modulus, float *Angle, double xFactor, double yFactor, double zFactor, vector5Double c)
+bool SamplePoint(double distance, float *Modulus, float *Angle, double xFactor, double yFactor, double zFactor, vector5Double c)
 {
   // Determine the x,y,z coord for this point
   double XPos = distance * xFactor;

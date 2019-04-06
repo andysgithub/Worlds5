@@ -27,7 +27,7 @@ namespace Worlds5
 
         #region Delegates
 
-        public delegate void UpdateStatusDelegate(int rowCount);
+        public delegate void UpdateStatusDelegate(int rowCount, int totalLines);
         public event UpdateStatusDelegate updateStatus;
 
         #endregion
@@ -211,8 +211,10 @@ namespace Worlds5
         private void RowCompleted(int lineIndex, DisplayOption displayOption)
         {
             linesProcessed++;
+            int totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
+
             // Call the UpdateStatus function in Main
-            updateStatus?.Invoke(linesProcessed);
+            updateStatus(linesProcessed, totalLines);
         }
 
         public void Redisplay(int rayCountY)

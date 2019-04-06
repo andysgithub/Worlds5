@@ -39,15 +39,6 @@ namespace Model
             RayData.BoundaryTotal = distanceValues.Length;
         }
 
-        public TracedRay(List<int> externalPoints, List<float> modulusValues, List<float> angleValues, List<double> distanceValues)
-        {
-            RayData.ExternalPoints = externalPoints.ToArray();
-            RayData.ModulusValues = modulusValues.ToArray();
-            RayData.AngleValues = angleValues.ToArray();
-            RayData.DistanceValues = distanceValues.ToArray();
-            RayData.BoundaryTotal = distanceValues.Count;
-        }
-
         public void SetColour()
         {
             byte r, g, b;

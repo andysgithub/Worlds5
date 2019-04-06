@@ -60,6 +60,9 @@ namespace Worlds5
             if (state.Height > 0) this.Height = state.Height;
             if (state.Left > 0) this.Left = state.Left;
             if (state.Top > 0) this.Top = state.Top;
+
+            string FilePath = Path.Combine(Globals.SetUp.NavPath, "home.json");
+            LoadSphereFile(FilePath);
         }
 
         private void Main_FormClosed(object sender, FormClosedEventArgs e)
@@ -69,7 +72,7 @@ namespace Worlds5
 
         public void mnuLoadSphere_Click(object sender, EventArgs e)
         {
-            string PathName = null;
+            string FilePath = "";
 
             OpenFileDialog dlg = new OpenFileDialog();
             if (Directory.Exists(Globals.SetUp.NavPath))
@@ -79,35 +82,40 @@ namespace Worlds5
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                PathName = dlg.FileName;
+                FilePath = dlg.FileName;
             }
 
             picImage.Refresh();
 
-            if (PathName != "" && PathName != null)
+            if (FilePath != "" && FilePath != null)
             {
-                clsSphere sphere = Model.Globals.Sphere;
+                LoadSphereFile(FilePath);
+            }
+        }
 
-                // Extract address from pathname
-                Globals.SetUp.NavPath = Path.GetDirectoryName(PathName);
-                currentAddress = Globals.SetUp.NavPath + "\\" + Path.GetFileName(PathName);
+        private void LoadSphereFile(string FilePath)
+        {
+            clsSphere sphere = Model.Globals.Sphere;
 
-                if (Navigation.Navigate(currentAddress))
+            // Extract address from pathname
+            Globals.SetUp.NavPath = Path.GetDirectoryName(FilePath);
+
+            if (Navigation.Navigate(FilePath))
+            {
+                if (sphere.ViewportImage == null)
                 {
-                    if (sphere.ViewportImage == null) {
-                        if (sphere.RayMap != null)
-                        {
-                            imageRendering.Redisplay();
-                        }
-                        else 
-                        {
-                            imageRendering.InitialiseSphere();
-                            imageRendering.PerformRayTracing();
-                        }
+                    if (sphere.RayMap != null)
+                    {
+                        imageRendering.Redisplay();
                     }
-                    // Display the bitmap
-                    picImage.Image = sphere.ViewportImage;
+                    else
+                    {
+                        imageRendering.InitialiseSphere();
+                        imageRendering.PerformRayTracing();
+                    }
                 }
+                // Display the bitmap
+                picImage.Image = sphere.ViewportImage;
             }
         }
 
@@ -115,9 +123,10 @@ namespace Worlds5
         /// Callback to update the status after a line has been processed.
         /// </summary>
         /// <param name="rowCount"></param>
-        private void UpdateStatus(int rowCount)
+        private void UpdateStatus(int rowCount, int totalLines)
         {
-            staStatus.Items[0].Text = "Rows processed: " + rowCount;
+            string statusMessage = (rowCount < totalLines) ? rowCount + " of " + totalLines + " rows processed" : "Rendering completed";
+            staStatus.Items[0].Text = statusMessage;
         }
 
         // Save current image
@@ -361,10 +370,16 @@ namespace Worlds5
             }
         }
 
-        private void mnuSettings_Click(object sender, EventArgs e)
+        private void mnuSphereSettings_Click(object sender, EventArgs e)
         {
-            Settings form = new Settings();
-            form.RefreshImage += new Settings.RefreshDelegate(RefreshImage);
+            SphereSettings form = new SphereSettings();
+            form.RefreshImage += new SphereSettings.RefreshDelegate(RefreshImage);
+            form.ShowDialog(this);
+        }
+
+        private void mnuUserSettings_Click(object sender, EventArgs e)
+        {
+            UserSettings form = new UserSettings();
             form.ShowDialog(this);
         }
 

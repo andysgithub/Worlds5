@@ -136,9 +136,12 @@
       <SubType>Designer</SubType>
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Settings.resx">
-      <DependentUpon>Settings.cs</DependentUpon>
+    <EmbeddedResource Include="SphereSettings.resx">
+      <DependentUpon>SphereSettings.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserSettings.resx">
+      <DependentUpon>UserSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VideoConversion.resx">
       <DependentUpon>VideoConversion.cs</DependentUpon>
@@ -158,14 +161,20 @@
     </Compile>
     <Compile Include="ImageRendering.cs" />
     <Compile Include="Sequence.cs" />
-    <Compile Include="Settings.cs">
+    <Compile Include="SphereSettings.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Settings.Designer.cs">
-      <DependentUpon>Settings.cs</DependentUpon>
+    <Compile Include="SphereSettings.Designer.cs">
+      <DependentUpon>SphereSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="SettingsData.cs" />
     <Compile Include="SphereData.cs" />
+    <Compile Include="UserSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserSettings.Designer.cs">
+      <DependentUpon>UserSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="VideoConversion.cs">
       <SubType>Form</SubType>
     </Compile>
