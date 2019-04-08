@@ -27,7 +27,12 @@ namespace Worlds5
 		public static WindowState LoadSettings() 
 		{
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string settingsPath = Path.Combine(appDataPath, "Worlds5", "settings.json");
+            string applicationPath = Path.Combine(appDataPath, "Worlds5");
+            if (!Directory.Exists(applicationPath))
+            {
+                Directory.CreateDirectory(applicationPath);
+            }
+            string settingsPath = Path.Combine(applicationPath, "settings.json");
             WindowState windowState = new WindowState();
 
             if (!File.Exists(settingsPath))

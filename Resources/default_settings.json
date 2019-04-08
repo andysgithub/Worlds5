@@ -1,6 +1,6 @@
 {
   "MainWindow": {
-    "MainState": "Normal",
+    "MainState": "NORMAL",
     "MainWidth": 840,
     "MainHeight": 690,
     "MainLeft": 300,
@@ -17,7 +17,7 @@
   "Imaging": {
     "FramesPerSec": 25,
     "AutoRepeat": false,
-    "SaveRays": false,
-    "SaveImage": true
+    "BitmapHeight": 600,
+    "BitmapWidth": 600
   }
 }

@@ -55,14 +55,9 @@
             // updFramesPerSec
             // 
             this.updFramesPerSec.DecimalPlaces = 3;
-            this.updFramesPerSec.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
             this.updFramesPerSec.Location = new System.Drawing.Point(100, 26);
             this.updFramesPerSec.Maximum = new decimal(new int[] {
-            1,
+            60,
             0,
             0,
             0});
@@ -70,15 +65,15 @@
             1,
             0,
             0,
-            131072});
+            0});
             this.updFramesPerSec.Name = "updFramesPerSec";
             this.updFramesPerSec.Size = new System.Drawing.Size(67, 20);
             this.updFramesPerSec.TabIndex = 6;
             this.updFramesPerSec.Value = new decimal(new int[] {
-            5,
+            25,
             0,
             0,
-            131072});
+            0});
             // 
             // label3
             // 
@@ -269,6 +264,7 @@
             this.MinimizeBox = false;
             this.Name = "UserSettings";
             this.Text = "UserSettings";
+            this.Load += new System.EventHandler(this.UserSettings_Load);
             ((System.ComponentModel.ISupportInitialize)(this.updFramesPerSec)).EndInit();
             this.grpSequence.ResumeLayout(false);
             this.grpSequence.PerformLayout();
