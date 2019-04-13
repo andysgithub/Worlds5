@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace Model
 {
@@ -36,7 +37,7 @@ namespace Model
             RayData.ModulusValues = modulusValues;
             RayData.AngleValues = angleValues;
             RayData.DistanceValues = distanceValues;
-            RayData.BoundaryTotal = distanceValues.Length;
+            RayData.BoundaryTotal = distanceValues == null ? 0 : distanceValues.Length;
         }
 
         public void SetColour()
@@ -58,105 +59,120 @@ namespace Model
             float exposureValue = sphere.ExposureValue[activeIndex];
             float saturation = sphere.Saturation[activeIndex];
 
-            // For each point on the ray
-            for (int i = 0; i < RayData.ModulusValues.Length - 1; i++)
+            try
             {
-                if (RayData.DistanceValues[i] < startDistance)
-                    continue;
-
-                if (Math.Abs(RayData.ModulusValues[i]) < 10)
+                // For each point on the ray
+                for (int i = 0; i < RayData.ModulusValues.Length - 1; i++)
                 {
-                    if (activeIndex == 0 && isSurfacePoint(i) && xTiltValues != null && yTiltValues != null)
+                    if (RayData.DistanceValues[i] < startDistance)
+                        continue;
+
+                    if (Math.Abs(RayData.ModulusValues[i]) < 10)
                     {
-                        ///// Set colour for surface point /////
+                        if (activeIndex == 0 && isSurfacePoint(i) && xTiltValues != null && yTiltValues != null)
+                        {
+                            ///// Set colour for surface point /////
 
-                        if (Double.IsPositiveInfinity(RayData.DistanceValues[i])
-                            || RayData.DistanceValues[i] > endDistance)
-                            break;
+                            if (Double.IsPositiveInfinity(RayData.DistanceValues[i])
+                                || RayData.DistanceValues[i] > endDistance)
+                                break;
 
-                        float lightingAngle = (sphere.LightingAngle + 90) * (float)Globals.DEG_TO_RAD;
+                            float lightingAngleX = (sphere.LightingAngle - 90) * (float)Globals.DEG_TO_RAD;
+                            float lightingAngleY = (160 - 90) * (float)Globals.DEG_TO_RAD;
 
-                        // Modify the exposure value according to the XTilt, YTilt values using Lambert's Cosine Law
-                        double xTilt = xTiltValues != null && xTiltValues.Count > 0 ? xTiltValues[i] : 0;
-                        double yTilt = yTiltValues != null && yTiltValues.Count > 0 ? yTiltValues[i] : 0;
-                        double tiltX = xTilt + lightingAngle;
-                        double tiltY = yTilt + lightingAngle;
-                        exposureValue = (float)(Math.Cos(tiltX) * Math.Cos(tiltY));
+                            // Modify the exposure value according to the XTilt, YTilt values using Lambert's Cosine Law
+                            double xTilt = xTiltValues != null && xTiltValues.Count > 0 ? xTiltValues[i] : 0;
+                            double yTilt = yTiltValues != null && yTiltValues.Count > 0 ? yTiltValues[i] : 0;
+                            double tiltX = xTilt - lightingAngleX;
+                            double tiltY = yTilt - lightingAngleY;
+                            double xFactor = Math.Cos(tiltX);
+                            double yFactor = Math.Cos(tiltY);
 
-                        float surfaceContrast = sphere.SurfaceContrast / 10;
+                            float surfaceContrast = sphere.SurfaceContrast / 10;
 
-                        //// Increase contrast of the exposure value
-                        exposureValue = (exposureValue * surfaceContrast * 2) - surfaceContrast;
+                            // Increase contrast of the exposure values
+                            double exposureX = (xFactor - (float)0.5) * surfaceContrast + (float)0.5;
+                            double exposureY = (yFactor - (float)0.5) * surfaceContrast + (float)0.5;
 
-                        exposureValue *= sphere.ExposureValue[0];
+                            // Produce the final exposure value
+                            float exposure = (float)(exposureX + exposureY) / 2;
 
-                        if (exposureValue < 0) exposureValue = 0;
-                        if (exposureValue > 1) exposureValue = 1;
+                            exposure *= exposureValue / 10;
 
-                        // Get Hue from the orbit angle
-                        float Hue = (float)(RayData.AngleValues[i] * 57.2957795 * 2);
+                            if (exposure < 0)
+                                exposure = 0;
+                            if (exposure > 1)
+                                exposure = 1;
 
-                        // Modify the exposure according to the position of the point between the start and end distances
-                        //float range = (float)(endDistance - startDistance);
-                        //float exposureFactor = (float)(RayData.DistanceValues[i] - startDistance) / range;
+                            // Get Hue from the orbit angle
+                            float Hue = (float)(RayData.AngleValues[i] * 57.2957795 * 2);
 
-                        //if (exposureFactor > 1)
-                        //{
-                        //    exposureFactor = 1;
-                        //}
+                            // Modify the exposure according to the position of the point between the start and end distances
+                            //float range = (float)(endDistance - startDistance);
+                            //float exposureFactor = (float)(RayData.DistanceValues[i] - startDistance) / range;
 
-                        float Lightness = exposureValue;// *(1 - exposureFactor);
-                        float Saturation = Lightness * saturation / 10;
+                            //if (exposureFactor > 1)
+                            //{
+                            //    exposureFactor = 1;
+                            //}
 
-                        // Limit S & V to 1 maximum
-                        Saturation = Saturation > 1 ? 1 : Saturation;
-                        Lightness = Lightness > 1 ? 1 : Lightness;
+                            float Lightness = exposure;// *(1 - exposureFactor);
+                            float Saturation = Lightness * saturation / 60;
 
-                        // Convert HSV to RGB
-                        HSVtoRGB(Hue, Saturation, Lightness, &r, &g, &b);
+                            // Limit S & V to 1 maximum
+                            Saturation = Saturation > 1 ? 1 : Saturation;
+                            Lightness = Lightness > 1 ? 1 : Lightness;
 
-                        // Add result to RGB total
-                        totalRGB.rgbRed += r;
-                        totalRGB.rgbGreen += g;
-                        totalRGB.rgbBlue += b;
-                        // Limit RGB values to 255
-                        totalRGB.rgbRed = totalRGB.rgbRed > 255 ? 255 : totalRGB.rgbRed;
-                        totalRGB.rgbGreen = totalRGB.rgbGreen > 255 ? 255 : totalRGB.rgbGreen;
-                        totalRGB.rgbBlue = totalRGB.rgbBlue > 255 ? 255 : totalRGB.rgbBlue;
-                    }
-                    else if (activeIndex == 1)
-                    {
-                        ///// Set colour for external point /////
+                            // Convert HSV to RGB
+                            HSVtoRGB(Hue, Saturation, Lightness, &r, &g, &b);
 
-                        if (Double.IsPositiveInfinity(RayData.DistanceValues[i + 1])
-                            || RayData.DistanceValues[i + 1] > endDistance)
-                            break;
+                            // Add result to RGB total
+                            totalRGB.rgbRed += r;
+                            totalRGB.rgbGreen += g;
+                            totalRGB.rgbBlue += b;
+                            // Limit RGB values to 255
+                            totalRGB.rgbRed = totalRGB.rgbRed > 255 ? 255 : totalRGB.rgbRed;
+                            totalRGB.rgbGreen = totalRGB.rgbGreen > 255 ? 255 : totalRGB.rgbGreen;
+                            totalRGB.rgbBlue = totalRGB.rgbBlue > 255 ? 255 : totalRGB.rgbBlue;
+                        }
+                        else if (activeIndex == 1)
+                        {
+                            ///// Set colour for external point /////
 
-                        // Get distance between points
-                        double distance = RayData.DistanceValues[i + 1] - RayData.DistanceValues[i];
+                            if (Double.IsPositiveInfinity(RayData.DistanceValues[i + 1])
+                                || RayData.DistanceValues[i + 1] > endDistance)
+                                break;
 
-                        // Get Hue from the orbit angle
-                        float Hue = (float)(RayData.AngleValues[i] * 57.2957795 * 2);
-                        // S & V set by distance * exposure value
-                        float Lightness = (float)distance * exposureValue;
-                        float Saturation = Lightness * saturation;
+                            // Get distance between points
+                            double distance = RayData.DistanceValues[i + 1] - RayData.DistanceValues[i];
 
-                        // Limit S & V to 1 maximum
-                        Saturation = Saturation > 1 ? 1 : Saturation;
-                        Lightness = Lightness > 1 ? 1 : Lightness;
+                            // Get Hue from the orbit angle
+                            float Hue = (float)(RayData.AngleValues[i] * 57.2957795 * 2);
+                            // S & V set by distance * exposure value
+                            float Lightness = (float)distance * exposureValue / 20;
+                            float Saturation = Lightness * saturation;
 
-                        // Convert HSV to RGB
-                        HSVtoRGB(Hue, Saturation, Lightness, &r, &g, &b);
-                        // Add result to RGB total
-                        totalRGB.rgbRed += r;
-                        totalRGB.rgbGreen += g;
-                        totalRGB.rgbBlue += b;
-                        // Limit RGB values to 255
-                        totalRGB.rgbRed = totalRGB.rgbRed > 255 ? 255 : totalRGB.rgbRed;
-                        totalRGB.rgbGreen = totalRGB.rgbGreen > 255 ? 255 : totalRGB.rgbGreen;
-                        totalRGB.rgbBlue = totalRGB.rgbBlue > 255 ? 255 : totalRGB.rgbBlue;
+                            // Limit S & V to 1 maximum
+                            Saturation = Saturation > 1 ? 1 : Saturation;
+                            Lightness = Lightness > 1 ? 1 : Lightness;
+
+                            // Convert HSV to RGB
+                            HSVtoRGB(Hue, Saturation, Lightness, &r, &g, &b);
+                            // Add result to RGB total
+                            totalRGB.rgbRed += r;
+                            totalRGB.rgbGreen += g;
+                            totalRGB.rgbBlue += b;
+                            // Limit RGB values to 255
+                            totalRGB.rgbRed = totalRGB.rgbRed > 255 ? 255 : totalRGB.rgbRed;
+                            totalRGB.rgbGreen = totalRGB.rgbGreen > 255 ? 255 : totalRGB.rgbGreen;
+                            totalRGB.rgbBlue = totalRGB.rgbBlue > 255 ? 255 : totalRGB.rgbBlue;
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error tracing ray: " + e.Message, "Trace Ray Error");
             }
 
             bmiColors.rgbRed = (byte)totalRGB.rgbRed;

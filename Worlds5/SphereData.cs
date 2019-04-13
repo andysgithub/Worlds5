@@ -35,13 +35,13 @@ namespace Worlds5
 
         public class Raytracing
         {
-            public float Bailout { get; set; }
             public double[] SamplingInterval { get; set; }
             public int[] RayPoints { get; set; }
             public int[] MaxSamples { get; set; }
             public int[] BinarySearchSteps { get; set; }
             public double SurfaceThickness { get; set; }
             public double BoundaryInterval { get; set; }
+            public float Bailout { get; set; }
             public int ActiveIndex { get; set; }
         }
 

@@ -86,21 +86,19 @@ namespace Worlds5
 
         private void SaveSettings()
         {
-            Globals.SetUpType settings = Globals.SetUp;
-
             // File paths
-            settings.NavPath = txtNavigationPath.Text;
-            settings.SeqPath = txtSequencePath.Text;
+            Globals.SetUp.NavPath = txtNavigationPath.Text;
+            Globals.SetUp.SeqPath = txtSequencePath.Text;
 
             // Main window
-            settings.Toolbar = chkToolbar.Checked;
-            settings.Labels = chkLabels.Checked;
-            settings.ToolTips = chkTooltips.Checked;
-            settings.StatusBar = chkStatusBar.Checked;
+            Globals.SetUp.Toolbar = chkToolbar.Checked;
+            Globals.SetUp.Labels = chkLabels.Checked;
+            Globals.SetUp.ToolTips = chkTooltips.Checked;
+            Globals.SetUp.StatusBar = chkStatusBar.Checked;
 
             // Sequence
-            settings.FramesPerSec = (int)updFramesPerSec.Value;
-            settings.AutoRepeat = chkRepeat.Checked;
+            Globals.SetUp.FramesPerSec = (int)updFramesPerSec.Value;
+            Globals.SetUp.AutoRepeat = chkRepeat.Checked;
         }
     }
 }

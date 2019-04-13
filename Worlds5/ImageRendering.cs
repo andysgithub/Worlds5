@@ -9,17 +9,17 @@ using Model;
 namespace Worlds5
 {
     sealed public class ImageRendering
-	{
+    {
         #region Member Variables
- 
+
         private clsSphere sphere;
         private ImageDisplay imageDisplay;
         private int linesProcessed = 0;
 
-		//  Image quality settings
-        private static float m_Bailout; 
-        
-		//  Sequence playback
+        //  Image quality settings
+        private static float m_Bailout;
+
+        //  Sequence playback
         // private static int m_CurrentKey;		// Current key frame for sequence
         // private static int m_FrameCount;		// Frame to display for current key
 
@@ -49,7 +49,9 @@ namespace Worlds5
         public static float Bailout
         {
             get { return m_Bailout; }
-            set { m_Bailout = value; }
+            set {
+                m_Bailout = value;
+            }
         }
 
         // public static int CurrentKey
@@ -131,10 +133,10 @@ namespace Worlds5
                     {
                         try
                         {
-                        // Perform raytracing
-                        TracedRay tracedRay = ProcessRay(sphere, rayCountX, rayCountY);
-                        // Add this ray to the ray map in the sphere
-                        sphere.RecordRay(tracedRay, rayCountX, rayCountY);
+                            // Perform raytracing
+                            TracedRay tracedRay = ProcessRay(sphere, rayCountX, rayCountY);
+                            // Add this ray to the ray map in the sphere
+                            sphere.RecordRay(tracedRay, rayCountX, rayCountY);
                             ProgressChanged(rayCountX, rayCountY, tracedRay);
                         }
                         catch
@@ -202,7 +204,7 @@ namespace Worlds5
             int totalRays = (int)(sphere.HorizontalView / sphere.AngularResolution);
 
             // If current row is still being processed
-            if (rayCountX < totalRays-1)
+            if (rayCountX < totalRays - 1)
             {
                 imageDisplay.updateImage(rayCountX, rayCountY, ray.bmiColors);
             }
@@ -277,24 +279,25 @@ namespace Worlds5
                 return null;
             }
             // Get the ray from the ray map
-            TracedRay.RayDataType rayData = sphere.RayMap[rayCountX++, rayCountY];
+            TracedRay.RayDataType rayData = sphere.RayMap[rayCountX, rayCountY];
             TracedRay tracedRay = new TracedRay(rayData.ExternalPoints, rayData.ModulusValues, rayData.AngleValues, rayData.DistanceValues);
-
-            // Calculate the tilt values from the previous rays
-            if (rayCountX > 0)
-            {
-                tracedRay.xTiltValues = sphere.addTiltValues(tracedRay, rayCountX - 1, rayCountY);
-            }
-            if (rayCountY > 0)
-            {
-                tracedRay.yTiltValues = sphere.addTiltValues(tracedRay, rayCountX, rayCountY - 1);
-            }
 
             if (tracedRay != null)
             {
+                // Calculate the tilt values from the previous rays
+                if (rayCountX > 0)
+                {
+                    tracedRay.xTiltValues = sphere.addTiltValues(tracedRay, rayCountX - 1, rayCountY);
+                }
+                if (rayCountY > 0)
+                {
+                    tracedRay.yTiltValues = sphere.addTiltValues(tracedRay, rayCountX, rayCountY - 1);
+                }
+
                 // Convert the fractal value collection into an rgb colour value
                 tracedRay.SetColour();
             }
+
             return tracedRay;
         }
 

@@ -114,6 +114,7 @@ namespace Worlds5
                     sphere.MaxSamples = raytracing.MaxSamples;
                     sphere.BoundaryInterval = raytracing.BoundaryInterval;
                     sphere.BinarySearchSteps = raytracing.BinarySearchSteps;
+                    sphere.Bailout = raytracing.Bailout;
                     sphere.ActiveIndex = raytracing.ActiveIndex;
 
                     // Rendering
@@ -204,6 +205,7 @@ namespace Worlds5
                 raytracing.MaxSamples = sphere.MaxSamples;
                 raytracing.BoundaryInterval = sphere.BoundaryInterval;
                 raytracing.BinarySearchSteps = sphere.BinarySearchSteps;
+                raytracing.Bailout = sphere.Bailout;
                 raytracing.ActiveIndex = sphere.ActiveIndex;
 
                 // Rendering

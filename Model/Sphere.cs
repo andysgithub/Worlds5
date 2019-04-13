@@ -39,6 +39,8 @@ namespace Model
         public int[] MaxSamples { get; set; }
         // The number of steps in the binary search for an orbit value boundary
         public int[] BinarySearchSteps { get; set; }
+        // Bailout value for the fractal algorithm
+        public float Bailout { get; set; }
         // Distance between sampling points during ray tracing
         public double[] SamplingInterval { get; set; }
         // The minimum acceptable thickness of the detected surface, to avoid speckling
@@ -146,7 +148,7 @@ namespace Model
             List<float> tiltValues = new List<float>();
             TracedRay.RayDataType rayData = RayMap[xIndex, yIndex];
             TracedRay lastRay = new TracedRay(rayData.ExternalPoints, rayData.ModulusValues, rayData.AngleValues, rayData.DistanceValues);
-            //if (lastRay != null)
+            if (lastRay != null)
             {
                 int lastRayStart = 0;
 
