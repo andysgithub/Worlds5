@@ -19,14 +19,14 @@
 #include "declares.h"
 #include "unmanaged.h"
 
-EXPORT void __stdcall HSVtoRGB(float h, float s, float v, BYTE *rval, BYTE *gval, BYTE *bval) 
-{
- /*	
-    Inputs:	 h in [0,360]
+/*
+	Inputs:	 h in [0,360]
 			 s in [0,1]
 			 v in [0,1]
 	Outputs: r,g,b each in [0,255]
- */
+*/
+EXPORT void __stdcall HSVtoRGB(float h, float s, float v, BYTE *rval, BYTE *gval, BYTE *bval) 
+{
 	float f, i;
 	float p, q, t;
 	float r, g, b;					// rgb values of 0.0 - 1.0
@@ -64,7 +64,8 @@ EXPORT void __stdcall HSVtoRGB(float h, float s, float v, BYTE *rval, BYTE *gval
 			break;
 	}
 
-	*rval = (BYTE)(r * 255); /* Normalise the values to 255 */
+	// Normalise the values to [0,255]
+	*rval = (BYTE)(r * 255);
 	*gval = (BYTE)(g * 255);
 	*bval = (BYTE)(b * 255);
 	return;

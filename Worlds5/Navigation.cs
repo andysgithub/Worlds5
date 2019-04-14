@@ -97,8 +97,6 @@ namespace Worlds5
                 // Load Rendering settings
                 if (FileType == 3)
                 {
-                    ImageRendering.Bailout = raytracing.Bailout;
-
                     // Viewing window
                     sphere.AngularResolution = viewing.AngularResolution;
                     sphere.Radius = viewing.Radius;
@@ -187,8 +185,6 @@ namespace Worlds5
                 compressedData = Helpers.Compress(imageData);
                 // Convert compressed data to base64 string
                 navigation.ViewportImage = Convert.ToBase64String(compressedData);
-
-                raytracing.Bailout = ImageRendering.Bailout;
 
                 // Viewing window
                 viewing.AngularResolution = sphere.AngularResolution;

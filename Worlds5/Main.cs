@@ -28,8 +28,6 @@ namespace Worlds5
         [DllImport("Unmanaged.dll")]
         static extern void InitBitmap(int Width, int Height);
         [DllImport("Unmanaged.dll")]
-        static extern void NewImagePlane(RectangleF ImagePlane);
-        [DllImport("Unmanaged.dll")]
         static extern void SetViewingAngle(double Latitude, double Longitude);
 
         private enum DisplayStatus
@@ -103,20 +101,51 @@ namespace Worlds5
             if (Navigation.Navigate(FilePath))
             {
                 if (sphere.ViewportImage == null)
-                {
+                {  
                     if (sphere.RayMap != null)
                     {
-                        imageRendering.Redisplay();
+                        RefreshImage();
                     }
                     else
                     {
-                        imageRendering.InitialiseSphere();
-                        imageRendering.PerformRayTracing();
+                        RaytraceImage();
                     }
                 }
-                // Display the bitmap
-                picImage.Image = sphere.ViewportImage;
             }
+        }
+
+        private void mnuRefresh_Click(object sender, EventArgs e)
+        {
+            RefreshImage();
+        }
+
+        private void mnuRender_Click(object sender, EventArgs e)
+        {
+            RaytraceImage();
+        }
+
+        private void RefreshImage()
+        {
+            if (Model.Globals.Sphere.RayMap != null)
+            {
+                staStatus.Items[0].Text = "Redisplaying...";
+                Application.DoEvents();
+                imageRendering.Redisplay();
+                staStatus.Items[0].Text = "Completed";
+                // Display the bitmap
+                picImage.Image = Model.Globals.Sphere.ViewportImage;
+            }
+        }
+
+        private void RaytraceImage()
+        {
+            imageRendering.InitialiseSphere();
+            staStatus.Items[0].Text = "Raytracing started...";
+            Application.DoEvents();
+            imageRendering.PerformRayTracing();
+
+            // Display the bitmap
+            picImage.Image = Model.Globals.Sphere.ViewportImage;
         }
 
         /// <summary>
@@ -183,21 +212,6 @@ namespace Worlds5
 
                 // Save sphere as json data
                 Navigation.SaveData(PathName);
-            }
-        }
-
-        private void mnuRefresh_Click(object sender, EventArgs e)
-        {
-            RefreshImage();
-        }
-
-        private void RefreshImage()
-        {
-            if (Model.Globals.Sphere.RayMap != null)
-            {
-                imageRendering.Redisplay();
-                // Display the bitmap
-                picImage.Image = imageRendering.GetBitmap();
             }
         }
 
@@ -276,14 +290,6 @@ namespace Worlds5
         {
         }
 
-        private void mnuRender_Click(object sender, EventArgs e)
-        {
-            imageRendering.InitialiseSphere();
-            imageRendering.PerformRayTracing();
-            // Display the bitmap
-            picImage.Image = Model.Globals.Sphere.ViewportImage;
-        }
-
         private void Main_KeyUp(object sender, KeyEventArgs e)
         {
             bool bScaleChanged = false;
@@ -338,10 +344,6 @@ namespace Worlds5
                 {
                     double fTop = 0 - fHeight / 2;
                     double fLeft = 0 - fWidth / 2;
-
-                    //DataClasses.Globals.Sphere.ImagePlane = new RectangleF((float)fLeft, (float)fTop, (float)fWidth, (float)fHeight);
-                    //NewImagePlane(DataClasses.Globals.Sphere.ImagePlane);
-
                     ResumeDisplay();
                 }
             }
