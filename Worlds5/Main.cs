@@ -111,6 +111,10 @@ namespace Worlds5
                         RaytraceImage();
                     }
                 }
+                else
+                {
+                    picImage.Image = sphere.ViewportImage;
+                }
             }
         }
 
@@ -396,7 +400,7 @@ namespace Worlds5
                 double[] centreCoords = form.CentreCoords;
 
                 // Record directory and base path for the sequence files
-                string sequenceDirectory = Path.Combine(Globals.SetUp.SeqPath, form.BaseName);
+                string sequenceDirectory = Path.Combine(Globals.SetUp.SeqSource, form.BaseName);
                 Directory.CreateDirectory(sequenceDirectory);
 
                 string basePath = Path.Combine(sequenceDirectory, form.BaseName);
@@ -430,20 +434,22 @@ namespace Worlds5
                 string targetFile = form.targetFile;
                 // Retrieve the frames per second
                 int framesPerSecond = form.FramesPerSecond;
+                int loops = form.Loops;
+
+                // TODO: Read the first file and find the width and height
+                int width = 360;
+                int height = 360;
 
                 // Close the dialog
                 form.Close();
                 form.Dispose();
 
-                writeAVI(sequenceDirectory, targetFile, framesPerSecond);
+                writeAVI(sequenceDirectory, targetFile, framesPerSecond, loops, width, height);
             }
         }
 
-        private void writeAVI(string sequenceDirectory, string targetFile, int framesPerSecond)
+        private void writeAVI(string sequenceDirectory, string targetFile, int framesPerSecond, int loops, int width, int height)
         {
-            int width = 360;
-            int height = 360;
-
             // create instance of video writer
             VideoFileWriter writer = new VideoFileWriter();
             // create new video file
@@ -452,10 +458,13 @@ namespace Worlds5
             string[] files = Directory.GetFiles(sequenceDirectory, "*.*");
             Bitmap bitmap;
 
-            foreach (String filePath in files)
+            for (int i = 0; i < loops; i++)
             {
-                bitmap = (Bitmap)Image.FromFile(filePath);
-                writer.WriteVideoFrame(bitmap);
+                foreach (String filePath in files)
+                {
+                    bitmap = (Bitmap)Image.FromFile(filePath);
+                    writer.WriteVideoFrame(bitmap);
+                }
             }
             writer.Close();
         }

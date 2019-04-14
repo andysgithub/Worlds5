@@ -2,4 +2,4 @@
 !.gitignore
 **/bin/
 **/obj/
-
+**/Debug/

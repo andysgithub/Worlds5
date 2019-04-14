@@ -60,7 +60,8 @@ namespace Worlds5
             {
                 // Preferences
                 Globals.SetUp.NavPath = DecodeTag(prefs.NavPath);
-                Globals.SetUp.SeqPath = DecodeTag(prefs.SeqPath);
+                Globals.SetUp.SeqSource = DecodeTag(prefs.SeqSource);
+                Globals.SetUp.SeqTarget = DecodeTag(prefs.SeqTarget);
                 Globals.SetUp.Toolbar = prefs.Toolbar;
                 Globals.SetUp.Labels = prefs.Labels; 
                 Globals.SetUp.ToolTips = prefs.ToolTips;
@@ -92,8 +93,10 @@ namespace Worlds5
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string decodedSetting = setting;
 
-            decodedSetting = decodedSetting.Replace("%APPDATA%", appDataPath);
-            decodedSetting = decodedSetting.Replace("%APPSTART%", Application.StartupPath);
+            if (decodedSetting !=null) {
+                decodedSetting = decodedSetting.Replace("%APPDATA%", appDataPath);
+                decodedSetting = decodedSetting.Replace("%APPSTART%", Application.StartupPath);
+            }
             return decodedSetting;
         }
         
@@ -108,7 +111,8 @@ namespace Worlds5
 			{
                 // Preferences
                 prefs.NavPath = Globals.SetUp.NavPath;
-                prefs.SeqPath = Globals.SetUp.SeqPath;
+                prefs.SeqSource = Globals.SetUp.SeqSource;
+                prefs.SeqTarget = Globals.SetUp.SeqTarget;
                 prefs.Toolbar = Globals.SetUp.Toolbar;
                 prefs.Labels = Globals.SetUp.Labels;
                 prefs.ToolTips = Globals.SetUp.ToolTips;

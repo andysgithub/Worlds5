@@ -38,28 +38,29 @@ namespace Worlds5
 		public static Bitmap bmpImage;	// Bitmap object to hold true colour image
 		public static bool UpdatingBitmap = false;
 
-		// ------------------------------------------------------
-		//  Type Structure Declarations
-		// ------------------------------------------------------
-        
-		public struct SetUpType 
-		{
-            public int      MainWidth;
-            public int      MainHeight;
-            public int      MainLeft;
-            public int      MainTop;
-            public string   MainState;
-            public bool     Toolbar; 
-			public bool     Labels; 
-			public bool     StatusBar; 
-			public bool     ToolTips;
-			public string   Sequence; 
-			public bool     AutoRepeat; 
-			public int      Quality;
-            public string   NavPath; 
-			public string   SeqPath;
-            public int      FramesPerSec;
-        } 
+        // ------------------------------------------------------
+        //  Type Structure Declarations
+        // ------------------------------------------------------
+
+        public struct SetUpType
+        {
+            public int MainWidth;
+            public int MainHeight;
+            public int MainLeft;
+            public int MainTop;
+            public string MainState;
+            public bool Toolbar;
+            public bool Labels;
+            public bool StatusBar;
+            public bool ToolTips;
+            public string Sequence;
+            public int AutoRepeat;
+            public int Quality;
+            public string NavPath;
+            public string SeqSource;
+            public string SeqTarget;
+            public int FramesPerSec;
+        }
         
 		public struct BitmapSizeType
         { 
