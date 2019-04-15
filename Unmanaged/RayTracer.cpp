@@ -207,7 +207,7 @@ bool SamplePoint(double distance, float *Modulus, float *Angle, double xFactor, 
 
 //    Determine whether nD point c[] in within the set
 //  Returns true if point is external to the set
-EXPORT bool __stdcall ExternalPoint(vector5Double c)
+bool ExternalPoint(vector5Double c)
 {
     long    MaxCount = (long)(MAX_COLOURS / m_Detail1);        // Iteration count for external points
     vector5Double    z;                                        // Temporary 5-D vector
