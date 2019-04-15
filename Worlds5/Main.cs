@@ -25,11 +25,6 @@ namespace Worlds5
         private string currentAddress = string.Empty;
         private ImageRendering imageRendering = null;
 
-        [DllImport("Unmanaged.dll")]
-        static extern void InitBitmap(int Width, int Height);
-        [DllImport("Unmanaged.dll")]
-        static extern void SetViewingAngle(double Latitude, double Longitude);
-
         private enum DisplayStatus
         {
             None = 0,
@@ -294,88 +289,6 @@ namespace Worlds5
         {
         }
 
-        private void Main_KeyUp(object sender, KeyEventArgs e)
-        {
-            bool bScaleChanged = false;
-            double fWidth = 0, fHeight = 0;
-
-            if (e.Control)
-            {
-                if (e.KeyCode == Keys.Add || e.KeyCode == Keys.Subtract)
-                {
-                    // Ctrl+ or Ctrl- was pressed (zoom image)
-                    //double Scale = 1.25;
-                    //if (e.KeyCode == Keys.Add)
-                    //    Scale = 0.8;
-
-                    //fWidth = (double)(DataClasses.Globals.Sphere.ImagePlane.Width * Scale);
-                    //fHeight = (double)(DataClasses.Globals.Sphere.ImagePlane.Height * Scale);
-
-                    //if (fWidth < DataClasses.Globals.Sphere.Resolution ||
-                    //    fHeight < DataClasses.Globals.Sphere.Resolution)
-                    //    return;
-
-                    bScaleChanged = true;
-                }
-                else if (e.KeyCode == Keys.NumPad0 || e.KeyCode == Keys.D0)
-                {
-                    // Ctrl0 was pressed (full size image)
-                    if (e.Alt)
-                    {
-                        double UnitsPerPixel = Model.Globals.Sphere.AngularResolution;
-                        //fHeight = Globals.SetUp.BitmapHeight * UnitsPerPixel;
-                       //fWidth = Globals.SetUp.BitmapWidth * UnitsPerPixel;
-                    }
-                    else
-                    {
-                        //float dRatio = (float)Globals.SetUp.BitmapWidth / Globals.SetUp.BitmapHeight;
-                        //if (dRatio > 1)
-                        //{
-                        //    fHeight = 2;
-                        //    fWidth = fHeight * dRatio;
-                        //}
-                        //else
-                        //{
-                        //    fWidth = 2;
-                        //    fHeight = fWidth * dRatio;
-                        //}
-                    }
-
-                    bScaleChanged = true;
-                }
-
-                if (bScaleChanged)
-                {
-                    double fTop = 0 - fHeight / 2;
-                    double fLeft = 0 - fWidth / 2;
-                    ResumeDisplay();
-                }
-            }
-            else if (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right || e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
-            {
-                // Update the latitude/longitude values
-                SetViewingAngle(Model.Globals.Sphere.CentreLatitude, Model.Globals.Sphere.CentreLongitude);
-                ResumeDisplay();
-            }
-        }
-
-        // Redisplay the image using the current parameters
-        private void ResumeDisplay()
-        {
-            if (m_DisplayStatus == DisplayStatus.InProgress)
-                m_DisplayStatus = DisplayStatus.Stopped;
-
-            tmrRedraw.Enabled = true;
-        }
-
-        private void tmrRedraw_Tick(object sender, EventArgs e)
-        {
-            if (m_DisplayStatus == DisplayStatus.None)
-            {
-                tmrRedraw.Enabled = false;
-            }
-        }
-
         private void mnuSphereSettings_Click(object sender, EventArgs e)
         {
             SphereSettings form = new SphereSettings();
@@ -436,26 +349,29 @@ namespace Worlds5
                 int framesPerSecond = form.FramesPerSecond;
                 int loops = form.Loops;
 
-                // TODO: Read the first file and find the width and height
-                int width = 360;
-                int height = 360;
-
                 // Close the dialog
                 form.Close();
                 form.Dispose();
 
-                writeAVI(sequenceDirectory, targetFile, framesPerSecond, loops, width, height);
+                writeAVI(sequenceDirectory, targetFile, framesPerSecond, loops);
             }
         }
 
-        private void writeAVI(string sequenceDirectory, string targetFile, int framesPerSecond, int loops, int width, int height)
+        private void writeAVI(string sequenceDirectory, string targetFile, int framesPerSecond, int loops)
         {
-            // create instance of video writer
             VideoFileWriter writer = new VideoFileWriter();
-            // create new video file
-            writer.Open(targetFile, width, height, framesPerSecond, VideoCodec.MPEG4);
-            // create a bitmap to save into the video file
+
+            // Read the first file to find the width and height
             string[] files = Directory.GetFiles(sequenceDirectory, "*.*");
+            Image img = Image.FromFile(files[0]);
+            // Make the size values even
+            int width = img.Width - img.Width % 2;
+            int height = img.Height - img.Height % 2;
+
+            // Open a new video file for this image size
+            writer.Open(targetFile, width, height, framesPerSecond, VideoCodec.MPEG4);
+
+            // Create a bitmap to save into the video file
             Bitmap bitmap;
 
             for (int i = 0; i < loops; i++)

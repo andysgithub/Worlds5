@@ -6,7 +6,7 @@
 #include "vectors.h"
 
 #define trans(a,b) m_Trans[b][a]            // Macro to address transformation matrix
-int        DimTotal = 5;                        // Total number of dimensions used
+int        DimTotal = 5;                    // Total number of dimensions used
 
 const BYTE    MAX_COLOURS = 1000;
 const BYTE    MAX_RAY_POINTS = 100;
@@ -177,7 +177,7 @@ EXPORT double __stdcall FindBoundary(double increment, int binarySearchSteps, do
     return sampleDistance;
 }
 
-bool SamplePoint(double distance, double xFactor, double yFactor, double zFactor, vector5Double c)
+EXPORT bool __stdcall SamplePoint(double distance, double xFactor, double yFactor, double zFactor, vector5Double c)
 {
   // Determine the x,y,z coord for this point
   double XPos = distance * xFactor;
@@ -246,7 +246,7 @@ EXPORT bool __stdcall ExternalPoint(vector5Double c)
 
 //    Determine orbital modulus at nD point c[] in fractal
 //  Returns true if point is external to the set
-EXPORT bool __stdcall ProcessPoint(float *Modulus, float *Angle, vector5Double c)
+bool  ProcessPoint(float *Modulus, float *Angle, vector5Double c)
 {
     double const PI = 3.1415926536;
     double const PI_OVER_2 = PI/2;
@@ -304,16 +304,6 @@ EXPORT bool __stdcall ProcessPoint(float *Modulus, float *Angle, vector5Double c
     // Return true if this point is external to the set
     return (count < MaxCount);
 }
-
-//void VectorTrans(double x, double y, vector5Double *c)
-//{
-//    for (int i = 0; i < DimTotal; i++)
-//    {
-//        (*c).coords[i] = m_Trans[i][0]*x +          // Transforms 2D image space at point x,y,z
-//               m_Trans[i][1]*y +                    // into nD vector space at point c[]
-//               m_Trans[i][5];
-//    }
-//}
 
 void VectorTrans(double x, double y, double z, vector5Double *c)
 {

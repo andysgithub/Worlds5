@@ -28,7 +28,6 @@ namespace Worlds5
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.mnuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuLoadSphere = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,7 +53,6 @@ namespace Worlds5
             this.picImage = new System.Windows.Forms.PictureBox();
             this.dlgOpenFile = new System.Windows.Forms.OpenFileDialog();
             this.pnlImage = new System.Windows.Forms.Panel();
-            this.tmrRedraw = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1.SuspendLayout();
             this.staStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picImage)).BeginInit();
@@ -263,11 +261,6 @@ namespace Worlds5
             this.pnlImage.Size = new System.Drawing.Size(723, 470);
             this.pnlImage.TabIndex = 3;
             // 
-            // tmrRedraw
-            // 
-            this.tmrRedraw.Interval = 200;
-            this.tmrRedraw.Tick += new System.EventHandler(this.tmrRedraw_Tick);
-            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -282,7 +275,6 @@ namespace Worlds5
             this.Text = "Worlds 5";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Main_FormClosed);
             this.Load += new System.EventHandler(this.frmMain_Load);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Main_KeyUp);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.staStatus.ResumeLayout(false);
@@ -309,7 +301,6 @@ namespace Worlds5
         private System.Windows.Forms.Panel pnlImage;
         private System.Windows.Forms.ToolStripMenuItem mnuReset;
         private System.Windows.Forms.ToolStripStatusLabel lblTileStatus;
-        private System.Windows.Forms.Timer tmrRedraw;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mnuSettings;

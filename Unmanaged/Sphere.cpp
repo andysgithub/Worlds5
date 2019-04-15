@@ -60,8 +60,3 @@ EXPORT void __stdcall InitSphere(float fDetail0, float fDetail1,
     }
 }
 
-EXPORT void __stdcall SetViewingAngle(double dLatitude, double dLongitude)
-{
-    m_Latitude = dLatitude;
-    m_Longitude = dLongitude;
-}
