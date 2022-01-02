@@ -1,4 +1,5 @@
 .*
 !.gitignore
-worlds5/bin/
-worlds5/obj/
+**/bin/
+**/obj/
+**/Debug/

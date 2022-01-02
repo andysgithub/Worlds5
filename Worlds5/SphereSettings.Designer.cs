@@ -45,31 +45,43 @@
             this.updSphereRadius = new System.Windows.Forms.NumericUpDown();
             this.updResolution = new System.Windows.Forms.NumericUpDown();
             this.tabRaytracing = new System.Windows.Forms.TabPage();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.chkShowVolume = new System.Windows.Forms.CheckBox();
             this.chkShowSurface = new System.Windows.Forms.CheckBox();
-            this.lblSurfaceThickness = new System.Windows.Forms.Label();
-            this.updSurfaceThickness = new System.Windows.Forms.NumericUpDown();
+            this.updBinarySearchSteps_1 = new System.Windows.Forms.NumericUpDown();
+            this.updMaxSamples_1 = new System.Windows.Forms.NumericUpDown();
+            this.updRayPoints_1 = new System.Windows.Forms.NumericUpDown();
+            this.updSamplingInterval_1 = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
-            this.updBinarySearchSteps = new System.Windows.Forms.NumericUpDown();
+            this.updBinarySearchSteps_0 = new System.Windows.Forms.NumericUpDown();
+            this.updMaxSamples_0 = new System.Windows.Forms.NumericUpDown();
+            this.updRayPoints_0 = new System.Windows.Forms.NumericUpDown();
+            this.updSamplingInterval_0 = new System.Windows.Forms.NumericUpDown();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label12 = new System.Windows.Forms.Label();
+            this.updBailout = new System.Windows.Forms.NumericUpDown();
+            this.lblSurfaceThickness = new System.Windows.Forms.Label();
+            this.updSurfaceThickness = new System.Windows.Forms.NumericUpDown();
+            this.label8 = new System.Windows.Forms.Label();
             this.updBoundaryInterval = new System.Windows.Forms.NumericUpDown();
-            this.updMaxSamples = new System.Windows.Forms.NumericUpDown();
-            this.updRayPoints = new System.Windows.Forms.NumericUpDown();
-            this.updSamplingInterval = new System.Windows.Forms.NumericUpDown();
             this.tabRendering = new System.Windows.Forms.TabPage();
+            this.label16 = new System.Windows.Forms.Label();
+            this.updEndDistance_1 = new System.Windows.Forms.NumericUpDown();
+            this.updStartDistance_1 = new System.Windows.Forms.NumericUpDown();
+            this.updSaturation_1 = new System.Windows.Forms.NumericUpDown();
+            this.updExposureValue_1 = new System.Windows.Forms.NumericUpDown();
+            this.label13 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.updLightingAngle = new System.Windows.Forms.NumericUpDown();
             this.label21 = new System.Windows.Forms.Label();
             this.updSurfaceContrast = new System.Windows.Forms.NumericUpDown();
-            this.updEndDistance = new System.Windows.Forms.NumericUpDown();
+            this.updEndDistance_0 = new System.Windows.Forms.NumericUpDown();
             this.btnApply = new System.Windows.Forms.Button();
             this.label19 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
-            this.updStartDistance = new System.Windows.Forms.NumericUpDown();
+            this.updStartDistance_0 = new System.Windows.Forms.NumericUpDown();
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
@@ -90,14 +102,23 @@
             ((System.ComponentModel.ISupportInitialize)(this.updSphereRadius)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updResolution)).BeginInit();
             this.tabRaytracing.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updBinarySearchSteps_1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updMaxSamples_1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updRayPoints_1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updSamplingInterval_1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updBinarySearchSteps_0)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updMaxSamples_0)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updRayPoints_0)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updSamplingInterval_0)).BeginInit();
+            this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updBailout)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSurfaceThickness)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updBinarySearchSteps)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updBoundaryInterval)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updMaxSamples)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updRayPoints)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updSamplingInterval)).BeginInit();
             this.tabRendering.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updEndDistance_1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updStartDistance_1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updSaturation_1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updExposureValue_1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updLightingAngle)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSurfaceContrast)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updEndDistance)).BeginInit();
@@ -139,6 +160,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabSettings.Controls.Add(this.tabViewport);
             this.tabSettings.Controls.Add(this.tabRaytracing);
+            this.tabSettings.Controls.Add(this.tabPage1);
             this.tabSettings.Controls.Add(this.tabRendering);
             this.tabSettings.Location = new System.Drawing.Point(12, 12);
             this.tabSettings.Name = "tabSettings";
@@ -365,19 +387,20 @@
             // 
             // tabRaytracing
             // 
-            this.tabRaytracing.Controls.Add(this.groupBox1);
-            this.tabRaytracing.Controls.Add(this.lblSurfaceThickness);
-            this.tabRaytracing.Controls.Add(this.updSurfaceThickness);
+            this.tabRaytracing.Controls.Add(this.chkShowVolume);
+            this.tabRaytracing.Controls.Add(this.chkShowSurface);
+            this.tabRaytracing.Controls.Add(this.updBinarySearchSteps_1);
+            this.tabRaytracing.Controls.Add(this.updMaxSamples_1);
+            this.tabRaytracing.Controls.Add(this.updRayPoints_1);
+            this.tabRaytracing.Controls.Add(this.updSamplingInterval_1);
             this.tabRaytracing.Controls.Add(this.label7);
-            this.tabRaytracing.Controls.Add(this.label8);
             this.tabRaytracing.Controls.Add(this.label9);
             this.tabRaytracing.Controls.Add(this.label10);
             this.tabRaytracing.Controls.Add(this.label11);
-            this.tabRaytracing.Controls.Add(this.updBinarySearchSteps);
-            this.tabRaytracing.Controls.Add(this.updBoundaryInterval);
-            this.tabRaytracing.Controls.Add(this.updMaxSamples);
-            this.tabRaytracing.Controls.Add(this.updRayPoints);
-            this.tabRaytracing.Controls.Add(this.updSamplingInterval);
+            this.tabRaytracing.Controls.Add(this.updBinarySearchSteps_0);
+            this.tabRaytracing.Controls.Add(this.updMaxSamples_0);
+            this.tabRaytracing.Controls.Add(this.updRayPoints_0);
+            this.tabRaytracing.Controls.Add(this.updSamplingInterval_0);
             this.tabRaytracing.Location = new System.Drawing.Point(4, 22);
             this.tabRaytracing.Name = "tabRaytracing";
             this.tabRaytracing.Padding = new System.Windows.Forms.Padding(3);
@@ -386,45 +409,304 @@
             this.tabRaytracing.Text = "Raytracing";
             this.tabRaytracing.UseVisualStyleBackColor = true;
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.chkShowVolume);
-            this.groupBox1.Controls.Add(this.chkShowSurface);
-            this.groupBox1.Location = new System.Drawing.Point(264, 20);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(118, 75);
-            this.groupBox1.TabIndex = 22;
-            this.groupBox1.TabStop = false;
-            // 
             // chkShowVolume
             // 
             this.chkShowVolume.AutoSize = true;
-            this.chkShowVolume.Location = new System.Drawing.Point(16, 45);
+            this.chkShowVolume.Location = new System.Drawing.Point(265, 21);
             this.chkShowVolume.Name = "chkShowVolume";
             this.chkShowVolume.Size = new System.Drawing.Size(90, 17);
-            this.chkShowVolume.TabIndex = 1;
+            this.chkShowVolume.TabIndex = 31;
             this.chkShowVolume.Text = "Show volume";
             this.chkShowVolume.UseVisualStyleBackColor = true;
-            this.chkShowVolume.CheckedChanged += new System.EventHandler(this.chkShowVolume_CheckedChanged);
             // 
             // chkShowSurface
             // 
             this.chkShowSurface.AutoSize = true;
-            this.chkShowSurface.Location = new System.Drawing.Point(16, 19);
+            this.chkShowSurface.Location = new System.Drawing.Point(142, 21);
             this.chkShowSurface.Name = "chkShowSurface";
             this.chkShowSurface.Size = new System.Drawing.Size(91, 17);
-            this.chkShowSurface.TabIndex = 0;
+            this.chkShowSurface.TabIndex = 30;
             this.chkShowSurface.Text = "Show surface";
             this.chkShowSurface.UseVisualStyleBackColor = true;
-            this.chkShowSurface.CheckedChanged += new System.EventHandler(this.chkShowSurface_CheckedChanged);
+            // 
+            // updBinarySearchSteps_1
+            // 
+            this.updBinarySearchSteps_1.Location = new System.Drawing.Point(265, 83);
+            this.updBinarySearchSteps_1.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.updBinarySearchSteps_1.Name = "updBinarySearchSteps_1";
+            this.updBinarySearchSteps_1.Size = new System.Drawing.Size(93, 20);
+            this.updBinarySearchSteps_1.TabIndex = 28;
+            this.updBinarySearchSteps_1.Value = new decimal(new int[] {
+            25,
+            0,
+            0,
+            0});
+            // 
+            // updMaxSamples_1
+            // 
+            this.updMaxSamples_1.Location = new System.Drawing.Point(265, 145);
+            this.updMaxSamples_1.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.updMaxSamples_1.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.updMaxSamples_1.Name = "updMaxSamples_1";
+            this.updMaxSamples_1.Size = new System.Drawing.Size(93, 20);
+            this.updMaxSamples_1.TabIndex = 27;
+            this.updMaxSamples_1.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            // 
+            // updRayPoints_1
+            // 
+            this.updRayPoints_1.Location = new System.Drawing.Point(265, 114);
+            this.updRayPoints_1.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.updRayPoints_1.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.updRayPoints_1.Name = "updRayPoints_1";
+            this.updRayPoints_1.Size = new System.Drawing.Size(93, 20);
+            this.updRayPoints_1.TabIndex = 26;
+            this.updRayPoints_1.Value = new decimal(new int[] {
+            70,
+            0,
+            0,
+            0});
+            // 
+            // updSamplingInterval_1
+            // 
+            this.updSamplingInterval_1.DecimalPlaces = 3;
+            this.updSamplingInterval_1.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.updSamplingInterval_1.Location = new System.Drawing.Point(265, 52);
+            this.updSamplingInterval_1.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.updSamplingInterval_1.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.updSamplingInterval_1.Name = "updSamplingInterval_1";
+            this.updSamplingInterval_1.Size = new System.Drawing.Size(93, 20);
+            this.updSamplingInterval_1.TabIndex = 25;
+            this.updSamplingInterval_1.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            131072});
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(35, 85);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(103, 13);
+            this.label7.TabIndex = 19;
+            this.label7.Text = "Binary Search Steps";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(35, 147);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(94, 13);
+            this.label9.TabIndex = 17;
+            this.label9.Text = "Maximum Samples";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(35, 116);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(58, 13);
+            this.label10.TabIndex = 16;
+            this.label10.Text = "Ray Points";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(35, 54);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(88, 13);
+            this.label11.TabIndex = 15;
+            this.label11.Text = "Sampling Interval";
+            // 
+            // updBinarySearchSteps_0
+            // 
+            this.updBinarySearchSteps_0.Location = new System.Drawing.Point(142, 83);
+            this.updBinarySearchSteps_0.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.updBinarySearchSteps_0.Name = "updBinarySearchSteps_0";
+            this.updBinarySearchSteps_0.Size = new System.Drawing.Size(93, 20);
+            this.updBinarySearchSteps_0.TabIndex = 14;
+            this.updBinarySearchSteps_0.Value = new decimal(new int[] {
+            25,
+            0,
+            0,
+            0});
+            this.updBinarySearchSteps_0.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updBinarySearchSteps_HelpRequested);
+            // 
+            // updMaxSamples_0
+            // 
+            this.updMaxSamples_0.Location = new System.Drawing.Point(142, 145);
+            this.updMaxSamples_0.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.updMaxSamples_0.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.updMaxSamples_0.Name = "updMaxSamples_0";
+            this.updMaxSamples_0.Size = new System.Drawing.Size(93, 20);
+            this.updMaxSamples_0.TabIndex = 12;
+            this.updMaxSamples_0.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.updMaxSamples_0.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updMaxSamples_HelpRequested);
+            // 
+            // updRayPoints_0
+            // 
+            this.updRayPoints_0.Location = new System.Drawing.Point(142, 114);
+            this.updRayPoints_0.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.updRayPoints_0.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.updRayPoints_0.Name = "updRayPoints_0";
+            this.updRayPoints_0.Size = new System.Drawing.Size(93, 20);
+            this.updRayPoints_0.TabIndex = 11;
+            this.updRayPoints_0.Value = new decimal(new int[] {
+            70,
+            0,
+            0,
+            0});
+            this.updRayPoints_0.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updRayPoints_HelpRequested);
+            // 
+            // updSamplingInterval_0
+            // 
+            this.updSamplingInterval_0.DecimalPlaces = 3;
+            this.updSamplingInterval_0.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.updSamplingInterval_0.Location = new System.Drawing.Point(142, 52);
+            this.updSamplingInterval_0.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.updSamplingInterval_0.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.updSamplingInterval_0.Name = "updSamplingInterval_0";
+            this.updSamplingInterval_0.Size = new System.Drawing.Size(93, 20);
+            this.updSamplingInterval_0.TabIndex = 10;
+            this.updSamplingInterval_0.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            131072});
+            this.updSamplingInterval_0.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updSamplingInterval_HelpRequested);
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.label12);
+            this.tabPage1.Controls.Add(this.updBailout);
+            this.tabPage1.Controls.Add(this.lblSurfaceThickness);
+            this.tabPage1.Controls.Add(this.updSurfaceThickness);
+            this.tabPage1.Controls.Add(this.label8);
+            this.tabPage1.Controls.Add(this.updBoundaryInterval);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(409, 229);
+            this.tabPage1.TabIndex = 3;
+            this.tabPage1.Text = "Surface";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(36, 114);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(69, 13);
+            this.label12.TabIndex = 27;
+            this.label12.Text = "Bailout Value";
+            // 
+            // updBailout
+            // 
+            this.updBailout.DecimalPlaces = 1;
+            this.updBailout.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.updBailout.Location = new System.Drawing.Point(142, 112);
+            this.updBailout.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.updBailout.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.updBailout.Name = "updBailout";
+            this.updBailout.Size = new System.Drawing.Size(93, 20);
+            this.updBailout.TabIndex = 26;
+            this.updBailout.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
             // 
             // lblSurfaceThickness
             // 
             this.lblSurfaceThickness.AutoSize = true;
-            this.lblSurfaceThickness.Location = new System.Drawing.Point(35, 58);
+            this.lblSurfaceThickness.Location = new System.Drawing.Point(35, 34);
             this.lblSurfaceThickness.Name = "lblSurfaceThickness";
             this.lblSurfaceThickness.Size = new System.Drawing.Size(96, 13);
-            this.lblSurfaceThickness.TabIndex = 21;
+            this.lblSurfaceThickness.TabIndex = 25;
             this.lblSurfaceThickness.Text = "Surface Thickness";
             // 
             // updSurfaceThickness
@@ -435,7 +717,7 @@
             0,
             0,
             131072});
-            this.updSurfaceThickness.Location = new System.Drawing.Point(142, 56);
+            this.updSurfaceThickness.Location = new System.Drawing.Point(142, 32);
             this.updSurfaceThickness.Maximum = new decimal(new int[] {
             1,
             0,
@@ -448,75 +730,21 @@
             196608});
             this.updSurfaceThickness.Name = "updSurfaceThickness";
             this.updSurfaceThickness.Size = new System.Drawing.Size(93, 20);
-            this.updSurfaceThickness.TabIndex = 20;
+            this.updSurfaceThickness.TabIndex = 24;
             this.updSurfaceThickness.Value = new decimal(new int[] {
             2,
             0,
             0,
             131072});
             // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(35, 178);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(103, 13);
-            this.label7.TabIndex = 19;
-            this.label7.Text = "Binary Search Steps";
-            // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(35, 148);
+            this.label8.Location = new System.Drawing.Point(35, 75);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(90, 13);
-            this.label8.TabIndex = 18;
+            this.label8.TabIndex = 23;
             this.label8.Text = "Boundary Interval";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(35, 118);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(94, 13);
-            this.label9.TabIndex = 17;
-            this.label9.Text = "Maximum Samples";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(35, 88);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(58, 13);
-            this.label10.TabIndex = 16;
-            this.label10.Text = "Ray Points";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(35, 28);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(88, 13);
-            this.label11.TabIndex = 15;
-            this.label11.Text = "Sampling Interval";
-            // 
-            // updBinarySearchSteps
-            // 
-            this.updBinarySearchSteps.Location = new System.Drawing.Point(142, 176);
-            this.updBinarySearchSteps.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.updBinarySearchSteps.Name = "updBinarySearchSteps";
-            this.updBinarySearchSteps.Size = new System.Drawing.Size(93, 20);
-            this.updBinarySearchSteps.TabIndex = 14;
-            this.updBinarySearchSteps.Value = new decimal(new int[] {
-            25,
-            0,
-            0,
-            0});
-            this.updBinarySearchSteps.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updBinarySearchSteps_HelpRequested);
             // 
             // updBoundaryInterval
             // 
@@ -526,7 +754,7 @@
             0,
             0,
             196608});
-            this.updBoundaryInterval.Location = new System.Drawing.Point(142, 146);
+            this.updBoundaryInterval.Location = new System.Drawing.Point(142, 73);
             this.updBoundaryInterval.Maximum = new decimal(new int[] {
             1,
             0,
@@ -539,88 +767,12 @@
             262144});
             this.updBoundaryInterval.Name = "updBoundaryInterval";
             this.updBoundaryInterval.Size = new System.Drawing.Size(93, 20);
-            this.updBoundaryInterval.TabIndex = 13;
+            this.updBoundaryInterval.TabIndex = 22;
             this.updBoundaryInterval.Value = new decimal(new int[] {
             1,
             0,
             0,
             196608});
-            this.updBoundaryInterval.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updBoundaryInterval_HelpRequested);
-            // 
-            // updMaxSamples
-            // 
-            this.updMaxSamples.Location = new System.Drawing.Point(142, 116);
-            this.updMaxSamples.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.updMaxSamples.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.updMaxSamples.Name = "updMaxSamples";
-            this.updMaxSamples.Size = new System.Drawing.Size(93, 20);
-            this.updMaxSamples.TabIndex = 12;
-            this.updMaxSamples.Value = new decimal(new int[] {
-            500,
-            0,
-            0,
-            0});
-            this.updMaxSamples.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updMaxSamples_HelpRequested);
-            // 
-            // updRayPoints
-            // 
-            this.updRayPoints.Location = new System.Drawing.Point(142, 86);
-            this.updRayPoints.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.updRayPoints.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.updRayPoints.Name = "updRayPoints";
-            this.updRayPoints.Size = new System.Drawing.Size(93, 20);
-            this.updRayPoints.TabIndex = 11;
-            this.updRayPoints.Value = new decimal(new int[] {
-            70,
-            0,
-            0,
-            0});
-            this.updRayPoints.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updRayPoints_HelpRequested);
-            // 
-            // updSamplingInterval
-            // 
-            this.updSamplingInterval.DecimalPlaces = 3;
-            this.updSamplingInterval.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.updSamplingInterval.Location = new System.Drawing.Point(142, 26);
-            this.updSamplingInterval.Maximum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.updSamplingInterval.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.updSamplingInterval.Name = "updSamplingInterval";
-            this.updSamplingInterval.Size = new System.Drawing.Size(93, 20);
-            this.updSamplingInterval.TabIndex = 10;
-            this.updSamplingInterval.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            131072});
-            this.updSamplingInterval.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updSamplingInterval_HelpRequested);
             // 
             // tabRendering
             // 
@@ -629,17 +781,15 @@
             this.tabRendering.Controls.Add(this.updLightingAngle);
             this.tabRendering.Controls.Add(this.label21);
             this.tabRendering.Controls.Add(this.updSurfaceContrast);
-            this.tabRendering.Controls.Add(this.updEndDistance);
+            this.tabRendering.Controls.Add(this.updEndDistance_0);
             this.tabRendering.Controls.Add(this.btnApply);
             this.tabRendering.Controls.Add(this.label19);
             this.tabRendering.Controls.Add(this.label18);
-            this.tabRendering.Controls.Add(this.updStartDistance);
+            this.tabRendering.Controls.Add(this.updStartDistance_0);
             this.tabRendering.Controls.Add(this.label14);
             this.tabRendering.Controls.Add(this.label15);
-            this.tabRendering.Controls.Add(this.label16);
-            this.tabRendering.Controls.Add(this.updSaturation);
-            this.tabRendering.Controls.Add(this.updExposureValue);
-            this.tabRendering.Controls.Add(this.updImageJpgQuality);
+            this.tabRendering.Controls.Add(this.updSaturation_0);
+            this.tabRendering.Controls.Add(this.updExposureValue_0);
             this.tabRendering.Location = new System.Drawing.Point(4, 22);
             this.tabRendering.Name = "tabRendering";
             this.tabRendering.Padding = new System.Windows.Forms.Padding(3);
@@ -648,10 +798,83 @@
             this.tabRendering.Text = "Rendering";
             this.tabRendering.UseVisualStyleBackColor = true;
             // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(262, 16);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(42, 13);
+            this.label16.TabIndex = 40;
+            this.label16.Text = "Volume";
+            // 
+            // updEndDistance_1
+            // 
+            this.updEndDistance_1.DecimalPlaces = 4;
+            this.updEndDistance_1.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.updEndDistance_1.Location = new System.Drawing.Point(265, 131);
+            this.updEndDistance_1.Name = "updEndDistance_1";
+            this.updEndDistance_1.Size = new System.Drawing.Size(93, 20);
+            this.updEndDistance_1.TabIndex = 39;
+            this.updEndDistance_1.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            // 
+            // updStartDistance_1
+            // 
+            this.updStartDistance_1.DecimalPlaces = 4;
+            this.updStartDistance_1.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.updStartDistance_1.Location = new System.Drawing.Point(265, 101);
+            this.updStartDistance_1.Name = "updStartDistance_1";
+            this.updStartDistance_1.Size = new System.Drawing.Size(93, 20);
+            this.updStartDistance_1.TabIndex = 38;
+            // 
+            // updSaturation_1
+            // 
+            this.updSaturation_1.Location = new System.Drawing.Point(265, 71);
+            this.updSaturation_1.Name = "updSaturation_1";
+            this.updSaturation_1.Size = new System.Drawing.Size(93, 20);
+            this.updSaturation_1.TabIndex = 37;
+            this.updSaturation_1.Value = new decimal(new int[] {
+            25,
+            0,
+            0,
+            0});
+            // 
+            // updExposureValue_1
+            // 
+            this.updExposureValue_1.Location = new System.Drawing.Point(265, 41);
+            this.updExposureValue_1.Name = "updExposureValue_1";
+            this.updExposureValue_1.Size = new System.Drawing.Size(93, 20);
+            this.updExposureValue_1.TabIndex = 36;
+            this.updExposureValue_1.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(139, 16);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(44, 13);
+            this.label13.TabIndex = 35;
+            this.label13.Text = "Surface";
+            // 
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(35, 117);
+            this.label22.Location = new System.Drawing.Point(35, 191);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(74, 13);
             this.label22.TabIndex = 34;
@@ -660,12 +883,7 @@
             // updLightingAngle
             // 
             this.updLightingAngle.DecimalPlaces = 1;
-            this.updLightingAngle.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            this.updLightingAngle.Location = new System.Drawing.Point(142, 115);
+            this.updLightingAngle.Location = new System.Drawing.Point(142, 189);
             this.updLightingAngle.Maximum = new decimal(new int[] {
             180,
             0,
@@ -683,7 +901,7 @@
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(35, 87);
+            this.label21.Location = new System.Drawing.Point(35, 162);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(86, 13);
             this.label21.TabIndex = 32;
@@ -691,7 +909,7 @@
             // 
             // updSurfaceContrast
             // 
-            this.updSurfaceContrast.Location = new System.Drawing.Point(142, 85);
+            this.updSurfaceContrast.Location = new System.Drawing.Point(142, 160);
             this.updSurfaceContrast.Name = "updSurfaceContrast";
             this.updSurfaceContrast.Size = new System.Drawing.Size(93, 20);
             this.updSurfaceContrast.TabIndex = 31;
@@ -701,10 +919,10 @@
             0,
             0});
             // 
-            // updEndDistance
+            // updEndDistance_0
             // 
-            this.updEndDistance.DecimalPlaces = 4;
-            this.updEndDistance.Increment = new decimal(new int[] {
+            this.updEndDistance_0.DecimalPlaces = 4;
+            this.updEndDistance_0.Increment = new decimal(new int[] {
             1,
             0,
             0,
@@ -738,7 +956,7 @@
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(35, 177);
+            this.label19.Location = new System.Drawing.Point(35, 133);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(71, 13);
             this.label19.TabIndex = 28;
@@ -747,29 +965,29 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(35, 147);
+            this.label18.Location = new System.Drawing.Point(35, 103);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(74, 13);
             this.label18.TabIndex = 26;
             this.label18.Text = "Start Distance";
             // 
-            // updStartDistance
+            // updStartDistance_0
             // 
-            this.updStartDistance.DecimalPlaces = 4;
-            this.updStartDistance.Increment = new decimal(new int[] {
+            this.updStartDistance_0.DecimalPlaces = 4;
+            this.updStartDistance_0.Increment = new decimal(new int[] {
             1,
             0,
             0,
             131072});
-            this.updStartDistance.Location = new System.Drawing.Point(142, 145);
-            this.updStartDistance.Name = "updStartDistance";
-            this.updStartDistance.Size = new System.Drawing.Size(93, 20);
-            this.updStartDistance.TabIndex = 25;
+            this.updStartDistance_0.Location = new System.Drawing.Point(142, 101);
+            this.updStartDistance_0.Name = "updStartDistance_0";
+            this.updStartDistance_0.Size = new System.Drawing.Size(93, 20);
+            this.updStartDistance_0.TabIndex = 25;
             // 
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(35, 58);
+            this.label14.Location = new System.Drawing.Point(35, 73);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(55, 13);
             this.label14.TabIndex = 20;
@@ -778,7 +996,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(35, 28);
+            this.label15.Location = new System.Drawing.Point(35, 43);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(81, 13);
             this.label15.TabIndex = 19;
@@ -796,42 +1014,18 @@
             // 
             // updSaturation
             // 
-            this.updSaturation.Location = new System.Drawing.Point(142, 56);
-            this.updSaturation.Name = "updSaturation";
-            this.updSaturation.Size = new System.Drawing.Size(93, 20);
-            this.updSaturation.TabIndex = 15;
-            this.updSaturation.Value = new decimal(new int[] {
+            this.updSaturation_0.Location = new System.Drawing.Point(142, 71);
+            this.updSaturation_0.Name = "updSaturation_0";
+            this.updSaturation_0.Size = new System.Drawing.Size(93, 20);
+            this.updSaturation_0.TabIndex = 15;
+            this.updSaturation_0.Value = new decimal(new int[] {
             25,
             0,
             0,
             0});
-            this.updSaturation.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updSaturation_HelpRequested);
+            this.updSaturation_0.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updSaturation_HelpRequested);
             // 
-            // updExposureValue
-            // 
-            this.updExposureValue.DecimalPlaces = 3;
-            this.updExposureValue.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.updExposureValue.Location = new System.Drawing.Point(142, 26);
-            this.updExposureValue.Maximum = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.updExposureValue.Name = "updExposureValue";
-            this.updExposureValue.Size = new System.Drawing.Size(93, 20);
-            this.updExposureValue.TabIndex = 14;
-            this.updExposureValue.Value = new decimal(new int[] {
-            8,
-            0,
-            0,
-            65536});
-            this.updExposureValue.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updExposureValue_HelpRequested);
-            // 
-            // updImageJpgQuality
+            // updExposureValue_0
             // 
             this.updImageJpgQuality.Increment = new decimal(new int[] {
             10,
@@ -852,8 +1046,7 @@
             0,
             0,
             0});
-            this.updImageJpgQuality.Visible = false;
-            this.updImageJpgQuality.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updImageJpgQuality_HelpRequested);
+            this.updExposureValue_0.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updExposureValue_HelpRequested);
             // 
             // groupBox2
             // 
@@ -953,16 +1146,25 @@
             ((System.ComponentModel.ISupportInitialize)(this.updResolution)).EndInit();
             this.tabRaytracing.ResumeLayout(false);
             this.tabRaytracing.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updBinarySearchSteps_1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updMaxSamples_1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updRayPoints_1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updSamplingInterval_1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updBinarySearchSteps_0)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updMaxSamples_0)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updRayPoints_0)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updSamplingInterval_0)).EndInit();
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updBailout)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSurfaceThickness)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updBinarySearchSteps)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updBoundaryInterval)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updMaxSamples)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updRayPoints)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updSamplingInterval)).EndInit();
             this.tabRendering.ResumeLayout(false);
             this.tabRendering.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updEndDistance_1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updStartDistance_1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updSaturation_1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updExposureValue_1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updLightingAngle)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSurfaceContrast)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updEndDistance)).EndInit();
@@ -997,35 +1199,28 @@
         private System.Windows.Forms.NumericUpDown updViewportWidth;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.NumericUpDown updBinarySearchSteps;
-        private System.Windows.Forms.NumericUpDown updBoundaryInterval;
-        private System.Windows.Forms.NumericUpDown updMaxSamples;
-        private System.Windows.Forms.NumericUpDown updRayPoints;
-        private System.Windows.Forms.NumericUpDown updSamplingInterval;
+        private System.Windows.Forms.NumericUpDown updBinarySearchSteps_0;
+        private System.Windows.Forms.NumericUpDown updMaxSamples_0;
+        private System.Windows.Forms.NumericUpDown updRayPoints_0;
+        private System.Windows.Forms.NumericUpDown updSamplingInterval_0;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.NumericUpDown updSaturation;
-        private System.Windows.Forms.NumericUpDown updExposureValue;
+        private System.Windows.Forms.NumericUpDown updSaturation_0;
+        private System.Windows.Forms.NumericUpDown updExposureValue_0;
         private System.Windows.Forms.NumericUpDown updResolution;
         private System.Windows.Forms.NumericUpDown updSphereRadius;
         private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.NumericUpDown updStartDistance;
-        private System.Windows.Forms.NumericUpDown updEndDistance;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.NumericUpDown updImageJpgQuality;
-        private System.Windows.Forms.Label lblSurfaceThickness;
-        private System.Windows.Forms.NumericUpDown updSurfaceThickness;
+        private System.Windows.Forms.NumericUpDown updStartDistance_0;
+        private System.Windows.Forms.NumericUpDown updEndDistance_0;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.NumericUpDown updSurfaceContrast;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.NumericUpDown updLightingAngle;
-        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox chkShowVolume;
         private System.Windows.Forms.CheckBox chkShowSurface;
         private System.Windows.Forms.GroupBox groupBox2;

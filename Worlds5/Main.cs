@@ -25,13 +25,6 @@ namespace Worlds5
         private string currentAddress = string.Empty;
         private ImageRendering imageRendering = null;
 
-        [DllImport("Unmanaged.dll")]
-        static extern void InitBitmap(int Width, int Height);
-        [DllImport("Unmanaged.dll")]
-        static extern void NewImagePlane(RectangleF ImagePlane);
-        [DllImport("Unmanaged.dll")]
-        static extern void SetViewingAngle(double Latitude, double Longitude);
-
         private enum DisplayStatus
         {
             None = 0,
@@ -103,20 +96,55 @@ namespace Worlds5
             if (Navigation.Navigate(FilePath))
             {
                 if (sphere.ViewportImage == null)
-                {
+                {  
                     if (sphere.RayMap != null)
                     {
-                        imageRendering.Redisplay();
+                        RefreshImage();
                     }
                     else
                     {
-                        imageRendering.InitialiseSphere();
-                        imageRendering.PerformRayTracing();
+                        RaytraceImage();
                     }
                 }
-                // Display the bitmap
-                picImage.Image = sphere.ViewportImage;
+                else
+                {
+                    picImage.Image = sphere.ViewportImage;
+                }
             }
+        }
+
+        private void mnuRefresh_Click(object sender, EventArgs e)
+        {
+            RefreshImage();
+        }
+
+        private void mnuRender_Click(object sender, EventArgs e)
+        {
+            RaytraceImage();
+        }
+
+        private void RefreshImage()
+        {
+            if (Model.Globals.Sphere.RayMap != null)
+            {
+                staStatus.Items[0].Text = "Redisplaying...";
+                Application.DoEvents();
+                imageRendering.Redisplay();
+                staStatus.Items[0].Text = "Completed";
+                // Display the bitmap
+                picImage.Image = Model.Globals.Sphere.ViewportImage;
+            }
+        }
+
+        private void RaytraceImage()
+        {
+            imageRendering.InitialiseSphere();
+            staStatus.Items[0].Text = "Raytracing started...";
+            Application.DoEvents();
+            imageRendering.PerformRayTracing();
+
+            // Display the bitmap
+            picImage.Image = Model.Globals.Sphere.ViewportImage;
         }
 
         /// <summary>
@@ -190,21 +218,6 @@ namespace Worlds5
 
                 // Save sphere as json data
                 Navigation.SaveData(PathName);
-            }
-        }
-
-        private void mnuRefresh_Click(object sender, EventArgs e)
-        {
-            RefreshImage();
-        }
-
-        private void RefreshImage()
-        {
-            if (Model.Globals.Sphere.RayMap != null)
-            {
-                imageRendering.Redisplay();
-                // Display the bitmap
-                picImage.Image = imageRendering.GetBitmap();
             }
         }
 
@@ -283,100 +296,6 @@ namespace Worlds5
         {
         }
 
-        private void mnuRender_Click(object sender, EventArgs e)
-        {
-            imageRendering.InitialiseSphere();
-            imageRendering.PerformRayTracing();
-            // Display the bitmap
-            picImage.Image = Model.Globals.Sphere.ViewportImage;
-        }
-
-        private void Main_KeyUp(object sender, KeyEventArgs e)
-        {
-            bool bScaleChanged = false;
-            double fWidth = 0, fHeight = 0;
-
-            if (e.Control)
-            {
-                if (e.KeyCode == Keys.Add || e.KeyCode == Keys.Subtract)
-                {
-                    // Ctrl+ or Ctrl- was pressed (zoom image)
-                    //double Scale = 1.25;
-                    //if (e.KeyCode == Keys.Add)
-                    //    Scale = 0.8;
-
-                    //fWidth = (double)(DataClasses.Globals.Sphere.ImagePlane.Width * Scale);
-                    //fHeight = (double)(DataClasses.Globals.Sphere.ImagePlane.Height * Scale);
-
-                    //if (fWidth < DataClasses.Globals.Sphere.Resolution ||
-                    //    fHeight < DataClasses.Globals.Sphere.Resolution)
-                    //    return;
-
-                    bScaleChanged = true;
-                }
-                else if (e.KeyCode == Keys.NumPad0 || e.KeyCode == Keys.D0)
-                {
-                    // Ctrl0 was pressed (full size image)
-                    if (e.Alt)
-                    {
-                        double UnitsPerPixel = Model.Globals.Sphere.AngularResolution;
-                        //fHeight = Globals.SetUp.BitmapHeight * UnitsPerPixel;
-                       //fWidth = Globals.SetUp.BitmapWidth * UnitsPerPixel;
-                    }
-                    else
-                    {
-                        //float dRatio = (float)Globals.SetUp.BitmapWidth / Globals.SetUp.BitmapHeight;
-                        //if (dRatio > 1)
-                        //{
-                        //    fHeight = 2;
-                        //    fWidth = fHeight * dRatio;
-                        //}
-                        //else
-                        //{
-                        //    fWidth = 2;
-                        //    fHeight = fWidth * dRatio;
-                        //}
-                    }
-
-                    bScaleChanged = true;
-                }
-
-                if (bScaleChanged)
-                {
-                    double fTop = 0 - fHeight / 2;
-                    double fLeft = 0 - fWidth / 2;
-
-                    //DataClasses.Globals.Sphere.ImagePlane = new RectangleF((float)fLeft, (float)fTop, (float)fWidth, (float)fHeight);
-                    //NewImagePlane(DataClasses.Globals.Sphere.ImagePlane);
-
-                    ResumeDisplay();
-                }
-            }
-            else if (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right || e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
-            {
-                // Update the latitude/longitude values
-                SetViewingAngle(Model.Globals.Sphere.CentreLatitude, Model.Globals.Sphere.CentreLongitude);
-                ResumeDisplay();
-            }
-        }
-
-        // Redisplay the image using the current parameters
-        private void ResumeDisplay()
-        {
-            if (m_DisplayStatus == DisplayStatus.InProgress)
-                m_DisplayStatus = DisplayStatus.Stopped;
-
-            tmrRedraw.Enabled = true;
-        }
-
-        private void tmrRedraw_Tick(object sender, EventArgs e)
-        {
-            if (m_DisplayStatus == DisplayStatus.None)
-            {
-                tmrRedraw.Enabled = false;
-            }
-        }
-
         private void mnuSphereSettings_Click(object sender, EventArgs e)
         {
             SphereSettings form = new SphereSettings();
@@ -401,7 +320,7 @@ namespace Worlds5
                 double[] centreCoords = form.CentreCoords;
 
                 // Record directory and base path for the sequence files
-                string sequenceDirectory = Path.Combine(Globals.SetUp.SeqPath, form.BaseName);
+                string sequenceDirectory = Path.Combine(Globals.SetUp.SeqSource, form.BaseName);
                 Directory.CreateDirectory(sequenceDirectory);
 
                 string basePath = Path.Combine(sequenceDirectory, form.BaseName);
@@ -441,37 +360,40 @@ namespace Worlds5
                 string targetFile = form.targetFile;
                 // Retrieve the frames per second
                 int framesPerSecond = form.FramesPerSecond;
+                int loops = form.Loops;
 
                 // Close the dialog
                 form.Close();
                 form.Dispose();
 
-                writeAVI(sequenceDirectory, targetFile, framesPerSecond);
+                writeAVI(sequenceDirectory, targetFile, framesPerSecond, loops);
             }
         }
 
-        private void writeAVI(string sequenceDirectory, string targetFile, int framesPerSecond)
+        private void writeAVI(string sequenceDirectory, string targetFile, int framesPerSecond, int loops)
         {
-            clsSphere sphere = Model.Globals.Sphere;
-            int width = (int)(sphere.HorizontalView/sphere.AngularResolution) - 3;
-            int height = (int)(sphere.VerticalView / sphere.AngularResolution) - 3;
-
-            if (width % 2 != 0) width -= 1;
-            if (height % 2 != 0) height -= 1;
-
-
-            // create instance of video writer
             VideoFileWriter writer = new VideoFileWriter();
-            // create new video file
-            writer.Open(targetFile, width, height, framesPerSecond, VideoCodec.Default);
-            // create a bitmap to save into the video file
+
+            // Read the first file to find the width and height
             string[] files = Directory.GetFiles(sequenceDirectory, "*.*");
+            Image img = Image.FromFile(files[0]);
+            // Make the size values even
+            int width = img.Width - img.Width % 2;
+            int height = img.Height - img.Height % 2;
+
+            // Open a new video file for this image size
+            writer.Open(targetFile, width, height, framesPerSecond, VideoCodec.MPEG4);
+
+            // Create a bitmap to save into the video file
             Bitmap bitmap;
 
-            foreach (String filePath in files)
+            for (int i = 0; i < loops; i++)
             {
-                bitmap = (Bitmap)Image.FromFile(filePath);
-                writer.WriteVideoFrame(bitmap);
+                foreach (String filePath in files)
+                {
+                    bitmap = (Bitmap)Image.FromFile(filePath);
+                    writer.WriteVideoFrame(bitmap);
+                }
             }
             writer.Close();
         }

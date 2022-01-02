@@ -1,6 +1,6 @@
 {
   "MainWindow": {
-    "MainState": "Normal",
+    "MainState": "NORMAL",
     "MainWidth": 840,
     "MainHeight": 690,
     "MainLeft": 300,
@@ -8,7 +8,8 @@
   },
   "Preferences": {
     "NavPath": "%APPSTART%\\Navigation\\",
-    "SeqPath": "%APPSTART%\\Sequence\\",
+    "SeqSource": "%APPSTART%\\Sequence\\",
+    "SeqTarget": "%APPSTART%\\Sequence\\",
     "Toolbar": true,
     "Labels": true,
     "ToolTips": false,
@@ -16,8 +17,8 @@
   },
   "Imaging": {
     "FramesPerSec": 25,
-    "AutoRepeat": false,
-    "SaveRays": false,
-    "SaveImage": true
+    "AutoRepeat": 1,
+    "BitmapHeight": 600,
+    "BitmapWidth": 600
   }
 }

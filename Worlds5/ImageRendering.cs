@@ -9,17 +9,14 @@ using Model;
 namespace Worlds5
 {
     sealed public class ImageRendering
-	{
+    {
         #region Member Variables
- 
+
         private clsSphere sphere;
         private ImageDisplay imageDisplay;
         private int linesProcessed = 0;
 
-		//  Image quality settings
-        private static float m_Bailout; 
-        
-		//  Sequence playback
+        //  Sequence playback
         // private static int m_CurrentKey;		// Current key frame for sequence
         // private static int m_FrameCount;		// Frame to display for current key
 
@@ -46,12 +43,6 @@ namespace Worlds5
         //    set { m_ScaleValue = value; }
         //}
 
-        public static float Bailout
-        {
-            get { return m_Bailout; }
-            set { m_Bailout = value; }
-        }
-
         // public static int CurrentKey
         // {
         //     get { return m_CurrentKey; }
@@ -75,12 +66,6 @@ namespace Worlds5
             int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
             int activeIndex);
 
-        //[DllImport("Unmanaged.dll")]
-        //static extern void TraceSurface(double startDistance, double increment, double surfaceThickness, 
-        //                                double XFactor, double YFactor, double ZFactor,
-        //                                ref float modulus, ref float angle, ref double distance,
-        //                                int rayPoints, int maxSamples, int binarySearchSteps);
-
         [DllImport("Unmanaged.dll")]
         static extern void InitSphere(float fDetail0, float fDetail1,
                                           float fBailout, double Resolution,
@@ -101,7 +86,7 @@ namespace Worlds5
 
             // Initialise the sphere in the dll from the ImageRendering sphere
             InitSphere(sphere.ColourDetail[0], sphere.ColourDetail[1],
-                       Bailout, sphere.AngularResolution,
+                       sphere.Bailout, sphere.AngularResolution,
                        sphere.CentreLatitude, sphere.CentreLongitude,
                        sphere.Radius, sphere.VerticalView, sphere.HorizontalView, sphere.PositionMatrix);
         }
@@ -122,7 +107,6 @@ namespace Worlds5
                 linesProcessed = 0;
 
                 //for (int rayCountY = 0; rayCountY < totalLines; rayCountY++)
-                //for (int rayCountY = totalLines/2; rayCountY < totalLines; rayCountY++)
                 Parallel.For(0, totalLines, rayCountY =>
                 {
                     // For each longitude point on this line
@@ -273,7 +257,7 @@ namespace Worlds5
 
             //if (tracedRay.ModulusValues[1] != 0)
             //{
-            //    var x = 0;
+            //    ;
             //}
             return tracedRay;
         }
@@ -285,24 +269,25 @@ namespace Worlds5
                 return null;
             }
             // Get the ray from the ray map
-            TracedRay.RayDataType rayData = sphere.RayMap[rayCountX++, rayCountY];
+            TracedRay.RayDataType rayData = sphere.RayMap[rayCountX, rayCountY];
             TracedRay tracedRay = new TracedRay(rayData.ExternalPoints, rayData.ModulusValues, rayData.AngleValues, rayData.DistanceValues);
-
-            // Calculate the tilt values from the previous rays
-            if (rayCountX > 0)
-            {
-                tracedRay.xTiltValues = sphere.addTiltValues(tracedRay, rayCountX - 1, rayCountY);
-            }
-            if (rayCountY > 0)
-            {
-                tracedRay.yTiltValues = sphere.addTiltValues(tracedRay, rayCountX, rayCountY - 1);
-            }
 
             if (tracedRay != null)
             {
+                // Calculate the tilt values from the previous rays
+                if (rayCountX > 0)
+                {
+                    tracedRay.xTiltValues = sphere.addTiltValues(tracedRay, rayCountX - 1, rayCountY);
+                }
+                if (rayCountY > 0)
+                {
+                    tracedRay.yTiltValues = sphere.addTiltValues(tracedRay, rayCountX, rayCountY - 1);
+                }
+
                 // Convert the fractal value collection into an rgb colour value
                 tracedRay.SetColour();
             }
+
             return tracedRay;
         }
 

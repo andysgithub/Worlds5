@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace Model
 {
@@ -57,11 +58,13 @@ namespace Model
             float interiorExposure = sphere.InteriorExposure;
             float interiorSaturation = sphere.InteriorSaturation;
 
-            // For each point on the ray
-            for (int i = 0; i < RayData.ModulusValues.Length - 1; i++)
+            try
             {
-                if (RayData.DistanceValues[i] < startDistance)
-                    continue;
+                // For each point on the ray
+                for (int i = 0; i < RayData.ModulusValues.Length - 1; i++)
+                {
+                    if (RayData.DistanceValues[i] < startDistance)
+                        continue;
 
                 if (Math.Abs(RayData.ModulusValues[i]) < 10)
                 {
@@ -69,37 +72,45 @@ namespace Model
                     {
                         ///// Set colour for surface point /////
 
-                        if (Double.IsPositiveInfinity(RayData.DistanceValues[i])
-                            || RayData.DistanceValues[i] > endDistance)
-                            break;
+                            if (Double.IsPositiveInfinity(RayData.DistanceValues[i])
+                                || RayData.DistanceValues[i] > endDistance)
+                                break;
 
-                        float lightingAngle = (sphere.LightingAngle + 90) * (float)Globals.DEG_TO_RAD;
+                            float lightingAngleX = (sphere.LightingAngle - 90) * (float)Globals.DEG_TO_RAD;
+                            float lightingAngleY = (160 - 90) * (float)Globals.DEG_TO_RAD;
 
-                        // Modify the exposure value according to the XTilt, YTilt values using Lambert's Cosine Law
-                        double xTilt = xTiltValues != null && xTiltValues.Count > 0 ? xTiltValues[i] : 0;
-                        double yTilt = yTiltValues != null && yTiltValues.Count > 0 ? yTiltValues[i] : 0;
-                        double tiltX = xTilt + lightingAngle;
-                        double tiltY = yTilt + lightingAngle;
-                        exposureValue = (float)(Math.Cos(tiltX) * Math.Cos(tiltY));
+                            // Modify the exposure value according to the XTilt, YTilt values using Lambert's Cosine Law
+                            double xTilt = xTiltValues != null && xTiltValues.Count > 0 ? xTiltValues[i] : 0;
+                            double yTilt = yTiltValues != null && yTiltValues.Count > 0 ? yTiltValues[i] : 0;
+                            double tiltX = xTilt - lightingAngleX;
+                            double tiltY = yTilt - lightingAngleY;
+                            double xFactor = Math.Cos(tiltX);
+                            double yFactor = Math.Cos(tiltY);
 
-                        float surfaceContrast = sphere.SurfaceContrast / 10;
+                            float surfaceContrast = sphere.SurfaceContrast / 10;
 
-                        //// Increase contrast of the exposure value
-                        exposureValue = (exposureValue * surfaceContrast * 2) - surfaceContrast;
+                            // Increase contrast of the exposure values
+                            double exposureX = (xFactor - (float)0.5) * surfaceContrast + (float)0.5;
+                            double exposureY = (yFactor - (float)0.5) * surfaceContrast + (float)0.5;
 
-                        exposureValue *= sphere.ExposureValue[0];
+                            // Produce the final exposure value
+                            float exposure = (float)(exposureX + exposureY) / 2;
 
-                        if (exposureValue < 0) exposureValue = 0;
-                        if (exposureValue > 1) exposureValue = 1;
+                            exposure *= exposureValue / 10;
+
+                            if (exposure < 0)
+                                exposure = 0;
+                            if (exposure > 1)
+                                exposure = 1;
 
                         // Modify the exposure according to the position of the point between the start and end distances
                         //float range = (float)(endDistance - startDistance);
                         //float exposureFactor = (float)(RayData.DistanceValues[i] - startDistance) / range;
 
-                        //if (exposureFactor > 1)
-                        //{
-                        //    exposureFactor = 1;
-                        //}
+                            //if (exposureFactor > 1)
+                            //{
+                            //    exposureFactor = 1;
+                            //}
 
                         // S & V set by exposure value
                         float Lightness = exposureValue;// *(1 - exposureFactor);
@@ -111,12 +122,12 @@ namespace Model
                     {
                         ///// Set colour for volume point /////
 
-                        if (Double.IsPositiveInfinity(RayData.DistanceValues[i + 1])
-                            || RayData.DistanceValues[i + 1] > endDistance)
-                            break;
+                            if (Double.IsPositiveInfinity(RayData.DistanceValues[i + 1])
+                                || RayData.DistanceValues[i + 1] > endDistance)
+                                break;
 
-                        // Get distance between points
-                        double distance = RayData.DistanceValues[i + 1] - RayData.DistanceValues[i];
+                            // Get distance between points
+                            double distance = RayData.DistanceValues[i + 1] - RayData.DistanceValues[i];
 
                         // S & V set by distance * exposure value
                         float Lightness = (float)distance * exposureValue;
@@ -125,6 +136,10 @@ namespace Model
                         IncreaseRGB(ref totalRGB, i, Saturation, Lightness);
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error tracing ray: " + e.Message, "Trace Ray Error");
             }
 
             // Colour the inside of the set if visible

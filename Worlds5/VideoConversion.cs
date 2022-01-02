@@ -18,6 +18,7 @@ namespace Worlds5
 
         private void btnConvert_Click(object sender, EventArgs e)
         {
+            SaveSettings();
             this.Hide();
         }
 
@@ -38,14 +39,19 @@ namespace Worlds5
 
         public int FramesPerSecond
         {
-            get { return (int)numRate.Value; }
+            get { return (int)updFramesPerSec.Value; }
+        }
+
+        public int Loops
+        {
+            get { return (int)updLoop.Value; }
         }
 
         private void btnSource_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog form = new FolderBrowserDialog();
             form.ShowNewFolderButton = true;
-            form.SelectedPath = Globals.SetUp.SeqPath;
+            form.SelectedPath = Globals.SetUp.SeqSource;
 
             DialogResult result = form.ShowDialog();
 
@@ -63,7 +69,7 @@ namespace Worlds5
             dlg.Filter = "AVI files (*.avi)|*.avi";
             dlg.AddExtension = true;
             dlg.CheckFileExists = false;
-            dlg.InitialDirectory = Globals.SetUp.SeqPath;
+            dlg.InitialDirectory = Globals.SetUp.SeqTarget;
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {
@@ -71,6 +77,35 @@ namespace Worlds5
                 txtTarget.Text = dlg.FileName;
                 dlg.Dispose();
             }
+        }
+
+        private void LoadSettings()
+        {
+            Globals.SetUpType settings = Globals.SetUp;
+
+            // File paths
+            txtSource.Text = settings.SeqSource;
+            txtTarget.Text = settings.SeqTarget;
+
+            // Sequence
+            updFramesPerSec.Value = settings.FramesPerSec;
+            updLoop.Value = settings.AutoRepeat;
+        }
+
+        private void SaveSettings()
+        {
+            // File paths
+            Globals.SetUp.SeqSource = txtSource.Text;
+            Globals.SetUp.SeqTarget = txtTarget.Text;
+
+            // Sequence
+            Globals.SetUp.FramesPerSec = (int)updFramesPerSec.Value;
+            Globals.SetUp.AutoRepeat = (int)updLoop.Value;
+        }
+
+        private void VideoConversion_Load(object sender, EventArgs e)
+        {
+            LoadSettings();
         }
     }
 }

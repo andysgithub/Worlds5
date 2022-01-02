@@ -97,8 +97,6 @@ namespace Worlds5
                 // Load Rendering settings
                 if (FileType == 3)
                 {
-                    ImageRendering.Bailout = raytracing.Bailout;
-
                     // Viewing window
                     sphere.AngularResolution = viewing.AngularResolution;
                     sphere.Radius = viewing.Radius;
@@ -114,6 +112,7 @@ namespace Worlds5
                     sphere.MaxSamples = raytracing.MaxSamples;
                     sphere.BoundaryInterval = raytracing.BoundaryInterval;
                     sphere.BinarySearchSteps = raytracing.BinarySearchSteps;
+                    sphere.Bailout = raytracing.Bailout;
                     sphere.ActiveIndex = raytracing.ActiveIndex;
 
                     // Rendering
@@ -189,8 +188,6 @@ namespace Worlds5
                 // Convert compressed data to base64 string
                 navigation.ViewportImage = Convert.ToBase64String(compressedData);
 
-                raytracing.Bailout = ImageRendering.Bailout;
-
                 // Viewing window
                 viewing.AngularResolution = sphere.AngularResolution;
                 viewing.Radius = sphere.Radius;
@@ -206,6 +203,7 @@ namespace Worlds5
                 raytracing.MaxSamples = sphere.MaxSamples;
                 raytracing.BoundaryInterval = sphere.BoundaryInterval;
                 raytracing.BinarySearchSteps = sphere.BinarySearchSteps;
+                raytracing.Bailout = sphere.Bailout;
                 raytracing.ActiveIndex = sphere.ActiveIndex;
 
                 // Rendering

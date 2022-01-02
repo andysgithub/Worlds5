@@ -19,8 +19,12 @@ namespace Worlds5
 
         public class Preferences
         {
-            public string NavPath { get; set; }
-            public string SeqPath { get; set; }
+            public string NavPath {
+                get;
+                set;
+            }
+            public string SeqSource { get; set; }
+            public string SeqTarget { get; set; }
             public bool Toolbar { get; set; }
             public bool Labels { get; set; }
             public bool ToolTips { get; set; }
@@ -30,7 +34,7 @@ namespace Worlds5
         public class Imaging
         {
             public int FramesPerSec { get; set; }
-            public bool AutoRepeat { get; set; }
+            public int AutoRepeat { get; set; }
         }
 
         public class RootObject
