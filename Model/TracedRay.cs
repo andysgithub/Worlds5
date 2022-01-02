@@ -66,11 +66,11 @@ namespace Model
                     if (RayData.DistanceValues[i] < startDistance)
                         continue;
 
-                if (Math.Abs(RayData.ModulusValues[i]) < 10)
-                {
-                    if (activeIndex == 0 && IsSurfacePoint(i) && xTiltValues != null && yTiltValues != null)
+                    if (Math.Abs(RayData.ModulusValues[i]) < 10)
                     {
-                        ///// Set colour for surface point /////
+                        if (activeIndex == 0 && IsSurfacePoint(i) && xTiltValues != null && yTiltValues != null)
+                        {
+                            ///// Set colour for surface point /////
 
                             if (Double.IsPositiveInfinity(RayData.DistanceValues[i])
                                 || RayData.DistanceValues[i] > endDistance)
@@ -103,24 +103,24 @@ namespace Model
                             if (exposure > 1)
                                 exposure = 1;
 
-                        // Modify the exposure according to the position of the point between the start and end distances
-                        //float range = (float)(endDistance - startDistance);
-                        //float exposureFactor = (float)(RayData.DistanceValues[i] - startDistance) / range;
+                            // Modify the exposure according to the position of the point between the start and end distances
+                            //float range = (float)(endDistance - startDistance);
+                            //float exposureFactor = (float)(RayData.DistanceValues[i] - startDistance) / range;
 
                             //if (exposureFactor > 1)
                             //{
                             //    exposureFactor = 1;
                             //}
 
-                        // S & V set by exposure value
-                        float Lightness = exposureValue;// *(1 - exposureFactor);
-                        float Saturation = Lightness * saturation / 10;
+                            // S & V set by exposure value
+                            float Lightness = exposureValue;// *(1 - exposureFactor);
+                            float Saturation = Lightness * saturation / 10;
 
-                        IncreaseRGB(ref totalRGB, i, Saturation, Lightness);
-                    }
-                    else if (activeIndex == 1)
-                    {
-                        ///// Set colour for volume point /////
+                            IncreaseRGB(ref totalRGB, i, Saturation, Lightness);
+                        }
+                        else if (activeIndex == 1)
+                        {
+                            ///// Set colour for volume point /////
 
                             if (Double.IsPositiveInfinity(RayData.DistanceValues[i + 1])
                                 || RayData.DistanceValues[i + 1] > endDistance)
@@ -129,11 +129,12 @@ namespace Model
                             // Get distance between points
                             double distance = RayData.DistanceValues[i + 1] - RayData.DistanceValues[i];
 
-                        // S & V set by distance * exposure value
-                        float Lightness = (float)distance * exposureValue;
-                        float Saturation = Lightness * saturation;
+                            // S & V set by distance * exposure value
+                            float Lightness = (float)distance * exposureValue;
+                            float Saturation = Lightness * saturation;
 
-                        IncreaseRGB(ref totalRGB, i, Saturation, Lightness);
+                            IncreaseRGB(ref totalRGB, i, Saturation, Lightness);
+                        }
                     }
                 }
             }
