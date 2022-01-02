@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+﻿using Model;
+using System;
 using System.Windows.Forms;
-using Model;
 
 namespace Worlds5
 {
@@ -61,6 +56,8 @@ namespace Worlds5
             sphere.EndDistance[0] = (double)updEndDistance.Value;
             sphere.SurfaceContrast = (float)updSurfaceContrast.Value;
             sphere.LightingAngle = (float)updLightingAngle.Value;
+            sphere.InteriorExposure = (float)updInteriorExposure.Value;
+            sphere.InteriorSaturation = (float)updInteriorSaturation.Value;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -97,6 +94,8 @@ namespace Worlds5
             updEndDistance.Value = (decimal)sphere.EndDistance[0];
             updSurfaceContrast.Value = (decimal)sphere.SurfaceContrast;
             updLightingAngle.Value = (decimal)sphere.LightingAngle;
+            updInteriorExposure.Value = (decimal)sphere.InteriorExposure;
+            updInteriorSaturation.Value = (decimal)sphere.InteriorSaturation;
         }
 
         #region Help functions
@@ -217,6 +216,26 @@ namespace Worlds5
             {
                 chkShowSurface.Checked = true;
             }
+        }
+
+        private void label13_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label12_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

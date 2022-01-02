@@ -17,7 +17,7 @@ namespace Worlds5
         private ImageRendering imageRendering;
         private string PathName;
 
-        // Matric containing a single transformation
+        // Matrix containing a single transformation
         private double[,] manip = new double[6, 6];
         private clsSphere sphere = Model.Globals.Sphere;
         private int DimTotal = 5;	// Total number of dimensions used
@@ -39,7 +39,7 @@ namespace Worlds5
                 this.extension = "png";
         }
 
-        public void PerformRotation(double[] centreCoords, double[,] angles, int totalFrames, string basePath)
+        public void PerformRotation(double[] centreCoords, double[,] angles, double[] sphereRadius, int totalFrames, string basePath)
         {
             // TODO: This should be in its own thread
 
@@ -52,6 +52,8 @@ namespace Worlds5
             // For each frame in the sequence
             for (int frameCount = 0; frameCount < totalFrames; frameCount++)
             {
+                sphere.Radius = sphereRadius[0] - (double)frameCount / (double)totalFrames * (sphereRadius[0] - sphereRadius[1]);
+
                 // Translate to the centre coords
                 for (int col = 0; col < DimTotal; ++col)
                 {

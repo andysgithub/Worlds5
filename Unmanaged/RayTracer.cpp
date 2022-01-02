@@ -98,10 +98,10 @@ EXPORT int __stdcall TraceRay(double startDistance, double increment, double sur
 	double	sampleDistance;
 	int	recordedPoints = 0;
 	int sampleCount = 0;
-	double xFactor = XFactor;
-	double yFactor = YFactor;
-	double zFactor = ZFactor;
-	vector5Double	c = {0,0,0,0,0};							// 5D vector for ray point coordinates
+	const double xFactor = XFactor;
+	const double yFactor = YFactor;
+	const double zFactor = ZFactor;
+	const vector5Double c = {0,0,0,0,0};							// 5D vector for ray point coordinates
 
 	// Determine orbit value for the starting point
 	bool externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, xFactor, yFactor, zFactor, c);
@@ -152,7 +152,7 @@ EXPORT int __stdcall TraceRay(double startDistance, double increment, double sur
 		{
             ///// Set value for external point /////
 
-			double angleChange = fabs(Angle - angles[recordedPoints-1]);
+			const double angleChange = fabs(Angle - angles[recordedPoints-1]);
 
 			// If orbit value is sufficiently different from the last recorded sample
 			if (angleChange > boundaryInterval)
@@ -179,8 +179,8 @@ EXPORT int __stdcall TraceRay(double startDistance, double increment, double sur
 EXPORT double __stdcall FindSurface(double increment, int binarySearchSteps, double currentDistance, double xFactor, double yFactor, double zFactor)
 {
 	double	stepSize = -increment / 2;
-	double	sampleDistance;
-	vector5Double	c = {0,0,0,0,0};							// 5D vector for ray point coordinates
+	double	sampleDistance = 0;
+	const vector5Double c = {0,0,0,0,0};							// 5D vector for ray point coordinates
 
 	// Perform binary search between the current and previous points, to determine boundary position
 	for (int i = 0; i < binarySearchSteps; i++)
@@ -207,9 +207,9 @@ EXPORT double __stdcall FindBoundary(double increment, int binarySearchSteps, do
 									  double boundaryInterval, bool *externalPoint, float *Modulus, float *Angle, 
 									  double xFactor, double yFactor, double zFactor)
 {
-	double	stepSize = -increment / 2;
-	double	sampleDistance;
-	vector5Double	c = {0,0,0,0,0};			// 5D vector for ray point coordinates
+	double stepSize = -increment / 2;
+	double sampleDistance = 0;
+	const vector5Double c = {0,0,0,0,0};			// 5D vector for ray point coordinates
 
 	// Perform binary search between the current and previous points, to determine boundary position
 	for (int i = 0; i < binarySearchSteps; i++)
@@ -219,7 +219,7 @@ EXPORT double __stdcall FindBoundary(double increment, int binarySearchSteps, do
 		// Take a sample at this point
 		*externalPoint = SamplePoint(sampleDistance, Modulus, Angle, xFactor, yFactor, zFactor, c);
 
-		double angleChange = fabs(*Angle - previousAngle);
+		const double angleChange = fabs(*Angle - previousAngle);
 
 		// If this point is sufficiently different from the last recorded sample
 		if (angleChange > boundaryInterval)
@@ -239,9 +239,9 @@ EXPORT double __stdcall FindBoundary(double increment, int binarySearchSteps, do
 bool SamplePoint(double distance, double xFactor, double yFactor, double zFactor, vector5Double c)
 {
   // Determine the x,y,z coord for this point
-  double XPos = distance * xFactor;
-  double YPos = distance * yFactor;
-  double ZPos = distance * zFactor;
+  const double XPos = distance * xFactor;
+  const double YPos = distance * yFactor;
+  const double ZPos = distance * zFactor;
 
   // Transform 3D point x,y,z into nD fractal space at point c[]
   VectorTrans(XPos, YPos, ZPos, &c);
@@ -253,9 +253,9 @@ bool SamplePoint(double distance, double xFactor, double yFactor, double zFactor
 bool SamplePoint(double distance, float *Modulus, float *Angle, double xFactor, double yFactor, double zFactor, vector5Double c)
 {
   // Determine the x,y,z coord for this point
-  double XPos = distance * xFactor;
-  double YPos = distance * yFactor;
-  double ZPos = distance * zFactor;
+  const double XPos = distance * xFactor;
+  const double YPos = distance * yFactor;
+  const double ZPos = distance * zFactor;
 
   // Transform 3D point x,y,z into nD fractal space at point c[]
   VectorTrans(XPos, YPos, ZPos, &c);
@@ -268,7 +268,7 @@ bool SamplePoint(double distance, float *Modulus, float *Angle, double xFactor, 
 //  Returns true if point is external to the set
 EXPORT bool __stdcall ExternalPoint(vector5Double c)
 {
-	long	MaxCount = (long)(MAX_COLOURS / m_Detail1);		// Iteration count for external points
+    const long MaxCount = (long)(MAX_COLOURS / m_Detail1);		// Iteration count for external points
 	vector5Double	z;												// Temporary 5-D vector
 	vector5Double diff;											// Temporary 5-D vector for orbit size
 	double ModulusTotal = 0;
@@ -310,7 +310,7 @@ EXPORT bool __stdcall ProcessPoint(float *Modulus, float *Angle, vector5Double c
 	double const PI = 3.1415926536;
 	double const PI_OVER_2 = PI/2;
 
-	long	MaxCount = (long)(1000);		// Iteration count for external points
+	const long MaxCount = (long)(1000);		// Iteration count for external points
 	vector5Double	z;												// Temporary 5-D vector
 	vector5Double diff;											// Temporary 5-D vector for orbit size
 	double ModulusTotal = 0;

@@ -40,6 +40,8 @@
     "EndDistance": [ 12.5, 15.0 ],
     "ColourDetail": [ 9.88, 1.0 ],
     "SurfaceContrast": 80.0,
-    "LightingAngle": 45.0
+    "LightingAngle": 45.0,
+    "InteriorExposure": 2.25,
+    "InteriorSaturation": 0.4
   }
 }

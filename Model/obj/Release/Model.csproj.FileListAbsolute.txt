@@ -1,0 +1,6 @@
+D:\Development\Worlds5\Model\obj\Release\Model.csproj.AssemblyReference.cache
+D:\Development\Worlds5\Model\obj\Release\Model.csproj.CoreCompileInputs.cache
+D:\Development\Worlds5\Model\bin\Release\DataClasses.dll
+D:\Development\Worlds5\Model\bin\Release\DataClasses.pdb
+D:\Development\Worlds5\Model\obj\Release\DataClasses.dll
+D:\Development\Worlds5\Model\obj\Release\DataClasses.pdb

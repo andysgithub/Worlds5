@@ -1,0 +1,14 @@
+﻿  stdafx.cpp
+  Colour.cpp
+  RayTracer.cpp
+D:\Development\Worlds5\Unmanaged\RayTracer.cpp(11,30): warning C4305: 'initializing': truncation from 'int' to 'BYTE'
+D:\Development\Worlds5\Unmanaged\RayTracer.cpp(11,26): warning C4309: 'initializing': truncation of constant value
+  Sphere.cpp
+  Transformation.cpp
+  Vectors.cpp
+     Creating library D:\Development\Worlds5\Release\Unmanaged.lib and object D:\Development\Worlds5\Release\Unmanaged.exp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 15 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  Unmanaged.vcxproj -> D:\Development\Worlds5\Release\Unmanaged.dll

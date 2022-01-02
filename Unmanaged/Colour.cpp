@@ -29,7 +29,7 @@ EXPORT void __stdcall HSVtoRGB(float h, float s, float v, BYTE *rval, BYTE *gval
  */
 	float f, i;
 	float p, q, t;
-	float r, g, b;					// rgb values of 0.0 - 1.0
+	float r = 0, g = 0, b = 0;					// rgb values of 0.0 - 1.0
 									// s and v are from 0.0 - 1.0)
 	if (h == 360)
 		h = 0;
@@ -62,6 +62,8 @@ EXPORT void __stdcall HSVtoRGB(float h, float s, float v, BYTE *rval, BYTE *gval
 		case 5:
 			r = v; g = p; b = q;
 			break;
+		default:
+			r = 0; g = 0; b = 0;
 	}
 
 	*rval = (BYTE)(r * 255); /* Normalise the values to 255 */

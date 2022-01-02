@@ -64,7 +64,10 @@ namespace Model
         // The distance along the ray to start rendering the image
         public double[] StartDistance { get; set; }
         // The distance along the ray to finish rendering the image
-        public double[] EndDistance { get; set; }         
+        public double[] EndDistance { get; set; }
+        public float InteriorExposure { get; set; }
+        public float InteriorSaturation { get; set; }
+
 
         #endregion
 
@@ -156,7 +159,7 @@ namespace Model
                     float tiltValue = 0;
 
                     // If this is a surface point
-                    if (tracedRay.isSurfacePoint(pointCount))
+                    if (tracedRay.IsSurfacePoint(pointCount))
                     {
                         // Get the distance to the surface
                         double currentDistance = tracedRay.Boundary(pointCount);
@@ -165,7 +168,7 @@ namespace Model
                         for (int testCount = lastRayStart; testCount < lastRay.BoundaryTotal && !double.IsPositiveInfinity(lastRay.Boundary(testCount)); testCount++, lastRayStart++)
                         {
                             // If this is a surface point
-                            if (lastRay.isSurfacePoint(testCount))
+                            if (lastRay.IsSurfacePoint(testCount))
                             {
                                 // Get the distance to the surface
                                 double lastDistance = lastRay.RayData.DistanceValues[testCount];

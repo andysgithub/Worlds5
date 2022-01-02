@@ -36,5 +36,10 @@ namespace Worlds5
         {
 
         }
+
+        private void updFramesPerSec_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

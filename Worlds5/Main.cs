@@ -125,8 +125,15 @@ namespace Worlds5
         /// <param name="rowCount"></param>
         private void UpdateStatus(int rowCount, int totalLines)
         {
-            string statusMessage = (rowCount < totalLines) ? rowCount + " of " + totalLines + " rows processed" : "Rendering completed";
-            staStatus.Items[0].Text = statusMessage;
+            if (staStatus != null && staStatus.Items != null && staStatus.Items.Count > 0)
+            {
+                string statusMessage = (rowCount < totalLines) ? rowCount + " of " + totalLines + " rows processed" : "Rendering completed";
+                try
+                {
+                    staStatus.Items[0].Text = statusMessage;
+                }
+                catch { }
+            }
         }
 
         // Save current image
@@ -385,7 +392,7 @@ namespace Worlds5
 
         private void mnuRotation_Click(object sender, EventArgs e)
         {
-            Rotation form = new Rotation(Path.GetFileNameWithoutExtension(currentAddress));
+            SequenceSettings form = new SequenceSettings(Path.GetFileNameWithoutExtension(currentAddress));
             DialogResult result = form.ShowDialog(this);
 
             if (result == DialogResult.OK)
@@ -398,10 +405,16 @@ namespace Worlds5
                 Directory.CreateDirectory(sequenceDirectory);
 
                 string basePath = Path.Combine(sequenceDirectory, form.BaseName);
+
                 // Determine the number of radians to turn per frame
                 double[,] angles = form.Angles;
+
+                // Retrieve the start and end sphere radius
+                double[] sphereRadius = form.SphereRadius;
+
                 // Retrieve the total frames
                 int totalFrames = form.Stages;
+
                 // Retrieve the file format
                 ImageFormat format = form.Format;
 
@@ -411,7 +424,7 @@ namespace Worlds5
 
                 // Call the sequence generator to perform the rotation and save the image and navigation files.
                 Sequence sequence = new Sequence(imageRendering, picImage, format);
-                sequence.PerformRotation(centreCoords, angles, totalFrames, basePath);
+                sequence.PerformRotation(centreCoords, angles, sphereRadius, totalFrames, basePath);
             }
         }
 
@@ -439,13 +452,18 @@ namespace Worlds5
 
         private void writeAVI(string sequenceDirectory, string targetFile, int framesPerSecond)
         {
-            int width = 360;
-            int height = 360;
+            clsSphere sphere = Model.Globals.Sphere;
+            int width = (int)(sphere.HorizontalView/sphere.AngularResolution) - 3;
+            int height = (int)(sphere.VerticalView / sphere.AngularResolution) - 3;
+
+            if (width % 2 != 0) width -= 1;
+            if (height % 2 != 0) height -= 1;
+
 
             // create instance of video writer
             VideoFileWriter writer = new VideoFileWriter();
             // create new video file
-            writer.Open(targetFile, width, height, framesPerSecond, VideoCodec.MPEG4);
+            writer.Open(targetFile, width, height, framesPerSecond, VideoCodec.Default);
             // create a bitmap to save into the video file
             string[] files = Directory.GetFiles(sequenceDirectory, "*.*");
             Bitmap bitmap;

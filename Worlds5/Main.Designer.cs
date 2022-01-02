@@ -45,7 +45,6 @@ namespace Worlds5
             this.mnuRender = new System.Windows.Forms.ToolStripMenuItem();
             this.sequenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRotation = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuTravel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuVideoConversion = new System.Windows.Forms.ToolStripMenuItem();
             this.staStatus = new System.Windows.Forms.StatusStrip();
@@ -125,7 +124,7 @@ namespace Worlds5
             this.mnuSettings,
             this.mnuUserSettings});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.settingsToolStripMenuItem.Text = "Tools";
             this.settingsToolStripMenuItem.DropDownOpening += new System.EventHandler(this.settingsToolStripMenuItem_DropDownOpening);
             // 
@@ -178,7 +177,6 @@ namespace Worlds5
             // 
             this.sequenceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuRotation,
-            this.mnuTravel,
             this.toolStripSeparator1,
             this.mnuVideoConversion});
             this.sequenceToolStripMenuItem.Name = "sequenceToolStripMenuItem";
@@ -188,25 +186,19 @@ namespace Worlds5
             // mnuRotation
             // 
             this.mnuRotation.Name = "mnuRotation";
-            this.mnuRotation.Size = new System.Drawing.Size(176, 22);
-            this.mnuRotation.Text = "Rotation...";
+            this.mnuRotation.Size = new System.Drawing.Size(180, 22);
+            this.mnuRotation.Text = "Settings...";
             this.mnuRotation.Click += new System.EventHandler(this.mnuRotation_Click);
-            // 
-            // mnuTravel
-            // 
-            this.mnuTravel.Name = "mnuTravel";
-            this.mnuTravel.Size = new System.Drawing.Size(176, 22);
-            this.mnuTravel.Text = "Travel...";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(173, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // mnuVideoConversion
             // 
             this.mnuVideoConversion.Name = "mnuVideoConversion";
-            this.mnuVideoConversion.Size = new System.Drawing.Size(176, 22);
+            this.mnuVideoConversion.Size = new System.Drawing.Size(180, 22);
             this.mnuVideoConversion.Text = "Video Conversion...";
             this.mnuVideoConversion.Click += new System.EventHandler(this.mnuVideoConversion_Click);
             // 
@@ -319,7 +311,6 @@ namespace Worlds5
         private System.Windows.Forms.ToolStripMenuItem mnuSaveSphere;
         private System.Windows.Forms.ToolStripMenuItem mnuRender;
         private System.Windows.Forms.ToolStripMenuItem mnuRotation;
-        private System.Windows.Forms.ToolStripMenuItem mnuTravel;
         private System.Windows.Forms.ToolStripMenuItem mnuUserSettings;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }

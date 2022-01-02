@@ -76,6 +76,11 @@
             this.updSaturation = new System.Windows.Forms.NumericUpDown();
             this.updExposureValue = new System.Windows.Forms.NumericUpDown();
             this.updImageJpgQuality = new System.Windows.Forms.NumericUpDown();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.updInteriorSaturation = new System.Windows.Forms.NumericUpDown();
+            this.updInteriorExposure = new System.Windows.Forms.NumericUpDown();
             this.tabSettings.SuspendLayout();
             this.tabViewport.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updViewportWidth)).BeginInit();
@@ -100,12 +105,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.updSaturation)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updExposureValue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updImageJpgQuality)).BeginInit();
+            this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updInteriorSaturation)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updInteriorExposure)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(273, 257);
+            this.btnOK.Location = new System.Drawing.Point(295, 263);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 0;
@@ -116,7 +124,7 @@
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.Location = new System.Drawing.Point(354, 257);
+            this.btnCancel.Location = new System.Drawing.Point(376, 263);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 1;
@@ -135,7 +143,7 @@
             this.tabSettings.Location = new System.Drawing.Point(12, 12);
             this.tabSettings.Name = "tabSettings";
             this.tabSettings.SelectedIndex = 0;
-            this.tabSettings.Size = new System.Drawing.Size(417, 239);
+            this.tabSettings.Size = new System.Drawing.Size(439, 245);
             this.tabSettings.TabIndex = 2;
             // 
             // tabViewport
@@ -154,7 +162,7 @@
             this.tabViewport.Controls.Add(this.updResolution);
             this.tabViewport.Location = new System.Drawing.Point(4, 22);
             this.tabViewport.Name = "tabViewport";
-            this.tabViewport.Size = new System.Drawing.Size(409, 213);
+            this.tabViewport.Size = new System.Drawing.Size(431, 219);
             this.tabViewport.TabIndex = 2;
             this.tabViewport.Text = "Viewport";
             this.tabViewport.UseVisualStyleBackColor = true;
@@ -307,7 +315,7 @@
             65536});
             this.updSphereRadius.Location = new System.Drawing.Point(142, 56);
             this.updSphereRadius.Maximum = new decimal(new int[] {
-            10,
+            200,
             0,
             0,
             0});
@@ -328,7 +336,7 @@
             // 
             // updResolution
             // 
-            this.updResolution.DecimalPlaces = 3;
+            this.updResolution.DecimalPlaces = 5;
             this.updResolution.Increment = new decimal(new int[] {
             1,
             0,
@@ -344,7 +352,7 @@
             1,
             0,
             0,
-            131072});
+            196608});
             this.updResolution.Name = "updResolution";
             this.updResolution.Size = new System.Drawing.Size(93, 20);
             this.updResolution.TabIndex = 0;
@@ -373,7 +381,7 @@
             this.tabRaytracing.Location = new System.Drawing.Point(4, 22);
             this.tabRaytracing.Name = "tabRaytracing";
             this.tabRaytracing.Padding = new System.Windows.Forms.Padding(3);
-            this.tabRaytracing.Size = new System.Drawing.Size(409, 213);
+            this.tabRaytracing.Size = new System.Drawing.Size(447, 246);
             this.tabRaytracing.TabIndex = 1;
             this.tabRaytracing.Text = "Raytracing";
             this.tabRaytracing.UseVisualStyleBackColor = true;
@@ -616,6 +624,7 @@
             // 
             // tabRendering
             // 
+            this.tabRendering.Controls.Add(this.groupBox2);
             this.tabRendering.Controls.Add(this.label22);
             this.tabRendering.Controls.Add(this.updLightingAngle);
             this.tabRendering.Controls.Add(this.label21);
@@ -634,7 +643,7 @@
             this.tabRendering.Location = new System.Drawing.Point(4, 22);
             this.tabRendering.Name = "tabRendering";
             this.tabRendering.Padding = new System.Windows.Forms.Padding(3);
-            this.tabRendering.Size = new System.Drawing.Size(409, 213);
+            this.tabRendering.Size = new System.Drawing.Size(431, 219);
             this.tabRendering.TabIndex = 0;
             this.tabRendering.Text = "Rendering";
             this.tabRendering.UseVisualStyleBackColor = true;
@@ -701,6 +710,11 @@
             0,
             131072});
             this.updEndDistance.Location = new System.Drawing.Point(142, 175);
+            this.updEndDistance.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
             this.updEndDistance.Name = "updEndDistance";
             this.updEndDistance.Size = new System.Drawing.Size(93, 20);
             this.updEndDistance.TabIndex = 30;
@@ -713,7 +727,7 @@
             // btnApply
             // 
             this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApply.Location = new System.Drawing.Point(318, 172);
+            this.btnApply.Location = new System.Drawing.Point(340, 178);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(75, 23);
             this.btnApply.TabIndex = 29;
@@ -773,7 +787,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(253, 55);
+            this.label16.Location = new System.Drawing.Point(262, 140);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(65, 13);
             this.label16.TabIndex = 18;
@@ -824,7 +838,7 @@
             0,
             0,
             0});
-            this.updImageJpgQuality.Location = new System.Drawing.Point(319, 53);
+            this.updImageJpgQuality.Location = new System.Drawing.Point(333, 138);
             this.updImageJpgQuality.Minimum = new decimal(new int[] {
             1,
             0,
@@ -841,11 +855,82 @@
             this.updImageJpgQuality.Visible = false;
             this.updImageJpgQuality.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updImageJpgQuality_HelpRequested);
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label12);
+            this.groupBox2.Controls.Add(this.label13);
+            this.groupBox2.Controls.Add(this.updInteriorSaturation);
+            this.groupBox2.Controls.Add(this.updInteriorExposure);
+            this.groupBox2.Location = new System.Drawing.Point(256, 20);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(158, 95);
+            this.groupBox2.TabIndex = 35;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Interior";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(6, 61);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(55, 13);
+            this.label12.TabIndex = 24;
+            this.label12.Text = "Saturation";
+            this.label12.Click += new System.EventHandler(this.label12_Click);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(6, 32);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(51, 13);
+            this.label13.TabIndex = 23;
+            this.label13.Text = "Exposure";
+            this.label13.Click += new System.EventHandler(this.label13_Click);
+            // 
+            // updInteriorSaturation
+            // 
+            this.updInteriorSaturation.DecimalPlaces = 1;
+            this.updInteriorSaturation.Location = new System.Drawing.Point(69, 58);
+            this.updInteriorSaturation.Name = "updInteriorSaturation";
+            this.updInteriorSaturation.Size = new System.Drawing.Size(73, 20);
+            this.updInteriorSaturation.TabIndex = 22;
+            this.updInteriorSaturation.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            65536});
+            this.updInteriorSaturation.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
+            // 
+            // updInteriorExposure
+            // 
+            this.updInteriorExposure.DecimalPlaces = 3;
+            this.updInteriorExposure.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.updInteriorExposure.Location = new System.Drawing.Point(69, 28);
+            this.updInteriorExposure.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.updInteriorExposure.Name = "updInteriorExposure";
+            this.updInteriorExposure.Size = new System.Drawing.Size(73, 20);
+            this.updInteriorExposure.TabIndex = 21;
+            this.updInteriorExposure.Value = new decimal(new int[] {
+            225,
+            0,
+            0,
+            131072});
+            this.updInteriorExposure.ValueChanged += new System.EventHandler(this.numericUpDown2_ValueChanged);
+            // 
             // SphereSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(441, 292);
+            this.ClientSize = new System.Drawing.Size(463, 298);
             this.Controls.Add(this.tabSettings);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
@@ -885,6 +970,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.updSaturation)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updExposureValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updImageJpgQuality)).EndInit();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updInteriorSaturation)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updInteriorExposure)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -939,5 +1028,10 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox chkShowVolume;
         private System.Windows.Forms.CheckBox chkShowSurface;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.NumericUpDown updInteriorSaturation;
+        private System.Windows.Forms.NumericUpDown updInteriorExposure;
     }
 }

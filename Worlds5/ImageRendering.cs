@@ -131,10 +131,10 @@ namespace Worlds5
                     {
                         try
                         {
-                        // Perform raytracing
-                        TracedRay tracedRay = ProcessRay(sphere, rayCountX, rayCountY);
-                        // Add this ray to the ray map in the sphere
-                        sphere.RecordRay(tracedRay, rayCountX, rayCountY);
+                            // Perform raytracing
+                            TracedRay tracedRay = ProcessRay(sphere, rayCountX, rayCountY);
+                            // Add this ray to the ray map in the sphere
+                            sphere.RecordRay(tracedRay, rayCountX, rayCountY);
                             ProgressChanged(rayCountX, rayCountY, tracedRay);
                         }
                         catch
@@ -150,6 +150,11 @@ namespace Worlds5
                     //for (int rayCountX = totalRays/2; rayCountX < totalRays; rayCountX++)
                     Parallel.For(0, totalRays, rayCountX =>
                     {
+/*                        if (rayCountX == totalRays/2 && rayCountY == totalLines/2)
+                        {
+                            ;
+                        }*/
+
                         try
                         {
                             // Set the colour and display the point
@@ -199,12 +204,15 @@ namespace Worlds5
 
         private void ProgressChanged(int rayCountX, int rayCountY, TracedRay ray)
         {
-            int totalRays = (int)(sphere.HorizontalView / sphere.AngularResolution);
-
-            // If current row is still being processed
-            if (rayCountX < totalRays-1)
+            if (ray != null)
             {
-                imageDisplay.updateImage(rayCountX, rayCountY, ray.bmiColors);
+                int totalRays = (int)(sphere.HorizontalView / sphere.AngularResolution);
+
+                // If current row is still being processed
+                if (rayCountX < totalRays - 1)
+                {
+                    imageDisplay.updateImage(rayCountX, rayCountY, ray.bmiColors);
+                }
             }
         }
 
@@ -254,7 +262,7 @@ namespace Worlds5
                         sphere.RayPoints[i], sphere.MaxSamples[i], sphere.BoundaryInterval, sphere.BinarySearchSteps[i],
                         i);
 
-            // TODO: Resize arrays to the recordedPoints value
+            // Resize arrays to the recordedPoints value
             Array.Resize(ref externalPoints, points);
             Array.Resize(ref modulusValues, points);
             Array.Resize(ref angleValues, points);

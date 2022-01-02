@@ -54,6 +54,9 @@ namespace Worlds5
             public float[] ColourDetail { get; set; }
             public float SurfaceContrast { get; set; }
             public float LightingAngle { get; set; }
+            public float InteriorExposure { get; set; }
+            public float InteriorSaturation { get; set; }
+
         }
 
         public class RootObject
