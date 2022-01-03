@@ -123,8 +123,6 @@ namespace Worlds5
                     sphere.ColourDetail = rendering.ColourDetail;
                     sphere.SurfaceContrast = rendering.SurfaceContrast;
                     sphere.LightingAngle = rendering.LightingAngle;
-                    sphere.InteriorExposure = rendering.InteriorExposure;
-                    sphere.InteriorSaturation = rendering.InteriorSaturation;
                 }
                 else
                 {
@@ -214,8 +212,6 @@ namespace Worlds5
                 rendering.ColourDetail = sphere.ColourDetail;
                 rendering.SurfaceContrast = sphere.SurfaceContrast;
                 rendering.LightingAngle = sphere.LightingAngle;
-                rendering.InteriorExposure = sphere.InteriorExposure;
-                rendering.InteriorSaturation = sphere.InteriorSaturation;
 
                 SphereData.RootObject sphereRoot = new SphereData.RootObject();
                 sphereRoot.Type = fileInfo;

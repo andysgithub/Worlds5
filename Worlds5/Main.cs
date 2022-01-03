@@ -21,7 +21,6 @@ namespace Worlds5
     public partial class Main : Form
     {
         private bool bResizing = false;
-        private DisplayStatus m_DisplayStatus = DisplayStatus.None;
         private string currentAddress = string.Empty;
         private ImageRendering imageRendering = null;
 
@@ -320,7 +319,7 @@ namespace Worlds5
                 double[] centreCoords = form.CentreCoords;
 
                 // Record directory and base path for the sequence files
-                string sequenceDirectory = Path.Combine(Globals.SetUp.SeqSource, form.BaseName);
+                string sequenceDirectory = Path.Combine(Globals.SetUp.SeqPath, form.BaseName);
                 Directory.CreateDirectory(sequenceDirectory);
 
                 string basePath = Path.Combine(sequenceDirectory, form.BaseName);

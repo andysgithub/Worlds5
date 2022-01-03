@@ -60,8 +60,7 @@ namespace Worlds5
             {
                 // Preferences
                 Globals.SetUp.NavPath = DecodeTag(prefs.NavPath);
-                Globals.SetUp.SeqSource = DecodeTag(prefs.SeqSource);
-                Globals.SetUp.SeqTarget = DecodeTag(prefs.SeqTarget);
+                Globals.SetUp.SeqPath = DecodeTag(prefs.SeqPath);
                 Globals.SetUp.Toolbar = prefs.Toolbar;
                 Globals.SetUp.Labels = prefs.Labels; 
                 Globals.SetUp.ToolTips = prefs.ToolTips;
@@ -111,8 +110,7 @@ namespace Worlds5
 			{
                 // Preferences
                 prefs.NavPath = Globals.SetUp.NavPath;
-                prefs.SeqSource = Globals.SetUp.SeqSource;
-                prefs.SeqTarget = Globals.SetUp.SeqTarget;
+                prefs.SeqPath = Globals.SetUp.SeqPath;
                 prefs.Toolbar = Globals.SetUp.Toolbar;
                 prefs.Labels = Globals.SetUp.Labels;
                 prefs.ToolTips = Globals.SetUp.ToolTips;

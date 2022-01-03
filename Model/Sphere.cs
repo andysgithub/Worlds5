@@ -67,8 +67,8 @@ namespace Model
         public double[] StartDistance { get; set; }
         // The distance along the ray to finish rendering the image
         public double[] EndDistance { get; set; }
-        public float InteriorExposure { get; set; }
-        public float InteriorSaturation { get; set; }
+/*        public float InteriorExposure { get; set; }
+        public float InteriorSaturation { get; set; }*/
 
 
         #endregion

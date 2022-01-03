@@ -211,11 +211,6 @@
             0,
             0,
             0});
-            this.updLoop.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
             this.updLoop.Name = "updLoop";
             this.updLoop.Size = new System.Drawing.Size(61, 20);
             this.updLoop.TabIndex = 8;

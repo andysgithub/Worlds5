@@ -27,7 +27,7 @@ namespace Model
             this.distance = distance;
         }
 
-        public void SetColour(float exposureValue, float saturation, double startDistance, double endDistance)
+/*        public void SetColour(float exposureValue, float saturation, double startDistance, double endDistance)
         {
             byte r = 0, g = 0, b = 0;
 
@@ -59,7 +59,7 @@ namespace Model
             bmiColors.rgbRed = r;
             bmiColors.rgbGreen = g;
             bmiColors.rgbBlue = b;
-        }
+        }*/
 
         /// <summary>
         /// The modulus value at the surface point

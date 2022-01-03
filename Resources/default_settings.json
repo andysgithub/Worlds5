@@ -8,8 +8,7 @@
   },
   "Preferences": {
     "NavPath": "%APPSTART%\\Navigation\\",
-    "SeqSource": "%APPSTART%\\Sequence\\",
-    "SeqTarget": "%APPSTART%\\Sequence\\",
+    "SeqPath": "%APPSTART%\\Sequence\\",
     "Toolbar": true,
     "Labels": true,
     "ToolTips": false,
@@ -17,8 +16,6 @@
   },
   "Imaging": {
     "FramesPerSec": 25,
-    "AutoRepeat": 1,
-    "BitmapHeight": 600,
-    "BitmapWidth": 600
+    "AutoRepeat": 0
   }
 }

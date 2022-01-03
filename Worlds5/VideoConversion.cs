@@ -51,7 +51,7 @@ namespace Worlds5
         {
             FolderBrowserDialog form = new FolderBrowserDialog();
             form.ShowNewFolderButton = true;
-            form.SelectedPath = Globals.SetUp.SeqSource;
+            form.SelectedPath = Globals.SetUp.SeqPath;
 
             DialogResult result = form.ShowDialog();
 
@@ -69,7 +69,7 @@ namespace Worlds5
             dlg.Filter = "AVI files (*.avi)|*.avi";
             dlg.AddExtension = true;
             dlg.CheckFileExists = false;
-            dlg.InitialDirectory = Globals.SetUp.SeqTarget;
+            dlg.InitialDirectory = Globals.SetUp.SeqPath;
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {
@@ -84,8 +84,8 @@ namespace Worlds5
             Globals.SetUpType settings = Globals.SetUp;
 
             // File paths
-            txtSource.Text = settings.SeqSource;
-            txtTarget.Text = settings.SeqTarget;
+            txtSource.Text = settings.SeqPath;
+            txtTarget.Text = settings.SeqPath;
 
             // Sequence
             updFramesPerSec.Value = settings.FramesPerSec;
@@ -95,8 +95,8 @@ namespace Worlds5
         private void SaveSettings()
         {
             // File paths
-            Globals.SetUp.SeqSource = txtSource.Text;
-            Globals.SetUp.SeqTarget = txtTarget.Text;
+            Globals.SetUp.SeqPath = txtSource.Text;
+            /*Globals.SetUp.SeqTarget = txtTarget.Text;*/
 
             // Sequence
             Globals.SetUp.FramesPerSec = (int)updFramesPerSec.Value;

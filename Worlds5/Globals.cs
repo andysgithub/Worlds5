@@ -57,8 +57,7 @@ namespace Worlds5
             public int AutoRepeat;
             public int Quality;
             public string NavPath;
-            public string SeqSource;
-            public string SeqTarget;
+            public string SeqPath;
             public int FramesPerSec;
         }
         

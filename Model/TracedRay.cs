@@ -55,8 +55,8 @@ namespace Model
             double endDistance = sphere.EndDistance[activeIndex];
             float exposureValue = sphere.ExposureValue[activeIndex];
             float saturation = sphere.Saturation[activeIndex];
-            float interiorExposure = sphere.InteriorExposure;
-            float interiorSaturation = sphere.InteriorSaturation;
+            float interiorExposure = sphere.ExposureValue[2];
+            float interiorSaturation = sphere.Saturation[2];
 
             try
             {
@@ -76,32 +76,25 @@ namespace Model
                                 || RayData.DistanceValues[i] > endDistance)
                                 break;
 
-                            float lightingAngleX = (sphere.LightingAngle - 90) * (float)Globals.DEG_TO_RAD;
-                            float lightingAngleY = (160 - 90) * (float)Globals.DEG_TO_RAD;
+
+                            float lightingAngle = (sphere.LightingAngle + 90) * (float)Globals.DEG_TO_RAD;
 
                             // Modify the exposure value according to the XTilt, YTilt values using Lambert's Cosine Law
                             double xTilt = xTiltValues != null && xTiltValues.Count > 0 ? xTiltValues[i] : 0;
                             double yTilt = yTiltValues != null && yTiltValues.Count > 0 ? yTiltValues[i] : 0;
-                            double tiltX = xTilt - lightingAngleX;
-                            double tiltY = yTilt - lightingAngleY;
-                            double xFactor = Math.Cos(tiltX);
-                            double yFactor = Math.Cos(tiltY);
+                            double tiltX = xTilt + lightingAngle;
+                            double tiltY = yTilt + lightingAngle;
+                            float  tiltValue = (float)(Math.Cos(tiltX) * Math.Cos(tiltY));
 
                             float surfaceContrast = sphere.SurfaceContrast / 10;
 
-                            // Increase contrast of the exposure values
-                            double exposureX = (xFactor - (float)0.5) * surfaceContrast + (float)0.5;
-                            double exposureY = (yFactor - (float)0.5) * surfaceContrast + (float)0.5;
+                            //// Increase contrast of the exposure value
+                            float contrastValue = (tiltValue * surfaceContrast * 2) - surfaceContrast;
 
-                            // Produce the final exposure value
-                            float exposure = (float)(exposureX + exposureY) / 2;
+                            float lightness = contrastValue * exposureValue / 10;
 
-                            exposure *= exposureValue / 10;
-
-                            if (exposure < 0)
-                                exposure = 0;
-                            if (exposure > 1)
-                                exposure = 1;
+                            if (lightness < 0) lightness = 0;
+                            if (lightness > 1) lightness = 1;
 
                             // Modify the exposure according to the position of the point between the start and end distances
                             //float range = (float)(endDistance - startDistance);
@@ -113,7 +106,7 @@ namespace Model
                             //}
 
                             // S & V set by exposure value
-                            float Lightness = exposureValue;// *(1 - exposureFactor);
+                            float Lightness = lightness;// *(1 - exposureFactor);
                             float Saturation = Lightness * saturation / 10;
 
                             IncreaseRGB(ref totalRGB, i, Saturation, Lightness);
@@ -130,7 +123,7 @@ namespace Model
                             double distance = RayData.DistanceValues[i + 1] - RayData.DistanceValues[i];
 
                             // S & V set by distance * exposure value
-                            float Lightness = (float)distance * exposureValue;
+                            float Lightness = (float)distance * exposureValue / 10;
                             float Saturation = Lightness * saturation;
 
                             IncreaseRGB(ref totalRGB, i, Saturation, Lightness);
@@ -146,7 +139,9 @@ namespace Model
             // Colour the inside of the set if visible
             if (RayData.ModulusValues.Length == 2 && RayData.ModulusValues[0] < 2 && RayData.ModulusValues[1] == 0)
             {
-                IncreaseRGB(ref totalRGB, 0, interiorExposure * interiorSaturation, interiorExposure);
+                float Lightness = interiorExposure / 100;
+                float Saturation = interiorSaturation / 100;
+                IncreaseRGB(ref totalRGB, 0, Saturation, Lightness);
             }
 
             bmiColors.rgbRed = (byte)totalRGB.rgbRed;

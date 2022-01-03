@@ -32,8 +32,6 @@
             "LightingAngle": float
             "StartDistance": double
             "EndDistance": double  
-            "InteriorExposure": float,
-            "InteriorSaturation": float
         }
     }
 

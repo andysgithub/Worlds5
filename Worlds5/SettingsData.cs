@@ -23,8 +23,7 @@ namespace Worlds5
                 get;
                 set;
             }
-            public string SeqSource { get; set; }
-            public string SeqTarget { get; set; }
+            public string SeqPath { get; set; }
             public bool Toolbar { get; set; }
             public bool Labels { get; set; }
             public bool ToolTips { get; set; }

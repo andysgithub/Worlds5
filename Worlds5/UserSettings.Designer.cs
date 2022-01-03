@@ -43,61 +43,6 @@
             this.grpFilePaths.SuspendLayout();
             this.SuspendLayout();
             // 
-            // updFramesPerSec
-            // 
-            this.updFramesPerSec.Location = new System.Drawing.Point(100, 26);
-            this.updFramesPerSec.Maximum = new decimal(new int[] {
-            60,
-            0,
-            0,
-            0});
-            this.updFramesPerSec.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.updFramesPerSec.Name = "updFramesPerSec";
-            this.updFramesPerSec.Size = new System.Drawing.Size(67, 20);
-            this.updFramesPerSec.TabIndex = 6;
-            this.updFramesPerSec.Value = new decimal(new int[] {
-            25,
-            0,
-            0,
-            0});
-            this.updFramesPerSec.ValueChanged += new System.EventHandler(this.updFramesPerSec_ValueChanged);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 28);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(79, 13);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "Frames per sec";
-            // 
-            // chkRepeat
-            // 
-            this.chkRepeat.AutoSize = true;
-            this.chkRepeat.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkRepeat.Location = new System.Drawing.Point(15, 60);
-            this.chkRepeat.Name = "chkRepeat";
-            this.chkRepeat.Size = new System.Drawing.Size(81, 17);
-            this.chkRepeat.TabIndex = 8;
-            this.chkRepeat.Text = "Auto repeat";
-            this.chkRepeat.UseVisualStyleBackColor = true;
-            // 
-            // grpSequence
-            // 
-            this.grpSequence.Controls.Add(this.chkRepeat);
-            this.grpSequence.Controls.Add(this.label3);
-            this.grpSequence.Controls.Add(this.updFramesPerSec);
-            this.grpSequence.Location = new System.Drawing.Point(158, 173);
-            this.grpSequence.Name = "grpSequence";
-            this.grpSequence.Size = new System.Drawing.Size(188, 92);
-            this.grpSequence.TabIndex = 6;
-            this.grpSequence.TabStop = false;
-            this.grpSequence.Text = "Sequence";
-            // 
             // chkToolbar
             // 
             this.chkToolbar.AutoSize = true;

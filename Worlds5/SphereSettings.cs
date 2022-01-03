@@ -13,15 +13,18 @@ namespace Worlds5
 
         #endregion
 
+        clsSphere sphere = Model.Globals.Sphere;
+        private int regionIndex = 0;
+        private bool isLoaded = false;
+
         public SphereSettings()
         {
             InitializeComponent();
+            cmbRegion.SelectedIndex = regionIndex;
         }
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            clsSphere sphere = Model.Globals.Sphere;
-
             // Sphere Viewing window
             sphere.AngularResolution = (double)updResolution.Value;
             sphere.Radius = (double)updSphereRadius.Value;
@@ -57,22 +60,13 @@ namespace Worlds5
 
         private void SaveRendering()
         {
-            clsSphere sphere = Model.Globals.Sphere;
-
-            sphere.ExposureValue[0] = (float)updExposureValue_0.Value;
-            sphere.Saturation[0] = (float)updSaturation_0.Value;
-            sphere.StartDistance[0] = (double)updStartDistance_0.Value;
-            sphere.EndDistance[0] = (double)updEndDistance_0.Value;
-
-            sphere.ExposureValue[1] = (float)updExposureValue_1.Value;
-            sphere.Saturation[1] = (float)updSaturation_1.Value;
-            sphere.StartDistance[1] = (double)updStartDistance_1.Value;
-            sphere.EndDistance[1] = (double)updEndDistance_1.Value;
+            sphere.ExposureValue[regionIndex] = (float)updExposureValue.Value;
+            sphere.Saturation[regionIndex] = (float)updSaturation.Value;
+            sphere.StartDistance[regionIndex] = (double)updStartDistance.Value;
+            sphere.EndDistance[regionIndex] = (double)updEndDistance.Value;
 
             sphere.SurfaceContrast = (float)updSurfaceContrast.Value;
             sphere.LightingAngle = (float)updLightingAngle.Value;
-            sphere.InteriorExposure = (float)updInteriorExposure.Value;
-            sphere.InteriorSaturation = (float)updInteriorSaturation.Value;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -82,7 +76,7 @@ namespace Worlds5
 
         private void Settings_Load(object sender, EventArgs e)
         {
-            clsSphere sphere = Model.Globals.Sphere;
+            isLoaded = true;
 
             // Sphere Viewing window
             updResolution.Value = (decimal)sphere.AngularResolution;
@@ -112,20 +106,13 @@ namespace Worlds5
             updBailout.Value = (decimal)sphere.Bailout;
 
             // Rendering
-            updExposureValue_0.Value = (decimal)sphere.ExposureValue[0];
-            updSaturation_0.Value = (decimal)sphere.Saturation[0];
-            updStartDistance_0.Value = (decimal)sphere.StartDistance[0];
-            updEndDistance_0.Value = (decimal)sphere.EndDistance[0];
-
-            updExposureValue_1.Value = (decimal)sphere.ExposureValue[1];
-            updSaturation_1.Value = (decimal)sphere.Saturation[1];
-            updStartDistance_1.Value = (decimal)sphere.StartDistance[1];
-            updEndDistance_1.Value = (decimal)sphere.EndDistance[1];
+            updExposureValue.Value = (decimal)sphere.ExposureValue[regionIndex];
+            updSaturation.Value = (decimal)sphere.Saturation[regionIndex];
+            updStartDistance.Value = (decimal)sphere.StartDistance[regionIndex];
+            updEndDistance.Value = (decimal)sphere.EndDistance[regionIndex];
 
             updSurfaceContrast.Value = (decimal)sphere.SurfaceContrast;
             updLightingAngle.Value = (decimal)sphere.LightingAngle;
-            updInteriorExposure.Value = (decimal)sphere.InteriorExposure;
-            updInteriorSaturation.Value = (decimal)sphere.InteriorSaturation;
         }
 
         #region Help functions
@@ -243,24 +230,27 @@ namespace Worlds5
             }
         }
 
-        private void label13_Click(object sender, EventArgs e)
+        private void cmbRegion_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (isLoaded)
+            {
+                sphere.ExposureValue[regionIndex] = (float)updExposureValue.Value;
+                sphere.Saturation[regionIndex] = (float)updSaturation.Value;
+                sphere.StartDistance[regionIndex] = (double)updStartDistance.Value;
+                sphere.EndDistance[regionIndex] = (double)updEndDistance.Value;
 
-        }
+                regionIndex = cmbRegion.SelectedIndex;
 
-        private void label12_Click(object sender, EventArgs e)
-        {
+                updExposureValue.Value = (decimal)sphere.ExposureValue[regionIndex];
+                updSaturation.Value = (decimal)sphere.Saturation[regionIndex];
+                updStartDistance.Value = (decimal)sphere.StartDistance[regionIndex];
+                updEndDistance.Value = (decimal)sphere.EndDistance[regionIndex];
 
-        }
-
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
-        {
-
+                updSurfaceContrast.Enabled = (regionIndex == 0);
+                updLightingAngle.Enabled = (regionIndex == 0);
+                updStartDistance.Enabled = (regionIndex < 2);
+                updEndDistance.Enabled = (regionIndex < 2);
+            }
         }
     }
 }

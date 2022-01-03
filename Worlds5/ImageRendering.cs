@@ -106,11 +106,9 @@ namespace Worlds5
 
                 linesProcessed = 0;
 
-                //for (int rayCountY = 0; rayCountY < totalLines; rayCountY++)
                 Parallel.For(0, totalLines, rayCountY =>
                 {
                     // For each longitude point on this line
-                    //for (int rayCountX = totalRays/2; rayCountX < totalRays; rayCountX++)
                     Parallel.For(0, totalRays, rayCountX =>
                     {
                         try
@@ -127,18 +125,11 @@ namespace Worlds5
                     RowCompleted((int)rayCountY, DisplayOption.None);
                 });
 
-                //for (int rayCountY = totalLines/2; rayCountY < totalLines; rayCountY++)
                 Parallel.For(0, totalLines, rayCountY =>
                 {
                     // For each longitude point on this line
-                    //for (int rayCountX = totalRays/2; rayCountX < totalRays; rayCountX++)
                     Parallel.For(0, totalRays, rayCountX =>
                     {
-/*                        if (rayCountX == totalRays/2 && rayCountY == totalLines/2)
-                        {
-                            ;
-                        }*/
-
                         try
                         {
                             // Set the colour and display the point
@@ -254,11 +245,6 @@ namespace Worlds5
 
             // Record the fractal value collection for this ray
             tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);
-
-            //if (tracedRay.ModulusValues[1] != 0)
-            //{
-            //    ;
-            //}
             return tracedRay;
         }
 
@@ -269,25 +255,24 @@ namespace Worlds5
                 return null;
             }
             // Get the ray from the ray map
-            TracedRay.RayDataType rayData = sphere.RayMap[rayCountX, rayCountY];
+            TracedRay.RayDataType rayData = sphere.RayMap[rayCountX++, rayCountY];
             TracedRay tracedRay = new TracedRay(rayData.ExternalPoints, rayData.ModulusValues, rayData.AngleValues, rayData.DistanceValues);
+
+            // Calculate the tilt values from the previous rays
+            if (rayCountX > 0)
+            {
+                tracedRay.xTiltValues = sphere.addTiltValues(tracedRay, rayCountX - 1, rayCountY);
+            }
+            if (rayCountY > 0)
+            {
+                tracedRay.yTiltValues = sphere.addTiltValues(tracedRay, rayCountX, rayCountY - 1);
+            }
 
             if (tracedRay != null)
             {
-                // Calculate the tilt values from the previous rays
-                if (rayCountX > 0)
-                {
-                    tracedRay.xTiltValues = sphere.addTiltValues(tracedRay, rayCountX - 1, rayCountY);
-                }
-                if (rayCountY > 0)
-                {
-                    tracedRay.yTiltValues = sphere.addTiltValues(tracedRay, rayCountX, rayCountY - 1);
-                }
-
                 // Convert the fractal value collection into an rgb colour value
                 tracedRay.SetColour();
             }
-
             return tracedRay;
         }
 
