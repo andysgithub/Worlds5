@@ -139,8 +139,8 @@ namespace Model
             // Colour the inside of the set if visible
             if (RayData.ModulusValues.Length == 2 && RayData.ModulusValues[0] < 2 && RayData.ModulusValues[1] == 0)
             {
-                float Lightness = interiorExposure / 100;
-                float Saturation = interiorSaturation / 100;
+                float Lightness = interiorExposure / 10;
+                float Saturation = Lightness * interiorSaturation / 10;
                 IncreaseRGB(ref totalRGB, 0, Saturation, Lightness);
             }
 

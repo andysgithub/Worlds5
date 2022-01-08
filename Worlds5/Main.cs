@@ -379,9 +379,11 @@ namespace Worlds5
             // Make the size values even
             int width = img.Width - img.Width % 2;
             int height = img.Height - img.Height % 2;
+            // Set the bitrate in megabits per second
+            float Mbps = 30.0f;
 
             // Open a new video file for this image size
-            writer.Open(targetFile, width, height, framesPerSecond, VideoCodec.MPEG4);
+            writer.Open(targetFile, width, height, framesPerSecond, VideoCodec.MPEG4, (int)(Mbps * 1000000));
 
             // Create a bitmap to save into the video file
             Bitmap bitmap;
