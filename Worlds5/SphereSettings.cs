@@ -9,7 +9,9 @@ namespace Worlds5
         #region Delegates
 
         public delegate void RefreshDelegate();
+        public delegate void RaytraceDelegate();
         public event RefreshDelegate RefreshImage;
+        public event RaytraceDelegate RaytraceImage;
 
         #endregion
 
@@ -25,6 +27,21 @@ namespace Worlds5
 
         private void btnOK_Click(object sender, EventArgs e)
         {
+            SaveSettings();
+            SaveRendering();
+            //RefreshImage();
+            this.Close();
+        }
+
+        private void btnRaytrace_Click(object sender, EventArgs e)
+        {
+            SaveSettings();
+            SaveRendering();
+            RaytraceImage();
+        }
+
+        private void SaveSettings()
+        {
             // Sphere Viewing window
             sphere.AngularResolution = (double)updResolution.Value;
             sphere.Radius = (double)updSphereRadius.Value;
@@ -32,6 +49,13 @@ namespace Worlds5
             sphere.CentreLongitude = (double)updCentreLongitude.Value;
             sphere.VerticalView = (double)updViewportHeight.Value;
             sphere.HorizontalView = (double)updViewportWidth.Value;
+
+            // Position
+            sphere.PositionMatrix[5, 0] = (double)updTranslate0.Value;
+            sphere.PositionMatrix[5, 1] = (double)updTranslate1.Value;
+            sphere.PositionMatrix[5, 2] = (double)updTranslate2.Value;
+            sphere.PositionMatrix[5, 3] = (double)updTranslate3.Value;
+            sphere.PositionMatrix[5, 4] = (double)updTranslate4.Value;
 
             // Raytracing
             sphere.ActiveIndex = chkShowSurface.Checked ? 0 : 1;
@@ -49,13 +73,8 @@ namespace Worlds5
             // Surface
             sphere.Bailout = (float)updBailout.Value;
             sphere.BoundaryInterval = (double)updBoundaryInterval.Value;
+            sphere.SurfaceSmoothing = (double)updSurfaceSmoothing.Value;
             sphere.SurfaceThickness = (double)updSurfaceThickness.Value;
-
-            // Rendering
-            SaveRendering();
-
-            //RefreshImage();
-            this.Close();
         }
 
         private void SaveRendering()
@@ -67,6 +86,9 @@ namespace Worlds5
 
             sphere.SurfaceContrast = (float)updSurfaceContrast.Value;
             sphere.LightingAngle = (float)updLightingAngle.Value;
+
+            sphere.ColourCompression = (float)updCompression.Value;
+            sphere.ColourOffset = (float)updOffset.Value;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -86,6 +108,13 @@ namespace Worlds5
             updViewportHeight.Value = (decimal)sphere.VerticalView;
             updViewportWidth.Value = (decimal)sphere.HorizontalView;
 
+            // Position
+            updTranslate0.Value = (decimal)sphere.PositionMatrix[5, 0];
+            updTranslate1.Value = (decimal)sphere.PositionMatrix[5, 1];
+            updTranslate2.Value = (decimal)sphere.PositionMatrix[5, 2];
+            updTranslate3.Value = (decimal)sphere.PositionMatrix[5, 3];
+            updTranslate4.Value = (decimal)sphere.PositionMatrix[5, 4];
+
             // Raytracing
             chkShowSurface.Checked = sphere.ActiveIndex == 0;
             chkShowVolume.Checked = sphere.ActiveIndex == 1;
@@ -102,6 +131,7 @@ namespace Worlds5
             
             // Surface
             updBoundaryInterval.Value = (decimal)sphere.BoundaryInterval;
+            updSurfaceSmoothing.Value = (decimal)sphere.SurfaceSmoothing;
             updSurfaceThickness.Value = (decimal)sphere.SurfaceThickness;
             updBailout.Value = (decimal)sphere.Bailout;
 
@@ -113,6 +143,9 @@ namespace Worlds5
 
             updSurfaceContrast.Value = (decimal)sphere.SurfaceContrast;
             updLightingAngle.Value = (decimal)sphere.LightingAngle;
+
+            updCompression.Value = (decimal)sphere.ColourCompression;
+            updOffset.Value = (decimal)sphere.ColourOffset;
         }
 
         #region Help functions
@@ -251,6 +284,22 @@ namespace Worlds5
                 updStartDistance.Enabled = (regionIndex < 2);
                 updEndDistance.Enabled = (regionIndex < 2);
             }
+        }
+
+        private void btnApplyColour_Click(object sender, EventArgs e)
+        {
+            SaveRendering();
+            RefreshImage();
+        }
+
+        private void tabViewport_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }

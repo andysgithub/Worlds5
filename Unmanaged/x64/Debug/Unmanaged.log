@@ -4,6 +4,7 @@ D:\Development\Worlds5\Unmanaged\RayTracer.cpp(11,33): warning C4305: 'initializ
 D:\Development\Worlds5\Unmanaged\RayTracer.cpp(11,29): warning C4309: 'initializing': truncation of constant value
   Sphere.cpp
   Transformation.cpp
+  Vectors.cpp
   Generating Code...
      Creating library ..\Worlds5\bin\x64\Debug\Unmanaged.lib and object ..\Worlds5\bin\x64\Debug\Unmanaged.exp
   Unmanaged.vcxproj -> D:\Development\Worlds5\Worlds5\bin\x64\Debug\Unmanaged.dll

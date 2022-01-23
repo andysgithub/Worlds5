@@ -43,6 +43,8 @@ namespace Model
         public float Bailout { get; set; }
         // Distance between sampling points during ray tracing
         public double[] SamplingInterval { get; set; }
+        // The smoothness of the surface
+        public double SurfaceSmoothing { get; set; }
         // The minimum acceptable thickness of the detected surface, to avoid speckling
         public double SurfaceThickness { get; set; }
         // The amount that the current orbit value is sufficiently different
@@ -67,9 +69,16 @@ namespace Model
         public double[] StartDistance { get; set; }
         // The distance along the ray to finish rendering the image
         public double[] EndDistance { get; set; }
-/*        public float InteriorExposure { get; set; }
-        public float InteriorSaturation { get; set; }*/
+        /*        public float InteriorExposure { get; set; }
+                public float InteriorSaturation { get; set; }*/
 
+
+        #endregion
+
+        #region Colour properties
+
+        public float ColourCompression { get; set; }
+        public float ColourOffset { get; set; }
 
         #endregion
 

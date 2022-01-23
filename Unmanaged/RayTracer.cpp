@@ -28,7 +28,7 @@ bool gapFound(double currentDistance, double surfaceThickness, double xFactor, d
 }
 
 // Produce the collection of fractal point values for the given vector
-EXPORT int __stdcall TraceRay(double startDistance, double increment, double surfaceThickness, 
+EXPORT int __stdcall TraceRay(double startDistance, double increment, double smoothness, double surfaceThickness,
                                double XFactor, double YFactor, double ZFactor,
                                int externalPoints[], float modulusValues[], float angles[], double distances[],
                                int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
@@ -70,7 +70,7 @@ EXPORT int __stdcall TraceRay(double startDistance, double increment, double sur
             ///// Set value for surface point /////
 
             // Perform binary search between this and the previous point, to determine surface position
-            sampleDistance = FindSurface(increment, binarySearchSteps, currentDistance, xFactor, yFactor, zFactor);
+            sampleDistance = FindSurface(increment, smoothness, binarySearchSteps, currentDistance, xFactor, yFactor, zFactor);
 
             // Test point a short distance further along, to determine whether this is still in the set
             if (surfaceThickness > 0 && gapFound(sampleDistance, surfaceThickness, xFactor, yFactor, zFactor, c))
@@ -117,10 +117,11 @@ EXPORT int __stdcall TraceRay(double startDistance, double increment, double sur
     return recordedPoints+1;
 }
 
-EXPORT double __stdcall FindSurface(double increment, int binarySearchSteps, double currentDistance, double xFactor, double yFactor, double zFactor)
+EXPORT double __stdcall FindSurface(double increment, double smoothness, int binarySearchSteps, double currentDistance, double xFactor, double yFactor, double zFactor)
 {
-	double	stepSize = -increment / 2;
-	double	sampleDistance = 0;
+    double stepFactor = smoothness / 10;
+	double	stepSize = -increment * stepFactor;
+	double	sampleDistance = currentDistance;
 	const vector5Double c = {0,0,0,0,0};							// 5D vector for ray point coordinates
 
 
@@ -128,18 +129,18 @@ EXPORT double __stdcall FindSurface(double increment, int binarySearchSteps, dou
     for (int i = 0; i < binarySearchSteps; i++)
     {
         // Step back or forwards by half the distance
-        sampleDistance = currentDistance + stepSize;
+        sampleDistance = sampleDistance + stepSize;
 
         // If this point is internal to the set
         if (SamplePoint(sampleDistance, xFactor, yFactor, zFactor, c) == 0)
         {
             // Step back next time
-            stepSize = -fabs(stepSize) / 2;
+            stepSize = -fabs(stepSize) * stepFactor;
         }
         else
         {
             // Step forward next time
-            stepSize = fabs(stepSize) / 2;
+            stepSize = fabs(stepSize) * stepFactor;
         }
     }
     return sampleDistance;
@@ -150,14 +151,14 @@ EXPORT double __stdcall FindBoundary(double increment, int binarySearchSteps, do
                                       double xFactor, double yFactor, double zFactor)
 {
 	double stepSize = -increment / 2;
-	double sampleDistance = 0;
+	double sampleDistance = currentDistance;
 	const vector5Double c = {0,0,0,0,0};			// 5D vector for ray point coordinates
 
     // Perform binary search between the current and previous points, to determine boundary position
     for (int i = 0; i < binarySearchSteps; i++)
     {
         // Step back or forwards by half the distance
-        sampleDistance = currentDistance + stepSize;
+        sampleDistance = sampleDistance + stepSize;
         // Take a sample at this point
         *externalPoint = SamplePoint(sampleDistance, Modulus, Angle, xFactor, yFactor, zFactor, c);
 

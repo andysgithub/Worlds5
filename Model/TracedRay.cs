@@ -18,6 +18,7 @@ namespace Model
         public Globals.RGBQUAD bmiColors;
 
         [StructLayout(LayoutKind.Sequential)]
+        [Serializable]
         public struct RayDataType
         {
             public int[] ExternalPoints;
@@ -152,9 +153,13 @@ namespace Model
         private void IncreaseRGB(ref Globals.RGBTRIPLE totalRGB, int i, float Saturation, float Lightness)
         {
             byte r, g, b;
+            clsSphere sphere = Model.Globals.Sphere;
+
+            float compression = sphere.ColourCompression;
+            float offset = sphere.ColourOffset;
 
             // Get Hue from the orbit angle
-            float Hue = (float)(RayData.AngleValues[i] * 57.2957795 * 2);
+            float Hue = (float)(RayData.AngleValues[i] * 57.2957795 * compression) + offset;
 
             // Limit S & V to 1 maximum
             Saturation = Saturation > 1 ? 1 : Saturation;
@@ -219,7 +224,9 @@ namespace Model
         /// </summary>
         public int BoundaryTotal
         {
-            get { return RayData.DistanceValues.Length; }
+            get {
+                return RayData.DistanceValues == null ? 0 : RayData.DistanceValues.Length; 
+            }
         }
 
         /// <summary>

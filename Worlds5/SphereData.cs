@@ -12,7 +12,7 @@ namespace Worlds5
     {
         public class Type
         {
-            public int FileType { get; set; }
+            public string FileType { get; set; }
             public int Dimensions { get; set; }
         }
 
@@ -39,6 +39,7 @@ namespace Worlds5
             public int[] RayPoints { get; set; }
             public int[] MaxSamples { get; set; }
             public int[] BinarySearchSteps { get; set; }
+            public double SurfaceSmoothing { get; set; }
             public double SurfaceThickness { get; set; }
             public double BoundaryInterval { get; set; }
             public float Bailout { get; set; }
@@ -54,7 +55,12 @@ namespace Worlds5
             public float[] ColourDetail { get; set; }
             public float SurfaceContrast { get; set; }
             public float LightingAngle { get; set; }
+        }
 
+        public class Colour
+        {
+            public float ColourCompression { get; set; }
+            public float ColourOffset { get; set; }
         }
 
         public class RootObject
@@ -64,6 +70,7 @@ namespace Worlds5
             public Viewing Viewing { get; set; }
             public Raytracing Raytracing { get; set; }
             public Rendering Rendering { get; set; }
+            public Colour Colour { get; set; }
         }
     }
 }

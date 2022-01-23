@@ -60,7 +60,7 @@ namespace Worlds5
         #region DLL Imports
 
         [DllImport("Unmanaged.dll")]
-        static extern int TraceRay(double startDistance, double increment, double surfaceThickness,
+        static extern int TraceRay(double startDistance, double increment, double smoothness, double surfaceThickness,
             double xFactor, double yFactor, double zFactor, int[] externalsArray,
             float[] valuesArray, float[] anglesArray, double[] distancesArray,
             int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
@@ -111,6 +111,10 @@ namespace Worlds5
                     // For each longitude point on this line
                     Parallel.For(0, totalRays, rayCountX =>
                     {
+                        if (rayCountX == totalRays/2 && rayCountY == totalLines / 2)
+                        {
+                            ;
+                        }
                         try
                         {
                             // Perform raytracing
@@ -231,7 +235,7 @@ namespace Worlds5
             int i = sphere.ActiveIndex;
 
             // Trace the ray from the sphere radius outwards
-            int points = TraceRay(sphere.Radius, sphere.SamplingInterval[i], sphere.SurfaceThickness,
+            int points = TraceRay(sphere.Radius, sphere.SamplingInterval[i], sphere.SurfaceSmoothing, sphere.SurfaceThickness,
                         xFactor, yFactor, zFactor,
                         externalPoints, modulusValues, angleValues, distanceValues,
                         sphere.RayPoints[i], sphere.MaxSamples[i], sphere.BoundaryInterval, sphere.BinarySearchSteps[i],
@@ -250,7 +254,7 @@ namespace Worlds5
 
         private TracedRay SetRayColour(clsSphere sphere, int rayCountX, int rayCountY)
         {
-            if (rayCountX >= sphere.RayMap.GetUpperBound(0))
+            if (rayCountX >= sphere.RayMap.GetUpperBound(0) || rayCountY >= sphere.RayMap.GetUpperBound(1))
             {
                 return null;
             }

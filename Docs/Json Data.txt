@@ -46,7 +46,7 @@
 
     "NavigationFile": {
         "Type": {
-            "FileType": int
+            "FileType": string
             "Dimensions": int
         }
 

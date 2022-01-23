@@ -46,13 +46,13 @@ void	PreMulT(void);  				//	Matrix pre-multiply for translations
 void	SetRot(int,int,double);
 
 //////  RAY TRACER  //////
-EXPORT int __stdcall TraceRay(double startDistance, double increment, double surfaceThickness,
+EXPORT int __stdcall TraceRay(double startDistance, double increment, double smoothness, double surfaceThickness,
 								double XFactor, double YFactor, double ZFactor,
 								int externalPoints[], float modulusValues[], float angles[], double distances[],
 								int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
 								int activeIndex);
 
-EXPORT double __stdcall FindSurface(double increment, int binarySearchSteps, double currentDistance,
+EXPORT double __stdcall FindSurface(double increment, double smoothness, int binarySearchSteps, double currentDistance,
 									double xFactor, double yFactor, double zFactor);
 EXPORT double __stdcall FindBoundary(double increment, int binarySearchSteps, double currentDistance, float previousAngle,
 									 double boundaryInterval, bool *externalPoint, float *Modulus, float *Angle,

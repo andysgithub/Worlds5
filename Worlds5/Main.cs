@@ -82,6 +82,7 @@ namespace Worlds5
             if (FilePath != "" && FilePath != null)
             {
                 LoadSphereFile(FilePath);
+                Model.Globals.CurrentAddress = FilePath;
             }
         }
 
@@ -94,6 +95,7 @@ namespace Worlds5
 
             if (Navigation.Navigate(FilePath))
             {
+                this.Text = Model.Globals.AppName + " - " + Path.GetFileNameWithoutExtension(FilePath);
                 if (sphere.ViewportImage == null)
                 {  
                     if (sphere.RayMap != null)
@@ -117,7 +119,7 @@ namespace Worlds5
             RefreshImage();
         }
 
-        private void mnuRender_Click(object sender, EventArgs e)
+        private void mnuRaytrace_Click(object sender, EventArgs e)
         {
             RaytraceImage();
         }
@@ -299,6 +301,7 @@ namespace Worlds5
         {
             SphereSettings form = new SphereSettings();
             form.RefreshImage += new SphereSettings.RefreshDelegate(RefreshImage);
+            form.RaytraceImage += new SphereSettings.RaytraceDelegate(RaytraceImage);
             form.ShowDialog(this);
         }
 

@@ -41,7 +41,7 @@ namespace Worlds5
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuReset = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuRender = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRaytrace = new System.Windows.Forms.ToolStripMenuItem();
             this.sequenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRotation = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -145,7 +145,7 @@ namespace Worlds5
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuRefresh,
             this.mnuReset,
-            this.mnuRender});
+            this.mnuRaytrace});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
             this.viewToolStripMenuItem.Text = "Actions";
@@ -153,23 +153,23 @@ namespace Worlds5
             // mnuRefresh
             // 
             this.mnuRefresh.Name = "mnuRefresh";
-            this.mnuRefresh.Size = new System.Drawing.Size(113, 22);
+            this.mnuRefresh.Size = new System.Drawing.Size(180, 22);
             this.mnuRefresh.Text = "Refresh";
             this.mnuRefresh.Click += new System.EventHandler(this.mnuRefresh_Click);
             // 
             // mnuReset
             // 
             this.mnuReset.Name = "mnuReset";
-            this.mnuReset.Size = new System.Drawing.Size(113, 22);
+            this.mnuReset.Size = new System.Drawing.Size(180, 22);
             this.mnuReset.Text = "Reset";
             this.mnuReset.Click += new System.EventHandler(this.mnuReset_Click);
             // 
-            // mnuRender
+            // mnuRaytrace
             // 
-            this.mnuRender.Name = "mnuRender";
-            this.mnuRender.Size = new System.Drawing.Size(113, 22);
-            this.mnuRender.Text = "Render";
-            this.mnuRender.Click += new System.EventHandler(this.mnuRender_Click);
+            this.mnuRaytrace.Name = "mnuRaytrace";
+            this.mnuRaytrace.Size = new System.Drawing.Size(180, 22);
+            this.mnuRaytrace.Text = "Raytrace";
+            this.mnuRaytrace.Click += new System.EventHandler(this.mnuRaytrace_Click);
             // 
             // sequenceToolStripMenuItem
             // 
@@ -184,19 +184,19 @@ namespace Worlds5
             // mnuRotation
             // 
             this.mnuRotation.Name = "mnuRotation";
-            this.mnuRotation.Size = new System.Drawing.Size(180, 22);
+            this.mnuRotation.Size = new System.Drawing.Size(176, 22);
             this.mnuRotation.Text = "Settings...";
             this.mnuRotation.Click += new System.EventHandler(this.mnuRotation_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(173, 6);
             // 
             // mnuVideoConversion
             // 
             this.mnuVideoConversion.Name = "mnuVideoConversion";
-            this.mnuVideoConversion.Size = new System.Drawing.Size(180, 22);
+            this.mnuVideoConversion.Size = new System.Drawing.Size(176, 22);
             this.mnuVideoConversion.Text = "Video Conversion...";
             this.mnuVideoConversion.Click += new System.EventHandler(this.mnuVideoConversion_Click);
             // 
@@ -300,7 +300,7 @@ namespace Worlds5
         private System.Windows.Forms.ToolStripMenuItem sequenceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mnuVideoConversion;
         private System.Windows.Forms.ToolStripMenuItem mnuSaveSphere;
-        private System.Windows.Forms.ToolStripMenuItem mnuRender;
+        private System.Windows.Forms.ToolStripMenuItem mnuRaytrace;
         private System.Windows.Forms.ToolStripMenuItem mnuRotation;
         private System.Windows.Forms.ToolStripMenuItem mnuUserSettings;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;

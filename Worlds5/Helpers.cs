@@ -17,7 +17,9 @@ namespace Worlds5
             IntPtr ptr = Marshal.AllocHGlobal(byteData.Length);
             Marshal.Copy(byteData, 0, ptr, byteData.Length);
 
-            TracedRay.RayDataType[,] x = (TracedRay.RayDataType[,])Marshal.PtrToStructure(ptr, typeof(TracedRay.RayDataType[,]));
+            var rayType = typeof(TracedRay.RayDataType[,]);
+            object rayPtr = Marshal.PtrToStructure(ptr, rayType);
+            TracedRay.RayDataType[,] x = (TracedRay.RayDataType[,])rayPtr;
             Marshal.FreeHGlobal(ptr);
 
             return x;

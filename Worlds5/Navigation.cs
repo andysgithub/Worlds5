@@ -62,9 +62,10 @@ namespace Worlds5
                 SphereData.Viewing viewing = sphereRoot.Viewing;
                 SphereData.Raytracing raytracing = sphereRoot.Raytracing;
                 SphereData.Rendering rendering = sphereRoot.Rendering;
+                SphereData.Colour colour = sphereRoot.Colour;
 
                 // Load file-type reference and total dimensions
-                int FileType = fileInfo.FileType;
+                string FileType = fileInfo.FileType;
 
                 // Redimension the transformation matrix
                 int dimensions = Convert.ToInt16(fileInfo.Dimensions);
@@ -74,15 +75,18 @@ namespace Worlds5
                 // Load Navigation settings
                 sphere.PositionMatrix = navigation.PositionMatrix;
 
-                //// Convert base64 string to compressed byte array
-                //compressedData = Convert.FromBase64String(navigation.RayMap);
-                //// Decompress byte array
-                //byte[] rayData = Helpers.Decompress(compressedData);
-                //// Convert byte array to ray map
-                //if (rayData.Length > 0)
-                //{
-                //    sphere.RayMap = Helpers.ConvertToRayMap(rayData);
-                //}
+/*                if (navigation.RayMap != null)
+                {
+                    // Convert base64 string to compressed byte array
+                    compressedData = Convert.FromBase64String(navigation.RayMap);
+                    // Decompress byte array
+                    byte[] rayData = Helpers.Decompress(compressedData);
+                    // Convert byte array to ray map
+                    if (rayData.Length > 0)
+                    {
+                        sphere.RayMap = Helpers.ConvertToRayMap(rayData);
+                    }
+                }*/
 
                 // Convert base64 string to compressed byte array
                 compressedData = Convert.FromBase64String(navigation.ViewportImage);
@@ -95,7 +99,7 @@ namespace Worlds5
                 }
 
                 // Load Rendering settings
-                if (FileType == 3)
+                if (FileType == "1.4")
                 {
                     // Viewing window
                     sphere.AngularResolution = viewing.AngularResolution;
@@ -107,6 +111,7 @@ namespace Worlds5
 
                     // Raytracing
                     sphere.SamplingInterval = raytracing.SamplingInterval;
+                    sphere.SurfaceSmoothing = raytracing.SurfaceSmoothing;
                     sphere.SurfaceThickness = raytracing.SurfaceThickness;
                     sphere.RayPoints = raytracing.RayPoints;
                     sphere.MaxSamples = raytracing.MaxSamples;
@@ -123,6 +128,10 @@ namespace Worlds5
                     sphere.ColourDetail = rendering.ColourDetail;
                     sphere.SurfaceContrast = rendering.SurfaceContrast;
                     sphere.LightingAngle = rendering.LightingAngle;
+
+                    // Colour
+                    sphere.ColourCompression = colour.ColourCompression;
+                    sphere.ColourOffset = colour.ColourOffset;
                 }
                 else
                 {
@@ -157,26 +166,27 @@ namespace Worlds5
             SphereData.Viewing viewing = new SphereData.Viewing();
             SphereData.Raytracing raytracing = new SphereData.Raytracing();
             SphereData.Rendering rendering = new SphereData.Rendering();
+            SphereData.Colour colour = new SphereData.Colour();
 
             try
             {
-                fileInfo.FileType = 3;
+                fileInfo.FileType = "1.4";
 
                 int dimensions = Model.Globals.Dimensions;
                 byte[] compressedData;
 
                 navigation.PositionMatrix = sphere.PositionMatrix;
 
-                //BinaryFormatter formatter = new BinaryFormatter();
-                //// Convert ray map to byte array
-                //MemoryStream mStream = new MemoryStream();
-                //formatter.Serialize(mStream, sphere.RayMap);
-                //byte[] buffer = mStream.ToArray();
-                //mStream.Close();
-                //// Compress byte array
-                //compressedData = Helpers.Compress(buffer);
-                //// Convert compressed data to base64 string
-                //navigation.RayMap = Convert.ToBase64String(compressedData);
+/*                BinaryFormatter formatter = new BinaryFormatter();
+                // Convert ray map to byte array
+                MemoryStream mStream = new MemoryStream();
+                formatter.Serialize(mStream, sphere.RayMap);
+                byte[] buffer = mStream.ToArray();
+                mStream.Close();
+                // Compress byte array
+                compressedData = Helpers.Compress(buffer);
+                // Convert compressed data to base64 string
+                navigation.RayMap = Convert.ToBase64String(compressedData);*/
 
                 ImageConverter converter = new ImageConverter();
                 // Convert image to byte array
@@ -196,6 +206,7 @@ namespace Worlds5
 
                 // Raytracing
                 raytracing.SamplingInterval = sphere.SamplingInterval;
+                raytracing.SurfaceSmoothing = sphere.SurfaceSmoothing;
                 raytracing.SurfaceThickness = sphere.SurfaceThickness;
                 raytracing.RayPoints = sphere.RayPoints;
                 raytracing.MaxSamples = sphere.MaxSamples;
@@ -213,17 +224,22 @@ namespace Worlds5
                 rendering.SurfaceContrast = sphere.SurfaceContrast;
                 rendering.LightingAngle = sphere.LightingAngle;
 
+                // Colour
+                colour.ColourCompression = sphere.ColourCompression;
+                colour.ColourOffset = sphere.ColourOffset;
+
                 SphereData.RootObject sphereRoot = new SphereData.RootObject();
                 sphereRoot.Type = fileInfo;
                 sphereRoot.Navigation = navigation;
                 sphereRoot.Viewing = viewing;
                 sphereRoot.Raytracing = raytracing;
                 sphereRoot.Rendering = rendering;
+                sphereRoot.Colour = colour;
 
                 // Save the json file
                 using (StreamWriter w = new StreamWriter(spherePath))
                 {
-                    string jsonSettings = JsonConvert.SerializeObject(sphereRoot);
+                    string jsonSettings = JsonConvert.SerializeObject(sphereRoot, Formatting.Indented);
                     w.Write(jsonSettings);
 
                 }
