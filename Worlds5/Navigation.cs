@@ -73,7 +73,7 @@ namespace Worlds5
                 byte[] compressedData;
 
                 // Load Navigation settings
-                sphere.PositionMatrix = navigation.PositionMatrix;
+                sphere.settings.PositionMatrix = navigation.PositionMatrix;
 
 /*                if (navigation.RayMap != null)
                 {
@@ -84,7 +84,7 @@ namespace Worlds5
                     // Convert byte array to ray map
                     if (rayData.Length > 0)
                     {
-                        sphere.RayMap = Helpers.ConvertToRayMap(rayData);
+                        sphere.settings.RayMap = Helpers.ConvertToRayMap(rayData);
                     }
                 }*/
 
@@ -102,36 +102,35 @@ namespace Worlds5
                 if (FileType == "1.4")
                 {
                     // Viewing window
-                    sphere.AngularResolution = viewing.AngularResolution;
-                    sphere.Radius = viewing.Radius;
-                    sphere.CentreLatitude = viewing.CentreLatitude;
-                    sphere.CentreLongitude = viewing.CentreLongitude;
-                    sphere.VerticalView = viewing.VerticalView;
-                    sphere.HorizontalView = viewing.HorizontalView;
+                    sphere.settings.AngularResolution = viewing.AngularResolution;
+                    sphere.settings.Radius = viewing.Radius;
+                    sphere.settings.CentreLatitude = viewing.CentreLatitude;
+                    sphere.settings.CentreLongitude = viewing.CentreLongitude;
+                    sphere.settings.VerticalView = viewing.VerticalView;
+                    sphere.settings.HorizontalView = viewing.HorizontalView;
 
                     // Raytracing
-                    sphere.SamplingInterval = raytracing.SamplingInterval;
-                    sphere.SurfaceSmoothing = raytracing.SurfaceSmoothing;
-                    sphere.SurfaceThickness = raytracing.SurfaceThickness;
-                    sphere.RayPoints = raytracing.RayPoints;
-                    sphere.MaxSamples = raytracing.MaxSamples;
-                    sphere.BoundaryInterval = raytracing.BoundaryInterval;
-                    sphere.BinarySearchSteps = raytracing.BinarySearchSteps;
-                    sphere.Bailout = raytracing.Bailout;
-                    sphere.ActiveIndex = raytracing.ActiveIndex;
+                    sphere.settings.SamplingInterval = raytracing.SamplingInterval;
+                    sphere.settings.SurfaceSmoothing = raytracing.SurfaceSmoothing;
+                    sphere.settings.SurfaceThickness = raytracing.SurfaceThickness;
+                    sphere.settings.RayPoints = raytracing.RayPoints;
+                    sphere.settings.MaxSamples = raytracing.MaxSamples;
+                    sphere.settings.BoundaryInterval = raytracing.BoundaryInterval;
+                    sphere.settings.BinarySearchSteps = raytracing.BinarySearchSteps;
+                    sphere.settings.Bailout = raytracing.Bailout;
+                    sphere.settings.ActiveIndex = raytracing.ActiveIndex;
 
                     // Rendering
-                    sphere.ExposureValue = rendering.ExposureValue;
-                    sphere.Saturation = rendering.Saturation;
-                    sphere.StartDistance = rendering.StartDistance;
-                    sphere.EndDistance = rendering.EndDistance;
-                    sphere.ColourDetail = rendering.ColourDetail;
-                    sphere.SurfaceContrast = rendering.SurfaceContrast;
-                    sphere.LightingAngle = rendering.LightingAngle;
+                    sphere.settings.ExposureValue = rendering.ExposureValue;
+                    sphere.settings.Saturation = rendering.Saturation;
+                    sphere.settings.StartDistance = rendering.StartDistance;
+                    sphere.settings.EndDistance = rendering.EndDistance;
+                    sphere.settings.SurfaceContrast = rendering.SurfaceContrast;
+                    sphere.settings.LightingAngle = rendering.LightingAngle;
 
                     // Colour
-                    sphere.ColourCompression = colour.ColourCompression;
-                    sphere.ColourOffset = colour.ColourOffset;
+                    sphere.settings.ColourCompression = colour.ColourCompression;
+                    sphere.settings.ColourOffset = colour.ColourOffset;
                 }
                 else
                 {
@@ -157,8 +156,6 @@ namespace Worlds5
 
         public static bool SaveData(string spherePath)
         {
-            float[] ColourDetail = new float[2];
-
             clsSphere sphere = Model.Globals.Sphere;
 
             SphereData.Type fileInfo = new SphereData.Type();
@@ -175,12 +172,12 @@ namespace Worlds5
                 int dimensions = Model.Globals.Dimensions;
                 byte[] compressedData;
 
-                navigation.PositionMatrix = sphere.PositionMatrix;
+                navigation.PositionMatrix = sphere.settings.PositionMatrix;
 
 /*                BinaryFormatter formatter = new BinaryFormatter();
                 // Convert ray map to byte array
                 MemoryStream mStream = new MemoryStream();
-                formatter.Serialize(mStream, sphere.RayMap);
+                formatter.Serialize(mStream, sphere.settings.RayMap);
                 byte[] buffer = mStream.ToArray();
                 mStream.Close();
                 // Compress byte array
@@ -197,36 +194,35 @@ namespace Worlds5
                 navigation.ViewportImage = Convert.ToBase64String(compressedData);
 
                 // Viewing window
-                viewing.AngularResolution = sphere.AngularResolution;
-                viewing.Radius = sphere.Radius;
-                viewing.CentreLatitude = sphere.CentreLatitude;
-                viewing.CentreLongitude = sphere.CentreLongitude;
-                viewing.VerticalView = sphere.VerticalView;
-                viewing.HorizontalView = sphere.HorizontalView;
+                viewing.AngularResolution = sphere.settings.AngularResolution;
+                viewing.Radius = sphere.settings.Radius;
+                viewing.CentreLatitude = sphere.settings.CentreLatitude;
+                viewing.CentreLongitude = sphere.settings.CentreLongitude;
+                viewing.VerticalView = sphere.settings.VerticalView;
+                viewing.HorizontalView = sphere.settings.HorizontalView;
 
                 // Raytracing
-                raytracing.SamplingInterval = sphere.SamplingInterval;
-                raytracing.SurfaceSmoothing = sphere.SurfaceSmoothing;
-                raytracing.SurfaceThickness = sphere.SurfaceThickness;
-                raytracing.RayPoints = sphere.RayPoints;
-                raytracing.MaxSamples = sphere.MaxSamples;
-                raytracing.BoundaryInterval = sphere.BoundaryInterval;
-                raytracing.BinarySearchSteps = sphere.BinarySearchSteps;
-                raytracing.Bailout = sphere.Bailout;
-                raytracing.ActiveIndex = sphere.ActiveIndex;
+                raytracing.SamplingInterval = sphere.settings.SamplingInterval;
+                raytracing.SurfaceSmoothing = sphere.settings.SurfaceSmoothing;
+                raytracing.SurfaceThickness = sphere.settings.SurfaceThickness;
+                raytracing.RayPoints = sphere.settings.RayPoints;
+                raytracing.MaxSamples = sphere.settings.MaxSamples;
+                raytracing.BoundaryInterval = sphere.settings.BoundaryInterval;
+                raytracing.BinarySearchSteps = sphere.settings.BinarySearchSteps;
+                raytracing.Bailout = sphere.settings.Bailout;
+                raytracing.ActiveIndex = sphere.settings.ActiveIndex;
 
                 // Rendering
-                rendering.ExposureValue = sphere.ExposureValue;
-                rendering.Saturation = sphere.Saturation;
-                rendering.StartDistance = sphere.StartDistance;
-                rendering.EndDistance = sphere.EndDistance;
-                rendering.ColourDetail = sphere.ColourDetail;
-                rendering.SurfaceContrast = sphere.SurfaceContrast;
-                rendering.LightingAngle = sphere.LightingAngle;
+                rendering.ExposureValue = sphere.settings.ExposureValue;
+                rendering.Saturation = sphere.settings.Saturation;
+                rendering.StartDistance = sphere.settings.StartDistance;
+                rendering.EndDistance = sphere.settings.EndDistance;
+                rendering.SurfaceContrast = sphere.settings.SurfaceContrast;
+                rendering.LightingAngle = sphere.settings.LightingAngle;
 
                 // Colour
-                colour.ColourCompression = sphere.ColourCompression;
-                colour.ColourOffset = sphere.ColourOffset;
+                colour.ColourCompression = sphere.settings.ColourCompression;
+                colour.ColourOffset = sphere.settings.ColourOffset;
 
                 SphereData.RootObject sphereRoot = new SphereData.RootObject();
                 sphereRoot.Type = fileInfo;

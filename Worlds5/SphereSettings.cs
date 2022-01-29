@@ -15,21 +15,26 @@ namespace Worlds5
 
         #endregion
 
-        clsSphere sphere = Model.Globals.Sphere;
+        clsSphere.Settings sphereSettings = Model.Globals.Sphere.settings;
+        clsSphere.Settings oldSphereSettings = Model.Globals.Sphere.settings.Clone();
         private int regionIndex = 0;
+        private int planeIndex = 0;
+        private int axisIndex = 0;
         private bool isLoaded = false;
 
         public SphereSettings()
         {
             InitializeComponent();
             cmbRegion.SelectedIndex = regionIndex;
+            cmbPlane.SelectedIndex = planeIndex;
+            updAxis.Value = (decimal)axisIndex + 1;
         }
 
         private void btnOK_Click(object sender, EventArgs e)
         {
             SaveSettings();
             SaveRendering();
-            //RefreshImage();
+            sphereSettings.RayMap = Model.Globals.Sphere.settings.RayMap;
             this.Close();
         }
 
@@ -38,61 +43,63 @@ namespace Worlds5
             SaveSettings();
             SaveRendering();
             RaytraceImage();
+            sphereSettings.RayMap = Model.Globals.Sphere.settings.RayMap;
         }
 
         private void SaveSettings()
         {
             // Sphere Viewing window
-            sphere.AngularResolution = (double)updResolution.Value;
-            sphere.Radius = (double)updSphereRadius.Value;
-            sphere.CentreLatitude = (double)updCentreLatitude.Value;
-            sphere.CentreLongitude = (double)updCentreLongitude.Value;
-            sphere.VerticalView = (double)updViewportHeight.Value;
-            sphere.HorizontalView = (double)updViewportWidth.Value;
+            sphereSettings.AngularResolution = (double)updResolution.Value;
+            sphereSettings.Radius = (double)updSphereRadius.Value;
+            sphereSettings.CentreLatitude = (double)updCentreLatitude.Value;
+            sphereSettings.CentreLongitude = (double)updCentreLongitude.Value;
+            sphereSettings.VerticalView = (double)updViewportHeight.Value;
+            sphereSettings.HorizontalView = (double)updViewportWidth.Value;
 
             // Position
-            sphere.PositionMatrix[5, 0] = (double)updTranslate0.Value;
-            sphere.PositionMatrix[5, 1] = (double)updTranslate1.Value;
-            sphere.PositionMatrix[5, 2] = (double)updTranslate2.Value;
-            sphere.PositionMatrix[5, 3] = (double)updTranslate3.Value;
-            sphere.PositionMatrix[5, 4] = (double)updTranslate4.Value;
+            sphereSettings.PositionMatrix[5, axisIndex] = (double)updTranslate.Value;
 
             // Raytracing
-            sphere.ActiveIndex = chkShowSurface.Checked ? 0 : 1;
+            sphereSettings.ActiveIndex = chkShowSurface.Checked ? 0 : 1;
 
-            sphere.SamplingInterval[0] = (double)updSamplingInterval_0.Value;
-            sphere.BinarySearchSteps[0] = (int)updBinarySearchSteps_0.Value;
-            sphere.RayPoints[0] = (int)updRayPoints_0.Value;
-            sphere.MaxSamples[0] = (int)updMaxSamples_0.Value;
+            sphereSettings.SamplingInterval[0] = (double)updSamplingInterval_0.Value;
+            sphereSettings.BinarySearchSteps[0] = (int)updBinarySearchSteps_0.Value;
+            sphereSettings.RayPoints[0] = (int)updRayPoints_0.Value;
+            sphereSettings.MaxSamples[0] = (int)updMaxSamples_0.Value;
 
-            sphere.SamplingInterval[1] = (double)updSamplingInterval_1.Value;
-            sphere.BinarySearchSteps[1] = (int)updBinarySearchSteps_1.Value;
-            sphere.RayPoints[1] = (int)updRayPoints_1.Value;
-            sphere.MaxSamples[1] = (int)updMaxSamples_1.Value;
+            sphereSettings.SamplingInterval[1] = (double)updSamplingInterval_1.Value;
+            sphereSettings.BinarySearchSteps[1] = (int)updBinarySearchSteps_1.Value;
+            sphereSettings.RayPoints[1] = (int)updRayPoints_1.Value;
+            sphereSettings.MaxSamples[1] = (int)updMaxSamples_1.Value;
 
             // Surface
-            sphere.Bailout = (float)updBailout.Value;
-            sphere.BoundaryInterval = (double)updBoundaryInterval.Value;
-            sphere.SurfaceSmoothing = (double)updSurfaceSmoothing.Value;
-            sphere.SurfaceThickness = (double)updSurfaceThickness.Value;
+            sphereSettings.Bailout = (float)updBailout.Value;
+            sphereSettings.BoundaryInterval = (double)updBoundaryInterval.Value;
+            sphereSettings.SurfaceSmoothing = (double)updSurfaceSmoothing.Value;
+            sphereSettings.SurfaceThickness = (double)updSurfaceThickness.Value;
+
+            Model.Globals.Sphere.settings = sphereSettings.Clone();
         }
 
         private void SaveRendering()
         {
-            sphere.ExposureValue[regionIndex] = (float)updExposureValue.Value;
-            sphere.Saturation[regionIndex] = (float)updSaturation.Value;
-            sphere.StartDistance[regionIndex] = (double)updStartDistance.Value;
-            sphere.EndDistance[regionIndex] = (double)updEndDistance.Value;
+            sphereSettings.ExposureValue[regionIndex] = (float)updExposureValue.Value;
+            sphereSettings.Saturation[regionIndex] = (float)updSaturation.Value;
+            sphereSettings.StartDistance[regionIndex] = (double)updStartDistance.Value;
+            sphereSettings.EndDistance[regionIndex] = (double)updEndDistance.Value;
 
-            sphere.SurfaceContrast = (float)updSurfaceContrast.Value;
-            sphere.LightingAngle = (float)updLightingAngle.Value;
+            sphereSettings.SurfaceContrast = (float)updSurfaceContrast.Value;
+            sphereSettings.LightingAngle = (float)updLightingAngle.Value;
 
-            sphere.ColourCompression = (float)updCompression.Value;
-            sphere.ColourOffset = (float)updOffset.Value;
+            sphereSettings.ColourCompression = (float)updCompression.Value;
+            sphereSettings.ColourOffset = (float)updOffset.Value;
+
+            Model.Globals.Sphere.settings = sphereSettings.Clone();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
+            Model.Globals.Sphere.settings = oldSphereSettings.Clone();
             this.Close();
         }
 
@@ -101,51 +108,47 @@ namespace Worlds5
             isLoaded = true;
 
             // Sphere Viewing window
-            updResolution.Value = (decimal)sphere.AngularResolution;
-            updSphereRadius.Value = (decimal)sphere.Radius;
-            updCentreLatitude.Value = (decimal)sphere.CentreLatitude;
-            updCentreLongitude.Value = (decimal)sphere.CentreLongitude;
-            updViewportHeight.Value = (decimal)sphere.VerticalView;
-            updViewportWidth.Value = (decimal)sphere.HorizontalView;
+            updResolution.Value = (decimal)sphereSettings.AngularResolution;
+            updSphereRadius.Value = (decimal)sphereSettings.Radius;
+            updCentreLatitude.Value = (decimal)sphereSettings.CentreLatitude;
+            updCentreLongitude.Value = (decimal)sphereSettings.CentreLongitude;
+            updViewportHeight.Value = (decimal)sphereSettings.VerticalView;
+            updViewportWidth.Value = (decimal)sphereSettings.HorizontalView;
 
             // Position
-            updTranslate0.Value = (decimal)sphere.PositionMatrix[5, 0];
-            updTranslate1.Value = (decimal)sphere.PositionMatrix[5, 1];
-            updTranslate2.Value = (decimal)sphere.PositionMatrix[5, 2];
-            updTranslate3.Value = (decimal)sphere.PositionMatrix[5, 3];
-            updTranslate4.Value = (decimal)sphere.PositionMatrix[5, 4];
+            updTranslate.Value = (decimal)sphereSettings.PositionMatrix[5, axisIndex];
 
             // Raytracing
-            chkShowSurface.Checked = sphere.ActiveIndex == 0;
-            chkShowVolume.Checked = sphere.ActiveIndex == 1;
+            chkShowSurface.Checked = sphereSettings.ActiveIndex == 0;
+            chkShowVolume.Checked = sphereSettings.ActiveIndex == 1;
 
-            updSamplingInterval_0.Value = (decimal)sphere.SamplingInterval[0];
-            updBinarySearchSteps_0.Value = sphere.BinarySearchSteps[0];
-            updRayPoints_0.Value = sphere.RayPoints[0];
-            updMaxSamples_0.Value = sphere.MaxSamples[0];
+            updSamplingInterval_0.Value = (decimal)sphereSettings.SamplingInterval[0];
+            updBinarySearchSteps_0.Value = sphereSettings.BinarySearchSteps[0];
+            updRayPoints_0.Value = sphereSettings.RayPoints[0];
+            updMaxSamples_0.Value = sphereSettings.MaxSamples[0];
 
-            updSamplingInterval_1.Value = (decimal)sphere.SamplingInterval[1];
-            updBinarySearchSteps_1.Value = sphere.BinarySearchSteps[1];
-            updRayPoints_1.Value = sphere.RayPoints[1];
-            updMaxSamples_1.Value = sphere.MaxSamples[1];
+            updSamplingInterval_1.Value = (decimal)sphereSettings.SamplingInterval[1];
+            updBinarySearchSteps_1.Value = sphereSettings.BinarySearchSteps[1];
+            updRayPoints_1.Value = sphereSettings.RayPoints[1];
+            updMaxSamples_1.Value = sphereSettings.MaxSamples[1];
             
             // Surface
-            updBoundaryInterval.Value = (decimal)sphere.BoundaryInterval;
-            updSurfaceSmoothing.Value = (decimal)sphere.SurfaceSmoothing;
-            updSurfaceThickness.Value = (decimal)sphere.SurfaceThickness;
-            updBailout.Value = (decimal)sphere.Bailout;
+            updBoundaryInterval.Value = (decimal)sphereSettings.BoundaryInterval;
+            updSurfaceSmoothing.Value = (decimal)sphereSettings.SurfaceSmoothing;
+            updSurfaceThickness.Value = (decimal)sphereSettings.SurfaceThickness;
+            updBailout.Value = (decimal)sphereSettings.Bailout;
 
             // Rendering
-            updExposureValue.Value = (decimal)sphere.ExposureValue[regionIndex];
-            updSaturation.Value = (decimal)sphere.Saturation[regionIndex];
-            updStartDistance.Value = (decimal)sphere.StartDistance[regionIndex];
-            updEndDistance.Value = (decimal)sphere.EndDistance[regionIndex];
+            updExposureValue.Value = (decimal)sphereSettings.ExposureValue[regionIndex];
+            updSaturation.Value = (decimal)sphereSettings.Saturation[regionIndex];
+            updStartDistance.Value = (decimal)sphereSettings.StartDistance[regionIndex];
+            updEndDistance.Value = (decimal)sphereSettings.EndDistance[regionIndex];
 
-            updSurfaceContrast.Value = (decimal)sphere.SurfaceContrast;
-            updLightingAngle.Value = (decimal)sphere.LightingAngle;
+            updSurfaceContrast.Value = (decimal)sphereSettings.SurfaceContrast;
+            updLightingAngle.Value = (decimal)sphereSettings.LightingAngle;
 
-            updCompression.Value = (decimal)sphere.ColourCompression;
-            updOffset.Value = (decimal)sphere.ColourOffset;
+            updCompression.Value = (decimal)sphereSettings.ColourCompression;
+            updOffset.Value = (decimal)sphereSettings.ColourOffset;
         }
 
         #region Help functions
@@ -182,7 +185,7 @@ namespace Worlds5
 
         private void updSphereRadius_HelpRequested(object sender, HelpEventArgs hlpevent)
         {
-            showDetails("Sphere Radius", "The distance from the centre of the sphere to first ray tracing point");
+            showDetails("Sphere Radius", "The distance from the centre of the sphereSettings to first ray tracing point");
         }
 
         private void updCentreLatitude_HelpRequested(object sender, HelpEventArgs hlpevent)
@@ -267,23 +270,26 @@ namespace Worlds5
         {
             if (isLoaded)
             {
-                sphere.ExposureValue[regionIndex] = (float)updExposureValue.Value;
-                sphere.Saturation[regionIndex] = (float)updSaturation.Value;
-                sphere.StartDistance[regionIndex] = (double)updStartDistance.Value;
-                sphere.EndDistance[regionIndex] = (double)updEndDistance.Value;
+                sphereSettings.ExposureValue[regionIndex] = (float)updExposureValue.Value;
+                sphereSettings.Saturation[regionIndex] = (float)updSaturation.Value;
+                sphereSettings.StartDistance[regionIndex] = (double)updStartDistance.Value;
+                sphereSettings.EndDistance[regionIndex] = (double)updEndDistance.Value;
 
                 regionIndex = cmbRegion.SelectedIndex;
 
-                updExposureValue.Value = (decimal)sphere.ExposureValue[regionIndex];
-                updSaturation.Value = (decimal)sphere.Saturation[regionIndex];
-                updStartDistance.Value = (decimal)sphere.StartDistance[regionIndex];
-                updEndDistance.Value = (decimal)sphere.EndDistance[regionIndex];
+                updExposureValue.Value = (decimal)sphereSettings.ExposureValue[regionIndex];
+                updSaturation.Value = (decimal)sphereSettings.Saturation[regionIndex];
+                updStartDistance.Value = (decimal)sphereSettings.StartDistance[regionIndex];
+                updEndDistance.Value = (decimal)sphereSettings.EndDistance[regionIndex];
 
                 updSurfaceContrast.Enabled = (regionIndex == 0);
                 updLightingAngle.Enabled = (regionIndex == 0);
                 updStartDistance.Enabled = (regionIndex < 2);
                 updEndDistance.Enabled = (regionIndex < 2);
             }
+        }
+        private void cmbPlane_SelectedIndexChanged(object sender, EventArgs e)
+        {
         }
 
         private void btnApplyColour_Click(object sender, EventArgs e)
@@ -300,6 +306,28 @@ namespace Worlds5
         private void groupBox1_Enter(object sender, EventArgs e)
         {
 
+        }
+
+        private void updAxis_ValueChanged(object sender, EventArgs e)
+        {
+            if (isLoaded)
+            {
+                sphereSettings.PositionMatrix[5, axisIndex] = (double)updTranslate.Value;
+                axisIndex = (int)updAxis.Value - 1;
+                updTranslate.Value = (decimal)sphereSettings.PositionMatrix[5, axisIndex];
+            }
+        }
+
+        private void cmbPlane_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+            if (isLoaded)
+            {
+                sphereSettings.PositionMatrix[5, axisIndex] = (double)updTranslate.Value;
+                axisIndex = (int)updAxis.Value - 1;
+                updTranslate.Value = (decimal)sphereSettings.PositionMatrix[5, axisIndex];
+
+
+            }
         }
     }
 }

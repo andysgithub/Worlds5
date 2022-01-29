@@ -98,7 +98,7 @@ namespace Worlds5
                 this.Text = Model.Globals.AppName + " - " + Path.GetFileNameWithoutExtension(FilePath);
                 if (sphere.ViewportImage == null)
                 {  
-                    if (sphere.RayMap != null)
+                    if (sphere.settings.RayMap != null)
                     {
                         RefreshImage();
                     }
@@ -126,7 +126,7 @@ namespace Worlds5
 
         private void RefreshImage()
         {
-            if (Model.Globals.Sphere.RayMap != null)
+            if (Model.Globals.Sphere.settings.RayMap != null)
             {
                 staStatus.Items[0].Text = "Redisplaying...";
                 Application.DoEvents();
@@ -266,13 +266,13 @@ namespace Worlds5
         private Globals.BitmapSizeType getBitmapSize()
         {
             clsSphere sphere = Model.Globals.Sphere;
-            double sphereResolution = sphere.AngularResolution * Globals.DEG_TO_RAD / 2;
+            double sphereResolution = sphere.settings.AngularResolution * Globals.DEG_TO_RAD / 2;
             double stepSize = Math.Sin(sphereResolution);
 
-            double verticalView = sphere.VerticalView * Globals.DEG_TO_RAD / 2;
+            double verticalView = sphere.settings.VerticalView * Globals.DEG_TO_RAD / 2;
             double maxVertical = Math.Sin(verticalView);
 
-            double horizontalView = sphere.HorizontalView * Globals.DEG_TO_RAD / 2;
+            double horizontalView = sphere.settings.HorizontalView * Globals.DEG_TO_RAD / 2;
             double maxHorizontal = Math.Sin(horizontalView);
 
             Globals.BitmapSize.Height = (int)(maxVertical / stepSize);
@@ -284,10 +284,10 @@ namespace Worlds5
         private int getBitmapWidth()
         {
             clsSphere sphere = Model.Globals.Sphere;
-            double sphereResolution = sphere.AngularResolution * Globals.DEG_TO_RAD / 2;
+            double sphereResolution = sphere.settings.AngularResolution * Globals.DEG_TO_RAD / 2;
             double stepSize = Math.Sin(sphereResolution);
 
-            double horizontalView = sphere.HorizontalView * Globals.DEG_TO_RAD / 2;
+            double horizontalView = sphere.settings.HorizontalView * Globals.DEG_TO_RAD / 2;
             double maxHorizontal = Math.Sin(horizontalView);
 
             return (int)(maxHorizontal / stepSize);
@@ -302,7 +302,11 @@ namespace Worlds5
             SphereSettings form = new SphereSettings();
             form.RefreshImage += new SphereSettings.RefreshDelegate(RefreshImage);
             form.RaytraceImage += new SphereSettings.RaytraceDelegate(RaytraceImage);
-            form.ShowDialog(this);
+            DialogResult result = form.ShowDialog(this);
+            if (result == DialogResult.OK)
+            {
+                RaytraceImage();
+            }
         }
 
         private void mnuUserSettings_Click(object sender, EventArgs e)

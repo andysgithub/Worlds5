@@ -24,17 +24,15 @@ extern double
 		m_Radius;
 
 extern float	
-		m_Detail0, m_Detail1,
 		m_Offset0, m_Offset1,
 		m_Hue0, m_Saturation0, m_Lightness0,
 		m_Hue1, m_Saturation1, m_Lightness1,
 		m_Bailout;
 
 //////  SPHERE  //////
-EXPORT	void __stdcall InitSphere(float fDetail0, float fDetail1,
-										  float fBailout, double dResolution,
-										  double dLatitude, double dLongitude,
-										  double Radius, double verticalView, double horizontalView, double *pTransMatrix);
+EXPORT	void __stdcall InitSphere(float fBailout, double dResolution,
+                                  double dLatitude, double dLongitude,
+                                  double Radius, double verticalView, double horizontalView, double *pTransMatrix);
 
 //////  TRANSFORMATION  //////
 void	ManipInit(void);				//	Initialise manipulation matrix

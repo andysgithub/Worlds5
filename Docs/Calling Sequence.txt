@@ -22,15 +22,15 @@
 					// Record the fractal value collection for this ray
 					tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);
 					// Add this ray to the ray map in the sphere
-					sphere.RecordRay(tracedRay, rayCountX, rayCountY)
+					sphere.settings.RecordRay(tracedRay, rayCountX, rayCountY)
 					
 				DisplayLine(sphere, rayCountY, latitude)        <-- increments X
 					// For each longitude point on this line, get the ray from the ray map
-					tracedRay = sphere.RayMap[rayCountX++, rayCountY]
+					tracedRay = sphere.settings.RayMap[rayCountX++, rayCountY]
 					// Calculate the tilt values from the previous rays
-					sphere.addTiltValues()
+					sphere.settings.addTiltValues()
 					// Convert the fractal value collection into an rgb colour value
-					tracedRay.SetColour(sphere.ExposureValue, sphere.Saturation, sphere.StartDistance, sphere.EndDistance)
+					tracedRay.SetColour(sphere.settings.ExposureValue, sphere.settings.Saturation, sphere.settings.StartDistance, sphere.settings.EndDistance)
 
 Unmanaged\RayTracer.cpp:
 	// Produce the collection of fractal point values for the given vector

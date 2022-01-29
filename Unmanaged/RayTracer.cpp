@@ -211,7 +211,7 @@ bool SamplePoint(double distance, float *Modulus, float *Angle, double xFactor, 
 //  Returns true if point is external to the set
 bool ExternalPoint(vector5Double c)
 {
-    const long MaxCount = (long)(MAX_COLOURS / m_Detail1);		// Iteration count for external points
+    const long MaxCount = (long)(MAX_COLOURS);		// Iteration count for external points
 	vector5Double	z;												// Temporary 5-D vector
 	vector5Double diff;											// Temporary 5-D vector for orbit size
 	double ModulusTotal = 0;

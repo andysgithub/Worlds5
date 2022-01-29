@@ -44,18 +44,17 @@
             this.updViewportHeight = new System.Windows.Forms.NumericUpDown();
             this.updSphereRadius = new System.Windows.Forms.NumericUpDown();
             this.updResolution = new System.Windows.Forms.NumericUpDown();
-            this.tabPosition = new System.Windows.Forms.TabPage();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label25 = new System.Windows.Forms.Label();
-            this.updTranslate4 = new System.Windows.Forms.NumericUpDown();
-            this.label26 = new System.Windows.Forms.Label();
-            this.updTranslate3 = new System.Windows.Forms.NumericUpDown();
-            this.label20 = new System.Windows.Forms.Label();
-            this.updTranslate2 = new System.Windows.Forms.NumericUpDown();
+            this.tabNavigation = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.updRotate = new System.Windows.Forms.NumericUpDown();
+            this.cmbPlane = new System.Windows.Forms.ComboBox();
+            this.label28 = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.updAxis = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
-            this.updTranslate1 = new System.Windows.Forms.NumericUpDown();
-            this.updTranslate0 = new System.Windows.Forms.NumericUpDown();
+            this.label29 = new System.Windows.Forms.Label();
+            this.updTranslate = new System.Windows.Forms.NumericUpDown();
             this.tabRaytracing = new System.Windows.Forms.TabPage();
             this.chkShowVolume = new System.Windows.Forms.CheckBox();
             this.chkShowSurface = new System.Windows.Forms.CheckBox();
@@ -72,6 +71,8 @@
             this.updRayPoints_0 = new System.Windows.Forms.NumericUpDown();
             this.updSamplingInterval_0 = new System.Windows.Forms.NumericUpDown();
             this.tabSurface = new System.Windows.Forms.TabPage();
+            this.label27 = new System.Windows.Forms.Label();
+            this.updSurfaceSmoothing = new System.Windows.Forms.NumericUpDown();
             this.label12 = new System.Windows.Forms.Label();
             this.updBailout = new System.Windows.Forms.NumericUpDown();
             this.lblSurfaceThickness = new System.Windows.Forms.Label();
@@ -101,8 +102,6 @@
             this.label17 = new System.Windows.Forms.Label();
             this.updOffset = new System.Windows.Forms.NumericUpDown();
             this.btnRaytrace = new System.Windows.Forms.Button();
-            this.label27 = new System.Windows.Forms.Label();
-            this.updSurfaceSmoothing = new System.Windows.Forms.NumericUpDown();
             this.tabSettings.SuspendLayout();
             this.tabViewport.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updCentreLongitude)).BeginInit();
@@ -111,13 +110,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.updViewportHeight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSphereRadius)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updResolution)).BeginInit();
-            this.tabPosition.SuspendLayout();
+            this.tabNavigation.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updRotate)).BeginInit();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.updTranslate4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updTranslate3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updTranslate2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updTranslate1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updTranslate0)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updAxis)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updTranslate)).BeginInit();
             this.tabRaytracing.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updBinarySearchSteps_1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updMaxSamples_1)).BeginInit();
@@ -128,6 +126,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.updRayPoints_0)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSamplingInterval_0)).BeginInit();
             this.tabSurface.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updSurfaceSmoothing)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updBailout)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSurfaceThickness)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updBoundaryInterval)).BeginInit();
@@ -141,12 +140,12 @@
             this.tabColour.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updCompression)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updOffset)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updSurfaceSmoothing)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.Location = new System.Drawing.Point(255, 273);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
@@ -158,6 +157,7 @@
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.Location = new System.Drawing.Point(336, 273);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -172,7 +172,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabSettings.Controls.Add(this.tabViewport);
-            this.tabSettings.Controls.Add(this.tabPosition);
+            this.tabSettings.Controls.Add(this.tabNavigation);
             this.tabSettings.Controls.Add(this.tabRaytracing);
             this.tabSettings.Controls.Add(this.tabSurface);
             this.tabSettings.Controls.Add(this.tabRendering);
@@ -399,170 +399,160 @@
             131072});
             this.updResolution.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updResolution_HelpRequested);
             // 
-            // tabPosition
+            // tabNavigation
             // 
-            this.tabPosition.Controls.Add(this.groupBox1);
-            this.tabPosition.Location = new System.Drawing.Point(4, 22);
-            this.tabPosition.Name = "tabPosition";
-            this.tabPosition.Size = new System.Drawing.Size(391, 216);
-            this.tabPosition.TabIndex = 5;
-            this.tabPosition.Text = "Position";
-            this.tabPosition.UseVisualStyleBackColor = true;
+            this.tabNavigation.Controls.Add(this.groupBox2);
+            this.tabNavigation.Controls.Add(this.groupBox1);
+            this.tabNavigation.Location = new System.Drawing.Point(4, 22);
+            this.tabNavigation.Name = "tabNavigation";
+            this.tabNavigation.Size = new System.Drawing.Size(391, 216);
+            this.tabNavigation.TabIndex = 5;
+            this.tabNavigation.Text = "Navigation";
+            this.tabNavigation.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label4);
+            this.groupBox2.Controls.Add(this.updRotate);
+            this.groupBox2.Controls.Add(this.cmbPlane);
+            this.groupBox2.Controls.Add(this.label28);
+            this.groupBox2.Location = new System.Drawing.Point(206, 18);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(165, 97);
+            this.groupBox2.TabIndex = 44;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Rotate";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 60);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(47, 13);
+            this.label4.TabIndex = 47;
+            this.label4.Text = "Degrees";
+            // 
+            // updRotate
+            // 
+            this.updRotate.DecimalPlaces = 5;
+            this.updRotate.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.updRotate.Location = new System.Drawing.Point(65, 58);
+            this.updRotate.Maximum = new decimal(new int[] {
+            360,
+            0,
+            0,
+            0});
+            this.updRotate.Name = "updRotate";
+            this.updRotate.Size = new System.Drawing.Size(73, 20);
+            this.updRotate.TabIndex = 46;
+            // 
+            // cmbPlane
+            // 
+            this.cmbPlane.BackColor = System.Drawing.SystemColors.Window;
+            this.cmbPlane.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPlane.FormattingEnabled = true;
+            this.cmbPlane.Items.AddRange(new object[] {
+            "1 - 2",
+            "1 - 3",
+            "2 - 3",
+            "1 - 4",
+            "2 - 4",
+            "1 - 5",
+            "2 - 5",
+            "3 - 4",
+            "3 - 5",
+            "4 - 5"});
+            this.cmbPlane.Location = new System.Drawing.Point(65, 27);
+            this.cmbPlane.Name = "cmbPlane";
+            this.cmbPlane.Size = new System.Drawing.Size(73, 21);
+            this.cmbPlane.TabIndex = 45;
+            this.cmbPlane.SelectedIndexChanged += new System.EventHandler(this.cmbPlane_SelectedIndexChanged_1);
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(25, 30);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(34, 13);
+            this.label28.TabIndex = 44;
+            this.label28.Text = "Plane";
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.label25);
-            this.groupBox1.Controls.Add(this.updTranslate4);
-            this.groupBox1.Controls.Add(this.label26);
-            this.groupBox1.Controls.Add(this.updTranslate3);
-            this.groupBox1.Controls.Add(this.label20);
-            this.groupBox1.Controls.Add(this.updTranslate2);
-            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.updAxis);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.updTranslate1);
-            this.groupBox1.Controls.Add(this.updTranslate0);
-            this.groupBox1.Location = new System.Drawing.Point(25, 18);
+            this.groupBox1.Controls.Add(this.label29);
+            this.groupBox1.Controls.Add(this.updTranslate);
+            this.groupBox1.Location = new System.Drawing.Point(19, 18);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(175, 182);
+            this.groupBox1.Size = new System.Drawing.Size(165, 97);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Move";
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
-            // label25
+            // updAxis
             // 
-            this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(20, 148);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(35, 13);
-            this.label25.TabIndex = 24;
-            this.label25.Text = "Axis 5";
-            // 
-            // updTranslate4
-            // 
-            this.updTranslate4.DecimalPlaces = 5;
-            this.updTranslate4.Increment = new decimal(new int[] {
+            this.updAxis.Location = new System.Drawing.Point(65, 27);
+            this.updAxis.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.updAxis.Minimum = new decimal(new int[] {
             1,
             0,
             0,
-            131072});
-            this.updTranslate4.Location = new System.Drawing.Point(69, 146);
-            this.updTranslate4.Minimum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            -2147483648});
-            this.updTranslate4.Name = "updTranslate4";
-            this.updTranslate4.Size = new System.Drawing.Size(79, 20);
-            this.updTranslate4.TabIndex = 23;
-            // 
-            // label26
-            // 
-            this.label26.AutoSize = true;
-            this.label26.Location = new System.Drawing.Point(20, 117);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(35, 13);
-            this.label26.TabIndex = 22;
-            this.label26.Text = "Axis 4";
-            // 
-            // updTranslate3
-            // 
-            this.updTranslate3.DecimalPlaces = 5;
-            this.updTranslate3.Increment = new decimal(new int[] {
+            0});
+            this.updAxis.Name = "updAxis";
+            this.updAxis.Size = new System.Drawing.Size(44, 20);
+            this.updAxis.TabIndex = 45;
+            this.updAxis.Value = new decimal(new int[] {
             1,
             0,
             0,
-            131072});
-            this.updTranslate3.Location = new System.Drawing.Point(69, 115);
-            this.updTranslate3.Minimum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            -2147483648});
-            this.updTranslate3.Name = "updTranslate3";
-            this.updTranslate3.Size = new System.Drawing.Size(79, 20);
-            this.updTranslate3.TabIndex = 21;
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(20, 87);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(35, 13);
-            this.label20.TabIndex = 20;
-            this.label20.Text = "Axis 3";
-            // 
-            // updTranslate2
-            // 
-            this.updTranslate2.DecimalPlaces = 5;
-            this.updTranslate2.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.updTranslate2.Location = new System.Drawing.Point(69, 85);
-            this.updTranslate2.Minimum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            -2147483648});
-            this.updTranslate2.Name = "updTranslate2";
-            this.updTranslate2.Size = new System.Drawing.Size(79, 20);
-            this.updTranslate2.TabIndex = 19;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(20, 56);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 13);
-            this.label4.TabIndex = 18;
-            this.label4.Text = "Axis 2";
+            0});
+            this.updAxis.ValueChanged += new System.EventHandler(this.updAxis_ValueChanged);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(20, 25);
+            this.label3.Location = new System.Drawing.Point(16, 58);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(32, 13);
+            this.label3.Size = new System.Drawing.Size(43, 13);
             this.label3.TabIndex = 17;
-            this.label3.Text = "Axis1";
+            this.label3.Text = "Amount";
             // 
-            // updTranslate1
+            // label29
             // 
-            this.updTranslate1.DecimalPlaces = 5;
-            this.updTranslate1.Increment = new decimal(new int[] {
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(33, 29);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(26, 13);
+            this.label29.TabIndex = 44;
+            this.label29.Text = "Axis";
+            // 
+            // updTranslate
+            // 
+            this.updTranslate.DecimalPlaces = 5;
+            this.updTranslate.Increment = new decimal(new int[] {
             1,
             0,
             0,
             131072});
-            this.updTranslate1.Location = new System.Drawing.Point(69, 54);
-            this.updTranslate1.Minimum = new decimal(new int[] {
+            this.updTranslate.Location = new System.Drawing.Point(65, 56);
+            this.updTranslate.Minimum = new decimal(new int[] {
             100,
             0,
             0,
             -2147483648});
-            this.updTranslate1.Name = "updTranslate1";
-            this.updTranslate1.Size = new System.Drawing.Size(79, 20);
-            this.updTranslate1.TabIndex = 16;
-            // 
-            // updTranslate0
-            // 
-            this.updTranslate0.DecimalPlaces = 5;
-            this.updTranslate0.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.updTranslate0.Location = new System.Drawing.Point(69, 23);
-            this.updTranslate0.Minimum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            -2147483648});
-            this.updTranslate0.Name = "updTranslate0";
-            this.updTranslate0.Size = new System.Drawing.Size(79, 20);
-            this.updTranslate0.TabIndex = 15;
+            this.updTranslate.Name = "updTranslate";
+            this.updTranslate.Size = new System.Drawing.Size(73, 20);
+            this.updTranslate.TabIndex = 15;
             // 
             // tabRaytracing
             // 
@@ -843,6 +833,43 @@
             this.tabSurface.TabIndex = 3;
             this.tabSurface.Text = "Surface";
             this.tabSurface.UseVisualStyleBackColor = true;
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Location = new System.Drawing.Point(35, 70);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(97, 13);
+            this.label27.TabIndex = 28;
+            this.label27.Text = "Surface Smoothing";
+            // 
+            // updSurfaceSmoothing
+            // 
+            this.updSurfaceSmoothing.DecimalPlaces = 2;
+            this.updSurfaceSmoothing.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.updSurfaceSmoothing.Location = new System.Drawing.Point(142, 68);
+            this.updSurfaceSmoothing.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.updSurfaceSmoothing.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.updSurfaceSmoothing.Name = "updSurfaceSmoothing";
+            this.updSurfaceSmoothing.Size = new System.Drawing.Size(93, 20);
+            this.updSurfaceSmoothing.TabIndex = 27;
+            this.updSurfaceSmoothing.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
             // 
             // label12
             // 
@@ -1264,47 +1291,11 @@
             this.btnRaytrace.UseVisualStyleBackColor = true;
             this.btnRaytrace.Click += new System.EventHandler(this.btnRaytrace_Click);
             // 
-            // label27
-            // 
-            this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(35, 70);
-            this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(97, 13);
-            this.label27.TabIndex = 28;
-            this.label27.Text = "Surface Smoothing";
-            // 
-            // updSurfaceSmoothing
-            // 
-            this.updSurfaceSmoothing.DecimalPlaces = 2;
-            this.updSurfaceSmoothing.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.updSurfaceSmoothing.Location = new System.Drawing.Point(142, 68);
-            this.updSurfaceSmoothing.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.updSurfaceSmoothing.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.updSurfaceSmoothing.Name = "updSurfaceSmoothing";
-            this.updSurfaceSmoothing.Size = new System.Drawing.Size(93, 20);
-            this.updSurfaceSmoothing.TabIndex = 27;
-            this.updSurfaceSmoothing.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            // 
             // SphereSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(423, 308);
             this.Controls.Add(this.btnRaytrace);
             this.Controls.Add(this.tabSettings);
@@ -1327,14 +1318,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.updViewportHeight)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSphereRadius)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updResolution)).EndInit();
-            this.tabPosition.ResumeLayout(false);
+            this.tabNavigation.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updRotate)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.updTranslate4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updTranslate3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updTranslate2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updTranslate1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updTranslate0)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updAxis)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updTranslate)).EndInit();
             this.tabRaytracing.ResumeLayout(false);
             this.tabRaytracing.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updBinarySearchSteps_1)).EndInit();
@@ -1347,6 +1338,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.updSamplingInterval_0)).EndInit();
             this.tabSurface.ResumeLayout(false);
             this.tabSurface.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updSurfaceSmoothing)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updBailout)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSurfaceThickness)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updBoundaryInterval)).EndInit();
@@ -1362,7 +1354,6 @@
             this.tabColour.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updCompression)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updOffset)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updSurfaceSmoothing)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1425,24 +1416,23 @@
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.NumericUpDown updOffset;
         private System.Windows.Forms.Button btnApplyColour;
-        private System.Windows.Forms.TabPage tabPosition;
+        private System.Windows.Forms.TabPage tabNavigation;
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.NumericUpDown updCentreLongitude;
         private System.Windows.Forms.NumericUpDown updCentreLatitude;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.NumericUpDown updTranslate2;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.NumericUpDown updTranslate1;
-        private System.Windows.Forms.NumericUpDown updTranslate0;
-        private System.Windows.Forms.Label label25;
-        private System.Windows.Forms.NumericUpDown updTranslate4;
-        private System.Windows.Forms.Label label26;
-        private System.Windows.Forms.NumericUpDown updTranslate3;
+        private System.Windows.Forms.NumericUpDown updTranslate;
         private System.Windows.Forms.Button btnRaytrace;
         private System.Windows.Forms.Label label27;
         private System.Windows.Forms.NumericUpDown updSurfaceSmoothing;
+        private System.Windows.Forms.NumericUpDown updAxis;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.NumericUpDown updRotate;
+        private System.Windows.Forms.ComboBox cmbPlane;
+        private System.Windows.Forms.Label label28;
     }
 }

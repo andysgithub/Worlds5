@@ -20,9 +20,9 @@ namespace Worlds5
 
         public ImageDisplay()
         {
-            verticalView = sphere.VerticalView * Globals.DEG_TO_RAD / 2;
-            horizontalView = sphere.HorizontalView * Globals.DEG_TO_RAD / 2;
-            double sphereResolution = sphere.AngularResolution * Globals.DEG_TO_RAD / 2;
+            verticalView = sphere.settings.VerticalView * Globals.DEG_TO_RAD / 2;
+            horizontalView = sphere.settings.HorizontalView * Globals.DEG_TO_RAD / 2;
+            double sphereResolution = sphere.settings.AngularResolution * Globals.DEG_TO_RAD / 2;
 
             maxHorizontal = Math.Sin(horizontalView);
             maxVertical = Math.Sin(verticalView);
@@ -39,8 +39,8 @@ namespace Worlds5
         public void updateImage(double rayCountX, double rayCountY, Model.Globals.RGBQUAD colours)
         {
             // Get lat/long from rayCountX/Y
-            double latitude = sphere.LatitudeStart - rayCountY * sphere.AngularResolution;
-            double longitude = sphere.LongitudeStart - rayCountX * sphere.AngularResolution;
+            double latitude = sphere.settings.LatitudeStart - rayCountY * sphere.settings.AngularResolution;
+            double longitude = sphere.settings.LongitudeStart - rayCountX * sphere.settings.AngularResolution;
 
             latitude = latitude * Globals.DEG_TO_RAD;
             longitude = longitude * Globals.DEG_TO_RAD;

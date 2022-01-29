@@ -18,8 +18,8 @@ namespace Worlds5
             this.cmbFormat.SelectedIndex = 0;
 
             Model.clsSphere sphere = Model.Globals.Sphere;
-            this.updRadiusStart.Value = (decimal)sphere.Radius;
-            this.updRadiusEnd.Value = (decimal)sphere.Radius;
+            this.updRadiusStart.Value = (decimal)sphere.settings.Radius;
+            this.updRadiusEnd.Value = (decimal)sphere.settings.Radius;
         }
 
         private void btnStart_Click(object sender, EventArgs e)

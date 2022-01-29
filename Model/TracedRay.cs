@@ -50,14 +50,14 @@ namespace Model
 
             clsSphere sphere = Model.Globals.Sphere;
 
-            int activeIndex = sphere.ActiveIndex;
+            int activeIndex = sphere.settings.ActiveIndex;
 
-            double startDistance = sphere.StartDistance[activeIndex];
-            double endDistance = sphere.EndDistance[activeIndex];
-            float exposureValue = sphere.ExposureValue[activeIndex];
-            float saturation = sphere.Saturation[activeIndex];
-            float interiorExposure = sphere.ExposureValue[2];
-            float interiorSaturation = sphere.Saturation[2];
+            double startDistance = sphere.settings.StartDistance[activeIndex];
+            double endDistance = sphere.settings.EndDistance[activeIndex];
+            float exposureValue = sphere.settings.ExposureValue[activeIndex];
+            float saturation = sphere.settings.Saturation[activeIndex];
+            float interiorExposure = sphere.settings.ExposureValue[2];
+            float interiorSaturation = sphere.settings.Saturation[2];
 
             try
             {
@@ -78,7 +78,7 @@ namespace Model
                                 break;
 
 
-                            float lightingAngle = (sphere.LightingAngle + 90) * (float)Globals.DEG_TO_RAD;
+                            float lightingAngle = (sphere.settings.LightingAngle + 90) * (float)Globals.DEG_TO_RAD;
 
                             // Modify the exposure value according to the XTilt, YTilt values using Lambert's Cosine Law
                             double xTilt = xTiltValues != null && xTiltValues.Count > 0 ? xTiltValues[i] : 0;
@@ -87,7 +87,7 @@ namespace Model
                             double tiltY = yTilt + lightingAngle;
                             float  tiltValue = (float)(Math.Cos(tiltX) * Math.Cos(tiltY));
 
-                            float surfaceContrast = sphere.SurfaceContrast / 10;
+                            float surfaceContrast = sphere.settings.SurfaceContrast / 10;
 
                             //// Increase contrast of the exposure value
                             float contrastValue = (tiltValue * surfaceContrast * 2) - surfaceContrast;
@@ -155,8 +155,8 @@ namespace Model
             byte r, g, b;
             clsSphere sphere = Model.Globals.Sphere;
 
-            float compression = sphere.ColourCompression;
-            float offset = sphere.ColourOffset;
+            float compression = sphere.settings.ColourCompression;
+            float offset = sphere.settings.ColourOffset;
 
             // Get Hue from the orbit angle
             float Hue = (float)(RayData.AngleValues[i] * 57.2957795 * compression) + offset;

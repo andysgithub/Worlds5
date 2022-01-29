@@ -55,8 +55,4 @@
         "Boundary": ImageSettings
         "Volume": ImageSettings
     }
-
-    "ImageSettings": {
-        "ColourDetail": float
-    }
 }

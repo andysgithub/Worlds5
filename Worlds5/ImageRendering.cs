@@ -67,10 +67,9 @@ namespace Worlds5
             int activeIndex);
 
         [DllImport("Unmanaged.dll")]
-        static extern void InitSphere(float fDetail0, float fDetail1,
-                                          float fBailout, double Resolution,
-                                          double Latitude, double Longitude,
-                                          double Radius, double verticalView, double horizontalView, double[,] PositionMatrix);
+        static extern void InitSphere(float fBailout, double Resolution,
+                                      double Latitude, double Longitude,
+                                      double Radius, double verticalView, double horizontalView, double[,] PositionMatrix);
 
         #endregion
 
@@ -85,10 +84,9 @@ namespace Worlds5
             sphere = Model.Globals.Sphere;
 
             // Initialise the sphere in the dll from the ImageRendering sphere
-            InitSphere(sphere.ColourDetail[0], sphere.ColourDetail[1],
-                       sphere.Bailout, sphere.AngularResolution,
-                       sphere.CentreLatitude, sphere.CentreLongitude,
-                       sphere.Radius, sphere.VerticalView, sphere.HorizontalView, sphere.PositionMatrix);
+            InitSphere(sphere.settings.Bailout, sphere.settings.AngularResolution,
+                       sphere.settings.CentreLatitude, sphere.settings.CentreLongitude,
+                       sphere.settings.Radius, sphere.settings.VerticalView, sphere.settings.HorizontalView, sphere.settings.PositionMatrix);
         }
 
         public void PerformRayTracing()
@@ -101,8 +99,8 @@ namespace Worlds5
                 // Initialise ray map
                 sphere.InitialiseRayMap();
 
-                int totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
-                int totalRays = (int)(sphere.HorizontalView / sphere.AngularResolution);
+                int totalLines = (int)(sphere.settings.VerticalView / sphere.settings.AngularResolution);
+                int totalRays = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
 
                 linesProcessed = 0;
 
@@ -158,9 +156,9 @@ namespace Worlds5
         public void Redisplay()
         {
             //picImage.Image = new Bitmap(picImage.Image.Width, picImage.Image.Height);
-            if (Model.Globals.Sphere.RayMap != null)
+            if (Model.Globals.Sphere.settings.RayMap != null)
             {
-                int totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
+                int totalLines = (int)(sphere.settings.VerticalView / sphere.settings.AngularResolution);
                 linesProcessed = 0;
 
                 try
@@ -185,7 +183,7 @@ namespace Worlds5
         {
             if (ray != null)
             {
-                int totalRays = (int)(sphere.HorizontalView / sphere.AngularResolution);
+                int totalRays = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
 
                 // If current row is still being processed
                 if (rayCountX < totalRays - 1)
@@ -198,7 +196,7 @@ namespace Worlds5
         private void RowCompleted(int lineIndex, DisplayOption displayOption)
         {
             linesProcessed++;
-            int totalLines = (int)(sphere.VerticalView / sphere.AngularResolution);
+            int totalLines = (int)(sphere.settings.VerticalView / sphere.settings.AngularResolution);
 
             // Call the UpdateStatus function in Main
             updateStatus(linesProcessed, totalLines);
@@ -206,7 +204,7 @@ namespace Worlds5
 
         public void Redisplay(int rayCountY)
         {
-            int totalRays = (int)(sphere.HorizontalView / sphere.AngularResolution);
+            int totalRays = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
 
             // For each longitude point on this line
             for (int rayCountX = 0; rayCountX < totalRays; rayCountX++)
@@ -220,8 +218,8 @@ namespace Worlds5
         // Trace the ray on this latitude line
         private TracedRay ProcessRay(clsSphere sphere, int rayCountX, int rayCountY)
         {
-            double latitude = sphere.LatitudeStart - rayCountY * sphere.AngularResolution;
-            double longitude = sphere.LongitudeStart - rayCountX * sphere.AngularResolution;
+            double latitude = sphere.settings.LatitudeStart - rayCountY * sphere.settings.AngularResolution;
+            double longitude = sphere.settings.LongitudeStart - rayCountX * sphere.settings.AngularResolution;
 
             double xFactor = Math.Cos(latitude * Globals.DEG_TO_RAD) * Math.Sin(-longitude * Globals.DEG_TO_RAD);
             double yFactor = Math.Sin(latitude * Globals.DEG_TO_RAD);
@@ -232,13 +230,13 @@ namespace Worlds5
             float[] modulusValues = new float[100];
             float[] angleValues = new float[100];
             double[] distanceValues = new double[100];
-            int i = sphere.ActiveIndex;
+            int i = sphere.settings.ActiveIndex;
 
             // Trace the ray from the sphere radius outwards
-            int points = TraceRay(sphere.Radius, sphere.SamplingInterval[i], sphere.SurfaceSmoothing, sphere.SurfaceThickness,
+            int points = TraceRay(sphere.settings.Radius, sphere.settings.SamplingInterval[i], sphere.settings.SurfaceSmoothing, sphere.settings.SurfaceThickness,
                         xFactor, yFactor, zFactor,
                         externalPoints, modulusValues, angleValues, distanceValues,
-                        sphere.RayPoints[i], sphere.MaxSamples[i], sphere.BoundaryInterval, sphere.BinarySearchSteps[i],
+                        sphere.settings.RayPoints[i], sphere.settings.MaxSamples[i], sphere.settings.BoundaryInterval, sphere.settings.BinarySearchSteps[i],
                         i);
 
             // Resize arrays to the recordedPoints value
@@ -254,12 +252,12 @@ namespace Worlds5
 
         private TracedRay SetRayColour(clsSphere sphere, int rayCountX, int rayCountY)
         {
-            if (rayCountX >= sphere.RayMap.GetUpperBound(0) || rayCountY >= sphere.RayMap.GetUpperBound(1))
+            if (rayCountX >= sphere.settings.RayMap.GetUpperBound(0) || rayCountY >= sphere.settings.RayMap.GetUpperBound(1))
             {
                 return null;
             }
             // Get the ray from the ray map
-            TracedRay.RayDataType rayData = sphere.RayMap[rayCountX++, rayCountY];
+            TracedRay.RayDataType rayData = sphere.settings.RayMap[rayCountX++, rayCountY];
             TracedRay tracedRay = new TracedRay(rayData.ExternalPoints, rayData.ModulusValues, rayData.AngleValues, rayData.DistanceValues);
 
             // Calculate the tilt values from the previous rays
@@ -291,13 +289,13 @@ namespace Worlds5
         //    int rayNumber = 0;
 
         //    // For each longitude point on this line working forwards
-        //    for (double longitude = sphere.LongitudeStart - sphere.Resolution;
-        //        longitude > sphere.LongitudeEnd; longitude -= sphere.Resolution)
+        //    for (double longitude = sphere.settings.LongitudeStart - sphere.settings.Resolution;
+        //        longitude > sphere.settings.LongitudeEnd; longitude -= sphere.settings.Resolution)
         //    {
         //        // Get the ray from the ray map
-        //        TracedRay thisRay = sphere.RayMap[rayNumber, row];
+        //        TracedRay thisRay = sphere.settings.RayMap[rayNumber, row];
         //        // Get the next ray from the ray map
-        //        TracedRay nextRay = sphere.RayMap[rayNumber + 1, row];
+        //        TracedRay nextRay = sphere.settings.RayMap[rayNumber + 1, row];
         //        // Add any additional boundaries on this ray to the next one
         //        addNewBoundaries(thisRay, ref nextRay);
         //        // Go on to the next ray in the row
@@ -307,13 +305,13 @@ namespace Worlds5
         //    // Start with the last ray
 
         //    // For each longitude point on this line working backwards
-        //    for (double longitude = sphere.LongitudeEnd + sphere.Resolution;
-        //        longitude < sphere.LongitudeStart; longitude += sphere.Resolution)
+        //    for (double longitude = sphere.settings.LongitudeEnd + sphere.settings.Resolution;
+        //        longitude < sphere.settings.LongitudeStart; longitude += sphere.settings.Resolution)
         //    {
         //        // Get the ray from the ray map
-        //        TracedRay thisRay = sphere.RayMap[rayNumber, row];
+        //        TracedRay thisRay = sphere.settings.RayMap[rayNumber, row];
         //        // Get the previous ray from the ray map
-        //        TracedRay previousRay = sphere.RayMap[rayNumber - 1, row];
+        //        TracedRay previousRay = sphere.settings.RayMap[rayNumber - 1, row];
         //        // Add any additional boundaries on this ray to the previous one
         //        addNewBoundaries(thisRay, ref previousRay);
         //        // Go on to the previous ray in the row
@@ -364,7 +362,7 @@ namespace Worlds5
         //        }
 
         //        // If this angle is sufficiently close to the test angle
-        //        if (Math.Abs(sourceRay.Angle(sourcePos) - targetRay.Angle(targetPos)) < sphere.BoundaryInterval)
+        //        if (Math.Abs(sourceRay.Angle(sourcePos) - targetRay.Angle(targetPos)) < sphere.settings.BoundaryInterval)
         //        {
         //            // Go on to the next source boundary position
         //            continue;
@@ -377,8 +375,8 @@ namespace Worlds5
         //        bool externalPoint;
 
         //        // Perform binary search between the target and the source points, to determine new boundary position
-        //        double newPosition = FindBoundary(separation, sphere.BinarySearchSteps, sourcePosition, targetRay.Angle(targetPos),
-        //                              sphere.BoundaryInterval, &externalPoint, &Modulus, &Angle);
+        //        double newPosition = FindBoundary(separation, sphere.settings.BinarySearchSteps, sourcePosition, targetRay.Angle(targetPos),
+        //                              sphere.settings.BoundaryInterval, &externalPoint, &Modulus, &Angle);
 
         //        // Insert this new boundary data into the current position in the target ray
         //        targetRay.Boundaries.Insert(targetPos+1, newPosition);

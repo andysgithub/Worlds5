@@ -17,8 +17,7 @@ double rightEdge;           // Right edge of the viewing window
 double topEdge;             // Top edge of the viewing window
 double bottomEdge;          // Bottom edge of the viewing window
 
-float    m_Detail0, m_Detail1,
-        m_Offset0, m_Offset1,
+float   m_Offset0, m_Offset1,
         m_Bailout;
 
 bool APIENTRY DllMain( HMODULE hModule,
@@ -28,14 +27,11 @@ bool APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
-EXPORT void __stdcall InitSphere(float fDetail0, float fDetail1,
-                                  float fBailout, double dResolution,
+EXPORT void __stdcall InitSphere(float fBailout, double dResolution,
                                   double dLatitude, double dLongitude, 
                                   double sphereRadius, double verticalView, double horizontalView, 
                   double *pTransMatrix)
 {
-    m_Detail0        = fDetail0;
-    m_Detail1        = fDetail1;
     m_Bailout        = fBailout*fBailout;
     m_Resolution     = dResolution;
     m_Latitude       = dLatitude;
