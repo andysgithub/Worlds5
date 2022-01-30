@@ -303,10 +303,6 @@ namespace Worlds5
             form.RefreshImage += new SphereSettings.RefreshDelegate(RefreshImage);
             form.RaytraceImage += new SphereSettings.RaytraceDelegate(RaytraceImage);
             DialogResult result = form.ShowDialog(this);
-            if (result == DialogResult.OK)
-            {
-                RaytraceImage();
-            }
         }
 
         private void mnuUserSettings_Click(object sender, EventArgs e)

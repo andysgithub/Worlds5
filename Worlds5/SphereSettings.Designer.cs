@@ -102,6 +102,7 @@
             this.label17 = new System.Windows.Forms.Label();
             this.updOffset = new System.Windows.Forms.NumericUpDown();
             this.btnRaytrace = new System.Windows.Forms.Button();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.tabSettings.SuspendLayout();
             this.tabViewport.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updCentreLongitude)).BeginInit();
@@ -140,6 +141,7 @@
             this.tabColour.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updCompression)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updOffset)).BeginInit();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOK
@@ -203,7 +205,6 @@
             this.tabViewport.TabIndex = 2;
             this.tabViewport.Text = "Viewport";
             this.tabViewport.UseVisualStyleBackColor = true;
-            this.tabViewport.Click += new System.EventHandler(this.tabViewport_Click);
             // 
             // label23
             // 
@@ -446,9 +447,15 @@
             0,
             0,
             0});
+            this.updRotate.Minimum = new decimal(new int[] {
+            360,
+            0,
+            0,
+            -2147483648});
             this.updRotate.Name = "updRotate";
             this.updRotate.Size = new System.Drawing.Size(73, 20);
             this.updRotate.TabIndex = 46;
+            this.updRotate.Leave += new System.EventHandler(this.updRotate_Leave);
             // 
             // cmbPlane
             // 
@@ -458,10 +465,10 @@
             this.cmbPlane.Items.AddRange(new object[] {
             "1 - 2",
             "1 - 3",
-            "2 - 3",
             "1 - 4",
-            "2 - 4",
             "1 - 5",
+            "2 - 3",
+            "2 - 4",
             "2 - 5",
             "3 - 4",
             "3 - 5",
@@ -470,7 +477,6 @@
             this.cmbPlane.Name = "cmbPlane";
             this.cmbPlane.Size = new System.Drawing.Size(73, 21);
             this.cmbPlane.TabIndex = 45;
-            this.cmbPlane.SelectedIndexChanged += new System.EventHandler(this.cmbPlane_SelectedIndexChanged_1);
             // 
             // label28
             // 
@@ -493,7 +499,6 @@
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Move";
-            this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
             // updAxis
             // 
@@ -553,6 +558,7 @@
             this.updTranslate.Name = "updTranslate";
             this.updTranslate.Size = new System.Drawing.Size(73, 20);
             this.updTranslate.TabIndex = 15;
+            this.updTranslate.Leave += new System.EventHandler(this.updTranslate_Leave);
             // 
             // tabRaytracing
             // 
@@ -1192,11 +1198,8 @@
             // 
             // tabColour
             // 
+            this.tabColour.Controls.Add(this.groupBox3);
             this.tabColour.Controls.Add(this.btnApplyColour);
-            this.tabColour.Controls.Add(this.label13);
-            this.tabColour.Controls.Add(this.updCompression);
-            this.tabColour.Controls.Add(this.label17);
-            this.tabColour.Controls.Add(this.updOffset);
             this.tabColour.Location = new System.Drawing.Point(4, 22);
             this.tabColour.Name = "tabColour";
             this.tabColour.Padding = new System.Windows.Forms.Padding(3);
@@ -1219,7 +1222,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(35, 34);
+            this.label13.Location = new System.Drawing.Point(18, 34);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(100, 13);
             this.label13.TabIndex = 29;
@@ -1233,7 +1236,7 @@
             0,
             0,
             65536});
-            this.updCompression.Location = new System.Drawing.Point(142, 32);
+            this.updCompression.Location = new System.Drawing.Point(125, 32);
             this.updCompression.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -1251,7 +1254,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(35, 75);
+            this.label17.Location = new System.Drawing.Point(18, 75);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(68, 13);
             this.label17.TabIndex = 27;
@@ -1265,7 +1268,7 @@
             0,
             0,
             65536});
-            this.updOffset.Location = new System.Drawing.Point(142, 73);
+            this.updOffset.Location = new System.Drawing.Point(125, 73);
             this.updOffset.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -1290,6 +1293,19 @@
             this.btnRaytrace.Text = "Raytrace";
             this.btnRaytrace.UseVisualStyleBackColor = true;
             this.btnRaytrace.Click += new System.EventHandler(this.btnRaytrace_Click);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.label17);
+            this.groupBox3.Controls.Add(this.updOffset);
+            this.groupBox3.Controls.Add(this.label13);
+            this.groupBox3.Controls.Add(this.updCompression);
+            this.groupBox3.Location = new System.Drawing.Point(26, 19);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(245, 116);
+            this.groupBox3.TabIndex = 31;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Surface Colour";
             // 
             // SphereSettings
             // 
@@ -1351,9 +1367,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.updSaturation)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updExposureValue)).EndInit();
             this.tabColour.ResumeLayout(false);
-            this.tabColour.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updCompression)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updOffset)).EndInit();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1434,5 +1451,6 @@
         private System.Windows.Forms.NumericUpDown updRotate;
         private System.Windows.Forms.ComboBox cmbPlane;
         private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.GroupBox groupBox3;
     }
 }

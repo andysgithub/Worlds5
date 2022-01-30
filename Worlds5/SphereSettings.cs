@@ -15,12 +15,14 @@ namespace Worlds5
 
         #endregion
 
-        clsSphere.Settings sphereSettings = Model.Globals.Sphere.settings;
-        clsSphere.Settings oldSphereSettings = Model.Globals.Sphere.settings.Clone();
+        private clsSphere.Settings sphereSettings = Model.Globals.Sphere.settings;
+        private clsSphere.Settings oldSphereSettings = Model.Globals.Sphere.settings.Clone();
         private int regionIndex = 0;
         private int planeIndex = 0;
         private int axisIndex = 0;
         private bool isLoaded = false;
+        private double[] translationValues = new double[5];
+        private double[] rotationValues = new double[10];
 
         public SphereSettings()
         {
@@ -34,7 +36,6 @@ namespace Worlds5
         {
             SaveSettings();
             SaveRendering();
-            sphereSettings.RayMap = Model.Globals.Sphere.settings.RayMap;
             this.Close();
         }
 
@@ -44,6 +45,29 @@ namespace Worlds5
             SaveRendering();
             RaytraceImage();
             sphereSettings.RayMap = Model.Globals.Sphere.settings.RayMap;
+        }
+
+        private double[,] Angles
+        {
+            get
+            {
+                // Factor to convert total degrees into radians
+                double factor = Globals.DEG_TO_RAD;
+                double[,] angles = new double[5, 6];
+
+                angles[1, 2] = rotationValues[0] * factor;
+                angles[1, 3] = rotationValues[1] * factor;
+                angles[1, 4] = rotationValues[2] * factor;
+                angles[1, 5] = rotationValues[3] * factor;
+                angles[2, 3] = rotationValues[4] * factor;
+                angles[2, 4] = rotationValues[5] * factor;
+                angles[2, 5] = rotationValues[6] * factor;
+                angles[3, 4] = rotationValues[7] * factor;
+                angles[3, 5] = rotationValues[8] * factor;
+                angles[4, 5] = rotationValues[9] * factor;
+
+                return angles;
+            }
         }
 
         private void SaveSettings()
@@ -57,7 +81,31 @@ namespace Worlds5
             sphereSettings.HorizontalView = (double)updViewportWidth.Value;
 
             // Position
-            sphereSettings.PositionMatrix[5, axisIndex] = (double)updTranslate.Value;
+            for (int axis = 0; axis < 5; axis++)
+            {
+                sphereSettings.PositionMatrix[5, axis] += translationValues[axis];
+                translationValues[axis] = 0;
+            }
+            // Clear the translation input
+            updTranslate.Value = 0;
+
+            // Transfer rotation values to position matrix
+            double[,] angles = Angles;
+            for (int axis1 = 1; axis1 < 5; axis1++)
+            {
+                for (int axis2 = 2; axis2 < 6; axis2++)
+                {
+                    // If rotation is set for this plane
+                    if (angles[axis1, axis2] != 0)
+                    {
+                        // Rotate by the given angle
+                        Transformation.SetRotation(axis1 - 1, axis2 - 1, angles[axis1, axis2]);
+                        Transformation.PreMulR();
+                    }
+                }
+            }
+            // Clear the rotation input
+            updRotate.Value = 0;
 
             // Raytracing
             sphereSettings.ActiveIndex = chkShowSurface.Checked ? 0 : 1;
@@ -116,7 +164,7 @@ namespace Worlds5
             updViewportWidth.Value = (decimal)sphereSettings.HorizontalView;
 
             // Position
-            updTranslate.Value = (decimal)sphereSettings.PositionMatrix[5, axisIndex];
+            /*updTranslate.Value = 0;*/
 
             // Raytracing
             chkShowSurface.Checked = sphereSettings.ActiveIndex == 0;
@@ -288,9 +336,6 @@ namespace Worlds5
                 updEndDistance.Enabled = (regionIndex < 2);
             }
         }
-        private void cmbPlane_SelectedIndexChanged(object sender, EventArgs e)
-        {
-        }
 
         private void btnApplyColour_Click(object sender, EventArgs e)
         {
@@ -298,36 +343,36 @@ namespace Worlds5
             RefreshImage();
         }
 
-        private void tabViewport_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void groupBox1_Enter(object sender, EventArgs e)
-        {
-
-        }
-
         private void updAxis_ValueChanged(object sender, EventArgs e)
         {
             if (isLoaded)
             {
-                sphereSettings.PositionMatrix[5, axisIndex] = (double)updTranslate.Value;
+                translationValues[axisIndex] = (double)updTranslate.Value;
                 axisIndex = (int)updAxis.Value - 1;
-                updTranslate.Value = (decimal)sphereSettings.PositionMatrix[5, axisIndex];
+                updTranslate.Value = (decimal)translationValues[axisIndex];
             }
+        }
+
+        private void updTranslate_Leave(object sender, EventArgs e)
+        {
+            axisIndex = (int)updAxis.Value - 1;
+            translationValues[axisIndex] = (double)updTranslate.Value;
         }
 
         private void cmbPlane_SelectedIndexChanged_1(object sender, EventArgs e)
         {
             if (isLoaded)
             {
-                sphereSettings.PositionMatrix[5, axisIndex] = (double)updTranslate.Value;
-                axisIndex = (int)updAxis.Value - 1;
-                updTranslate.Value = (decimal)sphereSettings.PositionMatrix[5, axisIndex];
-
-
+                rotationValues[planeIndex] = (double)updRotate.Value;
+                planeIndex = cmbPlane.SelectedIndex - 1;
+                updRotate.Value = (decimal)rotationValues[planeIndex];
             }
+        }
+
+        private void updRotate_Leave(object sender, EventArgs e)
+        {
+            planeIndex = (int)cmbPlane.SelectedIndex;
+            rotationValues[planeIndex] = (double)updRotate.Value;
         }
     }
 }

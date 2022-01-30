@@ -19,8 +19,8 @@ namespace Worlds5
         public class Navigation
         {
             public double[,] PositionMatrix { get; set; }
-            public String RayMap { get; set; }
-            public String ViewportImage { get; set; }
+            public string RayMap { get; set; }
+            public string ViewportImage { get; set; }
         }
 
         public class Viewing
