@@ -72,6 +72,26 @@ namespace Worlds5
 
         private void SaveSettings()
         {
+            // Transfer rotation values to position matrix
+            double[,] angles = Angles;
+            for (int axis1 = 1; axis1 < 5; axis1++)
+            {
+                for (int axis2 = 2; axis2 < 6; axis2++)
+                {
+                    // If rotation is set for this plane
+                    if (angles[axis1, axis2] != 0)
+                    {
+                        // Rotate by the given angle
+                        Transformation.SetRotation(axis1 - 1, axis2 - 1, angles[axis1, axis2]);
+                        Transformation.PreMulR();
+                    }
+                }
+            }
+
+            sphereSettings.PositionMatrix = Transformation.GetPositionMatrix();
+            // Clear the rotation input
+            updRotate.Value = 0;
+
             // Sphere Viewing window
             sphereSettings.AngularResolution = (double)updResolution.Value;
             sphereSettings.Radius = (double)updSphereRadius.Value;
@@ -88,24 +108,6 @@ namespace Worlds5
             }
             // Clear the translation input
             updTranslate.Value = 0;
-
-            // Transfer rotation values to position matrix
-            double[,] angles = Angles;
-            for (int axis1 = 1; axis1 < 5; axis1++)
-            {
-                for (int axis2 = 2; axis2 < 6; axis2++)
-                {
-                    // If rotation is set for this plane
-                    if (angles[axis1, axis2] != 0)
-                    {
-                        // Rotate by the given angle
-                        Transformation.SetRotation(axis1 - 1, axis2 - 1, angles[axis1, axis2]);
-                        Transformation.PreMulR();
-                    }
-                }
-            }
-            // Clear the rotation input
-            updRotate.Value = 0;
 
             // Raytracing
             sphereSettings.ActiveIndex = chkShowSurface.Checked ? 0 : 1;

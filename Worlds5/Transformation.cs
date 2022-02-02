@@ -150,5 +150,10 @@ namespace Worlds5
                 }
             }
         }
+
+        public static double[,] GetPositionMatrix()
+        {
+            return sphereSettings.PositionMatrix;
+        }
     }
 }
