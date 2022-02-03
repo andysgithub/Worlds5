@@ -11,8 +11,10 @@ namespace Worlds5
 
         public delegate void RefreshDelegate();
         public delegate Task<bool> RaytraceDelegate();
+        public delegate void StatusDelegate(string statusMessage);
         public event RefreshDelegate RefreshImage;
         public event RaytraceDelegate RaytraceImage;
+        public event StatusDelegate UpdateStatus;
 
         #endregion
 
@@ -35,17 +37,20 @@ namespace Worlds5
 
         private void btnOK_Click(object sender, EventArgs e)
         {
+            UpdateStatus("Saving settings...");
             SaveSettings();
             SaveRendering();
+            UpdateStatus("");
             this.Close();
         }
 
         private async void btnRaytrace_Click(object sender, EventArgs e)
         {
+            UpdateStatus("Initialising...");
             SaveSettings();
             SaveRendering();
+            UpdateStatus("");
             await RaytraceImage();
-            sphereSettings.RayMap = Model.Globals.Sphere.settings.RayMap;
         }
 
         private double[,] Angles
@@ -126,8 +131,6 @@ namespace Worlds5
             sphereSettings.BoundaryInterval = (double)updBoundaryInterval.Value;
             sphereSettings.SurfaceSmoothing = (double)updSurfaceSmoothing.Value;
             sphereSettings.SurfaceThickness = (double)updSurfaceThickness.Value;
-
-            Model.Globals.Sphere.settings = sphereSettings.Clone();
         }
 
         private void SaveRendering()
@@ -281,7 +284,9 @@ namespace Worlds5
 
         private void btnApply_Click(object sender, EventArgs e)
         {
+            UpdateStatus("Initialising...");
             SaveRendering();
+            UpdateStatus("");
             RefreshImage();
         }
 

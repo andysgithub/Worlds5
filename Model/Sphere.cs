@@ -26,6 +26,9 @@ namespace Model
         // Last generated image
         public Bitmap ViewportImage { get; set; }
 
+        // Sinusoidal mapping of traced rays
+        public TracedRay.RayDataType[,] RayMap { get; set; }
+
         public Settings settings;
 
         public struct Settings {
@@ -35,10 +38,9 @@ namespace Model
             // Transformation matrix
             public double[,] PositionMatrix { get; set; }
 
-            // Sinusoidal mapping of traced rays
-            public TracedRay.RayDataType[,] RayMap { get; set; }
             // Sinusoidal mapping of surface points
             //public SurfacePoint[,] SurfaceMap { get; set; } 
+
             // The number of boundary points recorded during ray tracing
             public int[] RayPoints { get; set; }
             // The maximum number of points examined during ray tracing
@@ -142,21 +144,21 @@ namespace Model
         public void InitialiseRayMap()
         {
             // Initialise the ray trace mapping to correspond to the viewport
-            settings.RayMap = new TracedRay.RayDataType[(int)(settings.HorizontalView / settings.AngularResolution) + 1, (int)(settings.VerticalView / settings.AngularResolution) + 1];
+            RayMap = new TracedRay.RayDataType[(int)(settings.HorizontalView / settings.AngularResolution) + 1, (int)(settings.VerticalView / settings.AngularResolution) + 1];
             incrementFactor = 2 * Math.Sin(settings.AngularResolution / 2);
         }
 
         public void RecordRay(TracedRay tracedRay, int xIndex, int yIndex)
         {
             // Store the new ray in the ray map
-            settings.RayMap[xIndex, yIndex] = tracedRay.RayData;
+            RayMap[xIndex, yIndex] = tracedRay.RayData;
         }
 
         public List<float> addTiltValues(TracedRay tracedRay, int xIndex, int yIndex)
         {
             // Initialise the tilt values list
             List<float> tiltValues = new List<float>();
-            TracedRay.RayDataType rayData = settings.RayMap[xIndex, yIndex];
+            TracedRay.RayDataType rayData = RayMap[xIndex, yIndex];
             TracedRay lastRay = new TracedRay(rayData.ExternalPoints, rayData.ModulusValues, rayData.AngleValues, rayData.DistanceValues);
             if (lastRay != null)
             {

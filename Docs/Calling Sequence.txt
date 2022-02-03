@@ -26,7 +26,7 @@
 					
 				DisplayLine(sphere, rayCountY, latitude)        <-- increments X
 					// For each longitude point on this line, get the ray from the ray map
-					tracedRay = sphere.settings.RayMap[rayCountX++, rayCountY]
+					tracedRay = sphere.RayMap[rayCountX++, rayCountY]
 					// Calculate the tilt values from the previous rays
 					sphere.settings.addTiltValues()
 					// Convert the fractal value collection into an rgb colour value

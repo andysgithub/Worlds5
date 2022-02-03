@@ -87,7 +87,7 @@ namespace Worlds5
             }
         }
 
-        private void LoadSphereFile(string FilePath)
+        private async void LoadSphereFile(string FilePath)
         {
             clsSphere sphere = Model.Globals.Sphere;
 
@@ -98,14 +98,14 @@ namespace Worlds5
             {
                 this.Text = Model.Globals.AppName + " - " + Path.GetFileNameWithoutExtension(FilePath);
                 if (sphere.ViewportImage == null)
-                {  
-                    if (sphere.settings.RayMap != null)
+                {
+                    if (sphere.RayMap != null)
                     {
                         RefreshImage();
                     }
                     else
                     {
-                        RaytraceImage();
+                        await RaytraceImage();
                     }
                 }
                 else
@@ -120,14 +120,15 @@ namespace Worlds5
             RefreshImage();
         }
 
-        private void mnuRaytrace_Click(object sender, EventArgs e)
+        private async void mnuRaytrace_Click(object sender, EventArgs e)
         {
-            RaytraceImage();
+
+            await RaytraceImage();
         }
 
         private void RefreshImage()
         {
-            if (Model.Globals.Sphere.settings.RayMap != null)
+            if (Model.Globals.Sphere.RayMap != null)
             {
                 staStatus.Items[0].Text = "Redisplaying...";
                 Application.DoEvents();
@@ -144,6 +145,7 @@ namespace Worlds5
 
         private async Task<bool> RaytraceImage()
         {
+            staStatus.Items[0].Text = "Initialising...";
             imageRendering.InitialiseSphere();
             if (staStatus != null && staStatus.Items != null && staStatus.Items.Count > 0)
             {
@@ -173,6 +175,21 @@ namespace Worlds5
                 catch { }
             }
         }
+        /// <summary>
+        /// Callback to update the status with a given message.
+        /// </summary>
+        /// <param name="rowCount"></param>
+        private void UpdateStatus(string statusMessage)
+        {
+            if (staStatus != null && staStatus.Items != null && staStatus.Items.Count > 0)
+            {
+                try
+                {
+                    staStatus.Items[0].Text = statusMessage;
+                }
+                catch { }
+            }
+        }
 
         // Save current image
         private void mnuSaveImage_Click(object sender, EventArgs e)
@@ -180,7 +197,7 @@ namespace Worlds5
             string PathName = null;
 
             SaveFileDialog dlg = new SaveFileDialog();
-            dlg.Filter =  "Jpeg files (*.jpg)|*.jpg|Tiff files (*.tif)|*.tif|" +
+            dlg.Filter = "Jpeg files (*.jpg)|*.jpg|Tiff files (*.tif)|*.tif|" +
                           "Bitmap files (*.bmp)|*.bmp|Png files (*.png)|*.png";
             dlg.FileName = Path.GetFileNameWithoutExtension(currentAddress);
 
@@ -311,6 +328,7 @@ namespace Worlds5
             SphereSettings form = new SphereSettings();
             form.RefreshImage += new SphereSettings.RefreshDelegate(RefreshImage);
             form.RaytraceImage += new SphereSettings.RaytraceDelegate(RaytraceImage);
+            form.UpdateStatus += new SphereSettings.StatusDelegate(UpdateStatus);
             form.ShowDialog(this);
         }
 

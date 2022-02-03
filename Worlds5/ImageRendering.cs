@@ -161,7 +161,7 @@ namespace Worlds5
         public void Redisplay()
         {
             //picImage.Image = new Bitmap(picImage.Image.Width, picImage.Image.Height);
-            if (Model.Globals.Sphere.settings.RayMap != null)
+            if (Model.Globals.Sphere.RayMap != null)
             {
                 int totalLines = (int)(sphere.settings.VerticalView / sphere.settings.AngularResolution);
                 linesProcessed = 0;
@@ -259,12 +259,12 @@ namespace Worlds5
 
         private TracedRay SetRayColour(clsSphere sphere, int rayCountX, int rayCountY)
         {
-            if (rayCountX >= sphere.settings.RayMap.GetUpperBound(0) || rayCountY >= sphere.settings.RayMap.GetUpperBound(1))
+            if (rayCountX >= sphere.RayMap.GetUpperBound(0) || rayCountY >= sphere.RayMap.GetUpperBound(1))
             {
                 return null;
             }
             // Get the ray from the ray map
-            TracedRay.RayDataType rayData = sphere.settings.RayMap[rayCountX++, rayCountY];
+            TracedRay.RayDataType rayData = sphere.RayMap[rayCountX++, rayCountY];
             TracedRay tracedRay = new TracedRay(rayData.ExternalPoints, rayData.ModulusValues, rayData.AngleValues, rayData.DistanceValues);
 
             // Calculate the tilt values from the previous rays
@@ -300,9 +300,9 @@ namespace Worlds5
         //        longitude > sphere.settings.LongitudeEnd; longitude -= sphere.settings.Resolution)
         //    {
         //        // Get the ray from the ray map
-        //        TracedRay thisRay = sphere.settings.RayMap[rayNumber, row];
+        //        TracedRay thisRay = sphere.RayMap[rayNumber, row];
         //        // Get the next ray from the ray map
-        //        TracedRay nextRay = sphere.settings.RayMap[rayNumber + 1, row];
+        //        TracedRay nextRay = sphere.RayMap[rayNumber + 1, row];
         //        // Add any additional boundaries on this ray to the next one
         //        addNewBoundaries(thisRay, ref nextRay);
         //        // Go on to the next ray in the row
@@ -316,9 +316,9 @@ namespace Worlds5
         //        longitude < sphere.settings.LongitudeStart; longitude += sphere.settings.Resolution)
         //    {
         //        // Get the ray from the ray map
-        //        TracedRay thisRay = sphere.settings.RayMap[rayNumber, row];
+        //        TracedRay thisRay = sphere.RayMap[rayNumber, row];
         //        // Get the previous ray from the ray map
-        //        TracedRay previousRay = sphere.settings.RayMap[rayNumber - 1, row];
+        //        TracedRay previousRay = sphere.RayMap[rayNumber - 1, row];
         //        // Add any additional boundaries on this ray to the previous one
         //        addNewBoundaries(thisRay, ref previousRay);
         //        // Go on to the previous ray in the row

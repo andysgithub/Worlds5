@@ -84,7 +84,7 @@ namespace Worlds5
                     // Convert byte array to ray map
                     if (rayData.Length > 0)
                     {
-                        sphere.settings.RayMap = Helpers.ConvertToRayMap(rayData);
+                        sphere.RayMap = Helpers.ConvertToRayMap(rayData);
                     }
                 }*/
 
@@ -175,7 +175,7 @@ namespace Worlds5
 /*                BinaryFormatter formatter = new BinaryFormatter();
                 // Convert ray map to byte array
                 MemoryStream mStream = new MemoryStream();
-                formatter.Serialize(mStream, sphere.settings.RayMap);
+                formatter.Serialize(mStream, sphere.RayMap);
                 byte[] buffer = mStream.ToArray();
                 mStream.Close();
                 // Compress byte array
