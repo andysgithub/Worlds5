@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Model;
 using Accord.Video.FFMPEG;
@@ -135,17 +136,25 @@ namespace Worlds5
                 // Display the bitmap
                 picImage.Image = Model.Globals.Sphere.ViewportImage;
             }
+            else
+            {
+                MessageBox.Show("You must perform raytracing before rendering.", "No Ray Map");
+            }
         }
 
-        private void RaytraceImage()
+        private async Task<bool> RaytraceImage()
         {
             imageRendering.InitialiseSphere();
-            staStatus.Items[0].Text = "Raytracing started...";
+            if (staStatus != null && staStatus.Items != null && staStatus.Items.Count > 0)
+            {
+                staStatus.Items[0].Text = "Raytracing started...";
+            }
             Application.DoEvents();
-            imageRendering.PerformRayTracing();
+            await imageRendering.PerformRayTracing();
 
             // Display the bitmap
             picImage.Image = Model.Globals.Sphere.ViewportImage;
+            return true;
         }
 
         /// <summary>
@@ -302,7 +311,7 @@ namespace Worlds5
             SphereSettings form = new SphereSettings();
             form.RefreshImage += new SphereSettings.RefreshDelegate(RefreshImage);
             form.RaytraceImage += new SphereSettings.RaytraceDelegate(RaytraceImage);
-            DialogResult result = form.ShowDialog(this);
+            form.ShowDialog(this);
         }
 
         private void mnuUserSettings_Click(object sender, EventArgs e)

@@ -1,6 +1,7 @@
 ﻿using Model;
 using System;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace Worlds5
 {
@@ -9,7 +10,7 @@ namespace Worlds5
         #region Delegates
 
         public delegate void RefreshDelegate();
-        public delegate void RaytraceDelegate();
+        public delegate Task<bool> RaytraceDelegate();
         public event RefreshDelegate RefreshImage;
         public event RaytraceDelegate RaytraceImage;
 
@@ -39,11 +40,11 @@ namespace Worlds5
             this.Close();
         }
 
-        private void btnRaytrace_Click(object sender, EventArgs e)
+        private async void btnRaytrace_Click(object sender, EventArgs e)
         {
             SaveSettings();
             SaveRendering();
-            RaytraceImage();
+            await RaytraceImage();
             sphereSettings.RayMap = Model.Globals.Sphere.settings.RayMap;
         }
 
@@ -114,12 +115,10 @@ namespace Worlds5
 
             sphereSettings.SamplingInterval[0] = (double)updSamplingInterval_0.Value;
             sphereSettings.BinarySearchSteps[0] = (int)updBinarySearchSteps_0.Value;
-            sphereSettings.RayPoints[0] = (int)updRayPoints_0.Value;
             sphereSettings.MaxSamples[0] = (int)updMaxSamples_0.Value;
 
             sphereSettings.SamplingInterval[1] = (double)updSamplingInterval_1.Value;
             sphereSettings.BinarySearchSteps[1] = (int)updBinarySearchSteps_1.Value;
-            sphereSettings.RayPoints[1] = (int)updRayPoints_1.Value;
             sphereSettings.MaxSamples[1] = (int)updMaxSamples_1.Value;
 
             // Surface
@@ -135,8 +134,6 @@ namespace Worlds5
         {
             sphereSettings.ExposureValue[regionIndex] = (float)updExposureValue.Value;
             sphereSettings.Saturation[regionIndex] = (float)updSaturation.Value;
-            sphereSettings.StartDistance[regionIndex] = (double)updStartDistance.Value;
-            sphereSettings.EndDistance[regionIndex] = (double)updEndDistance.Value;
 
             sphereSettings.SurfaceContrast = (float)updSurfaceContrast.Value;
             sphereSettings.LightingAngle = (float)updLightingAngle.Value;
@@ -174,12 +171,10 @@ namespace Worlds5
 
             updSamplingInterval_0.Value = (decimal)sphereSettings.SamplingInterval[0];
             updBinarySearchSteps_0.Value = sphereSettings.BinarySearchSteps[0];
-            updRayPoints_0.Value = sphereSettings.RayPoints[0];
             updMaxSamples_0.Value = sphereSettings.MaxSamples[0];
 
             updSamplingInterval_1.Value = (decimal)sphereSettings.SamplingInterval[1];
             updBinarySearchSteps_1.Value = sphereSettings.BinarySearchSteps[1];
-            updRayPoints_1.Value = sphereSettings.RayPoints[1];
             updMaxSamples_1.Value = sphereSettings.MaxSamples[1];
             
             // Surface
@@ -191,8 +186,6 @@ namespace Worlds5
             // Rendering
             updExposureValue.Value = (decimal)sphereSettings.ExposureValue[regionIndex];
             updSaturation.Value = (decimal)sphereSettings.Saturation[regionIndex];
-            updStartDistance.Value = (decimal)sphereSettings.StartDistance[regionIndex];
-            updEndDistance.Value = (decimal)sphereSettings.EndDistance[regionIndex];
 
             updSurfaceContrast.Value = (decimal)sphereSettings.SurfaceContrast;
             updLightingAngle.Value = (decimal)sphereSettings.LightingAngle;
@@ -263,11 +256,6 @@ namespace Worlds5
             showDetails("Sampling Interval", "The distance between sampling points during ray tracing");
         }
 
-        private void updRayPoints_HelpRequested(object sender, HelpEventArgs hlpevent)
-        {
-            showDetails("Ray Points", "The number of boundary points recorded during ray tracing");
-        }
-
         private void updMaxSamples_HelpRequested(object sender, HelpEventArgs hlpevent)
         {
             showDetails("Maximum Samples", "The maximum number of points examined during ray tracing");
@@ -322,20 +310,14 @@ namespace Worlds5
             {
                 sphereSettings.ExposureValue[regionIndex] = (float)updExposureValue.Value;
                 sphereSettings.Saturation[regionIndex] = (float)updSaturation.Value;
-                sphereSettings.StartDistance[regionIndex] = (double)updStartDistance.Value;
-                sphereSettings.EndDistance[regionIndex] = (double)updEndDistance.Value;
 
                 regionIndex = cmbRegion.SelectedIndex;
 
                 updExposureValue.Value = (decimal)sphereSettings.ExposureValue[regionIndex];
                 updSaturation.Value = (decimal)sphereSettings.Saturation[regionIndex];
-                updStartDistance.Value = (decimal)sphereSettings.StartDistance[regionIndex];
-                updEndDistance.Value = (decimal)sphereSettings.EndDistance[regionIndex];
 
                 updSurfaceContrast.Enabled = (regionIndex == 0);
                 updLightingAngle.Enabled = (regionIndex == 0);
-                updStartDistance.Enabled = (regionIndex < 2);
-                updEndDistance.Enabled = (regionIndex < 2);
             }
         }
 

@@ -37,7 +37,7 @@ namespace Worlds5
                 this.extension = "png";
         }
 
-        public void PerformRotation(double[] centreCoords, double[,] angles, double[] sphereRadius, int totalFrames, string basePath)
+        public async void PerformRotation(double[] centreCoords, double[,] angles, double[] sphereRadius, int totalFrames, string basePath)
         {
             // TODO: This should be in its own thread
 
@@ -87,7 +87,7 @@ namespace Worlds5
                 PathName = String.Format("{0}_{1:000}.{2}", basePath, frameCount, extension);
                 if (!File.Exists(PathName))
                 {
-                    imageRendering.PerformRayTracing();
+                    await imageRendering.PerformRayTracing();
                     SaveFrame();
                     Application.DoEvents();
                 }

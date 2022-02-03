@@ -50,8 +50,6 @@ namespace Worlds5
         {
             public float[] ExposureValue { get; set; }
             public float[] Saturation { get; set; }
-            public double[] StartDistance { get; set; }
-            public double[] EndDistance { get; set; }
             public float SurfaceContrast { get; set; }
             public float LightingAngle { get; set; }
         }

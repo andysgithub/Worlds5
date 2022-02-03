@@ -60,15 +60,12 @@
             this.chkShowSurface = new System.Windows.Forms.CheckBox();
             this.updBinarySearchSteps_1 = new System.Windows.Forms.NumericUpDown();
             this.updMaxSamples_1 = new System.Windows.Forms.NumericUpDown();
-            this.updRayPoints_1 = new System.Windows.Forms.NumericUpDown();
             this.updSamplingInterval_1 = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.updBinarySearchSteps_0 = new System.Windows.Forms.NumericUpDown();
             this.updMaxSamples_0 = new System.Windows.Forms.NumericUpDown();
-            this.updRayPoints_0 = new System.Windows.Forms.NumericUpDown();
             this.updSamplingInterval_0 = new System.Windows.Forms.NumericUpDown();
             this.tabSurface = new System.Windows.Forms.TabPage();
             this.label27 = new System.Windows.Forms.Label();
@@ -86,23 +83,19 @@
             this.updLightingAngle = new System.Windows.Forms.NumericUpDown();
             this.label21 = new System.Windows.Forms.Label();
             this.updSurfaceContrast = new System.Windows.Forms.NumericUpDown();
-            this.updEndDistance = new System.Windows.Forms.NumericUpDown();
             this.btnApply = new System.Windows.Forms.Button();
-            this.label19 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
-            this.updStartDistance = new System.Windows.Forms.NumericUpDown();
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.updSaturation = new System.Windows.Forms.NumericUpDown();
             this.updExposureValue = new System.Windows.Forms.NumericUpDown();
             this.tabColour = new System.Windows.Forms.TabPage();
-            this.btnApplyColour = new System.Windows.Forms.Button();
-            this.label13 = new System.Windows.Forms.Label();
-            this.updCompression = new System.Windows.Forms.NumericUpDown();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label17 = new System.Windows.Forms.Label();
             this.updOffset = new System.Windows.Forms.NumericUpDown();
+            this.label13 = new System.Windows.Forms.Label();
+            this.updCompression = new System.Windows.Forms.NumericUpDown();
+            this.btnApplyColour = new System.Windows.Forms.Button();
             this.btnRaytrace = new System.Windows.Forms.Button();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.tabSettings.SuspendLayout();
             this.tabViewport.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updCentreLongitude)).BeginInit();
@@ -120,11 +113,9 @@
             this.tabRaytracing.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updBinarySearchSteps_1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updMaxSamples_1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updRayPoints_1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSamplingInterval_1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updBinarySearchSteps_0)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updMaxSamples_0)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updRayPoints_0)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSamplingInterval_0)).BeginInit();
             this.tabSurface.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updSurfaceSmoothing)).BeginInit();
@@ -134,14 +125,12 @@
             this.tabRendering.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updLightingAngle)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSurfaceContrast)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updEndDistance)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updStartDistance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSaturation)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updExposureValue)).BeginInit();
             this.tabColour.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.updCompression)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updOffset)).BeginInit();
             this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updOffset)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updCompression)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOK
@@ -566,15 +555,12 @@
             this.tabRaytracing.Controls.Add(this.chkShowSurface);
             this.tabRaytracing.Controls.Add(this.updBinarySearchSteps_1);
             this.tabRaytracing.Controls.Add(this.updMaxSamples_1);
-            this.tabRaytracing.Controls.Add(this.updRayPoints_1);
             this.tabRaytracing.Controls.Add(this.updSamplingInterval_1);
             this.tabRaytracing.Controls.Add(this.label7);
             this.tabRaytracing.Controls.Add(this.label9);
-            this.tabRaytracing.Controls.Add(this.label10);
             this.tabRaytracing.Controls.Add(this.label11);
             this.tabRaytracing.Controls.Add(this.updBinarySearchSteps_0);
             this.tabRaytracing.Controls.Add(this.updMaxSamples_0);
-            this.tabRaytracing.Controls.Add(this.updRayPoints_0);
             this.tabRaytracing.Controls.Add(this.updSamplingInterval_0);
             this.tabRaytracing.Location = new System.Drawing.Point(4, 22);
             this.tabRaytracing.Name = "tabRaytracing";
@@ -623,7 +609,7 @@
             // 
             // updMaxSamples_1
             // 
-            this.updMaxSamples_1.Location = new System.Drawing.Point(265, 145);
+            this.updMaxSamples_1.Location = new System.Drawing.Point(265, 114);
             this.updMaxSamples_1.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -639,28 +625,6 @@
             this.updMaxSamples_1.TabIndex = 27;
             this.updMaxSamples_1.Value = new decimal(new int[] {
             500,
-            0,
-            0,
-            0});
-            // 
-            // updRayPoints_1
-            // 
-            this.updRayPoints_1.Location = new System.Drawing.Point(265, 114);
-            this.updRayPoints_1.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.updRayPoints_1.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.updRayPoints_1.Name = "updRayPoints_1";
-            this.updRayPoints_1.Size = new System.Drawing.Size(93, 20);
-            this.updRayPoints_1.TabIndex = 26;
-            this.updRayPoints_1.Value = new decimal(new int[] {
-            70,
             0,
             0,
             0});
@@ -705,20 +669,11 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(35, 147);
+            this.label9.Location = new System.Drawing.Point(35, 116);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(94, 13);
             this.label9.TabIndex = 17;
             this.label9.Text = "Maximum Samples";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(35, 116);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(58, 13);
-            this.label10.TabIndex = 16;
-            this.label10.Text = "Ray Points";
             // 
             // label11
             // 
@@ -749,7 +704,7 @@
             // 
             // updMaxSamples_0
             // 
-            this.updMaxSamples_0.Location = new System.Drawing.Point(142, 145);
+            this.updMaxSamples_0.Location = new System.Drawing.Point(142, 114);
             this.updMaxSamples_0.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -769,29 +724,6 @@
             0,
             0});
             this.updMaxSamples_0.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updMaxSamples_HelpRequested);
-            // 
-            // updRayPoints_0
-            // 
-            this.updRayPoints_0.Location = new System.Drawing.Point(142, 114);
-            this.updRayPoints_0.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.updRayPoints_0.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.updRayPoints_0.Name = "updRayPoints_0";
-            this.updRayPoints_0.Size = new System.Drawing.Size(93, 20);
-            this.updRayPoints_0.TabIndex = 11;
-            this.updRayPoints_0.Value = new decimal(new int[] {
-            70,
-            0,
-            0,
-            0});
-            this.updRayPoints_0.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.updRayPoints_HelpRequested);
             // 
             // updSamplingInterval_0
             // 
@@ -991,11 +923,7 @@
             this.tabRendering.Controls.Add(this.updLightingAngle);
             this.tabRendering.Controls.Add(this.label21);
             this.tabRendering.Controls.Add(this.updSurfaceContrast);
-            this.tabRendering.Controls.Add(this.updEndDistance);
             this.tabRendering.Controls.Add(this.btnApply);
-            this.tabRendering.Controls.Add(this.label19);
-            this.tabRendering.Controls.Add(this.label18);
-            this.tabRendering.Controls.Add(this.updStartDistance);
             this.tabRendering.Controls.Add(this.label14);
             this.tabRendering.Controls.Add(this.label15);
             this.tabRendering.Controls.Add(this.updSaturation);
@@ -1017,7 +945,7 @@
             "Surface",
             "Volume",
             "Interior"});
-            this.cmbRegion.Location = new System.Drawing.Point(257, 51);
+            this.cmbRegion.Location = new System.Drawing.Point(257, 55);
             this.cmbRegion.Name = "cmbRegion";
             this.cmbRegion.Size = new System.Drawing.Size(101, 21);
             this.cmbRegion.TabIndex = 41;
@@ -1026,7 +954,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(258, 33);
+            this.label16.Location = new System.Drawing.Point(258, 35);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(41, 13);
             this.label16.TabIndex = 40;
@@ -1035,7 +963,7 @@
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(35, 177);
+            this.label22.Location = new System.Drawing.Point(35, 120);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(74, 13);
             this.label22.TabIndex = 34;
@@ -1044,7 +972,7 @@
             // updLightingAngle
             // 
             this.updLightingAngle.DecimalPlaces = 1;
-            this.updLightingAngle.Location = new System.Drawing.Point(142, 175);
+            this.updLightingAngle.Location = new System.Drawing.Point(142, 118);
             this.updLightingAngle.Maximum = new decimal(new int[] {
             180,
             0,
@@ -1062,7 +990,7 @@
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(35, 148);
+            this.label21.Location = new System.Drawing.Point(35, 91);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(86, 13);
             this.label21.TabIndex = 32;
@@ -1070,35 +998,12 @@
             // 
             // updSurfaceContrast
             // 
-            this.updSurfaceContrast.Location = new System.Drawing.Point(142, 146);
+            this.updSurfaceContrast.Location = new System.Drawing.Point(142, 89);
             this.updSurfaceContrast.Name = "updSurfaceContrast";
             this.updSurfaceContrast.Size = new System.Drawing.Size(93, 20);
             this.updSurfaceContrast.TabIndex = 31;
             this.updSurfaceContrast.Value = new decimal(new int[] {
             80,
-            0,
-            0,
-            0});
-            // 
-            // updEndDistance
-            // 
-            this.updEndDistance.DecimalPlaces = 4;
-            this.updEndDistance.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.updEndDistance.Location = new System.Drawing.Point(142, 117);
-            this.updEndDistance.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.updEndDistance.Name = "updEndDistance";
-            this.updEndDistance.Size = new System.Drawing.Size(93, 20);
-            this.updEndDistance.TabIndex = 30;
-            this.updEndDistance.Value = new decimal(new int[] {
-            100,
             0,
             0,
             0});
@@ -1113,42 +1018,6 @@
             this.btnApply.Text = "Apply";
             this.btnApply.UseVisualStyleBackColor = true;
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(35, 119);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(71, 13);
-            this.label19.TabIndex = 28;
-            this.label19.Text = "End Distance";
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(35, 89);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(74, 13);
-            this.label18.TabIndex = 26;
-            this.label18.Text = "Start Distance";
-            // 
-            // updStartDistance
-            // 
-            this.updStartDistance.DecimalPlaces = 4;
-            this.updStartDistance.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.updStartDistance.Location = new System.Drawing.Point(142, 87);
-            this.updStartDistance.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.updStartDistance.Name = "updStartDistance";
-            this.updStartDistance.Size = new System.Drawing.Size(93, 20);
-            this.updStartDistance.TabIndex = 25;
             // 
             // label14
             // 
@@ -1208,48 +1077,18 @@
             this.tabColour.Text = "Colour";
             this.tabColour.UseVisualStyleBackColor = true;
             // 
-            // btnApplyColour
+            // groupBox3
             // 
-            this.btnApplyColour.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApplyColour.Location = new System.Drawing.Point(283, 172);
-            this.btnApplyColour.Name = "btnApplyColour";
-            this.btnApplyColour.Size = new System.Drawing.Size(75, 23);
-            this.btnApplyColour.TabIndex = 30;
-            this.btnApplyColour.Text = "Apply";
-            this.btnApplyColour.UseVisualStyleBackColor = true;
-            this.btnApplyColour.Click += new System.EventHandler(this.btnApplyColour_Click);
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(18, 34);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(100, 13);
-            this.label13.TabIndex = 29;
-            this.label13.Text = "Colour Compression";
-            // 
-            // updCompression
-            // 
-            this.updCompression.DecimalPlaces = 2;
-            this.updCompression.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.updCompression.Location = new System.Drawing.Point(125, 32);
-            this.updCompression.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.updCompression.Name = "updCompression";
-            this.updCompression.Size = new System.Drawing.Size(93, 20);
-            this.updCompression.TabIndex = 28;
-            this.updCompression.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
+            this.groupBox3.Controls.Add(this.label17);
+            this.groupBox3.Controls.Add(this.updOffset);
+            this.groupBox3.Controls.Add(this.label13);
+            this.groupBox3.Controls.Add(this.updCompression);
+            this.groupBox3.Location = new System.Drawing.Point(26, 19);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(245, 116);
+            this.groupBox3.TabIndex = 31;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Surface Colour";
             // 
             // label17
             // 
@@ -1283,6 +1122,49 @@
             this.updOffset.Size = new System.Drawing.Size(93, 20);
             this.updOffset.TabIndex = 26;
             // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(18, 34);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(100, 13);
+            this.label13.TabIndex = 29;
+            this.label13.Text = "Colour Compression";
+            // 
+            // updCompression
+            // 
+            this.updCompression.DecimalPlaces = 2;
+            this.updCompression.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.updCompression.Location = new System.Drawing.Point(125, 32);
+            this.updCompression.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.updCompression.Name = "updCompression";
+            this.updCompression.Size = new System.Drawing.Size(93, 20);
+            this.updCompression.TabIndex = 28;
+            this.updCompression.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // btnApplyColour
+            // 
+            this.btnApplyColour.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnApplyColour.Location = new System.Drawing.Point(283, 172);
+            this.btnApplyColour.Name = "btnApplyColour";
+            this.btnApplyColour.Size = new System.Drawing.Size(75, 23);
+            this.btnApplyColour.TabIndex = 30;
+            this.btnApplyColour.Text = "Apply";
+            this.btnApplyColour.UseVisualStyleBackColor = true;
+            this.btnApplyColour.Click += new System.EventHandler(this.btnApplyColour_Click);
+            // 
             // btnRaytrace
             // 
             this.btnRaytrace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -1293,19 +1175,6 @@
             this.btnRaytrace.Text = "Raytrace";
             this.btnRaytrace.UseVisualStyleBackColor = true;
             this.btnRaytrace.Click += new System.EventHandler(this.btnRaytrace_Click);
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.label17);
-            this.groupBox3.Controls.Add(this.updOffset);
-            this.groupBox3.Controls.Add(this.label13);
-            this.groupBox3.Controls.Add(this.updCompression);
-            this.groupBox3.Location = new System.Drawing.Point(26, 19);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(245, 116);
-            this.groupBox3.TabIndex = 31;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Surface Colour";
             // 
             // SphereSettings
             // 
@@ -1346,11 +1215,9 @@
             this.tabRaytracing.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updBinarySearchSteps_1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updMaxSamples_1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updRayPoints_1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSamplingInterval_1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updBinarySearchSteps_0)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updMaxSamples_0)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updRayPoints_0)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSamplingInterval_0)).EndInit();
             this.tabSurface.ResumeLayout(false);
             this.tabSurface.PerformLayout();
@@ -1362,15 +1229,13 @@
             this.tabRendering.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updLightingAngle)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSurfaceContrast)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updEndDistance)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updStartDistance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSaturation)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updExposureValue)).EndInit();
             this.tabColour.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.updCompression)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updOffset)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updOffset)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updCompression)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1391,11 +1256,9 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.NumericUpDown updBinarySearchSteps_0;
         private System.Windows.Forms.NumericUpDown updMaxSamples_0;
-        private System.Windows.Forms.NumericUpDown updRayPoints_0;
         private System.Windows.Forms.NumericUpDown updSamplingInterval_0;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label15;
@@ -1404,10 +1267,6 @@
         private System.Windows.Forms.NumericUpDown updResolution;
         private System.Windows.Forms.NumericUpDown updSphereRadius;
         private System.Windows.Forms.Button btnApply;
-        private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.NumericUpDown updStartDistance;
-        private System.Windows.Forms.NumericUpDown updEndDistance;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.NumericUpDown updSurfaceContrast;
         private System.Windows.Forms.Label label22;
@@ -1416,7 +1275,6 @@
         private System.Windows.Forms.CheckBox chkShowSurface;
         private System.Windows.Forms.NumericUpDown updBinarySearchSteps_1;
         private System.Windows.Forms.NumericUpDown updMaxSamples_1;
-        private System.Windows.Forms.NumericUpDown updRayPoints_1;
         private System.Windows.Forms.NumericUpDown updSamplingInterval_1;
         private System.Windows.Forms.TabPage tabSurface;
         private System.Windows.Forms.Label lblSurfaceThickness;

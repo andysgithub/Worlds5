@@ -123,8 +123,6 @@ namespace Worlds5
                     // Rendering
                     sphere.settings.ExposureValue = rendering.ExposureValue;
                     sphere.settings.Saturation = rendering.Saturation;
-                    sphere.settings.StartDistance = rendering.StartDistance;
-                    sphere.settings.EndDistance = rendering.EndDistance;
                     sphere.settings.SurfaceContrast = rendering.SurfaceContrast;
                     sphere.settings.LightingAngle = rendering.LightingAngle;
 
@@ -215,8 +213,6 @@ namespace Worlds5
                 // Rendering
                 rendering.ExposureValue = sphere.settings.ExposureValue;
                 rendering.Saturation = sphere.settings.Saturation;
-                rendering.StartDistance = sphere.settings.StartDistance;
-                rendering.EndDistance = sphere.settings.EndDistance;
                 rendering.SurfaceContrast = sphere.settings.SurfaceContrast;
                 rendering.LightingAngle = sphere.settings.LightingAngle;
 

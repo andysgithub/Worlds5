@@ -52,8 +52,9 @@ namespace Model
 
             int activeIndex = sphere.settings.ActiveIndex;
 
-            double startDistance = sphere.settings.StartDistance[activeIndex];
-            double endDistance = sphere.settings.EndDistance[activeIndex];
+            double totalPoints = sphere.settings.MaxSamples[activeIndex] * sphere.settings.SamplingInterval[activeIndex];
+            double startDistance = sphere.settings.Radius;
+            double endDistance = startDistance + totalPoints;
             float exposureValue = sphere.settings.ExposureValue[activeIndex];
             float saturation = sphere.settings.Saturation[activeIndex];
             float interiorExposure = sphere.settings.ExposureValue[2];

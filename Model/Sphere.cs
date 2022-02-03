@@ -69,10 +69,6 @@ namespace Model
             public float SurfaceContrast { get; set; }
             // The lighting angle for surface shading (0 to 180 degrees)
             public float LightingAngle { get; set; }
-            // The distance along the ray to start rendering the image
-            public double[] StartDistance { get; set; }
-            // The distance along the ray to finish rendering the image
-            public double[] EndDistance { get; set; }
 
             #endregion
 
