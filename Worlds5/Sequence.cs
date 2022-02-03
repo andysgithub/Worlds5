@@ -89,12 +89,10 @@ namespace Worlds5
                 {
                     await imageRendering.PerformRayTracing();
                     SaveFrame();
-                    Application.DoEvents();
                 }
                 else
                 {
                     picImage.Image = new Bitmap(PathName);
-                    Application.DoEvents();
                 }
             }
         }

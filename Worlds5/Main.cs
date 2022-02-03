@@ -126,13 +126,12 @@ namespace Worlds5
             await RaytraceImage();
         }
 
-        private void RefreshImage()
+        private async void RefreshImage()
         {
             if (Model.Globals.Sphere.RayMap != null)
             {
                 staStatus.Items[0].Text = "Redisplaying...";
-                Application.DoEvents();
-                imageRendering.Redisplay();
+                await imageRendering.Redisplay();
                 staStatus.Items[0].Text = "Completed";
                 // Display the bitmap
                 picImage.Image = Model.Globals.Sphere.ViewportImage;
@@ -151,7 +150,6 @@ namespace Worlds5
             {
                 staStatus.Items[0].Text = "Raytracing started...";
             }
-            Application.DoEvents();
             await imageRendering.PerformRayTracing();
 
             // Display the bitmap

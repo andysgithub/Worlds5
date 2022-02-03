@@ -46,11 +46,13 @@ namespace Worlds5
 
         private async void btnRaytrace_Click(object sender, EventArgs e)
         {
+            enableButtons(false);
             UpdateStatus("Initialising...");
             SaveSettings();
             SaveRendering();
             UpdateStatus("");
             await RaytraceImage();
+            enableButtons(true);
         }
 
         private double[,] Angles
@@ -282,12 +284,19 @@ namespace Worlds5
             form.ShowDialog(this);
         }
 
+        private void enableButtons(bool state)
+        {
+            btnApply.Enabled = state;
+            btnApplyColour.Enabled = state;
+            btnRaytrace.Enabled = state;
+        }
+
         private void btnApply_Click(object sender, EventArgs e)
         {
-            UpdateStatus("Initialising...");
+            enableButtons(false);
             SaveRendering();
-            UpdateStatus("");
             RefreshImage();
+            enableButtons(true);
         }
 
         private void chkShowSurface_CheckedChanged(object sender, EventArgs e)
@@ -324,12 +333,6 @@ namespace Worlds5
                 updSurfaceContrast.Enabled = (regionIndex == 0);
                 updLightingAngle.Enabled = (regionIndex == 0);
             }
-        }
-
-        private void btnApplyColour_Click(object sender, EventArgs e)
-        {
-            SaveRendering();
-            RefreshImage();
         }
 
         private void updAxis_ValueChanged(object sender, EventArgs e)

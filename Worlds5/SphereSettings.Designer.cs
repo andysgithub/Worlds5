@@ -1015,7 +1015,7 @@
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(75, 23);
             this.btnApply.TabIndex = 29;
-            this.btnApply.Text = "Apply";
+            this.btnApply.Text = "Render";
             this.btnApply.UseVisualStyleBackColor = true;
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
@@ -1161,9 +1161,9 @@
             this.btnApplyColour.Name = "btnApplyColour";
             this.btnApplyColour.Size = new System.Drawing.Size(75, 23);
             this.btnApplyColour.TabIndex = 30;
-            this.btnApplyColour.Text = "Apply";
+            this.btnApplyColour.Text = "Render";
             this.btnApplyColour.UseVisualStyleBackColor = true;
-            this.btnApplyColour.Click += new System.EventHandler(this.btnApplyColour_Click);
+            this.btnApplyColour.Click += new System.EventHandler(this.btnApply_Click);
             // 
             // btnRaytrace
             // 

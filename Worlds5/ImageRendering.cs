@@ -158,30 +158,34 @@ namespace Worlds5
             });
         }
 
-        public void Redisplay()
+        public async Task<bool> Redisplay()
         {
-            //picImage.Image = new Bitmap(picImage.Image.Width, picImage.Image.Height);
-            if (Model.Globals.Sphere.RayMap != null)
+            return await Task.Run(() =>
             {
-                int totalLines = (int)(sphere.settings.VerticalView / sphere.settings.AngularResolution);
-                linesProcessed = 0;
+                //picImage.Image = new Bitmap(picImage.Image.Width, picImage.Image.Height);
+                if (Model.Globals.Sphere.RayMap != null)
+                {
+                    int totalLines = (int)(sphere.settings.VerticalView / sphere.settings.AngularResolution);
+                    linesProcessed = 0;
 
-                try
-                {
-                    // for (int lineIndex = 0; lineIndex < totalLines; lineIndex++)
-                    Parallel.For(0, totalLines, lineIndex =>
+                    try
                     {
-                        // Set pixel colours for this line
-                        Redisplay(lineIndex);
-                        RowCompleted((int)lineIndex, DisplayOption.None);
-                    });
-                    sphere.ViewportImage = imageDisplay.GetBitmap();
+                        // for (int lineIndex = 0; lineIndex < totalLines; lineIndex++)
+                        Parallel.For(0, totalLines, lineIndex =>
+                        {
+                            // Set pixel colours for this line
+                            Redisplay(lineIndex);
+                            RowCompleted((int)lineIndex, DisplayOption.None);
+                        });
+                        sphere.ViewportImage = imageDisplay.GetBitmap();
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show("Error: " + e.Message, "Redisplay Error");
+                    }
                 }
-                catch (Exception e)
-                {
-                    MessageBox.Show("Error: " + e.Message, "Redisplay Error");
-                }
-            }
+                return true;
+            });
         }
 
         private void ProgressChanged(int rayCountX, int rayCountY, TracedRay ray)
