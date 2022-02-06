@@ -7,8 +7,8 @@
     "MainTop": 300
   },
   "Preferences": {
-    "NavPath": "%APPSTART%\\Navigation\\",
-    "SeqPath": "%APPSTART%\\Sequence\\",
+    "NavPath": "%APPDATA%\\Navigation\\",
+    "SeqPath": "%APPDATA%\\Sequence\\",
     "Toolbar": true,
     "Labels": true,
     "ToolTips": false,

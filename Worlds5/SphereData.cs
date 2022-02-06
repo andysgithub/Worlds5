@@ -36,7 +36,6 @@ namespace Worlds5
         public class Raytracing
         {
             public double[] SamplingInterval { get; set; }
-            public int[] RayPoints { get; set; }
             public int[] MaxSamples { get; set; }
             public int[] BinarySearchSteps { get; set; }
             public double SurfaceSmoothing { get; set; }

@@ -39,48 +39,13 @@ namespace Worlds5
 
         public async void PerformRotation(double[] centreCoords, double[,] angles, double[] sphereRadius, int totalFrames, string basePath)
         {
-            // TODO: This should be in its own thread
-
-            double[] Position = new double[DimTotal];
-            for (int col = 0; col < DimTotal; ++col)
-            {
-                Position[col] = sphere.settings.PositionMatrix[DimTotal, col];
-            }
-
             // For each frame in the sequence
             for (int frameCount = 0; frameCount < totalFrames; frameCount++)
             {
                 sphere.settings.Radius = sphereRadius[0] - (double)frameCount / (double)totalFrames * (sphereRadius[0] - sphereRadius[1]);
 
-                // Translate to the centre coords
-                for (int col = 0; col < DimTotal; ++col)
-                {
-                    Position[col] = -Position[col];
-                }
-                Transformation.SetTranslation(2, Position);
-                Transformation.PreMulT();
-
-                for (int axis1 = 1; axis1 < 5; axis1++)
-                {
-                    for (int axis2 = 2; axis2 < 6; axis2++)
-                    {
-                        // If rotation is set for this plane
-                        if (angles[axis1, axis2] > 0)
-                        {
-                            // Rotate by the given angle
-                            Transformation.SetRotation(axis1-1, axis2-1, angles[axis1, axis2]);
-                            Transformation.PreMulR();
-                        }
-                    }
-                }
-
-                // Translate back from the centre
-                for (int col = 0; col < DimTotal; ++col)
-                {
-                    Position[col] = -Position[col];
-                }
-                Transformation.SetTranslation(2, Position);
-                Transformation.PreMulT();
+                Transformation.RotateSphere(1, angles);
+                sphere.settings.PositionMatrix = Transformation.GetPositionMatrix();
 
                 imageRendering.InitialiseSphere();
 

@@ -190,7 +190,7 @@ namespace Worlds5
 
         private void ProgressChanged(int rayCountX, int rayCountY, TracedRay ray)
         {
-            if (ray != null)
+/*            if (ray != null)
             {
                 int totalRays = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
 
@@ -199,7 +199,7 @@ namespace Worlds5
                 {
                     imageDisplay.updateImage(rayCountX, rayCountY, ray.bmiColors);
                 }
-            }
+            }*/
         }
 
         private void RowCompleted(int lineIndex, DisplayOption displayOption)
@@ -229,19 +229,22 @@ namespace Worlds5
         {
             double latitude = sphere.settings.LatitudeStart - rayCountY * sphere.settings.AngularResolution;
             double longitude = sphere.settings.LongitudeStart - rayCountX * sphere.settings.AngularResolution;
+            int i = sphere.settings.ActiveIndex;
+            int rayPoints = (int)(sphere.settings.MaxSamples[i] * sphere.settings.SamplingInterval[i]);
 
-            double xFactor = Math.Cos(latitude * Globals.DEG_TO_RAD) * Math.Sin(-longitude * Globals.DEG_TO_RAD);
-            double yFactor = Math.Sin(latitude * Globals.DEG_TO_RAD);
-            double zFactor = Math.Cos(latitude * Globals.DEG_TO_RAD) * Math.Cos(-longitude * Globals.DEG_TO_RAD);
-
-            TracedRay tracedRay;
+            // TODO: Array allocation causes null object exception
             int[] externalPoints = new int[100];
             float[] modulusValues = new float[100];
             float[] angleValues = new float[100];
             double[] distanceValues = new double[100];
-            int i = sphere.settings.ActiveIndex;
 
-            int rayPoints = (int)(sphere.settings.MaxSamples[i] * sphere.settings.SamplingInterval[i]);
+            double latRadians = latitude * Globals.DEG_TO_RAD;
+            double longRadians = longitude * Globals.DEG_TO_RAD;
+            double cosLat = Math.Cos(latRadians);
+
+            double xFactor = cosLat * Math.Sin(-longRadians);
+            double yFactor = Math.Sin(latRadians);
+            double zFactor = cosLat * Math.Cos(-longRadians);
 
             // Trace the ray from the sphere radius outwards
             int points = TraceRay(sphere.settings.Radius, sphere.settings.SamplingInterval[i], sphere.settings.SurfaceSmoothing, sphere.settings.SurfaceThickness,
@@ -256,9 +259,8 @@ namespace Worlds5
             Array.Resize(ref angleValues, points);
             Array.Resize(ref distanceValues, points);
 
-            // Record the fractal value collection for this ray
-            tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);
-            return tracedRay;
+            // Record the fractal value collection for this ray 
+            return new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);
         }
 
         private TracedRay SetRayColour(clsSphere sphere, int rayCountX, int rayCountY)

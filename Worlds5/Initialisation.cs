@@ -1,15 +1,8 @@
 using System;
-using System.Collections;
-using System.Configuration;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Diagnostics;
 using System.Windows.Forms;
-using Microsoft.Win32;
 using Model;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace Worlds5 
 {
@@ -94,7 +87,6 @@ namespace Worlds5
 
             if (decodedSetting !=null) {
                 decodedSetting = decodedSetting.Replace("%APPDATA%", appDataPath);
-                decodedSetting = decodedSetting.Replace("%APPSTART%", Application.StartupPath);
             }
             return decodedSetting;
         }

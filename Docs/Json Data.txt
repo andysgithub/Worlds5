@@ -16,7 +16,6 @@
         "Raytracing": {
 			"Bailout": float
             "SamplingInterval": double
-            "RayPoints": int
             "MaxSamples": int
             "BoundaryInterval": double
             "BinarySearchSteps": int

@@ -26,12 +26,14 @@ namespace Worlds5
         private bool isLoaded = false;
         private double[] translationValues = new double[5];
         private double[] rotationValues = new double[10];
+        private int[] rotationCentres = new int[10];
 
         public SphereSettings()
         {
             InitializeComponent();
             cmbRegion.SelectedIndex = regionIndex;
             cmbPlane.SelectedIndex = planeIndex;
+            cmbCentre.SelectedIndex = 0;
             updAxis.Value = (decimal)axisIndex + 1;
         }
 
@@ -81,24 +83,16 @@ namespace Worlds5
         private void SaveSettings()
         {
             // Transfer rotation values to position matrix
-            double[,] angles = Angles;
-            for (int axis1 = 1; axis1 < 5; axis1++)
-            {
-                for (int axis2 = 2; axis2 < 6; axis2++)
-                {
-                    // If rotation is set for this plane
-                    if (angles[axis1, axis2] != 0)
-                    {
-                        // Rotate by the given angle
-                        Transformation.SetRotation(axis1 - 1, axis2 - 1, angles[axis1, axis2]);
-                        Transformation.PreMulR();
-                    }
-                }
-            }
-
+            Transformation.RotateSphere(cmbCentre.SelectedIndex, Angles);
             sphereSettings.PositionMatrix = Transformation.GetPositionMatrix();
+
             // Clear the rotation input
             updRotate.Value = 0;
+            // Clear the rotation values
+            for (int i = 0; i < 10; ++i)
+            {
+                rotationValues[i] = 0;
+            }
 
             // Sphere Viewing window
             sphereSettings.AngularResolution = (double)updResolution.Value;
@@ -351,12 +345,12 @@ namespace Worlds5
             translationValues[axisIndex] = (double)updTranslate.Value;
         }
 
-        private void cmbPlane_SelectedIndexChanged_1(object sender, EventArgs e)
+        private void cmbPlane_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (isLoaded)
             {
                 rotationValues[planeIndex] = (double)updRotate.Value;
-                planeIndex = cmbPlane.SelectedIndex - 1;
+                planeIndex = cmbPlane.SelectedIndex;
                 updRotate.Value = (decimal)rotationValues[planeIndex];
             }
         }

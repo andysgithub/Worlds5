@@ -113,7 +113,6 @@ namespace Worlds5
                     sphere.settings.SamplingInterval = raytracing.SamplingInterval;
                     sphere.settings.SurfaceSmoothing = raytracing.SurfaceSmoothing;
                     sphere.settings.SurfaceThickness = raytracing.SurfaceThickness;
-                    sphere.settings.RayPoints = raytracing.RayPoints;
                     sphere.settings.MaxSamples = raytracing.MaxSamples;
                     sphere.settings.BoundaryInterval = raytracing.BoundaryInterval;
                     sphere.settings.BinarySearchSteps = raytracing.BinarySearchSteps;
@@ -203,7 +202,6 @@ namespace Worlds5
                 raytracing.SamplingInterval = sphere.settings.SamplingInterval;
                 raytracing.SurfaceSmoothing = sphere.settings.SurfaceSmoothing;
                 raytracing.SurfaceThickness = sphere.settings.SurfaceThickness;
-                raytracing.RayPoints = sphere.settings.RayPoints;
                 raytracing.MaxSamples = sphere.settings.MaxSamples;
                 raytracing.BoundaryInterval = sphere.settings.BoundaryInterval;
                 raytracing.BinarySearchSteps = sphere.settings.BinarySearchSteps;

@@ -41,8 +41,6 @@ namespace Model
             // Sinusoidal mapping of surface points
             //public SurfacePoint[,] SurfaceMap { get; set; } 
 
-            // The number of boundary points recorded during ray tracing
-            public int[] RayPoints { get; set; }
             // The maximum number of points examined during ray tracing
             public int[] MaxSamples { get; set; }
             // The number of steps in the binary search for an orbit value boundary

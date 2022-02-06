@@ -65,7 +65,7 @@ namespace Worlds5
             }
         }
 
-        public static void SetTranslation(int Axis, double[] Position)
+        public static void SetTranslation(double[] Position)
         {
             ManipInit();
             for (int col = 0; col < DimTotal; ++col)
@@ -154,6 +154,67 @@ namespace Worlds5
         public static double[,] GetPositionMatrix()
         {
             return sphereSettings.PositionMatrix;
+        }
+
+        public static void RotateSphere(int rotationCentre, double[,] angles)
+        {
+            double[] Position = new double[DimTotal];
+
+            if (rotationCentre == 1)
+            {
+                var settings = sphereSettings.Clone();
+
+                //  Invert the rotation
+                for (int col = 0; col < DimTotal; ++col)
+                {
+                    for (int row = 0; row < DimTotal; ++row)
+                    {
+                        if (row != col)
+                        {
+                            sphereSettings.PositionMatrix[row, col] = -sphereSettings.PositionMatrix[row, col];
+                        }
+                    }
+                    manip[DimTotal, col] = sphereSettings.PositionMatrix[DimTotal, col];
+                    sphereSettings.PositionMatrix[DimTotal, col] = 0;
+                }
+
+                PreMulT();
+
+                //  Extract the translation parameters
+                for (int col = 0; col < DimTotal; ++col)
+                {
+                    Position[col] = sphereSettings.PositionMatrix[DimTotal, col];
+                }
+
+                sphereSettings = settings.Clone();
+
+                // Translate to the centre coords
+                for (int col = 0; col < DimTotal; col++)
+                {
+                    sphereSettings.PositionMatrix[DimTotal, col] = 0;
+                }
+            }
+
+            for (int axis1 = 1; axis1 < DimTotal; axis1++)
+            {
+                for (int axis2 = 2; axis2 <= DimTotal; axis2++)
+                {
+                    // If rotation is set for this plane
+                    if (angles[axis1, axis2] != 0)
+                    {
+                        // Rotate by the given angle
+                        SetRotation(axis1 - 1, axis2 - 1, angles[axis1, axis2]);
+                        PreMulR();
+                    }
+                }
+            }
+
+            if (rotationCentre == 1)
+            {
+                // Translate back from the centre
+                SetTranslation(Position);
+                PreMulT();
+            }
         }
     }
 }

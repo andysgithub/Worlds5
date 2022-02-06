@@ -49,12 +49,29 @@ namespace Worlds5
             form.Dispose();
         }
 
+        private void btnSequencePath_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog form = new FolderBrowserDialog();
+            form.ShowNewFolderButton = true;
+            form.SelectedPath = Globals.SetUp.SeqPath;
+
+            DialogResult result = form.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                // Get the source directory & write to the textbox
+                txtSequencePath.Text = form.SelectedPath;
+            }
+            form.Dispose();
+        }
+
         private void LoadSettings()
         {
             Globals.SetUpType settings = Globals.SetUp;
 
             // File paths
             txtNavigationPath.Text = settings.NavPath;
+            txtSequencePath.Text = settings.SeqPath;
 
             // Main window
             chkToolbar.Checked = settings.Toolbar;
@@ -67,17 +84,13 @@ namespace Worlds5
         {
             // File paths
             Globals.SetUp.NavPath = txtNavigationPath.Text;
+            Globals.SetUp.SeqPath = txtSequencePath.Text;
 
             // Main window
             Globals.SetUp.Toolbar = chkToolbar.Checked;
             Globals.SetUp.Labels = chkLabels.Checked;
             Globals.SetUp.ToolTips = chkTooltips.Checked;
             Globals.SetUp.StatusBar = chkStatusBar.Checked;
-        }
-
-        private void updFramesPerSec_ValueChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }

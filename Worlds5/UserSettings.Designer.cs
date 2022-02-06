@@ -39,6 +39,9 @@
             this.grpFilePaths = new System.Windows.Forms.GroupBox();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.btnSequencePath = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtSequencePath = new System.Windows.Forms.TextBox();
             this.grpMainWindow.SuspendLayout();
             this.grpFilePaths.SuspendLayout();
             this.SuspendLayout();
@@ -80,7 +83,7 @@
             this.grpMainWindow.Controls.Add(this.chkTooltips);
             this.grpMainWindow.Controls.Add(this.chkLabels);
             this.grpMainWindow.Controls.Add(this.chkToolbar);
-            this.grpMainWindow.Location = new System.Drawing.Point(14, 117);
+            this.grpMainWindow.Location = new System.Drawing.Point(14, 169);
             this.grpMainWindow.Name = "grpMainWindow";
             this.grpMainWindow.Size = new System.Drawing.Size(196, 87);
             this.grpMainWindow.TabIndex = 5;
@@ -125,12 +128,15 @@
             // 
             // grpFilePaths
             // 
+            this.grpFilePaths.Controls.Add(this.btnSequencePath);
+            this.grpFilePaths.Controls.Add(this.label2);
+            this.grpFilePaths.Controls.Add(this.txtSequencePath);
             this.grpFilePaths.Controls.Add(this.btnNavigationPath);
             this.grpFilePaths.Controls.Add(this.label1);
             this.grpFilePaths.Controls.Add(this.txtNavigationPath);
             this.grpFilePaths.Location = new System.Drawing.Point(12, 12);
             this.grpFilePaths.Name = "grpFilePaths";
-            this.grpFilePaths.Size = new System.Drawing.Size(334, 89);
+            this.grpFilePaths.Size = new System.Drawing.Size(334, 140);
             this.grpFilePaths.TabIndex = 4;
             this.grpFilePaths.TabStop = false;
             this.grpFilePaths.Text = "File Paths";
@@ -138,7 +144,7 @@
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(274, 147);
+            this.btnOK.Location = new System.Drawing.Point(274, 199);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 2;
@@ -149,7 +155,7 @@
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.Location = new System.Drawing.Point(274, 181);
+            this.btnCancel.Location = new System.Drawing.Point(274, 233);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 3;
@@ -157,11 +163,37 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
+            // btnSequencePath
+            // 
+            this.btnSequencePath.Location = new System.Drawing.Point(258, 97);
+            this.btnSequencePath.Name = "btnSequencePath";
+            this.btnSequencePath.Size = new System.Drawing.Size(64, 20);
+            this.btnSequencePath.TabIndex = 5;
+            this.btnSequencePath.Text = "Browse...";
+            this.btnSequencePath.UseVisualStyleBackColor = true;
+            this.btnSequencePath.Click += new System.EventHandler(this.btnSequencePath_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 79);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(80, 13);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Sequence path";
+            // 
+            // txtSequencePath
+            // 
+            this.txtSequencePath.Location = new System.Drawing.Point(14, 97);
+            this.txtSequencePath.Name = "txtSequencePath";
+            this.txtSequencePath.Size = new System.Drawing.Size(238, 20);
+            this.txtSequencePath.TabIndex = 3;
+            // 
             // UserSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(361, 222);
+            this.ClientSize = new System.Drawing.Size(361, 274);
             this.Controls.Add(this.grpMainWindow);
             this.Controls.Add(this.grpFilePaths);
             this.Controls.Add(this.btnCancel);
@@ -192,5 +224,8 @@
         private System.Windows.Forms.GroupBox grpFilePaths;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnSequencePath;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox txtSequencePath;
     }
 }

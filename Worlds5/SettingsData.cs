@@ -19,10 +19,7 @@ namespace Worlds5
 
         public class Preferences
         {
-            public string NavPath {
-                get;
-                set;
-            }
+            public string NavPath { get; set; }
             public string SeqPath { get; set; }
             public bool Toolbar { get; set; }
             public bool Labels { get; set; }
