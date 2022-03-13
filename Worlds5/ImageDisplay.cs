@@ -59,7 +59,6 @@ namespace Worlds5
                 int x = (int)(widthMidpoint * (1 - horizontalOffset / maxHorizontal)) * 4;
                 int y = (int)(heightMidpoint * (1 - verticalOffset / maxVertical));
 
-                int byteCount = bitmapData.Stride * bitmapHeight;
                 byte[] pixels = new byte[4];
                 IntPtr ptrFirstPixel = bitmapData.Scan0;
 

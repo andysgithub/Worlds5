@@ -2,8 +2,7 @@ using System;
 using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Model;
@@ -161,18 +160,24 @@ namespace Worlds5
         /// Callback to update the status after a line has been processed.
         /// </summary>
         /// <param name="rowCount"></param>
-        private void UpdateStatus(int rowCount, int totalLines)
+        private void UpdateStatus(int[] rowArray, int totalLines)
         {
+            int rowCount = rowArray.Count(c => c == 1);
             if (staStatus != null && staStatus.Items != null && staStatus.Items.Count > 0)
             {
                 string statusMessage = (rowCount < totalLines) ? rowCount + " of " + totalLines + " rows processed" : "Rendering completed";
-                try
+
+                if (staStatus.InvokeRequired)
+                {
+                    staStatus.Invoke(new MethodInvoker(() => staStatus.Items[0].Text = statusMessage));
+                }
+                else
                 {
                     staStatus.Items[0].Text = statusMessage;
                 }
-                catch { }
             }
         }
+
         /// <summary>
         /// Callback to update the status with a given message.
         /// </summary>

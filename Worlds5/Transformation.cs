@@ -25,9 +25,9 @@ namespace Worlds5
         {
             int row, col;
 
-            for (row = 0; row <= 5; ++row)
+            for (row = 0; row <= DimTotal; ++row)
             {
-                for (col = 0; col <= 5; ++col)
+                for (col = 0; col <= DimTotal; ++col)
                 {
                     manip[row, col] = 0;
                     manip[row, col] = 0;
@@ -159,6 +159,8 @@ namespace Worlds5
         public static void RotateSphere(int rotationCentre, double[,] angles)
         {
             double[] Position = new double[DimTotal];
+
+            ManipInit();
 
             if (rotationCentre == 1)
             {

@@ -1,0 +1,21 @@
+ToDo 13-03-2022
+~~~~~~~~~~~~~~~
+
+Add intersection mode
+	Intersection of fractal on sphere surface
+Add colour maps
+	Colour mapping for all imaging modes including ray-tracing
+Preview sequence and transformation
+	If not equal to matrix in sphere
+		use matrix interpolation
+3D-limited mode
+	Limit to 3D arithmetic for speed
+Single Precision mode
+	Limit to single precision for speed and consumer GPUs
+Record the last nav values in the sphere
+
+Domain names:
+	celestior.com
+	fractorb.com
+	worlds5.com
+

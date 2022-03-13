@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.421
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worlds5", "Worlds5\Worlds5.csproj", "{7F4990A2-2F4C-4B25-9474-6B7BDAA0DDDC}"
 EndProject
@@ -17,12 +17,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{03D43517-C5EC-4D19-A2D4-5EE2BBCE3FEB}"
 	ProjectSection(SolutionItems) = preProject
-		Docs\2D Arrays.txt = Docs\2D Arrays.txt
 		Docs\API.txt = Docs\API.txt
 		Docs\Calling Sequence.txt = Docs\Calling Sequence.txt
 		Docs\Json Data.txt = Docs\Json Data.txt
 		Docs\Settings.txt = Docs\Settings.txt
 		Docs\Sphere Notes.txt = Docs\Sphere Notes.txt
+		ToDo.txt = ToDo.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{E453010C-79BD-470C-B387-02F9C65E742A}"
