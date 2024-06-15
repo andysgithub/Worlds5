@@ -10,14 +10,6 @@ using Accord.Video.FFMPEG;
 
 namespace Worlds5
 {
-    public enum DisplayOption
-    {
-        None = 0,
-        Start,
-        Redisplay,
-        Cancel
-    }
-
     public partial class Main : Form
     {
         private bool bResizing = false;
@@ -197,8 +189,6 @@ namespace Worlds5
         // Save current image
         private void mnuSaveImage_Click(object sender, EventArgs e)
         {
-            string PathName = null;
-
             SaveFileDialog dlg = new SaveFileDialog();
             dlg.Filter = "Jpeg files (*.jpg)|*.jpg|Tiff files (*.tif)|*.tif|" +
                           "Bitmap files (*.bmp)|*.bmp|Png files (*.png)|*.png";
@@ -206,7 +196,7 @@ namespace Worlds5
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                PathName = dlg.FileName;
+                string PathName = dlg.FileName;
                 int filter = dlg.FilterIndex;
                 ImageFormat format;
 

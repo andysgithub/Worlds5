@@ -1,7 +1,8 @@
 using System;
+using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Model;
@@ -16,6 +17,9 @@ namespace Worlds5
             float[] valuesArray, float[] anglesArray, double[] distancesArray,
             int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
             int activeIndex);
+
+        //[DllImport("Unmanaged.dll")]
+        //static extern double[] ImageToFractalSpace (double startDistance, double xFactor, double yFactor, double zFactor);
 
         private int[] externalPoints;
         private float[] modulusValues;
@@ -33,24 +37,37 @@ namespace Worlds5
         // Trace the ray on this latitude line
         public void ProcessRay(clsSphere sphere, int rayCountX, int rayCountY)
         {
-            double latitude = sphere.settings.LatitudeStart - rayCountY * sphere.settings.AngularResolution;
-            double longitude = sphere.settings.LongitudeStart - rayCountX * sphere.settings.AngularResolution;
-            int i = sphere.settings.ActiveIndex;
-            int rayPoints = (int)(sphere.settings.MaxSamples[i] * sphere.settings.SamplingInterval[i]);
+            clsSphere.Settings settings = sphere.settings;
+            double latitude = settings.LatitudeStart - rayCountY * settings.AngularResolution;
+            double longitude = settings.LongitudeStart - rayCountX * settings.AngularResolution;
+            int i = settings.ActiveIndex;
+            int rayPoints = (int)(settings.MaxSamples[i] * settings.SamplingInterval[i]);
 
             double latRadians = latitude * Globals.DEG_TO_RAD;
             double longRadians = longitude * Globals.DEG_TO_RAD;
-            double cosLat = Math.Cos(latRadians);
 
-            double xFactor = cosLat * Math.Sin(-longRadians);
+            double xFactor = Math.Cos(latRadians) * Math.Sin(-longRadians);
             double yFactor = Math.Sin(latRadians);
-            double zFactor = cosLat * Math.Cos(-longRadians);
+            double zFactor = Math.Cos(latRadians) * Math.Cos(-longRadians);
 
-            // Trace the ray from the sphere radius outwards
-            int points = TraceRay(sphere.settings.Radius, sphere.settings.SamplingInterval[i], sphere.settings.SurfaceSmoothing, sphere.settings.SurfaceThickness,
+            // Set the start distance to the sphere radius
+            double startDistance = settings.Radius;
+
+            // If clipping is enabled
+            if (settings.UseClipping)
+            {
+                // Get the 5D coordinates for the intersection between this vector and the clipping plane
+                double distance = Clipping.CalculateDistance(latRadians, longRadians, settings.ClippingAxes, settings.ClippingOffset);
+
+                // Set the start distance to this value if larger than sphere radius
+                if (distance > startDistance) startDistance = distance;
+            }
+
+            // Trace the ray from the starting point outwards
+            int points = TraceRay(startDistance, settings.SamplingInterval[i], settings.SurfaceSmoothing, settings.SurfaceThickness,
                         xFactor, yFactor, zFactor,
                         externalPoints, modulusValues, angleValues, distanceValues,
-                        rayPoints, sphere.settings.MaxSamples[i], sphere.settings.BoundaryInterval, sphere.settings.BinarySearchSteps[i],
+                        rayPoints, settings.MaxSamples[i], settings.BoundaryInterval, settings.BinarySearchSteps[i],
                         i);
 
             // Resize arrays to the recordedPoints value

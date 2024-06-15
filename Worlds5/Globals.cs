@@ -1,25 +1,17 @@
-using System;
-using System.Collections;
-using System.Data;
 using System.Drawing;
-using System.Diagnostics;
-using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using Model;
 
 namespace Worlds5 
 {
-	sealed public class Globals 
+    sealed public class Globals 
 	{ 
         public const int TOTAL_THREADS = 8;
 
 		public const int DIB_RGB_COLORS = 0; 
 		public const int DIB_PAL_COLORS = 1; 
-        //public const int vbSrcCopy = 13369376;
         public const double DEG_TO_RAD = 0.0174532925;
 
 		// ----------------------------------------
-		//  Worlds5 Global Constants
+		//  Global Constants
 		// ----------------------------------------
         
 		public const int JPG_FORMAT = 0; 

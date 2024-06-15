@@ -1,12 +1,5 @@
 ﻿using Model;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Worlds5
 {
@@ -217,6 +210,37 @@ namespace Worlds5
                 SetTranslation(Position);
                 PreMulT();
             }
+        }
+
+        public static Vector5 ImageToFractalSpace(double distance, Vector3 vector3D)
+        {
+            // Determine the x,y,z coord for this point
+            double XPos = distance * vector3D.X;
+            double YPos = distance * vector3D.Y;
+            double ZPos = distance * vector3D.Z;
+
+            // Transform 3D point x,y,z into nD fractal space at point c[]
+            return VectorTrans(XPos, YPos, ZPos);
+        }
+
+        public static Vector3 FractalToImageSpace()
+        {
+            // TODO: Transform nD fractal space at point c[] into 3D point
+            return new Vector3(0,0,0);
+        }
+
+        public static Vector5 VectorTrans(double x, double y, double z)
+        {
+            double[] c = new double[DimTotal];
+            double[,] matrix = sphereSettings.PositionMatrix;
+            for (int i = 0; i < DimTotal; i++)
+            {
+                c[i] = matrix[0, i] * x +       // Transforms 3D image space at point x,y,z
+                       matrix[1, i] * y +       // into nD vector space at point c[]
+                       matrix[2, i] * z +
+                       matrix[5, i];
+            }
+            return new Vector5(c[0], c[1], c[2], c[3], c[4]) ;
         }
     }
 }

@@ -179,6 +179,22 @@ EXPORT double __stdcall FindBoundary(double increment, int binarySearchSteps, do
     return sampleDistance;
 }
 
+EXPORT std::array<double, 5> __stdcall ImageToFractalSpace (double distance, double xFactor, double yFactor, double zFactor)
+{
+    // Determine the x,y,z coord for this point
+    const double XPos = distance * xFactor;
+    const double YPos = distance * yFactor;
+    const double ZPos = distance * zFactor;
+
+    vector5Double c = { 0,0,0,0,0 };
+
+    // Transform 3D point x,y,z into nD fractal space at point c[]
+    VectorTrans(XPos, YPos, ZPos, &c);
+
+    // Return the nD fractal space point
+    return c.toArray();
+}
+
 EXPORT bool __stdcall SamplePoint(double distance, double xFactor, double yFactor, double zFactor, vector5Double c)
 {
   // Determine the x,y,z coord for this point
@@ -207,13 +223,13 @@ bool SamplePoint(double distance, float *Modulus, float *Angle, double xFactor, 
   return ProcessPoint(Modulus, Angle, c) ? 1 : 0;
 }
 
-//    Determine whether nD point c[] in within the set
-//  Returns true if point is external to the set
+// Determine whether nD point c[] in within the set
+// Returns true if point is external to the set
 bool ExternalPoint(vector5Double c)
 {
-    const long MaxCount = (long)(MAX_COLOURS);		// Iteration count for external points
-	vector5Double	z;												// Temporary 5-D vector
-	vector5Double diff;											// Temporary 5-D vector for orbit size
+    const long MaxCount = (long)(MAX_COLOURS);		        // Iteration count for external points
+	vector5Double z;										// Temporary 5-D vector
+	vector5Double diff;										// Temporary 5-D vector for orbit size
 	double ModulusTotal = 0;
 	double ModVal = 0;
 	long count;
@@ -246,8 +262,8 @@ bool ExternalPoint(vector5Double c)
     return (count < MaxCount);
 }
 
-//    Determine orbital modulus at nD point c[] in fractal
-//  Returns true if point is external to the set
+// Determine orbital modulus at nD point c[] in fractal
+// Returns true if point is external to the set
 bool  ProcessPoint(float *Modulus, float *Angle, vector5Double c)
 {
     double const PI = 3.1415926536;

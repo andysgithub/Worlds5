@@ -86,7 +86,7 @@ namespace Worlds5
             string decodedSetting = setting;
 
             if (decodedSetting !=null) {
-                decodedSetting = decodedSetting.Replace("%APPDATA%", appDataPath);
+                decodedSetting = decodedSetting.Replace("%APPDATA%", Path.Combine(appDataPath, "Worlds5"));
             }
             return decodedSetting;
         }

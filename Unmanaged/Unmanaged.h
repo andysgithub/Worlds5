@@ -55,6 +55,8 @@ EXPORT double __stdcall FindSurface(double increment, double smoothness, int bin
 EXPORT double __stdcall FindBoundary(double increment, int binarySearchSteps, double currentDistance, float previousAngle,
 									 double boundaryInterval, bool *externalPoint, float *Modulus, float *Angle,
 									 double xFactor, double yFactor, double zFactor);
+
+EXPORT std::array<double, 5> __stdcall ImageToFractalSpace (double distance, double xFactor, double yFactor, double zFactor);
 EXPORT bool __stdcall SamplePoint(double distance, double xFactor, double yFactor, double zFactor, vector5Double c);
 
 bool ExternalPoint(vector5Double c);

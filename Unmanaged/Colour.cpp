@@ -25,11 +25,11 @@
 			 v in [0,1]
 	Outputs: r,g,b each in [0,255]
 */
-EXPORT void __stdcall HSVtoRGB(float h, float s, float v, BYTE *rval, BYTE *gval, BYTE *bval) 
+EXPORT void __stdcall HSVtoRGB(float h, float s, float v, BYTE* rval, BYTE* gval, BYTE* bval)
 {
 	float f, i;
 	float p, q, t;
-	float r = 0, g = 0, b = 0;					// rgb values of 0.0 - 1.0
+	float r = 0, g = 0, b = 0;		// rgb values of 0.0 - 1.0
 									// s and v are from 0.0 - 1.0)
 	if (h == 360)
 		h = 0;
@@ -42,28 +42,28 @@ EXPORT void __stdcall HSVtoRGB(float h, float s, float v, BYTE *rval, BYTE *gval
 	q = v * (1 - (s * f));
 	t = v * (1 - (s * (1 - f)));
 
-	switch ((int) i)
+	switch ((int)i)
 	{
-		case 0:
-			r = v; g = t; b = p;
-			break;
-		case 1:
-			r = q; g = v; b = p;
-			break;
-		case 2:
-			r = p; g = v; b = t;
-			break;
-		case 3:
-			r = p; g = q; b = v;
-			break;
-		case 4:
-			r = t; g = p; b = v;
-			break;
-		case 5:
-			r = v; g = p; b = q;
-			break;
-		default:
-			r = 0; g = 0; b = 0;
+	case 0:
+		r = v; g = t; b = p;
+		break;
+	case 1:
+		r = q; g = v; b = p;
+		break;
+	case 2:
+		r = p; g = v; b = t;
+		break;
+	case 3:
+		r = p; g = q; b = v;
+		break;
+	case 4:
+		r = t; g = p; b = v;
+		break;
+	case 5:
+		r = v; g = p; b = q;
+		break;
+	default:
+		r = 0; g = 0; b = 0;
 	}
 
 	// Normalise the values to [0,255]

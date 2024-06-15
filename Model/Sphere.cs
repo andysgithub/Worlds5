@@ -130,6 +130,17 @@ namespace Model
             }
 
             #endregion
+
+            #region Clipping plane
+
+            // Clipping plane rotation angles for each dimension
+            public AxisPair ClippingAxes { get; set; }
+            // Constant value for the clipping plane offset
+            public double ClippingOffset { get; set; }
+            // Flag to indicate if clipping should be used
+            public bool UseClipping { get; set; }
+
+            #endregion
         }
 
         //public void InitialiseSurfaceMap()

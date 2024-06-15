@@ -1,0 +1,21 @@
+{
+  "MainWindow": {
+    "MainState": "Normal",
+    "MainWidth": 840,
+    "MainHeight": 690,
+    "MainLeft": 3101,
+    "MainTop": 99
+  },
+  "Preferences": {
+    "NavPath": "%APPDATA%\\Navigation\\",
+    "SeqPath": "%APPDATA%\\Sequence\\",
+    "Toolbar": true,
+    "Labels": true,
+    "ToolTips": false,
+    "StatusBar": true
+  },
+  "Imaging": {
+    "FramesPerSec": 25,
+    "AutoRepeat": 0
+  }
+}

@@ -2,6 +2,7 @@
 using System;
 using System.Windows.Forms;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Worlds5
 {
@@ -21,19 +22,21 @@ namespace Worlds5
         private clsSphere.Settings sphereSettings = Model.Globals.Sphere.settings;
         private clsSphere.Settings oldSphereSettings = Model.Globals.Sphere.settings.Clone();
         private int regionIndex = 0;
-        private int planeIndex = 0;
+        private int navPlaneIndex = 0;
+        private int clipPlaneIndex = 0;
         private int axisIndex = 0;
         private bool isLoaded = false;
         private double[] translationValues = new double[5];
-        private double[] rotationValues = new double[10];
-        private int[] rotationCentres = new int[10];
+        private double[] navRotationValues = new double[10];
+        private double[] clipRotationValues = new double[10];
 
         public SphereSettings()
         {
             InitializeComponent();
             cmbRegion.SelectedIndex = regionIndex;
-            cmbPlane.SelectedIndex = planeIndex;
-            cmbCentre.SelectedIndex = 0;
+            cmbNavPlane.SelectedIndex = navPlaneIndex;
+            cmbClipPlane.SelectedIndex = clipPlaneIndex;
+            cmbNavCentre.SelectedIndex = 0;
             updAxis.Value = (decimal)axisIndex + 1;
         }
 
@@ -57,7 +60,7 @@ namespace Worlds5
             enableButtons(true);
         }
 
-        private double[,] Angles
+        private double[,] NavAngles
         {
             get
             {
@@ -65,16 +68,16 @@ namespace Worlds5
                 double factor = Globals.DEG_TO_RAD;
                 double[,] angles = new double[5, 6];
 
-                angles[1, 2] = rotationValues[0] * factor;
-                angles[1, 3] = rotationValues[1] * factor;
-                angles[1, 4] = rotationValues[2] * factor;
-                angles[1, 5] = rotationValues[3] * factor;
-                angles[2, 3] = rotationValues[4] * factor;
-                angles[2, 4] = rotationValues[5] * factor;
-                angles[2, 5] = rotationValues[6] * factor;
-                angles[3, 4] = rotationValues[7] * factor;
-                angles[3, 5] = rotationValues[8] * factor;
-                angles[4, 5] = rotationValues[9] * factor;
+                angles[1, 2] = navRotationValues[0] * factor;
+                angles[1, 3] = navRotationValues[1] * factor;
+                angles[1, 4] = navRotationValues[2] * factor;
+                angles[1, 5] = navRotationValues[3] * factor;
+                angles[2, 3] = navRotationValues[4] * factor;
+                angles[2, 4] = navRotationValues[5] * factor;
+                angles[2, 5] = navRotationValues[6] * factor;
+                angles[3, 4] = navRotationValues[7] * factor;
+                angles[3, 5] = navRotationValues[8] * factor;
+                angles[4, 5] = navRotationValues[9] * factor;
 
                 return angles;
             }
@@ -83,18 +86,18 @@ namespace Worlds5
         private void SaveSettings()
         {
             // Transfer rotation values to position matrix
-            Transformation.RotateSphere(cmbCentre.SelectedIndex, Angles);
+            Transformation.RotateSphere(cmbNavCentre.SelectedIndex, NavAngles);
             sphereSettings.PositionMatrix = Transformation.GetPositionMatrix();
-
+/*
             // Clear the rotation input
-            updRotate.Value = 0;
+            updNavRotate.Value = 0;
             // Clear the rotation values
             for (int i = 0; i < 10; ++i)
             {
-                rotationValues[i] = 0;
+                navRotationValues[i] = 0;
             }
-
-            // Sphere Viewing window
+*/
+            // Sphere viewing window
             sphereSettings.AngularResolution = (double)updResolution.Value;
             sphereSettings.Radius = (double)updSphereRadius.Value;
             sphereSettings.CentreLatitude = (double)updCentreLatitude.Value;
@@ -106,10 +109,10 @@ namespace Worlds5
             for (int axis = 0; axis < 5; axis++)
             {
                 sphereSettings.PositionMatrix[5, axis] += translationValues[axis];
-                translationValues[axis] = 0;
+                //translationValues[axis] = 0;
             }
-            // Clear the translation input
-            updTranslate.Value = 0;
+/*            // Clear the translation input
+            updTranslate.Value = 0;*/
 
             // Raytracing
             sphereSettings.ActiveIndex = chkShowSurface.Checked ? 0 : 1;
@@ -122,11 +125,20 @@ namespace Worlds5
             sphereSettings.BinarySearchSteps[1] = (int)updBinarySearchSteps_1.Value;
             sphereSettings.MaxSamples[1] = (int)updMaxSamples_1.Value;
 
+            // Clipping
+            sphereSettings.ClippingAxes = Clipping.GetAxes(cmbClipPlane.SelectedIndex);
+            sphereSettings.ClippingOffset = (double)updClipOffset.Value;
+            sphereSettings.UseClipping = chkUseClipping.Checked;
+
             // Surface
             sphereSettings.Bailout = (float)updBailout.Value;
             sphereSettings.BoundaryInterval = (double)updBoundaryInterval.Value;
             sphereSettings.SurfaceSmoothing = (double)updSurfaceSmoothing.Value;
             sphereSettings.SurfaceThickness = (double)updSurfaceThickness.Value;
+
+/*            // Clear the rotation and offset inputs
+            updClipRotate.Value = 0;
+            updClipOffset.Value = 0;*/
         }
 
         private void SaveRendering()
@@ -175,7 +187,10 @@ namespace Worlds5
             updSamplingInterval_1.Value = (decimal)sphereSettings.SamplingInterval[1];
             updBinarySearchSteps_1.Value = sphereSettings.BinarySearchSteps[1];
             updMaxSamples_1.Value = sphereSettings.MaxSamples[1];
-            
+
+            // Clipping
+            chkUseClipping.Checked = sphereSettings.UseClipping;
+
             // Surface
             updBoundaryInterval.Value = (decimal)sphereSettings.BoundaryInterval;
             updSurfaceSmoothing.Value = (decimal)sphereSettings.SurfaceSmoothing;
@@ -345,20 +360,79 @@ namespace Worlds5
             translationValues[axisIndex] = (double)updTranslate.Value;
         }
 
-        private void cmbPlane_SelectedIndexChanged(object sender, EventArgs e)
+        private void cmbNavPlane_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (isLoaded)
             {
-                rotationValues[planeIndex] = (double)updRotate.Value;
-                planeIndex = cmbPlane.SelectedIndex;
-                updRotate.Value = (decimal)rotationValues[planeIndex];
+                navRotationValues[navPlaneIndex] = (double)updNavRotate.Value;
+                navPlaneIndex = cmbNavPlane.SelectedIndex;
+                updNavRotate.Value = (decimal)navRotationValues[navPlaneIndex];
             }
         }
 
-        private void updRotate_Leave(object sender, EventArgs e)
+        private void updNavRotate_Leave(object sender, EventArgs e)
         {
-            planeIndex = (int)cmbPlane.SelectedIndex;
-            rotationValues[planeIndex] = (double)updRotate.Value;
+            navPlaneIndex = (int)cmbNavPlane.SelectedIndex;
+            navRotationValues[navPlaneIndex] = (double)updNavRotate.Value;
+        }
+
+        private void chkUseClipping_CheckedChanged(object sender, EventArgs e)
+        {
+            grpClipping.Enabled = chkUseClipping.Checked;
+        }
+
+        private void cmbClipPlane_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (isLoaded)
+            {
+                clipRotationValues[clipPlaneIndex] = (double)updClipRotate.Value;
+                clipPlaneIndex = cmbClipPlane.SelectedIndex;
+                updClipRotate.Value = (decimal)clipRotationValues[clipPlaneIndex];
+            }
+        }
+
+        private void updClipRotate_Leave(object sender, EventArgs e)
+        {
+            clipPlaneIndex = (int)cmbClipPlane.SelectedIndex;
+            clipRotationValues[clipPlaneIndex] = (double)updClipRotate.Value;
+        }
+
+        private void btnClearNav_Click(object sender, EventArgs e)
+        {
+            // Clear sphere settings
+            for (int axisIndex = 0; axisIndex < 5; axisIndex++)
+            { 
+                translationValues[axisIndex] = 0.0;
+            }
+            for (int planeIndex = 0; planeIndex < 10; planeIndex++)
+            {
+                navRotationValues[planeIndex] = 0.0;
+            }
+            axisIndex = 0;
+            navPlaneIndex = 0;
+
+            // Clear navigation controls
+            updTranslate.Value = 0;
+            updNavRotate.Value = 0;
+            cmbNavPlane.SelectedIndex = 0;
+            cmbNavCentre.SelectedIndex = 0;
+            updAxis.Value = 1;
+        }
+
+        private void btnClearClipping_Click(object sender, EventArgs e)
+        {
+            // Clear sphere settings
+            for (int planeIndex = 0; planeIndex < 10; planeIndex++)
+            {
+                clipRotationValues[planeIndex] = 0.0;
+            }
+            sphereSettings.ClippingOffset = 0.0;
+
+            // Clear clipping controls
+            cmbClipPlane.SelectedIndex = 0;
+            updClipRotate.Value = 0;
+            updClipOffset.Value = 0;
+            chkUseClipping.Checked = false;
         }
     }
 }
