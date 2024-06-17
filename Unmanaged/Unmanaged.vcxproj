@@ -178,7 +178,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Colour.cpp" />
+    <ClCompile Include="ProcessPoint.cpp" />
     <ClCompile Include="RayTracer.cpp" />
+    <ClCompile Include="Kernel.cpp" />
+    <ClCompile Include="SamplePoint.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -188,6 +191,7 @@
     </ClCompile>
     <ClCompile Include="Transformation.cpp" />
     <ClCompile Include="Vectors.cpp" />
+    <ClCompile Include="VectorTrans.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Apeirion.h" />

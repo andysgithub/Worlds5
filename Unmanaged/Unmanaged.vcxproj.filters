@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="Source Files\Cuda">
+      <UniqueIdentifier>{4cc6bba9-3765-4842-a38b-883e9ff4d7fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Colour.cpp">
@@ -32,6 +35,18 @@
     </ClCompile>
     <ClCompile Include="Vectors.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Kernel.cpp">
+      <Filter>Source Files\Cuda</Filter>
+    </ClCompile>
+    <ClCompile Include="SamplePoint.cpp">
+      <Filter>Source Files\Cuda</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessPoint.cpp">
+      <Filter>Source Files\Cuda</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers.cpp">
+      <Filter>Source Files\Cuda</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
