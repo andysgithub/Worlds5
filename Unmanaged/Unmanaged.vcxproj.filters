@@ -36,18 +36,6 @@
     <ClCompile Include="Vectors.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Kernel.cpp">
-      <Filter>Source Files\Cuda</Filter>
-    </ClCompile>
-    <ClCompile Include="SamplePoint.cpp">
-      <Filter>Source Files\Cuda</Filter>
-    </ClCompile>
-    <ClCompile Include="ProcessPoint.cpp">
-      <Filter>Source Files\Cuda</Filter>
-    </ClCompile>
-    <ClCompile Include="Helpers.cpp">
-      <Filter>Source Files\Cuda</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Apeirion.h">
@@ -65,5 +53,16 @@
     <ClInclude Include="Vectors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="main.cu">
+      <Filter>Source Files\Cuda</Filter>
+    </None>
+    <None Include="kernel.cuh">
+      <Filter>Source Files\Cuda</Filter>
+    </None>
+    <None Include="kernel.cu">
+      <Filter>Source Files\Cuda</Filter>
+    </None>
   </ItemGroup>
 </Project>
