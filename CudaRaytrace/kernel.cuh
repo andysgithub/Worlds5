@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cuda_runtime.h> // Include CUDA runtime header for device functions and types
+#include "inline.cuh" // Include the inline functions
+
 #define DimTotal 5
 
 // Constant memory declaration

@@ -196,11 +196,6 @@
     <ClInclude Include="Unmanaged.h" />
     <ClInclude Include="Vectors.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="kernel.cu" />
-    <None Include="kernel.cuh" />
-    <None Include="main.cu" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
