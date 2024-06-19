@@ -34,7 +34,7 @@ int main() {
     int blockSize = 256;
     int numBlocks = (rayPoints + blockSize - 1) / blockSize;
     TraceRayKernel<<<numBlocks, blockSize>>>(1.0, 0.1, 1.0, 0.1,
-        1.0, 0.0, 0.0,
+        1.0, 0.0, 0.0, 8.0,
         d_externalPoints, d_modulusValues, d_angles, d_distances,
         rayPoints, maxSamples, 0.1, 10, 0);
 

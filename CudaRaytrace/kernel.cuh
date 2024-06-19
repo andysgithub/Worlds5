@@ -15,12 +15,12 @@ struct vector5Double {
 __device__ void VectorTrans(double x, double y, double z, vector5Double* c);
 __device__ bool ProcessPoint(float* Modulus, float* Angle, vector5Double c);
 __device__ bool SamplePoint(double distance, float* Modulus, float* Angle, double xFactor, double yFactor, double zFactor, vector5Double c);
-__device__ double FindSurface(double increment, double smoothness, int binarySearchSteps, double currentDistance, double xFactor, double yFactor, double zFactor);
+__device__ double FindSurface(double increment, double smoothness, int binarySearchSteps, double currentDistance, double xFactor, double yFactor, double zFactor, float bailout);
 __device__ double FindBoundary(double increment, int binarySearchSteps, double currentDistance, float previousAngle,
     double boundaryInterval, bool* externalPoint, float* Modulus, float* Angle,
-    double xFactor, double yFactor, double zFactor);
+    double xFactor, double yFactor, double zFactor, float bailout);
 __global__ void TraceRayKernel(double startDistance, double increment, double smoothness, double surfaceThickness,
-    double xFactor, double yFactor, double zFactor,
+    double xFactor, double yFactor, double zFactor, float bailout,
     int* externalPoints, float* modulusValues, float* angles, double* distances,
     int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
     int activeIndex);

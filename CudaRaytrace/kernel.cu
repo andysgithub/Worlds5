@@ -1,6 +1,6 @@
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
-#include <math_functions.h>
+#include <cuda_runtime.h>
 #include <cmath>
 #include "kernel.cuh"
 
@@ -220,7 +220,7 @@ __global__ void TraceRayKernel(
         externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, xFactor, yFactor, zFactor, bailout, c);
 
         if (activeIndex == 0 && externalPoint == 0 && externalPoints[recordedPoints - 1] == 1) {
-            sampleDistance = FindSurface(increment, smoothness, binarySearchSteps, currentDistance, xFactor, yFactor, zFactor);
+            sampleDistance = FindSurface(increment, smoothness, binarySearchSteps, currentDistance, xFactor, yFactor, zFactor, bailout);
 
             if (surfaceThickness > 0 && gapFound(sampleDistance, surfaceThickness, xFactor, yFactor, zFactor, bailout, c)) {
                 externalPoint = true;
@@ -240,7 +240,7 @@ __global__ void TraceRayKernel(
             if (angleChange > boundaryInterval) {
                 sampleDistance = FindBoundary(increment, binarySearchSteps, currentDistance, angles[recordedPoints - 1],
                     boundaryInterval, &externalPoint, &Modulus, &Angle,
-                    xFactor, yFactor, zFactor);
+                    xFactor, yFactor, zFactor, bailout);
 
                 externalPoints[recordedPoints] = externalPoint;
                 modulusValues[recordedPoints] = Modulus;
@@ -266,6 +266,7 @@ void runKernel() {
     double xFactor = 1.0;
     double yFactor = 1.0;
     double zFactor = 1.0;
+    float bailout = 8.0;
     double boundaryInterval = 0.01;
     int binarySearchSteps = 10;
     int activeIndex = 0;
@@ -287,7 +288,7 @@ void runKernel() {
 
     // Launch the kernel
     TraceRayKernel<<<numBlocks, blockSize>>>(startDistance, increment, smoothness, surfaceThickness,
-        xFactor, yFactor, zFactor,
+        xFactor, yFactor, zFactor, bailout,
         d_externalPoints, d_modulusValues, d_angles, d_distances,
         rayPoints, maxSamples, boundaryInterval, binarySearchSteps,
         activeIndex);
