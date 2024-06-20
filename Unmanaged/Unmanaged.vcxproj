@@ -88,6 +88,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>..\Worlds5\bin\x64\Debug\</OutDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.5\include;</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -124,8 +125,9 @@
       <ObjectFileName>.\Debug/</ObjectFileName>
       <ProgramDataBaseFileName>.\Debug/</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>None</DebugInformationFormat>
       <BrowseInformation>true</BrowseInformation>
+      <AdditionalIncludeDirectories>$(CUDA_PATH)\include;$(SolutionDir)\CudaRaytrace</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <OutputFile>..\Worlds5\bin\x64\Debug\Unmanaged.dll</OutputFile>
@@ -134,6 +136,8 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
+      <AdditionalLibraryDirectories>$(CUDA_PATH)\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);cudart.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
@@ -190,11 +194,17 @@
     <ClCompile Include="Vectors.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Apeirion.h" />
+    <ClInclude Include="Myrion.h" />
     <ClInclude Include="Declares.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Unmanaged.h" />
+    <ClInclude Include="vector5Double.h" />
     <ClInclude Include="Vectors.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CudaRaytrace\CudaRaytrace.vcxproj">
+      <Project>{e2ff6630-8279-4ba8-b982-0d06aa3a22f5}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

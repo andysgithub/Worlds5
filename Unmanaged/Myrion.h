@@ -1,7 +1,7 @@
 #ifndef WORLDS5_APEIRON_H
 #define WORLDS5_APEIRON_H
 /*
- *	Apeirion Engine:  5-dimensional routines
+ *	Myrion Engine:  5-dimensional routines
  *
  *	Andrew G Williams  April 1996
  */

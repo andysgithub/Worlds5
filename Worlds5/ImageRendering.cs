@@ -13,8 +13,8 @@ namespace Worlds5
     {
         [DllImport("Unmanaged.dll")]
         static extern int TraceRay(double startDistance, double increment, double smoothness, double surfaceThickness,
-            double xFactor, double yFactor, double zFactor, int[] externalsArray,
-            float[] valuesArray, float[] anglesArray, double[] distancesArray,
+            double xFactor, double yFactor, double zFactor, float bailout,
+            int[] externalsArray, float[] valuesArray, float[] anglesArray, double[] distancesArray,
             int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
             int activeIndex);
 
@@ -65,7 +65,7 @@ namespace Worlds5
 
             // Trace the ray from the starting point outwards
             int points = TraceRay(startDistance, settings.SamplingInterval[i], settings.SurfaceSmoothing, settings.SurfaceThickness,
-                        xFactor, yFactor, zFactor,
+                        xFactor, yFactor, zFactor, settings.Bailout,
                         externalPoints, modulusValues, angleValues, distanceValues,
                         rayPoints, settings.MaxSamples[i], settings.BoundaryInterval, settings.BinarySearchSteps[i],
                         i);

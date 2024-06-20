@@ -35,7 +35,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Apeirion.h">
+    <ClInclude Include="Myrion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Declares.h">
@@ -48,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Vectors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vector5Double.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -18,7 +18,6 @@ namespace Worlds5
         private string PathName;
 
         private clsSphere sphere = Model.Globals.Sphere;
-        private int DimTotal = 5;	// Total number of dimensions used
 
         public Sequence(ImageRendering imageRendering, PictureBox picImage, ImageFormat format)
         {

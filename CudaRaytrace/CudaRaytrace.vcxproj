@@ -14,10 +14,11 @@
     <ProjectGuid>{E2FF6630-8279-4BA8-B982-0D06AA3A22F5}</ProjectGuid>
     <RootNamespace>CudaRaytrace</RootNamespace>
     <CudaToolkitCustomDir>C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.5</CudaToolkitCustomDir>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
@@ -62,6 +63,7 @@
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <CodeGeneration>compute_61,sm_61</CodeGeneration>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -86,9 +88,9 @@
   <ItemGroup>
     <ClInclude Include="kernel.cuh" />
     <ClInclude Include="inline.cuh" />
+    <ClInclude Include="vector5Double.h" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="main.cu" />
     <CudaCompile Include="kernel.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

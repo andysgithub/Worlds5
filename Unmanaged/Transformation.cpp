@@ -21,9 +21,8 @@
 
 #define trans(a,b) m_Trans[b][a]        // Macro to address transformation matrix
 
-extern double Scale;
 double manip[MAX_DIM+1][MAX_DIM+1];     // Manipulation matrix for fractal generation
-extern int DimTotal;
+int DimTotal;
 
 /*******************************
         Module functions
@@ -153,7 +152,6 @@ void SetRot(int Axis1,int Axis2,double Angle)
  *********************************************************************/
 void Redimension(int DimCount, double Scale)
 {
-    extern int DimTotal;
     int row,col;
 
     // Copy the translation row to the new position
