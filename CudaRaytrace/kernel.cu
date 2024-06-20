@@ -2,6 +2,7 @@
 #include <device_launch_parameters.h>
 #include <cuda_runtime.h>
 #include <cmath>
+#include <stdio.h>
 #include "vector5Double.h"
 #include "kernel.cuh"
 #include "inline.cuh"
@@ -198,6 +199,8 @@ __global__ void TraceRayKernel(
 
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     if (idx >= rayPoints) return;
+
+    printf("Index: %d\n", idx);
 
     float Modulus, Angle;
     double currentDistance = startDistance;

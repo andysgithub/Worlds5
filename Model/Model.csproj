@@ -8,8 +8,8 @@
     <ProjectGuid>{675B80CD-F5FD-4847-97CF-27C8F29F5779}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DataClasses</RootNamespace>
-    <AssemblyName>DataClasses</AssemblyName>
+    <RootNamespace>Model</RootNamespace>
+    <AssemblyName>Worlds5_Model</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>

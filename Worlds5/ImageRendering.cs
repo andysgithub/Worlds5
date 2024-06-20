@@ -11,7 +11,15 @@ namespace Worlds5
 {
     sealed public class RayProcessing
     {
-        [DllImport("Unmanaged.dll")]
+        [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void launchTraceRayKernel(
+            double startDistance, double increment, double smoothness, double surfaceThickness,
+            double XFactor, double YFactor, double ZFactor, float bailout,
+            int[] externalPoints, float[] modulusValues, float[] angles, double[] distances,
+            int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
+            int activeIndex);
+
+        [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
         static extern int TraceRay(double startDistance, double increment, double smoothness, double surfaceThickness,
             double xFactor, double yFactor, double zFactor, float bailout,
             int[] externalsArray, float[] valuesArray, float[] anglesArray, double[] distancesArray,
