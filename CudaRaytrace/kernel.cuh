@@ -38,6 +38,10 @@ __global__ void TraceRayKernel(double startDistance, double increment, double sm
     int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
     int activeIndex);
 
+extern "C" {
+    __global__ void ProcessPointKernel(float* d_Modulus, float* d_Angle, float bailout, vector5Double* d_c, bool* d_result);
+}
+
 void launchTraceRayKernel(double startDistance, double increment, double smoothness, double surfaceThickness,
     double XFactor, double YFactor, double ZFactor, float bailout,
     int* externalPoints, float* modulusValues, float* angles, double* distances,

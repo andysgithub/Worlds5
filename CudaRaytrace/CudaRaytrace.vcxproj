@@ -86,6 +86,7 @@
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="cuda_interface.h" />
     <ClInclude Include="kernel.cuh" />
     <ClInclude Include="inline.cuh" />
     <ClInclude Include="vector5Double.h" />
