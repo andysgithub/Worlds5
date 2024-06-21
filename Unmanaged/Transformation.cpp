@@ -19,7 +19,7 @@
 #include <math.h>
 #include "unmanaged.h"
 
-//#define trans(a,b) m_Trans[b][a]        // Macro to address transformation matrix
+#define trans(a,b) m_Trans[b][a]        // Macro to address transformation matrix
 
 double manip[MAX_DIM+1][MAX_DIM+1];     // Manipulation matrix for fractal generation
 int DimTotal;
