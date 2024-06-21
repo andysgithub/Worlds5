@@ -3,7 +3,8 @@
 #include "unmanaged.h"
 #include "declares.h"
 
-double  m_Resolution,       // Angular resolution of the sphere surface (degrees)
+double  m_Trans[6][6],
+        m_Resolution,       // Angular resolution of the sphere surface (degrees)
         m_Radius,           // Distance from centre to first ray tracing point
         m_Latitude,         // Latitude of the viewing centre (degrees)
         m_Longitude,        // Longitude of the viewing centre (degrees)

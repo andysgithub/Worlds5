@@ -17,7 +17,7 @@ extern int
 	    m_BitmapHeight;
 
 extern double	
-		m_Trans[5][6],
+		m_Trans[6][6],
 		m_Resolution,
 		m_ImageRatio,
 		m_Latitude,

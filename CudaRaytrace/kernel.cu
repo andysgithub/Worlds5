@@ -9,10 +9,10 @@
 
 __device__ void VectorTrans(double x, double y, double z, vector5Double* c) {
     for (int i = 0; i < DimTotal; i++) {
-        (*c).coords[i] = m_Trans[i][0] * x +
-            m_Trans[i][1] * y +
-            m_Trans[i][2] * z +
-            m_Trans[i][5];
+        (*c).coords[i] = cudaTrans[i][0] * x +
+            cudaTrans[i][1] * y +
+            cudaTrans[i][2] * z +
+            cudaTrans[i][5];
     }
 }
 
@@ -187,7 +187,7 @@ __device__ double FindBoundary(double increment, int binarySearchSteps, double c
 }
 
 void copyTransformationMatrixToDevice(double h_Trans[DimTotal][6]) {
-    cudaMemcpyToSymbol(m_Trans, h_Trans, sizeof(double) * DimTotal * 6);
+    cudaMemcpyToSymbol(cudaTrans, h_Trans, sizeof(double) * DimTotal * 6);
 }
 
 __global__ void TraceRayKernel(

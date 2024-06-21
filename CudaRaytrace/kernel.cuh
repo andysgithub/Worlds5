@@ -7,7 +7,7 @@
 #define DimTotal 5
 
 // Constant memory declaration
-__constant__ double m_Trans[DimTotal][6];
+__constant__ double cudaTrans[DimTotal][6];
 
 //// Define the vector5Double structure
 //struct vector5Double {

@@ -22,7 +22,7 @@
 #define trans(a,b) m_Trans[b][a]        // Macro to address transformation matrix
 
 double manip[MAX_DIM+1][MAX_DIM+1];     // Manipulation matrix for fractal generation
-int DimTotal;
+int DimTotal = 5;
 
 /*******************************
         Module functions
