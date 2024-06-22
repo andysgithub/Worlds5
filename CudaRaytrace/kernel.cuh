@@ -24,29 +24,34 @@ __constant__ double cudaTrans[DimTotal][6];
 //    }
 //};
 
-__device__ void VectorTrans(double x, double y, double z, vector5Double* c);
+__device__ void VectorTrans2(double x, double y, double z, vector5Double* c);
 __device__ bool ProcessPoint(float* Modulus, float* Angle, float bailout, vector5Double c);
-__device__ bool SamplePoint(double distance, float* Modulus, float* Angle, float bailout, double xFactor, double yFactor, double zFactor, vector5Double c);
+__device__ bool SamplePoint2(double distance, float* Modulus, float* Angle, float bailout, double xFactor, double yFactor, double zFactor, vector5Double c);
 __device__ double FindSurface(double increment, double smoothness, int binarySearchSteps, double currentDistance, double xFactor, double yFactor, double zFactor, float bailout);
 __device__ double FindBoundary(double increment, int binarySearchSteps, double currentDistance, float previousAngle,
     double boundaryInterval, bool* externalPoint, float* Modulus, float* Angle,
     double xFactor, double yFactor, double zFactor, float bailout);
 
-__global__ void TraceRayKernel(double startDistance, double increment, double smoothness, double surfaceThickness,
-    double xFactor, double yFactor, double zFactor, float bailout,
-    int* externalPoints, float* modulusValues, float* angles, double* distances,
-    int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
-    int activeIndex);
-
+extern "C" {
+    __global__ void TraceRayKernel(double startDistance, double increment, double smoothness, double surfaceThickness,
+        double xFactor, double yFactor, double zFactor, float bailout,
+        int* externalPoints, float* modulusValues, float* angles, double* distances,
+        int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
+        int activeIndex);
+}
 extern "C" {
     __global__ void ProcessPointKernel(float* d_Modulus, float* d_Angle, float bailout, vector5Double* d_c, bool* d_result);
 }
+extern "C" {
+    __global__ void SamplePointKernel(double distance, float* d_Modulus, float* d_Angle, float bailout,
+        double xFactor, double yFactor, double zFactor, vector5Double c, bool* d_result);
+}
 
-void launchTraceRayKernel(double startDistance, double increment, double smoothness, double surfaceThickness,
-    double XFactor, double YFactor, double ZFactor, float bailout,
-    int* externalPoints, float* modulusValues, float* angles, double* distances,
-    int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
-    int activeIndex);
+//void launchTraceRayKernel(double startDistance, double increment, double smoothness, double surfaceThickness,
+//    double XFactor, double YFactor, double ZFactor, float bailout,
+//    int* externalPoints, float* modulusValues, float* angles, double* distances,
+//    int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
+//    int activeIndex);
 
 // Function to copy transformation matrix to device
 void copyTransformationMatrixToDevice(double h_Trans[DimTotal][6]);
