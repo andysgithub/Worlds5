@@ -77,7 +77,7 @@ __device__ double vectorAngle(const vector5Double& A, const vector5Double& B, co
     return acos(dotProduct);
 }
 
-__device__ bool ProcessPoint(float* Modulus, float* Angle, float bailout, vector5Double c) {
+__device__ bool ProcessPoint2(float* Modulus, float* Angle, float bailout, vector5Double c) {
     double const PI = 3.1415926536;
 
     const long MaxCount = 1000;
@@ -128,7 +128,7 @@ __device__ bool SamplePoint2(double distance, float* Modulus, float* Angle, floa
     const double ZPos = distance * zFactor;
 
     VectorTrans2(XPos, YPos, ZPos, &c);
-    return ProcessPoint(Modulus, Angle, bailout, c) ? 1 : 0;
+    return ProcessPoint2(Modulus, Angle, bailout, c) ? 1 : 0;
 }
 
 __device__ bool gapFound2(double currentDistance, double surfaceThickness, double xFactor, double yFactor, double zFactor, float bailout, vector5Double c) {
@@ -200,38 +200,49 @@ __global__ void TraceRayKernel(
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     if (idx >= rayPoints) return;
 
-    printf("Index: %d\n", idx);
-
     float Modulus, Angle;
     double currentDistance = startDistance;
     double sampleDistance;
     int recordedPoints = 0;
     int sampleCount = 0;
-    const vector5Double c = { 0, 0, 0, 0, 0 };
+    const vector5Double c = { 0, 0, 0, 0, 0 }; // 5D vector for ray point coordinates
 
+    // Determine orbit value for the starting point
     bool externalPoint = SamplePoint2(currentDistance, &Modulus, &Angle, bailout, xFactor, yFactor, zFactor, c);
 
+    // Record this point as the first sample
     externalPoints[idx] = externalPoint;
     modulusValues[idx] = Modulus;
     angles[idx] = Angle;
     distances[idx] = currentDistance;
     recordedPoints++;
 
+    // Begin loop
     while (recordedPoints < rayPoints && sampleCount < maxSamples) {
+        // Move on to the next point
         currentDistance += increment;
         sampleCount++;
 
+        // Determine orbit properties for this point
         externalPoint = SamplePoint2(currentDistance, &Modulus, &Angle, bailout, xFactor, yFactor, zFactor, c);
 
+        // If this is an internal point and previous point is external
         if (activeIndex == 0 && externalPoint == 0 && externalPoints[recordedPoints - 1] == 1) {
+            ///// Set value for surface point /////
+
+            // Perform binary search between this and the previous point, to determine surface position
             sampleDistance = FindSurface2(increment, smoothness, binarySearchSteps, currentDistance, xFactor, yFactor, zFactor, bailout);
 
+            // Test point a short distance further along, to determine whether this is still in the set
             if (surfaceThickness > 0 && gapFound2(sampleDistance, surfaceThickness, xFactor, yFactor, zFactor, bailout, c)) {
+                // Back outside the set, so continue as normal for external points
                 externalPoint = true;
                 continue;
             }
+            // Determine orbit properties for this point
             externalPoint = SamplePoint2(sampleDistance, &Modulus, &Angle, bailout, xFactor, yFactor, zFactor, c);
 
+            // Save this point value in the ray collection
             externalPoints[recordedPoints] = externalPoint;
             modulusValues[recordedPoints] = Modulus;
             angles[recordedPoints] = Angle;
@@ -239,13 +250,22 @@ __global__ void TraceRayKernel(
             recordedPoints++;
         }
         else if (activeIndex == 1) {
+            ///// Set value for external point /////
+
             double angleChange = fabs(Angle - angles[recordedPoints - 1]);
 
+            // If orbit value is sufficiently different from the last recorded sample
             if (angleChange > boundaryInterval) {
+                // Perform binary search between this and the recorded point, to determine boundary position
                 sampleDistance = FindBoundary2(increment, binarySearchSteps, currentDistance, angles[recordedPoints - 1],
                     boundaryInterval, &externalPoint, &Modulus, &Angle,
                     xFactor, yFactor, zFactor, bailout);
 
+                printf("Modulus: %d\n", Modulus);
+                printf("Angle: %d\n", Angle);
+                printf("Distance: %d\n\n", sampleDistance);
+
+                // Save this point value in the ray collection
                 externalPoints[recordedPoints] = externalPoint;
                 modulusValues[recordedPoints] = Modulus;
                 angles[recordedPoints] = Angle;
@@ -272,6 +292,8 @@ extern "C" int launchTraceRayKernel(double startDistance, double increment, doub
     int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
     int activeIndex)
 {
+    printf("activeIndex3: %d\n", activeIndex);
+
     // Allocate device memory
     int* d_externalPoints, * d_recordedPointsOut;
     float* d_modulusValues, * d_angles;
@@ -319,7 +341,7 @@ extern "C" int launchTraceRayKernel(double startDistance, double increment, doub
 }
 
 __global__ void ProcessPointKernel(float* d_Modulus, float* d_Angle, float bailout, vector5Double* d_c, bool* d_result) {
-    *d_result = ProcessPoint(d_Modulus, d_Angle, bailout, *d_c);
+    *d_result = ProcessPoint2(d_Modulus, d_Angle, bailout, *d_c);
 }
 
 extern "C" void launchProcessPointKernel(float* d_Modulus, float* d_Angle, float bailout, vector5Double* d_c, bool* d_result)
