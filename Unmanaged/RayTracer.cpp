@@ -14,7 +14,6 @@
 
 const BYTE MAX_COLOURS = 1000;
 
-#define trans(a,b) m_Trans[b][a]            // Macro to address transformation matrix
 
 // Error checking macro
 #define cudaCheckError(ans) { gpuAssert((ans), __FILE__, __LINE__); }
@@ -25,6 +24,12 @@ inline void gpuAssert(cudaError_t code, const char* file, int line, bool abort =
         fprintf(stderr, "GPUassert: %s %s %d\n", cudaGetErrorString(code), file, line);
         if (abort) exit(code);
     }
+}
+
+// Host function to initialize the GPU with constant parameters
+EXPORT void InitializeGPU(const RayTracingParams * params)
+{
+    InitializeGPUKernel(params);
 }
 
 int TraceRayC(double startDistance, double increment, double smoothness, double surfaceThickness,
@@ -45,6 +50,8 @@ int TraceRayC(double startDistance, double increment, double smoothness, double 
 
     // Determine orbit value for the starting point
     bool externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, bailout, xFactor, yFactor, zFactor, c);
+
+    //printf("externalPoint: %d\n", externalPoint);
 
     // Record this point as the first sample
     externalPoints[recordedPoints] = externalPoint;
@@ -116,11 +123,8 @@ int TraceRayC(double startDistance, double increment, double smoothness, double 
     return recordedPoints + 1;
 }
 
-int TraceRayCuda(double startDistance, double increment, double smoothness, double surfaceThickness,
-    double XFactor, double YFactor, double ZFactor, float bailout,
-    int externalPoints[], float modulusValues[], float angles[], double distances[],
-    int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
-    int activeIndex)
+int TraceRayCuda(double XFactor, double YFactor, double ZFactor, int rayPoints,
+    int externalPoints[], float modulusValues[], float angles[], double distances[])
 {
     // Allocate host memory if not already done
     // Note: In a real-world scenario, you might want to manage this memory externally for better performance
@@ -131,18 +135,21 @@ int TraceRayCuda(double startDistance, double increment, double smoothness, doub
 
     // Call the CUDA kernel wrapper
     int recordedPoints = launchTraceRayKernel(
-        startDistance, increment, smoothness, surfaceThickness,
-        XFactor, YFactor, ZFactor, bailout,
-        h_externalPoints, h_modulusValues, h_angles, h_distances,
-        rayPoints, maxSamples, boundaryInterval, binarySearchSteps,
-        activeIndex
+        XFactor, YFactor, ZFactor, rayPoints,
+        h_externalPoints, h_modulusValues, h_angles, h_distances
     );
+
+    printf("recordedPoints: %d\n", recordedPoints);
 
     // Check for CUDA errors
     cudaCheckError(cudaGetLastError());
     cudaCheckError(cudaDeviceSynchronize());
 
     distances[recordedPoints] = HUGE_VAL;
+
+
+    printf("return\n\n");
+
     return recordedPoints + 1;
 }
 
@@ -153,17 +160,14 @@ EXPORT int __stdcall TraceRay(double startDistance, double increment, double smo
     int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
     int activeIndex)
 {
-    return TraceRayC(startDistance, increment, smoothness, surfaceThickness,
-        XFactor, YFactor, ZFactor, bailout,
-        externalPoints, modulusValues, angles, distances,
-        rayPoints, maxSamples, boundaryInterval, binarySearchSteps,
-        activeIndex);
-
-    //return TraceRayCuda(startDistance, increment, smoothness, surfaceThickness,
+    //return TraceRayC(startDistance, increment, smoothness, surfaceThickness,
     //    XFactor, YFactor, ZFactor, bailout,
     //    externalPoints, modulusValues, angles, distances,
     //    rayPoints, maxSamples, boundaryInterval, binarySearchSteps,
     //    activeIndex);
+
+    return TraceRayCuda(XFactor, YFactor, ZFactor, rayPoints,
+        externalPoints, modulusValues, angles, distances);
 }
 
 EXPORT double __stdcall FindSurface(double increment, double smoothness, int binarySearchSteps, double currentDistance, double xFactor, double yFactor, double zFactor, float bailout)
@@ -258,6 +262,8 @@ bool SamplePoint(double distance, float* Modulus, float* Angle, float bailout, d
     return ProcessPoint(Modulus, Angle, bailout, c) ? 1 : 0;
 }
 
+// Transform 3D coordinates to 5D point c[] in fractal
+// Returns true if point is external to the set
 EXPORT bool __stdcall SamplePoint(double distance, float bailout, double xFactor, double yFactor, double zFactor, vector5Double c)
 {
   // Determine the x,y,z coord for this point
@@ -280,82 +286,6 @@ void checkCudaErrors(cudaError_t err) {
         exit(-1);
     }
 }
-
-//bool SamplePoint(double distance, float *Modulus, float *Angle, float bailout, double xFactor, double yFactor, double zFactor, vector5Double c)
-//{
-//  // Determine the x,y,z coord for this point
-//  const double XPos = distance * xFactor;
-//  const double YPos = distance * yFactor;
-//  const double ZPos = distance * zFactor;
-//
-//  // Transform 3D point x,y,z into nD fractal space at point c[]
-//  VectorTrans(XPos, YPos, ZPos, &c);
-//
-//  // Determine orbit value for this point
-//  //return ProcessPoint(Modulus, Angle, bailout, c) ? 1 : 0;
-//
-//  // Allocate device memory
-//  float* d_Modulus;
-//  float* d_Angle;
-//  vector5Double* d_c;
-//  bool* d_result;
-//  bool h_result;
-//
-//  checkCudaErrors(cudaMalloc((void**)&d_Modulus, sizeof(float)));
-//  checkCudaErrors(cudaMalloc((void**)&d_Angle, sizeof(float)));
-//  checkCudaErrors(cudaMalloc((void**)&d_c, sizeof(vector5Double)));
-//  checkCudaErrors(cudaMalloc((void**)&d_result, sizeof(bool)));
-//
-//  // Copy inputs to device
-//  checkCudaErrors(cudaMemcpy(d_c, &c, sizeof(vector5Double), cudaMemcpyHostToDevice));
-//
-//  // Launch the kernel
-//  launchProcessPointKernel(d_Modulus, d_Angle, bailout, d_c, d_result);
-//  checkCudaErrors(cudaGetLastError());
-//  checkCudaErrors(cudaDeviceSynchronize());
-//
-//  // Copy results back to host
-//  checkCudaErrors(cudaMemcpy(Modulus, d_Modulus, sizeof(float), cudaMemcpyDeviceToHost));
-//  checkCudaErrors(cudaMemcpy(Angle, d_Angle, sizeof(float), cudaMemcpyDeviceToHost));
-//  checkCudaErrors(cudaMemcpy(&h_result, d_result, sizeof(bool), cudaMemcpyDeviceToHost));
-//
-//  // Free device memory
-//  checkCudaErrors(cudaFree(d_Modulus));
-//  checkCudaErrors(cudaFree(d_Angle));
-//  checkCudaErrors(cudaFree(d_c));
-//  checkCudaErrors(cudaFree(d_result));
-//
-//  return h_result;
-//}
-
-//bool SamplePoint(double distance, float* Modulus, float* Angle, float bailout, double xFactor, double yFactor, double zFactor, vector5Double c)
-//{
-//    // Allocate device memory
-//    float* d_Modulus;
-//    float* d_Angle;
-//    vector5Double* d_c;
-//
-//    cudaMalloc((void**)&d_Modulus, sizeof(float));
-//    cudaMalloc((void**)&d_Angle, sizeof(float));
-//    cudaMalloc((void**)&d_c, sizeof(vector5Double));
-//
-//    // Copy data to device
-//    cudaMemcpy(d_c, &c, sizeof(vector5Double), cudaMemcpyHostToDevice);
-//
-//    // Call the CUDA kernel
-//    bool result = launchSamplePointKernel(distance, d_Modulus, d_Angle, bailout, xFactor, yFactor, zFactor, d_c);
-//
-//    // Copy results back to host
-//    cudaMemcpy(Modulus, d_Modulus, sizeof(float), cudaMemcpyDeviceToHost);
-//    cudaMemcpy(Angle, d_Angle, sizeof(float), cudaMemcpyDeviceToHost);
-//
-//    // Free device memory
-//    cudaFree(d_Modulus);
-//    cudaFree(d_Angle);
-//    cudaFree(d_c);
-//
-//    return result;
-//}
 
 // Determine whether nD point c[] in within the set
 // Returns true if point is external to the set

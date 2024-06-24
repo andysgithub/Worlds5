@@ -12,13 +12,21 @@ namespace Worlds5
 {
     sealed public class RayProcessing
     {
-        [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void launchTraceRayKernel(
-            double startDistance, double increment, double smoothness, double surfaceThickness,
-            double XFactor, double YFactor, double ZFactor, float bailout,
-            int[] externalPoints, float[] modulusValues, float[] angles, double[] distances,
-            int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
-            int activeIndex);
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RayTracingParams
+        {
+            public double startDistance;
+            public double increment;
+            public double smoothness;
+            public double surfaceThickness;
+            public float bailout;
+            public int rayPoints;
+            public int maxSamples;
+            public double boundaryInterval;
+            public int binarySearchSteps;
+            public int activeIndex;
+            public double[][] m_Trans;
+        }
 
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
         static extern int TraceRay(double startDistance, double increment, double smoothness, double surfaceThickness,
@@ -26,6 +34,9 @@ namespace Worlds5
             int[] externalsArray, float[] valuesArray, float[] anglesArray, double[] distancesArray,
             int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
             int activeIndex);
+
+        [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void InitializeGPU(ref RayTracingParams parameters);
 
         //[DllImport("Unmanaged.dll")]
         //static extern double[] ImageToFractalSpace (double startDistance, double xFactor, double yFactor, double zFactor);
@@ -85,7 +96,7 @@ namespace Worlds5
             Array.Resize(ref angleValues, points);
             Array.Resize(ref distanceValues, points);
 
-            Console.Write("modulusValues: {0}\n", JsonConvert.SerializeObject(modulusValues, Formatting.Indented));
+            //Console.Write("modulusValues: {0}\n", JsonConvert.SerializeObject(modulusValues, Formatting.Indented));
 
             // Record the fractal value collection for this ray 
             TracedRay tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);

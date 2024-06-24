@@ -24,6 +24,20 @@ __constant__ double cudaTrans[DimTotal][6];
 //    }
 //};
 
+struct RayTracingParams {
+    double startDistance;
+    double increment;
+    double smoothness;
+    double surfaceThickness;
+    float bailout;
+    int rayPoints;
+    int maxSamples;
+    double boundaryInterval;
+    int binarySearchSteps;
+    int activeIndex;
+    double m_Trans[6][6];
+};
+
 __device__ void VectorTrans2(double x, double y, double z, vector5Double* c);
 __device__ bool ProcessPoint(float* Modulus, float* Angle, float bailout, vector5Double c);
 __device__ bool SamplePoint2(double distance, float* Modulus, float* Angle, float bailout, double xFactor, double yFactor, double zFactor, vector5Double c);
@@ -33,11 +47,8 @@ __device__ double FindBoundary(double increment, int binarySearchSteps, double c
     double xFactor, double yFactor, double zFactor, float bailout);
 
 extern "C" {
-    __global__ void TraceRayKernel(double startDistance, double increment, double smoothness, double surfaceThickness,
-        double xFactor, double yFactor, double zFactor, float bailout,
-        int* externalPoints, float* modulusValues, float* angles, double* distances,
-        int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
-        int activeIndex);
+    __global__ void TraceRayKernel(double xFactor, double yFactor, double zFactor,
+        int* externalPoints, float* modulusValues, float* angles, double* distances);
 }
 extern "C" {
     __global__ void ProcessPointKernel(float* d_Modulus, float* d_Angle, float bailout, vector5Double* d_c, bool* d_result);
@@ -47,13 +58,7 @@ extern "C" {
         double xFactor, double yFactor, double zFactor, vector5Double c, bool* d_result);
 }
 
-//void launchTraceRayKernel(double startDistance, double increment, double smoothness, double surfaceThickness,
-//    double XFactor, double YFactor, double ZFactor, float bailout,
-//    int* externalPoints, float* modulusValues, float* angles, double* distances,
-//    int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
-//    int activeIndex);
-
 // Function to copy transformation matrix to device
-void copyTransformationMatrixToDevice(double h_Trans[DimTotal][6]);
+void copyTransformationMatrixToDevice(double m_Trans[DimTotal][6]);
 
 #endif // KERNEL_CUH

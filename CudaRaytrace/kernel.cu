@@ -8,6 +8,8 @@
 #include "kernel.cuh"
 #include "inline.cuh"
 
+__constant__ RayTracingParams d_params;
+
 __device__ void VectorTrans2(double x, double y, double z, vector5Double* c) {
     for (int i = 0; i < DimTotal; i++) {
         (*c).coords[i] = cudaTrans[i][0] * x +
@@ -77,6 +79,45 @@ __device__ double vectorAngle(const vector5Double& A, const vector5Double& B, co
     return acos(dotProduct);
 }
 
+// Determine whether nD point c[] in within the set
+// Returns true if point is external to the set
+__device__ bool ExternalPoint2(vector5Double c, float bailout)
+{
+    const long MaxCount = (long)(1000);		        // Iteration count for external points
+    vector5Double z;										// Temporary 5-D vector
+    vector5Double diff;										// Temporary 5-D vector for orbit size
+    double ModulusTotal = 0;
+    double ModVal = 0;
+    long count;
+
+    z.coords[DimTotal - 2] = 0;
+    z.coords[DimTotal - 1] = 0;
+
+    v_mov(c.coords, z.coords);        // z = c
+
+    for (count = 0; count < MaxCount; count++)
+    {
+        v_mandel(z.coords, c.coords);                   //    z = z*z + c
+
+        // Determine modulus for this point in orbit
+        v_subm(c.coords, z.coords, diff.coords);        // Current orbit size = mod(z - c)
+        ModVal = v_mod(diff.coords);
+
+        // Accumulate modulus value
+        ModulusTotal += ModVal;
+
+        //    Stop accumulating values when modulus exceeds bailout value
+        if (ModVal > bailout)
+        {
+            count++;
+            break;
+        }
+    }
+
+    // Return true if this point is external to the set
+    return (count < MaxCount);
+}
+
 __device__ bool ProcessPoint2(float* Modulus, float* Angle, float bailout, vector5Double c) {
     double const PI = 3.1415926536;
 
@@ -123,12 +164,29 @@ __device__ bool ProcessPoint2(float* Modulus, float* Angle, float bailout, vecto
 }
 
 __device__ bool SamplePoint2(double distance, float* Modulus, float* Angle, float bailout, double xFactor, double yFactor, double zFactor, vector5Double c) {
+    // Determine the x,y,z coord for this point
     const double XPos = distance * xFactor;
     const double YPos = distance * yFactor;
     const double ZPos = distance * zFactor;
 
+    // Transform 3D point x,y,z into nD fractal space at point c[]
     VectorTrans2(XPos, YPos, ZPos, &c);
+
+    // Determine orbit value for this point
     return ProcessPoint2(Modulus, Angle, bailout, c) ? 1 : 0;
+}
+
+__device__ bool SamplePoint2(double distance, float bailout, double xFactor, double yFactor, double zFactor, vector5Double c) {
+    // Determine the x,y,z coord for this point
+    const double XPos = distance * xFactor;
+    const double YPos = distance * yFactor;
+    const double ZPos = distance * zFactor;
+
+    // Transform 3D point x,y,z into nD fractal space at point c[]
+    VectorTrans2(XPos, YPos, ZPos, &c);
+
+    // Determine orbit value for this point
+    return ExternalPoint2(c, bailout) ? 1 : 0;
 }
 
 __device__ bool gapFound2(double currentDistance, double surfaceThickness, double xFactor, double yFactor, double zFactor, float bailout, vector5Double c) {
@@ -137,7 +195,7 @@ __device__ bool gapFound2(double currentDistance, double surfaceThickness, doubl
     for (int factor = 1; factor <= 4; factor++) {
         testDistance = currentDistance + surfaceThickness * factor / 4;
 
-        if (SamplePoint2(testDistance, nullptr, nullptr, bailout, xFactor, yFactor, zFactor, c) == 1) {
+        if (SamplePoint2(testDistance, bailout, xFactor, yFactor, zFactor, c) == 1) {
             return true;
         }
     }
@@ -153,7 +211,7 @@ __device__ double FindSurface2(double increment, double smoothness, int binarySe
     for (int i = 0; i < binarySearchSteps; i++) {
         sampleDistance += stepSize;
 
-        if (SamplePoint2(sampleDistance, nullptr, nullptr, bailout, xFactor, yFactor, zFactor, c) == 0) {
+        if (SamplePoint2(sampleDistance, bailout, xFactor, yFactor, zFactor, c) == 0) {
             stepSize = -fabs(stepSize) * stepFactor;
         }
         else {
@@ -186,29 +244,22 @@ __device__ double FindBoundary2(double increment, int binarySearchSteps, double 
     return sampleDistance;
 }
 
-void copyTransformationMatrixToDevice(double h_Trans[DimTotal][6]) {
-    cudaMemcpyToSymbol(cudaTrans, h_Trans, sizeof(double) * DimTotal * 6);
-}
-
 __global__ void TraceRayKernel(
-    double startDistance, double increment, double smoothness, double surfaceThickness,
-    double xFactor, double yFactor, double zFactor, float bailout,
-    int* externalPoints, float* modulusValues, float* angles, double* distances,
-    int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
-    int activeIndex, int* recordedPointsOut) {
+    double xFactor, double yFactor, double zFactor,
+    int* externalPoints, float* modulusValues, float* angles, double* distances, int* recordedPointsOut) {
 
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
-    if (idx >= rayPoints) return;
+    if (idx >= d_params.rayPoints) return;
 
     float Modulus, Angle;
-    double currentDistance = startDistance;
+    double currentDistance = d_params.startDistance;
     double sampleDistance;
     int recordedPoints = 0;
     int sampleCount = 0;
     const vector5Double c = { 0, 0, 0, 0, 0 }; // 5D vector for ray point coordinates
 
     // Determine orbit value for the starting point
-    bool externalPoint = SamplePoint2(currentDistance, &Modulus, &Angle, bailout, xFactor, yFactor, zFactor, c);
+    bool externalPoint = SamplePoint2(currentDistance, &Modulus, &Angle, d_params.bailout, xFactor, yFactor, zFactor, c);
 
     // Record this point as the first sample
     externalPoints[idx] = externalPoint;
@@ -218,65 +269,57 @@ __global__ void TraceRayKernel(
     recordedPoints++;
 
     // Begin loop
-    while (recordedPoints < rayPoints && sampleCount < maxSamples) {
+    while (recordedPoints < d_params.rayPoints && sampleCount < d_params.maxSamples) {
         // Move on to the next point
-        currentDistance += increment;
+        currentDistance += d_params.increment;
         sampleCount++;
 
         // Determine orbit properties for this point
-        externalPoint = SamplePoint2(currentDistance, &Modulus, &Angle, bailout, xFactor, yFactor, zFactor, c);
+        externalPoint = SamplePoint2(currentDistance, &Modulus, &Angle, d_params.bailout, xFactor, yFactor, zFactor, c);
 
         // If this is an internal point and previous point is external
-        if (activeIndex == 0 && externalPoint == 0 && externalPoints[recordedPoints - 1] == 1) {
+        if (d_params.activeIndex == 0 && !externalPoint && externalPoints[recordedPoints - 1] == 1) {
             ///// Set value for surface point /////
 
             // Perform binary search between this and the previous point, to determine surface position
-            sampleDistance = FindSurface2(increment, smoothness, binarySearchSteps, currentDistance, xFactor, yFactor, zFactor, bailout);
+            sampleDistance = FindSurface2(d_params.increment, d_params.smoothness, d_params.binarySearchSteps, currentDistance, xFactor, yFactor, zFactor, d_params.bailout);
 
             // Test point a short distance further along, to determine whether this is still in the set
-            if (surfaceThickness > 0 && gapFound2(sampleDistance, surfaceThickness, xFactor, yFactor, zFactor, bailout, c)) {
+            if (d_params.surfaceThickness > 0 && gapFound2(sampleDistance, d_params.surfaceThickness, xFactor, yFactor, zFactor, d_params.bailout, c)) {
                 // Back outside the set, so continue as normal for external points
                 externalPoint = true;
                 continue;
             }
             // Determine orbit properties for this point
-            externalPoint = SamplePoint2(sampleDistance, &Modulus, &Angle, bailout, xFactor, yFactor, zFactor, c);
+            externalPoint = SamplePoint2(sampleDistance, &Modulus, &Angle, d_params.bailout, xFactor, yFactor, zFactor, c);
 
             // Save this point value in the ray collection
-            externalPoints[recordedPoints] = externalPoint;
+            externalPoints[recordedPoints] = externalPoint ? 1 : 0;
             modulusValues[recordedPoints] = Modulus;
             angles[recordedPoints] = Angle;
             distances[recordedPoints] = sampleDistance;
             recordedPoints++;
         }
-        else if (activeIndex == 1) {
+        else if (d_params.activeIndex == 1) {
             ///// Set value for external point /////
 
             double angleChange = fabs(Angle - angles[recordedPoints - 1]);
 
             // If orbit value is sufficiently different from the last recorded sample
-            if (angleChange > boundaryInterval) {
+            if (angleChange > d_params.boundaryInterval) {
                 // Perform binary search between this and the recorded point, to determine boundary position
-                sampleDistance = FindBoundary2(increment, binarySearchSteps, currentDistance, angles[recordedPoints - 1],
-                    boundaryInterval, &externalPoint, &Modulus, &Angle,
-                    xFactor, yFactor, zFactor, bailout);
-
-                printf("Modulus: %d\n", Modulus);
-                printf("Angle: %d\n", Angle);
-                printf("Distance: %d\n\n", sampleDistance);
+                sampleDistance = FindBoundary2(d_params.increment, d_params.binarySearchSteps, currentDistance, angles[recordedPoints - 1],
+                    d_params.boundaryInterval, &externalPoint, &Modulus, &Angle,
+                    xFactor, yFactor, zFactor, d_params.bailout);
 
                 // Save this point value in the ray collection
-                externalPoints[recordedPoints] = externalPoint;
+                externalPoints[recordedPoints] = externalPoint ? 1 : 0;
                 modulusValues[recordedPoints] = Modulus;
                 angles[recordedPoints] = Angle;
                 distances[recordedPoints] = sampleDistance;
                 recordedPoints++;
             }
         }
-    }
-
-    if (threadIdx.x == 0 && blockIdx.x == 0) {
-        *recordedPointsOut = recordedPoints + 1;
     }
 
     distances[recordedPoints] = CUDART_INF;
@@ -286,14 +329,21 @@ __global__ void TraceRayKernel(
     }
 }
 
-extern "C" int launchTraceRayKernel(double startDistance, double increment, double smoothness, double surfaceThickness,
-    double XFactor, double YFactor, double ZFactor, float bailout,
-    int* externalPoints, float* modulusValues, float* angles, double* distances,
-    int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
-    int activeIndex)
+// Host function to initialize the GPU with constant parameters
+extern "C" void InitializeGPUKernel(const RayTracingParams * params)
 {
-    printf("activeIndex3: %d\n", activeIndex);
+    // Copy the parameters to the device's constant memory
+    cudaError_t cudaStatus = cudaMemcpyToSymbol(d_params, params, sizeof(RayTracingParams));
 
+    if (cudaStatus != cudaSuccess) {
+        fprintf(stderr, "cudaMemcpyToSymbol failed: %s\n", cudaGetErrorString(cudaStatus));
+        // Handle error (e.g., throw an exception or return an error code)
+    }
+}
+
+extern "C" int launchTraceRayKernel(double XFactor, double YFactor, double ZFactor, int rayPoints,
+    int* externalPoints, float* modulusValues, float* angles, double* distances)
+{
     // Allocate device memory
     int* d_externalPoints, * d_recordedPointsOut;
     float* d_modulusValues, * d_angles;
@@ -302,31 +352,17 @@ extern "C" int launchTraceRayKernel(double startDistance, double increment, doub
     cudaMalloc(&d_externalPoints, rayPoints * sizeof(int));
     cudaMalloc(&d_modulusValues, rayPoints * sizeof(float));
     cudaMalloc(&d_angles, rayPoints * sizeof(float));
-    cudaMalloc(&d_distances, (rayPoints + 1) * sizeof(double));
+    cudaMalloc(&d_distances, rayPoints * sizeof(double));
     cudaMalloc(&d_recordedPointsOut, sizeof(int));
-
-    // Copy input data to device
-    cudaMemcpy(d_externalPoints, externalPoints, rayPoints * sizeof(int), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_modulusValues, modulusValues, rayPoints * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_angles, angles, rayPoints * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_distances, distances, rayPoints * sizeof(double), cudaMemcpyHostToDevice);
 
     int blockSize = 256;
     int numBlocks = (rayPoints + blockSize - 1) / blockSize;
 
     // Launch kernel
-    TraceRayKernel<<<numBlocks, blockSize >>>(startDistance, increment, smoothness, surfaceThickness,
-        XFactor, YFactor, ZFactor, bailout,
-        d_externalPoints, d_modulusValues, d_angles, d_distances,
-        rayPoints, maxSamples, boundaryInterval, binarySearchSteps,
-        activeIndex, d_recordedPointsOut);
+    TraceRayKernel<<<numBlocks, blockSize>>>(XFactor, YFactor, ZFactor,
+        d_externalPoints, d_modulusValues, d_angles, d_distances, d_recordedPointsOut);
 
     // Copy results back to host
-    cudaMemcpy(externalPoints, d_externalPoints, rayPoints * sizeof(int), cudaMemcpyDeviceToHost);
-    cudaMemcpy(modulusValues, d_modulusValues, rayPoints * sizeof(float), cudaMemcpyDeviceToHost);
-    cudaMemcpy(angles, d_angles, rayPoints * sizeof(float), cudaMemcpyDeviceToHost);
-    cudaMemcpy(distances, d_distances, (rayPoints + 1) * sizeof(double), cudaMemcpyDeviceToHost);
-
     int recordedPoints;
     cudaMemcpy(&recordedPoints, d_recordedPointsOut, sizeof(int), cudaMemcpyDeviceToHost);
 
@@ -339,40 +375,3 @@ extern "C" int launchTraceRayKernel(double startDistance, double increment, doub
 
     return recordedPoints;
 }
-
-__global__ void ProcessPointKernel(float* d_Modulus, float* d_Angle, float bailout, vector5Double* d_c, bool* d_result) {
-    *d_result = ProcessPoint2(d_Modulus, d_Angle, bailout, *d_c);
-}
-
-extern "C" void launchProcessPointKernel(float* d_Modulus, float* d_Angle, float bailout, vector5Double* d_c, bool* d_result)
-{
-    ProcessPointKernel<<<1, 1>>>(d_Modulus, d_Angle, bailout, d_c, d_result);
-    cudaDeviceSynchronize(); // Wait for the kernel to finish
-}
-
-__global__ void SamplePointKernel(double distance, float* d_Modulus, float* d_Angle, float bailout,
-    double xFactor, double yFactor, double zFactor, vector5Double c, bool* d_result)
-{
-    *d_result = SamplePoint2(distance, d_Modulus, d_Angle, bailout, xFactor, yFactor, zFactor, c);
-}
-
-extern "C" bool launchSamplePointKernel(double distance, float* d_Modulus, float* d_Angle, float bailout,
-    double xFactor, double yFactor, double zFactor, vector5Double * d_c)
-{
-    bool* d_result;
-    bool h_result;
-
-    cudaMalloc((void**)&d_result, sizeof(bool));
-
-    vector5Double h_c;
-    cudaMemcpy(&h_c, d_c, sizeof(vector5Double), cudaMemcpyDeviceToHost);
-
-    SamplePointKernel<<<1, 1>>>(distance, d_Modulus, d_Angle, bailout, xFactor, yFactor, zFactor, h_c, d_result);
-    cudaDeviceSynchronize();
-
-    cudaMemcpy(&h_result, d_result, sizeof(bool), cudaMemcpyDeviceToHost);
-    cudaFree(d_result);
-
-    return h_result;
-}
-
