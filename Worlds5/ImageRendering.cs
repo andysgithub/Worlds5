@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Model;
 using Newtonsoft.Json;
+using static Worlds5.RayProcessing;
 
 namespace Worlds5
 {
@@ -25,7 +26,6 @@ namespace Worlds5
             public double boundaryInterval;
             public int binarySearchSteps;
             public int activeIndex;
-            public double[][] m_Trans;
         }
 
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -36,7 +36,13 @@ namespace Worlds5
             int activeIndex);
 
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void InitializeGPU(ref RayTracingParams parameters);
+        public static extern bool InitializeGPU(ref RayTracingParams parameters);
+
+        [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool CopyTransformationMatrix([In] double[] positionMatrix);
+
+        [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool VerifyTransformationMatrix([Out] double[] output);
 
         //[DllImport("Unmanaged.dll")]
         //static extern double[] ImageToFractalSpace (double startDistance, double xFactor, double yFactor, double zFactor);
@@ -177,6 +183,85 @@ namespace Worlds5
             InitSphere(sphere.settings.Bailout, sphere.settings.AngularResolution,
                        sphere.settings.CentreLatitude, sphere.settings.CentreLongitude,
                        sphere.settings.Radius, sphere.settings.VerticalView, sphere.settings.HorizontalView, sphere.settings.PositionMatrix);
+
+            RayTracingParams rayParams;
+
+            rayParams.startDistance = sphere.settings.Radius;
+            rayParams.increment = sphere.settings.SamplingInterval[sphere.settings.ActiveIndex];
+            rayParams.smoothness = sphere.settings.SurfaceSmoothing;
+            rayParams.surfaceThickness = sphere.settings.SurfaceThickness;
+            rayParams.bailout = sphere.settings.Bailout;
+            rayParams.rayPoints = (int)(sphere.settings.MaxSamples[sphere.settings.ActiveIndex] * sphere.settings.SamplingInterval[sphere.settings.ActiveIndex]);
+            rayParams.maxSamples = sphere.settings.MaxSamples[sphere.settings.ActiveIndex];
+            rayParams.boundaryInterval = sphere.settings.BoundaryInterval;
+            rayParams.binarySearchSteps = sphere.settings.BinarySearchSteps[sphere.settings.ActiveIndex];
+            rayParams.activeIndex = sphere.settings.ActiveIndex;
+
+            bool success = InitializeGPU(ref rayParams);
+            if (!success)
+            {
+                Console.WriteLine("Failed to initialize GPU parameters");
+            }
+
+            success = CopyMatrix(sphere.settings.PositionMatrix);
+            if (!success)
+            {
+                Console.WriteLine("Failed to set transform matrix");
+            }
+
+            // Verify the matrix
+            try
+            {
+                double[,] verifiedMatrix = VerifyMatrix();
+
+                Console.WriteLine("Verify matrix");
+                // TODO: Compare verifiedMatrix with positionMatrix to ensure they match
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error verifying matrix: {ex.Message}");
+            }
+        }
+
+        public static bool CopyMatrix(double[,] positionMatrix)
+        {
+            int rows = positionMatrix.GetLength(0);
+            int cols = positionMatrix.GetLength(1);
+            double[] flatMatrix = new double[rows * cols];
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    flatMatrix[i * cols + j] = positionMatrix[i, j];
+                }
+            }
+
+            return CopyTransformationMatrix(flatMatrix);
+        }
+
+        public static double[,] VerifyMatrix()
+        {
+            int DimTotal = 5;
+
+            double[] flatOutput = new double[DimTotal * 6];
+            bool success = VerifyTransformationMatrix(flatOutput);
+
+            if (!success)
+            {
+                throw new Exception("Failed to verify transform matrix");
+            }
+
+            double[,] output = new double[DimTotal, 6];
+            for (int i = 0; i < DimTotal; i++)
+            {
+                for (int j = 0; j < 6; j++)
+                {
+                    output[i, j] = flatOutput[i * 6 + j];
+                }
+            }
+
+            return output;
         }
 
         public async Task<bool> PerformRayTracing()

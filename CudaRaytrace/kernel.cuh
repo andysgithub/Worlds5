@@ -24,20 +24,6 @@ __constant__ double cudaTrans[DimTotal][6];
 //    }
 //};
 
-struct RayTracingParams {
-    double startDistance;
-    double increment;
-    double smoothness;
-    double surfaceThickness;
-    float bailout;
-    int rayPoints;
-    int maxSamples;
-    double boundaryInterval;
-    int binarySearchSteps;
-    int activeIndex;
-    double m_Trans[6][6];
-};
-
 __device__ void VectorTrans2(double x, double y, double z, vector5Double* c);
 __device__ bool ProcessPoint(float* Modulus, float* Angle, float bailout, vector5Double c);
 __device__ bool SamplePoint2(double distance, float* Modulus, float* Angle, float bailout, double xFactor, double yFactor, double zFactor, vector5Double c);
@@ -46,19 +32,16 @@ __device__ double FindBoundary(double increment, int binarySearchSteps, double c
     double boundaryInterval, bool* externalPoint, float* Modulus, float* Angle,
     double xFactor, double yFactor, double zFactor, float bailout);
 
-extern "C" {
-    __global__ void TraceRayKernel(double xFactor, double yFactor, double zFactor,
-        int* externalPoints, float* modulusValues, float* angles, double* distances);
-}
-extern "C" {
-    __global__ void ProcessPointKernel(float* d_Modulus, float* d_Angle, float bailout, vector5Double* d_c, bool* d_result);
-}
-extern "C" {
-    __global__ void SamplePointKernel(double distance, float* d_Modulus, float* d_Angle, float bailout,
-        double xFactor, double yFactor, double zFactor, vector5Double c, bool* d_result);
-}
-
-// Function to copy transformation matrix to device
-void copyTransformationMatrixToDevice(double m_Trans[DimTotal][6]);
+//extern "C" {
+//    __global__ void TraceRayKernel(double xFactor, double yFactor, double zFactor,
+//        int* externalPoints, float* modulusValues, float* angles, double* distances);
+//}
+//extern "C" {
+//    __global__ void ProcessPointKernel(float* d_Modulus, float* d_Angle, float bailout, vector5Double* d_c, bool* d_result);
+//}
+//extern "C" {
+//    __global__ void SamplePointKernel(double distance, float* d_Modulus, float* d_Angle, float bailout,
+//        double xFactor, double yFactor, double zFactor, vector5Double c, bool* d_result);
+//}
 
 #endif // KERNEL_CUH

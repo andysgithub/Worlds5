@@ -27,10 +27,11 @@ bool APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
-EXPORT void __stdcall InitSphere(float fBailout, double dResolution,
-                                  double dLatitude, double dLongitude, 
-                                  double sphereRadius, double verticalView, double horizontalView, 
-                  double *pTransMatrix)
+EXPORT void __stdcall InitSphere(
+    float fBailout, double dResolution,
+    double dLatitude, double dLongitude, 
+    double sphereRadius, double verticalView, double horizontalView, 
+    double *pTransMatrix)
 {
     m_Bailout        = fBailout*fBailout;
     m_Resolution     = dResolution;
@@ -43,8 +44,6 @@ EXPORT void __stdcall InitSphere(float fBailout, double dResolution,
   rightEdge = -horizontalView / 2;
   topEdge = verticalView / 2;
   bottomEdge = -verticalView / 2;
-
-  // TODO: Transform the sphere centre to the fractal space
 
   // Copy the supplied transformation matrix into this class
     for (int iYCount = 0; iYCount < 6; iYCount++)

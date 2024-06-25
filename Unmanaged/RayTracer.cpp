@@ -27,9 +27,23 @@ inline void gpuAssert(cudaError_t code, const char* file, int line, bool abort =
 }
 
 // Host function to initialize the GPU with constant parameters
-EXPORT void InitializeGPU(const RayTracingParams * params)
+EXPORT bool InitializeGPU(const RayTracingParams* params)
 {
-    InitializeGPUKernel(params);
+    cudaError_t cudaStatus = InitializeGPUKernel(params);
+    return cudaStatus == cudaSuccess;
+}
+
+// Host function to initialize the GPU with constant parameters
+EXPORT bool CopyTransformationMatrix(const double* positionMatrix)
+{
+    cudaError_t cudaStatus = InitializeTransformMatrix(positionMatrix);
+    return cudaStatus == cudaSuccess;
+}
+
+EXPORT bool VerifyTransformationMatrix(double* output)
+{
+    cudaError_t cudaStatus = VerifyTransformMatrix(output);
+    return cudaStatus == cudaSuccess;
 }
 
 int TraceRayC(double startDistance, double increment, double smoothness, double surfaceThickness,
@@ -139,16 +153,11 @@ int TraceRayCuda(double XFactor, double YFactor, double ZFactor, int rayPoints,
         h_externalPoints, h_modulusValues, h_angles, h_distances
     );
 
-    printf("recordedPoints: %d\n", recordedPoints);
-
     // Check for CUDA errors
     cudaCheckError(cudaGetLastError());
     cudaCheckError(cudaDeviceSynchronize());
 
     distances[recordedPoints] = HUGE_VAL;
-
-
-    printf("return\n\n");
 
     return recordedPoints + 1;
 }

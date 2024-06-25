@@ -7,6 +7,7 @@
 #include "vector5Double.h"
 #include "kernel.cuh"
 #include "inline.cuh"
+#include "cuda_interface.h"
 
 __constant__ RayTracingParams d_params;
 
@@ -330,15 +331,54 @@ __global__ void TraceRayKernel(
 }
 
 // Host function to initialize the GPU with constant parameters
-extern "C" void InitializeGPUKernel(const RayTracingParams * params)
+extern "C" cudaError_t InitializeGPUKernel(const RayTracingParams* params)
 {
     // Copy the parameters to the device's constant memory
-    cudaError_t cudaStatus = cudaMemcpyToSymbol(d_params, params, sizeof(RayTracingParams));
+    //return cudaMemcpyToSymbol((const void*)&d_params, (const void*)params, sizeof(RayTracingParams));
 
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "cudaMemcpyToSymbol failed: %s\n", cudaGetErrorString(cudaStatus));
-        // Handle error (e.g., throw an exception or return an error code)
+    void* d_addr;
+    cudaError_t error;
+
+    // Get the address of the symbol in device memory
+    error = cudaGetSymbolAddress(&d_addr, (const void*)&d_params);
+    if (error != cudaSuccess) {
+        return error;
     }
+
+    // Copy the data to the symbol
+    error = cudaMemcpy(d_addr, params, sizeof(RayTracingParams), cudaMemcpyHostToDevice);
+    return error;
+}
+
+extern "C" cudaError_t InitializeTransformMatrix(const double* positionMatrix)
+{
+    return cudaMemcpyToSymbol(cudaTrans, positionMatrix, sizeof(double) * DimTotal * 6);
+}
+
+// Verification kernel
+__global__ void VerifyTransformMatrixKernel(double* output)
+{
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx < DimTotal * 6) {
+        output[idx] = ((double*)cudaTrans)[idx];
+    }
+}
+
+extern "C" cudaError_t VerifyTransformMatrix(double* output)
+{
+    double* d_output;
+    cudaError_t error;
+
+    error = cudaMalloc(&d_output, sizeof(double) * DimTotal * 6);
+    if (error != cudaSuccess) return error;
+
+    VerifyTransformMatrixKernel<<<( DimTotal * 6 + 255) / 256, 256 >>>(d_output);
+
+    error = cudaMemcpy(output, d_output, sizeof(double) * DimTotal * 6, cudaMemcpyDeviceToHost);
+    if (error != cudaSuccess) return error;
+
+    cudaFree(d_output);
+    return cudaSuccess;
 }
 
 extern "C" int launchTraceRayKernel(double XFactor, double YFactor, double ZFactor, int rayPoints,
