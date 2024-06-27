@@ -328,7 +328,7 @@ namespace Worlds5
                     catch
                     { }
                 });
-                //RowCompleted(rayCountY);
+                RowCompleted(rayCountY);
             });
 
             Parallel.For(0, totalLines, rayCountY =>

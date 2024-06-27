@@ -342,9 +342,9 @@ bool  ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Double c)
     double const PI = 3.1415926536;
     double const PI_OVER_2 = PI/2;
 
-	const long MaxCount = (long)(1000);		// Iteration count for external points
-	vector5Double	z;												// Temporary 5-D vector
-	vector5Double diff;											// Temporary 5-D vector for orbit size
+	const long MaxCount = (long)(100);		// Iteration count for external points
+	vector5Double	z;						// Temporary 5-D vector
+	vector5Double diff;						// Temporary 5-D vector for orbit size
 	double ModulusTotal = 0;
 	double ModVal = 0;
 	double AngleTotal = PI;		// Angle for first two vectors is 180 degrees
@@ -355,11 +355,11 @@ bool  ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Double c)
 
     v_mov(c.coords, z.coords);             // z = c
     vector5Double vectorSet[3];            // Collection of the three most recent vectors for determining the angle between them
-    v_mov(z.coords, vectorSet[1].coords);            // Store the first point in the vector set
+    v_mov(z.coords, vectorSet[1].coords);  // Store the first point in the vector set
 
     for (count = 0; count < MaxCount; count++)
     {
-        v_mandel(z.coords, c.coords);                //    z = z*z + c
+        v_mandel(z.coords, c.coords);                // z = z*z + c
         v_mov(z.coords, vectorSet[2].coords);        // Store the new point in the vector set
 
         // Determine vector angle for the last three positions
@@ -376,7 +376,7 @@ bool  ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Double c)
         // Accumulate modulus value
         ModulusTotal += ModVal;
 
-        //    Stop accumulating values when modulus exceeds bailout value
+        // Stop accumulating values when modulus exceeds bailout value
         if (ModVal > bailout)
         {
             count++;
