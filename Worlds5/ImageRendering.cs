@@ -118,6 +118,7 @@ namespace Worlds5
 
         private clsSphere sphere;
         private ImageDisplay imageDisplay;
+        private int[] raysProcessed;
         private int[] linesProcessed;
 
         //  Sequence playback
@@ -128,8 +129,11 @@ namespace Worlds5
 
         #region Delegates
 
-        public delegate void UpdateStatusDelegate(int[] rowArray, int totalLines);
-        public event UpdateStatusDelegate updateStatus;
+        public delegate void UpdateRowStatusDelegate(int[] rowArray, int totalLines);
+        public event UpdateRowStatusDelegate updateRowStatus;
+
+        public delegate void UpdateRayStatusDelegate(int[] rayArray, int totalRays);
+        public event UpdateRayStatusDelegate updateRayStatus;
 
         #endregion
 
@@ -196,7 +200,7 @@ namespace Worlds5
             rayParams.boundaryInterval = sphere.settings.BoundaryInterval;
             rayParams.binarySearchSteps = sphere.settings.BinarySearchSteps[sphere.settings.ActiveIndex];
             rayParams.activeIndex = sphere.settings.ActiveIndex;
-
+/*
             bool success = InitializeGPU(ref rayParams);
             if (!success)
             {
@@ -220,7 +224,7 @@ namespace Worlds5
             catch (Exception ex)
             {
                 Console.WriteLine($"Error verifying matrix: {ex.Message}");
-            }
+            }*/
         }
 
         public static bool CopyMatrix(double[,] positionMatrix)
@@ -279,6 +283,7 @@ namespace Worlds5
                     int totalLines = (int)(sphere.settings.VerticalView / sphere.settings.AngularResolution);
                     int totalRays = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
 
+                    raysProcessed = new int[totalRays];
                     linesProcessed = new int[totalLines];
 
                     PerformParallel(totalLines, totalRays);
@@ -317,11 +322,13 @@ namespace Worlds5
                     {
                         // Perform raytracing
                         rayProc[rayCountX, rayCountY].ProcessRay(sphere, rayCountX, rayCountY);
+
+                        //RayCompleted(rayCountY * totalRays + rayCountX);
                     }
                     catch
                     { }
                 });
-                RowCompleted((int)rayCountY);
+                //RowCompleted(rayCountY);
             });
 
             Parallel.For(0, totalLines, rayCountY =>
@@ -385,13 +392,22 @@ namespace Worlds5
             }
         }
 
+        private void RayCompleted(int rayIndex)
+        {
+            raysProcessed[rayIndex] = 1;
+            int totalRays = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
+
+            // Call the UpdateStatus function in Main
+            updateRayStatus(raysProcessed, totalRays);
+        }
+
         private void RowCompleted(int lineIndex)
         {
             linesProcessed[lineIndex] = 1;
             int totalLines = (int)(sphere.settings.VerticalView / sphere.settings.AngularResolution);
 
             // Call the UpdateStatus function in Main
-            updateStatus(linesProcessed, totalLines);
+            updateRowStatus(linesProcessed, totalLines);
         }
 
         public void Redisplay(int rayCountY)

@@ -85,7 +85,7 @@ int TraceRayC(double startDistance, double increment, double smoothness, double 
         externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, bailout, xFactor, yFactor, zFactor, c);
 
         // If this is an internal point and previous point is external
-        if (activeIndex == 0 && externalPoint == 0 && externalPoints[recordedPoints - 1] == 1)
+        if (activeIndex == 0 && !externalPoint && externalPoints[recordedPoints - 1] == 1)
         {
             ///// Set value for surface point /////
 
@@ -103,7 +103,7 @@ int TraceRayC(double startDistance, double increment, double smoothness, double 
             externalPoint = SamplePoint(sampleDistance, &Modulus, &Angle, bailout, xFactor, yFactor, zFactor, c);
 
             // Save this point value in the ray collection
-            externalPoints[recordedPoints] = externalPoint;
+            externalPoints[recordedPoints] = externalPoint ? 1 : 0;
             modulusValues[recordedPoints] = Modulus;
             angles[recordedPoints] = Angle;
             distances[recordedPoints] = sampleDistance;
@@ -124,7 +124,7 @@ int TraceRayC(double startDistance, double increment, double smoothness, double 
                     xFactor, yFactor, zFactor, bailout);
 
                 // Save this point value in the ray collection
-                externalPoints[recordedPoints] = externalPoint;
+                externalPoints[recordedPoints] = externalPoint ? 1 : 0;
                 modulusValues[recordedPoints] = Modulus;
                 angles[recordedPoints] = Angle;
                 distances[recordedPoints] = sampleDistance;
@@ -169,14 +169,14 @@ EXPORT int __stdcall TraceRay(double startDistance, double increment, double smo
     int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
     int activeIndex)
 {
-    //return TraceRayC(startDistance, increment, smoothness, surfaceThickness,
-    //    XFactor, YFactor, ZFactor, bailout,
-    //    externalPoints, modulusValues, angles, distances,
-    //    rayPoints, maxSamples, boundaryInterval, binarySearchSteps,
-    //    activeIndex);
+    return TraceRayC(startDistance, increment, smoothness, surfaceThickness,
+        XFactor, YFactor, ZFactor, bailout,
+        externalPoints, modulusValues, angles, distances,
+        rayPoints, maxSamples, boundaryInterval, binarySearchSteps,
+        activeIndex);
 
-    return TraceRayCuda(XFactor, YFactor, ZFactor, rayPoints,
-        externalPoints, modulusValues, angles, distances);
+    //return TraceRayCuda(XFactor, YFactor, ZFactor, rayPoints,
+    //    externalPoints, modulusValues, angles, distances);
 }
 
 EXPORT double __stdcall FindSurface(double increment, double smoothness, int binarySearchSteps, double currentDistance, double xFactor, double yFactor, double zFactor, float bailout)
@@ -194,7 +194,7 @@ EXPORT double __stdcall FindSurface(double increment, double smoothness, int bin
         sampleDistance = sampleDistance + stepSize;
 
         // If this point is internal to the set
-        if (SamplePoint(sampleDistance, bailout, xFactor, yFactor, zFactor, c) == 0)
+        if (!SamplePoint(sampleDistance, bailout, xFactor, yFactor, zFactor, c))
         {
             // Step back next time
             stepSize = -fabs(stepSize) * stepFactor;
@@ -404,7 +404,7 @@ bool gapFound(double currentDistance, double surfaceThickness, double xFactor, d
     {
         testDistance = currentDistance + surfaceThickness * factor / 4;
 
-        if (SamplePoint(testDistance, bailout, xFactor, yFactor, zFactor, c) == 1)
+        if (SamplePoint(testDistance, bailout, xFactor, yFactor, zFactor, c))
         {
             return true;
         }

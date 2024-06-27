@@ -34,7 +34,8 @@ namespace Worlds5
             // Instantiate a new sphere before setting properties
             Model.Globals.Sphere = new clsSphere();
             imageRendering = new ImageRendering();
-            imageRendering.updateStatus += new ImageRendering.UpdateStatusDelegate(UpdateStatus);
+            imageRendering.updateRowStatus += new ImageRendering.UpdateRowStatusDelegate(UpdateRowStatus);
+            imageRendering.updateRayStatus += new ImageRendering.UpdateRayStatusDelegate(UpdateRayStatus);
 
             WindowState state = Initialisation.LoadSettings();
 
@@ -45,7 +46,8 @@ namespace Worlds5
             if (state.Left > 0) this.Left = state.Left;
             if (state.Top > 0) this.Top = state.Top;
 
-            string FilePath = Path.Combine(Globals.SetUp.NavPath, "home.json");
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string FilePath = Path.Combine(appDataPath, "Worlds5", "Navigation", "home.json");
             LoadSphereFile(FilePath);
         }
 
@@ -152,7 +154,7 @@ namespace Worlds5
         /// Callback to update the status after a line has been processed.
         /// </summary>
         /// <param name="rowCount"></param>
-        private void UpdateStatus(int[] rowArray, int totalLines)
+        private void UpdateRowStatus(int[] rowArray, int totalLines)
         {
             int rowCount = rowArray.Count(c => c == 1);
             if (staStatus != null && staStatus.Items != null && staStatus.Items.Count > 0)
@@ -171,9 +173,32 @@ namespace Worlds5
         }
 
         /// <summary>
+        /// Callback to update the status after a line has been processed.
+        /// </summary>
+        /// <param name="rayCount"></param>
+        private void UpdateRayStatus(int[] rayArray, int totalRays)
+        {
+            int rayCount = rayArray.Count(c => c == 1);
+
+            if (staStatus != null && staStatus.Items != null && staStatus.Items.Count > 0)
+            {
+                string statusMessage = (rayCount < totalRays) ? rayCount + " of " + totalRays + " rays processed" : "Rendering completed";
+
+                if (staStatus.InvokeRequired)
+                {
+                    staStatus.Invoke(new MethodInvoker(() => staStatus.Items[0].Text = statusMessage));
+                }
+                else
+                {
+                    staStatus.Items[0].Text = statusMessage;
+                }
+            }
+        }
+
+        /// <summary>
         /// Callback to update the status with a given message.
         /// </summary>
-        /// <param name="rowCount"></param>
+        /// <param name="statusMessage"></param>
         private void UpdateStatus(string statusMessage)
         {
             if (staStatus != null && staStatus.Items != null && staStatus.Items.Count > 0)

@@ -174,7 +174,7 @@ __device__ bool SamplePoint2(double distance, float* Modulus, float* Angle, floa
     VectorTrans2(XPos, YPos, ZPos, &c);
 
     // Determine orbit value for this point
-    return ProcessPoint2(Modulus, Angle, bailout, c) ? 1 : 0;
+    return ProcessPoint2(Modulus, Angle, bailout, c);
 }
 
 __device__ bool SamplePoint2(double distance, float bailout, double xFactor, double yFactor, double zFactor, vector5Double c) {
@@ -187,7 +187,7 @@ __device__ bool SamplePoint2(double distance, float bailout, double xFactor, dou
     VectorTrans2(XPos, YPos, ZPos, &c);
 
     // Determine orbit value for this point
-    return ExternalPoint2(c, bailout) ? 1 : 0;
+    return ExternalPoint2(c, bailout);
 }
 
 __device__ bool gapFound2(double currentDistance, double surfaceThickness, double xFactor, double yFactor, double zFactor, float bailout, vector5Double c) {
@@ -196,7 +196,7 @@ __device__ bool gapFound2(double currentDistance, double surfaceThickness, doubl
     for (int factor = 1; factor <= 4; factor++) {
         testDistance = currentDistance + surfaceThickness * factor / 4;
 
-        if (SamplePoint2(testDistance, bailout, xFactor, yFactor, zFactor, c) == 1) {
+        if (SamplePoint2(testDistance, bailout, xFactor, yFactor, zFactor, c)) {
             return true;
         }
     }
@@ -212,7 +212,7 @@ __device__ double FindSurface2(double increment, double smoothness, int binarySe
     for (int i = 0; i < binarySearchSteps; i++) {
         sampleDistance += stepSize;
 
-        if (SamplePoint2(sampleDistance, bailout, xFactor, yFactor, zFactor, c) == 0) {
+        if (!SamplePoint2(sampleDistance, bailout, xFactor, yFactor, zFactor, c)) {
             stepSize = -fabs(stepSize) * stepFactor;
         }
         else {
@@ -263,7 +263,7 @@ __global__ void TraceRayKernel(
     bool externalPoint = SamplePoint2(currentDistance, &Modulus, &Angle, d_params.bailout, xFactor, yFactor, zFactor, c);
 
     // Record this point as the first sample
-    externalPoints[idx] = externalPoint;
+    externalPoints[idx] = externalPoint ? 1 : 0;
     modulusValues[idx] = Modulus;
     angles[idx] = Angle;
     distances[idx] = currentDistance;
@@ -372,7 +372,7 @@ extern "C" cudaError_t VerifyTransformMatrix(double* output)
     error = cudaMalloc(&d_output, sizeof(double) * DimTotal * 6);
     if (error != cudaSuccess) return error;
 
-    VerifyTransformMatrixKernel<<<( DimTotal * 6 + 255) / 256, 256 >>>(d_output);
+    VerifyTransformMatrixKernel<<<(DimTotal * 6 + 255) / 256, 256 >>>(d_output);
 
     error = cudaMemcpy(output, d_output, sizeof(double) * DimTotal * 6, cudaMemcpyDeviceToHost);
     if (error != cudaSuccess) return error;
