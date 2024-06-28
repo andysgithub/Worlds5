@@ -102,7 +102,7 @@ namespace Worlds5
             Array.Resize(ref angleValues, points);
             Array.Resize(ref distanceValues, points);
 
-            //Console.Write("modulusValues: {0}\n", JsonConvert.SerializeObject(modulusValues, Formatting.Indented));
+            Console.Write("modulusValues: {0}\n", JsonConvert.SerializeObject(modulusValues, Formatting.Indented));
 
             // Record the fractal value collection for this ray 
             TracedRay tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);
