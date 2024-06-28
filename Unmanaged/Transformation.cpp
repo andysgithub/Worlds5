@@ -21,7 +21,7 @@
 
 #define trans(a,b) m_Trans[b][a]        // Macro to address transformation matrix
 
-double manip[MAX_DIM+1][MAX_DIM+1];     // Manipulation matrix for fractal generation
+float manip[MAX_DIM+1][MAX_DIM+1];     // Manipulation matrix for fractal generation
 int DimTotal = 5;
 
 /*******************************
@@ -55,7 +55,7 @@ void TransInit()                        // Initialise transformation matrix
 void PostMul()                          // Matrix post-multiply (general)
 {
     int row,col,count;
-    double temp[MAX_DIM+1][MAX_DIM+1];
+    float temp[MAX_DIM+1][MAX_DIM+1];
 
     for (row=0;row<=DimTotal;++row)
     {
@@ -73,7 +73,7 @@ void PostMul()                          // Matrix post-multiply (general)
     }
 }
 
-void PostMulS(double Scale)            // Matrix post-multiply for scalings
+void PostMulS(float Scale)            // Matrix post-multiply for scalings
 {
     int row,col;
 
@@ -87,7 +87,7 @@ void PostMulS(double Scale)            // Matrix post-multiply for scalings
 void PreMulR()                        // Matrix pre-multiply for rotations
 {
     int row,col,count;
-    double temp[MAX_DIM+1][MAX_DIM+1];
+    float temp[MAX_DIM+1][MAX_DIM+1];
 
     for (row=0;row<DimTotal;++row)
     {
@@ -116,7 +116,7 @@ void PreMulT()                        // Matrix pre-multiply for translations
     }
 }
 
-void SetRot(int Axis1,int Axis2,double Angle)
+void SetRot(int Axis1,int Axis2,float Angle)
 {
     int a,b;
 
@@ -133,10 +133,10 @@ void SetRot(int Axis1,int Axis2,double Angle)
 
     //Angle = Angle/57.2957795131;
 
-    manip[a][a] = cos(Angle);
-    manip[b][b] = cos(Angle);
-    manip[b][a] = sin(Angle);
-    manip[a][b] = -sin(Angle);
+    manip[a][a] = static_cast<float>(cos(Angle));
+    manip[b][b] = static_cast<float>(cos(Angle));
+    manip[b][a] = static_cast<float>(sin(Angle));
+    manip[a][b] = static_cast<float>(-sin(Angle));
 
     if (((b-a) == 2) || ((b-a) == 4))
     {
@@ -150,7 +150,7 @@ void SetRot(int Axis1,int Axis2,double Angle)
     by DimCount. This is only called if the matrices are made larger
     than their current size.
  *********************************************************************/
-void Redimension(int DimCount, double Scale)
+void Redimension(int DimCount, float Scale)
 {
     int row,col;
 

@@ -14,7 +14,7 @@
 	b[4] = a[4]
 
 #define v_mul(a,b)																		\
-	double b0 = b[0];																			\
+	float b0 = b[0];																			\
 	b[0] = a[0]*b0              - a[1]*(b[1]-b[2]+b[3]-b[4]) + b[1]*(a[2]-a[3]+a[4]);	\
 	b[1] = a[0]*b[1] + a[1]* b0 + a[2]*(b[2]-b[3]+b[4])      - b[2]*(a[3]-a[4]);		\
 	b[2] = a[0]*b[2] + a[2]* b0 - a[3]*(b[3]-b[4])           + b[3]* a[4];				\
@@ -72,7 +72,7 @@
 		v_mandelx(a,b);	\
 	else				\
 	{					\
-		double a0 = a[0];		\
+		float a0 = a[0];		\
 		a[0] =   a0*a0   - a[1]*(a[1]-a[2]+a[3]-a[4]) + a[1]*(a[2]-a[3]+a[4]) + b[0]; \
 		a[1] = 2*a0*a[1] + a[2]*(a[2]-a[3]+a[4])	  - a[2]*(a[3]-a[4])      + b[1]; \
 		a[2] = 2*a0*a[2] - a[3]*(a[3]-a[4])			  + a[3]*(a[4])           + b[2]; \
@@ -80,7 +80,7 @@
 		a[4] = 2*a0*a[4]													  + b[4]; \
 	}
 
-void v_movx(double *a, double *b)
+void v_movx(float *a, float *b)
 {
 	extern int DimTotal;
 
@@ -90,12 +90,12 @@ void v_movx(double *a, double *b)
   }
 }
 
-void v_mulx(double *a, double *b)
+void v_mulx(float *a, float *b)
 {
 	extern int DimTotal;
-	double sum1,sum2;
-	double products;
-	double a0 = a[0];
+	float sum1,sum2;
+	float products;
+	float a0 = a[0];
 
 	for(int x=0; x<DimTotal; x++)
 	{	
@@ -107,7 +107,7 @@ void v_mulx(double *a, double *b)
 			sum2 = sum2 + a[i+1] - a[i+2];
 		}
 
-		if(double(x)/2 == x/2)
+		if(float(x)/2 == x/2)
 		{	
 			sum1 = -sum1;
 			sum2 = -sum2;
@@ -120,12 +120,12 @@ void v_mulx(double *a, double *b)
 	}
 }
 
-void v_mandelx(double *a, double *b)
+void v_mandelx(float *a, float *b)
 {
 	extern int DimTotal;
-	double sum1,sum2;
-	double products;
-	double a0 = a[0];
+	float sum1,sum2;
+	float products;
+	float a0 = a[0];
 
 	for(int x=0; x<DimTotal; x++)
 	{	
@@ -150,9 +150,9 @@ void v_mandelx(double *a, double *b)
 	}
 }
 
-void v_invm(double *a, double *b)
+void v_invm(float *a, float *b)
 {
-	double gra, grb, grc, grd, x;
+	float gra, grb, grc, grd, x;
 
 	if (a[0]==0 && a[2]==0 && a[3]==0 && a[4]==0 && a[1]!=0)
 	{
@@ -162,7 +162,7 @@ void v_invm(double *a, double *b)
 	else
 	{
 		if (a[0]==0)
-			b[0]=b[1]=b[2]=b[3]=b[4]=1e16;
+			b[0]=b[1]=b[2]=b[3]=b[4]=1e16f;
 		else
 		{
 			gra=-a[4];
@@ -172,11 +172,11 @@ void v_invm(double *a, double *b)
 			x=a[0]*a[0]-grd*(a[1]-a[2]+a[3]-a[4])+a[1]*(grc-grb+gra);
 
 			if (x==0)
-				b[0]=b[1]=b[2]=b[3]=b[4]=1e16;
+				b[0]=b[1]=b[2]=b[3]=b[4]=1e16f;
 			else
 			{
-				if (x>1e20) x=1e18;
-				if (x<1e-20) x=1e-18;
+				if (x>1e20) x=1e18f;
+				if (x<1e-20) x=1e-18f;
 				x=1/x;
 				b[0]=x*a[0];
 				b[1]=x*grd;

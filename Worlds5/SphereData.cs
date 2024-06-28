@@ -18,29 +18,29 @@ namespace Worlds5
 
         public class Navigation
         {
-            public double[,] PositionMatrix { get; set; }
+            public float[,] PositionMatrix { get; set; }
             public string RayMap { get; set; }
             public string ViewportImage { get; set; }
         }
 
         public class Viewing
         {
-            public double AngularResolution { get; set; }
-            public double Radius { get; set; }
-            public double CentreLatitude { get; set; }
-            public double CentreLongitude { get; set; }
-            public double VerticalView { get; set; }
-            public double HorizontalView { get; set; }
+            public float AngularResolution { get; set; }
+            public float Radius { get; set; }
+            public float CentreLatitude { get; set; }
+            public float CentreLongitude { get; set; }
+            public float VerticalView { get; set; }
+            public float HorizontalView { get; set; }
         }
 
         public class Raytracing
         {
-            public double[] SamplingInterval { get; set; }
+            public float[] SamplingInterval { get; set; }
             public int[] MaxSamples { get; set; }
             public int[] BinarySearchSteps { get; set; }
-            public double SurfaceSmoothing { get; set; }
-            public double SurfaceThickness { get; set; }
-            public double BoundaryInterval { get; set; }
+            public float SurfaceSmoothing { get; set; }
+            public float SurfaceThickness { get; set; }
+            public float BoundaryInterval { get; set; }
             public float Bailout { get; set; }
             public int ActiveIndex { get; set; }
         }

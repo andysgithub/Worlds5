@@ -10,17 +10,17 @@ namespace Model
         #region Private fields
 
         // Vertical field of view (degrees)                    
-        private static double verticalView;
+        private static float verticalView;
         // Horizontal field of view (degrees)
-        private static double horizontalView;
+        private static float horizontalView;
         // The value to use when calculating surface patch angles
-        private double incrementFactor;
+        private float incrementFactor;
 
         #endregion
 
         public clsSphere()
         {
-            settings.PositionMatrix = new double[6, 6];
+            settings.PositionMatrix = new float[6, 6];
         }
 
         // Last generated image
@@ -36,7 +36,7 @@ namespace Model
             #region Ray tracing properties
 
             // Transformation matrix
-            public double[,] PositionMatrix { get; set; }
+            public float[,] PositionMatrix { get; set; }
 
             // Sinusoidal mapping of surface points
             //public SurfacePoint[,] SurfaceMap { get; set; } 
@@ -48,14 +48,14 @@ namespace Model
             // Bailout value for the fractal algorithm
             public float Bailout { get; set; }
             // Distance between sampling points during ray tracing
-            public double[] SamplingInterval { get; set; }
+            public float[] SamplingInterval { get; set; }
             // The smoothness of the surface
-            public double SurfaceSmoothing { get; set; }
+            public float SurfaceSmoothing { get; set; }
             // The minimum acceptable thickness of the detected surface, to avoid speckling
-            public double SurfaceThickness { get; set; }
+            public float SurfaceThickness { get; set; }
             // The amount that the current orbit value is sufficiently different
             // from the last recorded sample to start a binary search for the boundary
-            public double BoundaryInterval { get; set; }
+            public float BoundaryInterval { get; set; }
             // Flag to indicate display of surface region / external region
             public int ActiveIndex { get; set; }
 
@@ -82,29 +82,29 @@ namespace Model
             #region Transformed reference points
 
             // Top edge of the viewing window
-            public double LatitudeStart { get; set; }
+            public float LatitudeStart { get; set; }
             // Bottom edge of the viewing window
-            public double LatitudeEnd { get; set; }
+            public float LatitudeEnd { get; set; }
             // Left edge of the viewing window as seen from the sphere centre
-            public double LongitudeStart { get; set; }
+            public float LongitudeStart { get; set; }
             // Right edge of the viewing window
-            public double LongitudeEnd { get; set; }
+            public float LongitudeEnd { get; set; }
 
             #endregion
 
             #region Viewing window properties
 
             // Angular resolution of the viewport surface (degrees)
-            public double AngularResolution { get; set; }
+            public float AngularResolution { get; set; }
             // Latitude of the viewing centre (degrees)
-            public double CentreLatitude { get; set; }
+            public float CentreLatitude { get; set; }
             // Longitude of the viewing centre (degrees)
-            public double CentreLongitude { get; set; }
+            public float CentreLongitude { get; set; }
             // Distance from centre to first ray tracing point
-            public double Radius { get; set; }
+            public float Radius { get; set; }
 
             // Vertical field of view (degrees)
-            public double VerticalView
+            public float VerticalView
             {
                 get { return verticalView; }
                 set
@@ -117,7 +117,7 @@ namespace Model
             }
 
             // Horizontal field of view (degrees)
-            public double HorizontalView
+            public float HorizontalView
             {
                 get { return horizontalView; }
                 set
@@ -136,7 +136,7 @@ namespace Model
             // Clipping plane rotation angles for each dimension
             public AxisPair ClippingAxes { get; set; }
             // Constant value for the clipping plane offset
-            public double ClippingOffset { get; set; }
+            public float ClippingOffset { get; set; }
             // Flag to indicate if clipping should be used
             public bool UseClipping { get; set; }
 
@@ -147,14 +147,14 @@ namespace Model
         //{
         //    // Initialise the surface mapping to correspond to the viewport
         //    surfaceMap = new SurfacePoint[(int)(HorizontalView / settings.AngularResolution) + 1, (int)(settings.VerticalView / settings.AngularResolution) + 1];
-        //    incrementFactor = 2 * Math.Sin(settings.AngularResolution / 2);
+        //    incrementFactor = 2 * (float)Math.Sin(settings.AngularResolution / 2);
         //}
 
         public void InitialiseRayMap()
         {
             // Initialise the ray trace mapping to correspond to the viewport
             RayMap = new TracedRay.RayDataType[(int)(settings.HorizontalView / settings.AngularResolution) + 1, (int)(settings.VerticalView / settings.AngularResolution) + 1];
-            incrementFactor = 2 * Math.Sin(settings.AngularResolution / 2);
+            incrementFactor = 2 * (float)Math.Sin(settings.AngularResolution / 2);
         }
 
         public void RecordRay(TracedRay tracedRay, int xIndex, int yIndex)
@@ -174,7 +174,7 @@ namespace Model
                 int lastRayStart = 0;
 
                 // For each surface boundary distance in the current ray
-                for (int pointCount = 0; pointCount < tracedRay.BoundaryTotal && !double.IsPositiveInfinity(tracedRay.Boundary(pointCount)); pointCount++)
+                for (int pointCount = 0; pointCount < tracedRay.BoundaryTotal && !float.IsPositiveInfinity(tracedRay.Boundary(pointCount)); pointCount++)
                 {
                     float tiltValue = 0;
 
@@ -182,16 +182,16 @@ namespace Model
                     if (tracedRay.IsSurfacePoint(pointCount))
                     {
                         // Get the distance to the surface
-                        double currentDistance = tracedRay.Boundary(pointCount);
-                        double increment = currentDistance * incrementFactor;
+                        float currentDistance = tracedRay.Boundary(pointCount);
+                        float increment = currentDistance * incrementFactor;
 
-                        for (int testCount = lastRayStart; testCount < lastRay.BoundaryTotal && !double.IsPositiveInfinity(lastRay.Boundary(testCount)); testCount++, lastRayStart++)
+                        for (int testCount = lastRayStart; testCount < lastRay.BoundaryTotal && !float.IsPositiveInfinity(lastRay.Boundary(testCount)); testCount++, lastRayStart++)
                         {
                             // If this is a surface point
                             if (lastRay.IsSurfacePoint(testCount))
                             {
                                 // Get the distance to the surface
-                                double lastDistance = lastRay.RayData.DistanceValues[testCount];
+                                float lastDistance = lastRay.RayData.DistanceValues[testCount];
 
                                 // If the distance on the previous ray has overshot the current ray
                                 if (lastDistance > currentDistance + settings.SurfaceThickness * 10.0)
@@ -208,7 +208,7 @@ namespace Model
                                 }
 
                                 // Calculate the longitudinal tilt value
-                                double separation = lastDistance - currentDistance;
+                                float separation = lastDistance - currentDistance;
                                 tiltValue = (float)Math.Atan(separation / increment);
                                 lastRayStart++;
                                 break;
@@ -225,9 +225,9 @@ namespace Model
         //{
         //    surfaceMap[xIndex, yIndex] = surfacePoint;
 
-        //    double increment = surfacePoint.Distance * incrementFactor;
-        //    double lastDistance;
-        //    double separation;
+        //    float increment = surfacePoint.Distance * incrementFactor;
+        //    float lastDistance;
+        //    float separation;
 
         //    if (xIndex > 0)
         //    {

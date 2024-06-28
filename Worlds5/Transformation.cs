@@ -6,7 +6,7 @@ namespace Worlds5
     public class Transformation
     {
         // Matrix containing a single transformation
-        private static double[,] manip = new double[6, 6];
+        private static float[,] manip = new float[6, 6];
         // Total number of dimensions used
         private static int DimTotal = 5;
         private static clsSphere.Settings sphereSettings = Model.Globals.Sphere.settings;
@@ -29,7 +29,7 @@ namespace Worlds5
             }
         }
 
-        public static void SetRotation(int Axis1, int Axis2, double Angle)
+        public static void SetRotation(int Axis1, int Axis2, float Angle)
         {
             ManipInit();
 
@@ -46,10 +46,10 @@ namespace Worlds5
                 b = Axis1;
             }
 
-            manip[a, a] = Math.Cos(Angle);
-            manip[b, b] = Math.Cos(Angle);
-            manip[b, a] = Math.Sin(Angle);
-            manip[a, b] = -Math.Sin(Angle);
+            manip[a, a] = (float)Math.Cos(Angle);
+            manip[b, b] = (float)Math.Cos(Angle);
+            manip[b, a] = (float)Math.Sin(Angle);
+            manip[a, b] = -(float)Math.Sin(Angle);
 
             if (((b - a) == 2) || ((b - a) == 4))
             {
@@ -58,7 +58,7 @@ namespace Worlds5
             }
         }
 
-        public static void SetTranslation(double[] Position)
+        public static void SetTranslation(float[] Position)
         {
             ManipInit();
             for (int col = 0; col < DimTotal; ++col)
@@ -70,7 +70,7 @@ namespace Worlds5
         // Matrix pre-multiply for rotations
         public static void PreMulR()
         {
-            double[,] temp = new double[6, 6];
+            float[,] temp = new float[6, 6];
 
             for (int row = 0; row < DimTotal; row++)
             {
@@ -121,7 +121,7 @@ namespace Worlds5
         //	Matrix post-multiply for rotations
         public static void PostMulR()
         {
-            double[,] temp = new double[6, 6];
+            float[,] temp = new float[6, 6];
 
             for (int row = 0; row < DimTotal; row++)
             {
@@ -144,14 +144,14 @@ namespace Worlds5
             }
         }
 
-        public static double[,] GetPositionMatrix()
+        public static float[,] GetPositionMatrix()
         {
             return sphereSettings.PositionMatrix;
         }
 
-        public static void RotateSphere(int rotationCentre, double[,] angles)
+        public static void RotateSphere(int rotationCentre, float[,] angles)
         {
-            double[] Position = new double[DimTotal];
+            float[] Position = new float[DimTotal];
 
             ManipInit();
 
@@ -212,12 +212,12 @@ namespace Worlds5
             }
         }
 
-        public static Vector5 ImageToFractalSpace(double distance, Vector3 vector3D)
+        public static Vector5 ImageToFractalSpace(float distance, Vector3 vector3D)
         {
             // Determine the x,y,z coord for this point
-            double XPos = distance * vector3D.X;
-            double YPos = distance * vector3D.Y;
-            double ZPos = distance * vector3D.Z;
+            float XPos = distance * vector3D.X;
+            float YPos = distance * vector3D.Y;
+            float ZPos = distance * vector3D.Z;
 
             // Transform 3D point x,y,z into nD fractal space at point c[]
             return VectorTrans(XPos, YPos, ZPos);
@@ -229,10 +229,10 @@ namespace Worlds5
             return new Vector3(0,0,0);
         }
 
-        public static Vector5 VectorTrans(double x, double y, double z)
+        public static Vector5 VectorTrans(float x, float y, float z)
         {
-            double[] c = new double[DimTotal];
-            double[,] matrix = sphereSettings.PositionMatrix;
+            float[] c = new float[DimTotal];
+            float[,] matrix = sphereSettings.PositionMatrix;
             for (int i = 0; i < DimTotal; i++)
             {
                 c[i] = matrix[0, i] * x +       // Transforms 3D image space at point x,y,z

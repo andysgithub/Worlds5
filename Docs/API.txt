@@ -1,6 +1,6 @@
 
 // Set the ImageRendering sphere parameters
-SetPositionMatrix(double[6,5])
+SetPositionMatrix(float[6,5])
 
 // Initialise the dll sphere from the ImageRendering sphere
 InitialiseSphere()

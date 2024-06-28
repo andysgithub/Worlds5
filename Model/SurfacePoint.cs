@@ -12,7 +12,7 @@ namespace Model
 
         private float modulus; 
         private float angle;
-        private double distance;
+        private float distance;
 
         private float xTilt;
         private float yTilt;
@@ -20,14 +20,14 @@ namespace Model
         // RGB colour
         public Globals.RGBQUAD bmiColors;
 
-        public SurfacePoint(float modulus, float angle, double distance)
+        public SurfacePoint(float modulus, float angle, float distance)
         {
             this.modulus = modulus;
             this.angle = angle;
             this.distance = distance;
         }
 
-/*        public void SetColour(float exposureValue, float saturation, double startDistance, double endDistance)
+/*        public void SetColour(float exposureValue, float saturation, float startDistance, float endDistance)
         {
             byte r = 0, g = 0, b = 0;
 
@@ -80,7 +80,7 @@ namespace Model
         /// <summary>
         /// The distance value at the surface point
         /// </summary>
-        public double Distance
+        public float Distance
         {
             get { return distance; }
         }

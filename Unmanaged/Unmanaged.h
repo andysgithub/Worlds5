@@ -6,7 +6,7 @@
 #include <windows.h>
 #include "declares.h"
 #include "Vectors.h"
-#include "vector5Double.h"
+#include "vector5Single.h"
 
 ///////  CONSTANTS  ///////
 const int MAX_DIM = 20;
@@ -16,7 +16,7 @@ extern int
 		m_BitmapWidth,
 	    m_BitmapHeight;
 
-extern double	
+extern float	
 		m_Trans[6][6],
 		m_Resolution,
 		m_ImageRatio,
@@ -31,40 +31,40 @@ extern float
 		m_Bailout;
 
 //////  SPHERE  //////
-EXPORT	void __stdcall InitSphere(float fBailout, double dResolution,
-                                  double dLatitude, double dLongitude,
-                                  double Radius, double verticalView, double horizontalView, double *pTransMatrix);
+EXPORT	void __stdcall InitSphere(float fBailout, float dResolution,
+                                  float dLatitude, float dLongitude,
+                                  float Radius, float verticalView, float horizontalView, float *pTransMatrix);
 
 //////  TRANSFORMATION  //////
 void	ManipInit(void);				//	Initialise manipulation matrix
 void	TransInit(void);				//	Initialise transformation matrix
 void	PostMul(void);  				//	Matrix post-multiply (general)
-void	PostMulS(double); 				//	Matrix post-multiply for scalings
+void	PostMulS(float); 				//	Matrix post-multiply for scalings
 void	PreMulR(void);  				//	Matrix pre-multiply for rotations
 void	PreMulT(void);  				//	Matrix pre-multiply for translations
-void	SetRot(int,int,double);
+void	SetRot(int,int,float);
 
 //////  RAY TRACER  //////
-EXPORT int __stdcall TraceRay(double startDistance, double increment, double smoothness, double surfaceThickness,
-								double XFactor, double YFactor, double ZFactor, float bailout,
-								int externalPoints[], float modulusValues[], float angles[], double distances[],
-								int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
+EXPORT int __stdcall TraceRay(float startDistance, float increment, float smoothness, float surfaceThickness,
+								float XFactor, float YFactor, float ZFactor, float bailout,
+								int externalPoints[], float modulusValues[], float angles[], float distances[],
+								int rayPoints, int maxSamples, float boundaryInterval, int binarySearchSteps,
 								int activeIndex);
 
-EXPORT double __stdcall FindSurface(double increment, double smoothness, int binarySearchSteps, double currentDistance,
-									double xFactor, double yFactor, double zFactor, float bailout);
-EXPORT double __stdcall FindBoundary(double increment, int binarySearchSteps, double currentDistance, float previousAngle,
-									 double boundaryInterval, bool *externalPoint, float *Modulus, float *Angle,
-									 double xFactor, double yFactor, double zFactor, float bailout);
+EXPORT float __stdcall FindSurface(float increment, float smoothness, int binarySearchSteps, float currentDistance,
+									float xFactor, float yFactor, float zFactor, float bailout);
+EXPORT float __stdcall FindBoundary(float increment, int binarySearchSteps, float currentDistance, float previousAngle,
+									 float boundaryInterval, bool *externalPoint, float *Modulus, float *Angle,
+									 float xFactor, float yFactor, float zFactor, float bailout);
 
-EXPORT std::array<double, 5> __stdcall ImageToFractalSpace (double distance, double xFactor, double yFactor, double zFactor);
-EXPORT bool __stdcall SamplePoint(double distance, float bailout, double xFactor, double yFactor, double zFactor, vector5Double c);
+EXPORT std::array<float, 5> __stdcall ImageToFractalSpace (float distance, float xFactor, float yFactor, float zFactor);
+EXPORT bool __stdcall SamplePoint(float distance, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c);
 
-bool ExternalPoint(vector5Double c, float bailout);
-bool ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Double c);
-bool gapFound(double currentDistance, double surfaceThickness, double xFactor, double yFactor, double zFactor, float bailout, vector5Double c);
-bool SamplePoint(double distance, float *Modulus, float *Angle, float bailout, double xFactor, double yFactor, double zFactor, vector5Double c);
-void VectorTrans(double x, double y, double z, vector5Double *c);
+bool ExternalPoint(vector5Single c, float bailout);
+bool ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Single c);
+bool gapFound(float currentDistance, float surfaceThickness, float xFactor, float yFactor, float zFactor, float bailout, vector5Single c);
+bool SamplePoint(float distance, float *Modulus, float *Angle, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c);
+void VectorTrans(float x, float y, float z, vector5Single *c);
 
 //////  COLOUR  //////
 EXPORT void __stdcall HSVtoRGB(float h, float s, float v, BYTE *rval, BYTE *gval, BYTE *bval);

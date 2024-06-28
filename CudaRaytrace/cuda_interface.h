@@ -1,16 +1,16 @@
 #pragma once
 
-#include "vector5Double.h"
+#include "vector5Single.h"
 
 struct RayTracingParams {
-    double startDistance;
-    double increment;
-    double smoothness;
-    double surfaceThickness;
+    float startDistance;
+    float increment;
+    float smoothness;
+    float surfaceThickness;
     float bailout;
     int rayPoints;
     int maxSamples;
-    double boundaryInterval;
+    float boundaryInterval;
     int binarySearchSteps;
     int activeIndex;
 };
@@ -24,11 +24,11 @@ extern "C" {
 
 	cudaError_t InitializeGPUKernel(const RayTracingParams* params);
 
-    cudaError_t InitializeTransformMatrix(const double* positionMatrix);
-    cudaError_t VerifyTransformMatrix(double* output);
+    cudaError_t InitializeTransformMatrix(const float* positionMatrix);
+    cudaError_t VerifyTransformMatrix(float* output);
 
-	int launchTraceRayKernel(double XFactor, double YFactor, double ZFactor, int rayPoints,
-		int* externalPoints, float* modulusValues, float* angles, double* distances);
+	int launchTraceRayKernel(float XFactor, float YFactor, float ZFactor, int rayPoints,
+		int* externalPoints, float* modulusValues, float* angles, float* distances);
 
 #ifdef __cplusplus
 }

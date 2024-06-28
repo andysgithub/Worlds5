@@ -8,7 +8,7 @@ namespace Worlds5
 
 		public const int DIB_RGB_COLORS = 0; 
 		public const int DIB_PAL_COLORS = 1; 
-        public const double DEG_TO_RAD = 0.0174532925;
+        public const float DEG_TO_RAD = 0.0174532925F;
 
 		// ----------------------------------------
 		//  Global Constants

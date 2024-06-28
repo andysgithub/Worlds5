@@ -2,8 +2,8 @@
 #define _VECTORS_H
 
 #include <array>
-#include "vector5Double.h"
+#include "vector5Single.h"
 
-double vectorAngle(vector5Double A, vector5Double B, vector5Double C);
+float vectorAngle(vector5Single A, vector5Single B, vector5Single C);
 
 #endif

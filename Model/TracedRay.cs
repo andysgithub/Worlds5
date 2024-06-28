@@ -24,13 +24,13 @@ namespace Model
             public int[] ExternalPoints;
             public float[] ModulusValues;
             public float[] AngleValues;
-            public double[] DistanceValues;
+            public float[] DistanceValues;
             public int BoundaryTotal;
         }
 
         public RayDataType RayData;
 
-        public TracedRay(int[] externalPoints, float[] modulusValues, float[] angleValues, double[] distanceValues)
+        public TracedRay(int[] externalPoints, float[] modulusValues, float[] angleValues, float[] distanceValues)
         {
             RayData.ExternalPoints = externalPoints;
             RayData.ModulusValues = modulusValues;
@@ -52,9 +52,9 @@ namespace Model
 
             int activeIndex = sphere.settings.ActiveIndex;
 
-            double totalPoints = sphere.settings.MaxSamples[activeIndex] * sphere.settings.SamplingInterval[activeIndex];
-            double startDistance = sphere.settings.Radius;
-            double endDistance = startDistance + totalPoints;
+            float totalPoints = sphere.settings.MaxSamples[activeIndex] * sphere.settings.SamplingInterval[activeIndex];
+            float startDistance = sphere.settings.Radius;
+            float endDistance = startDistance + totalPoints;
             float exposureValue = sphere.settings.ExposureValue[activeIndex];
             float saturation = sphere.settings.Saturation[activeIndex];
             float interiorExposure = sphere.settings.ExposureValue[2];
@@ -74,7 +74,7 @@ namespace Model
                         {
                             ///// Set colour for surface point /////
 
-                            if (Double.IsPositiveInfinity(RayData.DistanceValues[i])
+                            if (Single.IsPositiveInfinity(RayData.DistanceValues[i])
                                 || RayData.DistanceValues[i] > endDistance)
                                 break;
 
@@ -82,11 +82,11 @@ namespace Model
                             float lightingAngle = (sphere.settings.LightingAngle + 90) * (float)Globals.DEG_TO_RAD;
 
                             // Modify the exposure value according to the XTilt, YTilt values using Lambert's Cosine Law
-                            double xTilt = xTiltValues != null && xTiltValues.Count > 0 ? xTiltValues[i] : 0;
-                            double yTilt = yTiltValues != null && yTiltValues.Count > 0 ? yTiltValues[i] : 0;
-                            double tiltX = xTilt + lightingAngle;
-                            double tiltY = yTilt + lightingAngle;
-                            float  tiltValue = (float)(Math.Cos(tiltX) * Math.Cos(tiltY));
+                            float xTilt = xTiltValues != null && xTiltValues.Count > 0 ? xTiltValues[i] : 0;
+                            float yTilt = yTiltValues != null && yTiltValues.Count > 0 ? yTiltValues[i] : 0;
+                            float tiltX = xTilt + lightingAngle;
+                            float tiltY = yTilt + lightingAngle;
+                            float  tiltValue = (float)((float)Math.Cos(tiltX) * (float)Math.Cos(tiltY));
 
                             float surfaceContrast = sphere.settings.SurfaceContrast / 10;
 
@@ -117,12 +117,12 @@ namespace Model
                         {
                             ///// Set colour for volume point /////
 
-                            if (Double.IsPositiveInfinity(RayData.DistanceValues[i + 1])
+                            if (Single.IsPositiveInfinity(RayData.DistanceValues[i + 1])
                                 || RayData.DistanceValues[i + 1] > endDistance)
                                 break;
 
                             // Get distance between points
-                            double distance = RayData.DistanceValues[i + 1] - RayData.DistanceValues[i];
+                            float distance = RayData.DistanceValues[i + 1] - RayData.DistanceValues[i];
 
                             // S & V set by distance * exposure value
                             float Lightness = (float)distance * exposureValue / 10;
@@ -191,7 +191,7 @@ namespace Model
         /// <summary>
         /// Return distance values for boundary positions.
         /// </summary>
-        public double[] Boundaries
+        public float[] Boundaries
         {
             get { return RayData.DistanceValues; }
         }
@@ -235,7 +235,7 @@ namespace Model
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public double Boundary(int index)
+        public float Boundary(int index)
         {
             return RayData.DistanceValues[index]; 
         }
@@ -257,7 +257,7 @@ namespace Model
         /// <returns></returns>
         public bool IsSurfacePoint(int index)
         {
-            if (index > 0 && index < BoundaryTotal && !double.IsPositiveInfinity(RayData.DistanceValues[index]))
+            if (index > 0 && index < BoundaryTotal && !float.IsPositiveInfinity(RayData.DistanceValues[index]))
             {
                 return RayData.ExternalPoints[index - 1] == 1 && RayData.ExternalPoints[index] == 0;
             }

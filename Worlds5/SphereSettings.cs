@@ -26,9 +26,9 @@ namespace Worlds5
         private int clipPlaneIndex = 0;
         private int axisIndex = 0;
         private bool isLoaded = false;
-        private double[] translationValues = new double[5];
-        private double[] navRotationValues = new double[10];
-        private double[] clipRotationValues = new double[10];
+        private float[] translationValues = new float[5];
+        private float[] navRotationValues = new float[10];
+        private float[] clipRotationValues = new float[10];
 
         public SphereSettings()
         {
@@ -60,13 +60,13 @@ namespace Worlds5
             enableButtons(true);
         }
 
-        private double[,] NavAngles
+        private float[,] NavAngles
         {
             get
             {
                 // Factor to convert total degrees into radians
-                double factor = Globals.DEG_TO_RAD;
-                double[,] angles = new double[5, 6];
+                float factor = Globals.DEG_TO_RAD;
+                float[,] angles = new float[5, 6];
 
                 angles[1, 2] = navRotationValues[0] * factor;
                 angles[1, 3] = navRotationValues[1] * factor;
@@ -98,12 +98,12 @@ namespace Worlds5
             }
 */
             // Sphere viewing window
-            sphereSettings.AngularResolution = (double)updResolution.Value;
-            sphereSettings.Radius = (double)updSphereRadius.Value;
-            sphereSettings.CentreLatitude = (double)updCentreLatitude.Value;
-            sphereSettings.CentreLongitude = (double)updCentreLongitude.Value;
-            sphereSettings.VerticalView = (double)updViewportHeight.Value;
-            sphereSettings.HorizontalView = (double)updViewportWidth.Value;
+            sphereSettings.AngularResolution = (float)updResolution.Value;
+            sphereSettings.Radius = (float)updSphereRadius.Value;
+            sphereSettings.CentreLatitude = (float)updCentreLatitude.Value;
+            sphereSettings.CentreLongitude = (float)updCentreLongitude.Value;
+            sphereSettings.VerticalView = (float)updViewportHeight.Value;
+            sphereSettings.HorizontalView = (float)updViewportWidth.Value;
 
             // Position
             for (int axis = 0; axis < 5; axis++)
@@ -117,24 +117,24 @@ namespace Worlds5
             // Raytracing
             sphereSettings.ActiveIndex = chkShowSurface.Checked ? 0 : 1;
 
-            sphereSettings.SamplingInterval[0] = (double)updSamplingInterval_0.Value;
+            sphereSettings.SamplingInterval[0] = (float)updSamplingInterval_0.Value;
             sphereSettings.BinarySearchSteps[0] = (int)updBinarySearchSteps_0.Value;
             sphereSettings.MaxSamples[0] = (int)updMaxSamples_0.Value;
 
-            sphereSettings.SamplingInterval[1] = (double)updSamplingInterval_1.Value;
+            sphereSettings.SamplingInterval[1] = (float)updSamplingInterval_1.Value;
             sphereSettings.BinarySearchSteps[1] = (int)updBinarySearchSteps_1.Value;
             sphereSettings.MaxSamples[1] = (int)updMaxSamples_1.Value;
 
             // Clipping
             sphereSettings.ClippingAxes = Clipping.GetAxes(cmbClipPlane.SelectedIndex);
-            sphereSettings.ClippingOffset = (double)updClipOffset.Value;
+            sphereSettings.ClippingOffset = (float)updClipOffset.Value;
             sphereSettings.UseClipping = chkUseClipping.Checked;
 
             // Surface
             sphereSettings.Bailout = (float)updBailout.Value;
-            sphereSettings.BoundaryInterval = (double)updBoundaryInterval.Value;
-            sphereSettings.SurfaceSmoothing = (double)updSurfaceSmoothing.Value;
-            sphereSettings.SurfaceThickness = (double)updSurfaceThickness.Value;
+            sphereSettings.BoundaryInterval = (float)updBoundaryInterval.Value;
+            sphereSettings.SurfaceSmoothing = (float)updSurfaceSmoothing.Value;
+            sphereSettings.SurfaceThickness = (float)updSurfaceThickness.Value;
 
 /*            // Clear the rotation and offset inputs
             updClipRotate.Value = 0;
@@ -348,7 +348,7 @@ namespace Worlds5
         {
             if (isLoaded)
             {
-                translationValues[axisIndex] = (double)updTranslate.Value;
+                translationValues[axisIndex] = (float)updTranslate.Value;
                 axisIndex = (int)updAxis.Value - 1;
                 updTranslate.Value = (decimal)translationValues[axisIndex];
             }
@@ -357,14 +357,14 @@ namespace Worlds5
         private void updTranslate_Leave(object sender, EventArgs e)
         {
             axisIndex = (int)updAxis.Value - 1;
-            translationValues[axisIndex] = (double)updTranslate.Value;
+            translationValues[axisIndex] = (float)updTranslate.Value;
         }
 
         private void cmbNavPlane_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (isLoaded)
             {
-                navRotationValues[navPlaneIndex] = (double)updNavRotate.Value;
+                navRotationValues[navPlaneIndex] = (float)updNavRotate.Value;
                 navPlaneIndex = cmbNavPlane.SelectedIndex;
                 updNavRotate.Value = (decimal)navRotationValues[navPlaneIndex];
             }
@@ -373,7 +373,7 @@ namespace Worlds5
         private void updNavRotate_Leave(object sender, EventArgs e)
         {
             navPlaneIndex = (int)cmbNavPlane.SelectedIndex;
-            navRotationValues[navPlaneIndex] = (double)updNavRotate.Value;
+            navRotationValues[navPlaneIndex] = (float)updNavRotate.Value;
         }
 
         private void chkUseClipping_CheckedChanged(object sender, EventArgs e)
@@ -385,7 +385,7 @@ namespace Worlds5
         {
             if (isLoaded)
             {
-                clipRotationValues[clipPlaneIndex] = (double)updClipRotate.Value;
+                clipRotationValues[clipPlaneIndex] = (float)updClipRotate.Value;
                 clipPlaneIndex = cmbClipPlane.SelectedIndex;
                 updClipRotate.Value = (decimal)clipRotationValues[clipPlaneIndex];
             }
@@ -394,7 +394,7 @@ namespace Worlds5
         private void updClipRotate_Leave(object sender, EventArgs e)
         {
             clipPlaneIndex = (int)cmbClipPlane.SelectedIndex;
-            clipRotationValues[clipPlaneIndex] = (double)updClipRotate.Value;
+            clipRotationValues[clipPlaneIndex] = (float)updClipRotate.Value;
         }
 
         private void btnClearNav_Click(object sender, EventArgs e)
@@ -402,11 +402,11 @@ namespace Worlds5
             // Clear sphere settings
             for (int axisIndex = 0; axisIndex < 5; axisIndex++)
             { 
-                translationValues[axisIndex] = 0.0;
+                translationValues[axisIndex] = 0.0F;
             }
             for (int planeIndex = 0; planeIndex < 10; planeIndex++)
             {
-                navRotationValues[planeIndex] = 0.0;
+                navRotationValues[planeIndex] = 0.0F;
             }
             axisIndex = 0;
             navPlaneIndex = 0;
@@ -424,9 +424,9 @@ namespace Worlds5
             // Clear sphere settings
             for (int planeIndex = 0; planeIndex < 10; planeIndex++)
             {
-                clipRotationValues[planeIndex] = 0.0;
+                clipRotationValues[planeIndex] = 0.0F;
             }
-            sphereSettings.ClippingOffset = 0.0;
+            sphereSettings.ClippingOffset = 0.0F;
 
             // Clear clipping controls
             cmbClipPlane.SelectedIndex = 0;

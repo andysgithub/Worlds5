@@ -35,7 +35,7 @@ EXPORT void __stdcall HSVtoRGB(float h, float s, float v, BYTE* rval, BYTE* gval
 		h = 0;
 
 	h *= inv60;						// convert hue to be in 0,6 
-	i = (float)floor((double)h);	// i = greatest integer <= h 
+	i = (float)floor((float)h);	// i = greatest integer <= h 
 	f = h - i;						// f = fractional part of h 
 
 	p = v * (1 - s);

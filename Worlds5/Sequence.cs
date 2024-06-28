@@ -36,12 +36,12 @@ namespace Worlds5
                 this.extension = "png";
         }
 
-        public async void PerformRotation(double[] centreCoords, double[,] angles, double[] sphereRadius, int totalFrames, string basePath)
+        public async void PerformRotation(float[] centreCoords, float[,] angles, float[] sphereRadius, int totalFrames, string basePath)
         {
             // For each frame in the sequence
             for (int frameCount = 0; frameCount < totalFrames; frameCount++)
             {
-                sphere.settings.Radius = sphereRadius[0] - (double)frameCount / (double)totalFrames * (sphereRadius[0] - sphereRadius[1]);
+                sphere.settings.Radius = sphereRadius[0] - (float)frameCount / (float)totalFrames * (sphereRadius[0] - sphereRadius[1]);
 
                 Transformation.RotateSphere(1, angles);
                 sphere.settings.PositionMatrix = Transformation.GetPositionMatrix();

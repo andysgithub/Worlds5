@@ -90,7 +90,7 @@
     <ClInclude Include="cuda_interface.h" />
     <ClInclude Include="kernel.cuh" />
     <ClInclude Include="inline.cuh" />
-    <ClInclude Include="vector5Double.h" />
+    <ClInclude Include="vector5Single.h" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="kernel.cu" />

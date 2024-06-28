@@ -11,10 +11,10 @@ namespace Worlds5
         private Bitmap FinalBitmap = null;
         private BitmapData bitmapData = null;
         private clsSphere sphere = Model.Globals.Sphere;
-        private double verticalView = 0;
-        private double horizontalView = 0;
-        private double maxVertical = 0;
-        private double maxHorizontal = 0;
+        private float verticalView = 0;
+        private float horizontalView = 0;
+        private float maxVertical = 0;
+        private float maxHorizontal = 0;
         private int bitmapWidth = 0;
         private int bitmapHeight = 0;
 
@@ -22,11 +22,11 @@ namespace Worlds5
         {
             verticalView = sphere.settings.VerticalView * Globals.DEG_TO_RAD / 2;
             horizontalView = sphere.settings.HorizontalView * Globals.DEG_TO_RAD / 2;
-            double sphereResolution = sphere.settings.AngularResolution * Globals.DEG_TO_RAD / 2;
+            float sphereResolution = sphere.settings.AngularResolution * Globals.DEG_TO_RAD / 2;
 
-            maxHorizontal = Math.Sin(horizontalView);
-            maxVertical = Math.Sin(verticalView);
-            double stepSize = Math.Sin(sphereResolution);
+            maxHorizontal = (float)Math.Sin(horizontalView);
+            maxVertical = (float)Math.Sin(verticalView);
+            float stepSize = (float)Math.Sin(sphereResolution);
 
             // Initialise the bitmap
             bitmapWidth = (int)(maxHorizontal / stepSize);
@@ -36,11 +36,11 @@ namespace Worlds5
             FinalBitmap = new Bitmap(bitmapWidth, bitmapHeight, PixelFormat.Format32bppRgb);
         }
 
-        public void updateImage(double rayCountX, double rayCountY, Model.Globals.RGBQUAD colours)
+        public void updateImage(float rayCountX, float rayCountY, Model.Globals.RGBQUAD colours)
         {
             // Get lat/long from rayCountX/Y
-            double latitude = sphere.settings.LatitudeStart - rayCountY * sphere.settings.AngularResolution;
-            double longitude = sphere.settings.LongitudeStart - rayCountX * sphere.settings.AngularResolution;
+            float latitude = sphere.settings.LatitudeStart - rayCountY * sphere.settings.AngularResolution;
+            float longitude = sphere.settings.LongitudeStart - rayCountX * sphere.settings.AngularResolution;
 
             latitude = latitude * Globals.DEG_TO_RAD;
             longitude = longitude * Globals.DEG_TO_RAD;
@@ -49,8 +49,8 @@ namespace Worlds5
             if (Math.Abs(latitude) <= verticalView
                 && Math.Abs(longitude) <= horizontalView)
             {
-                double verticalOffset = Math.Sin(latitude);
-                double horizontalOffset = Math.Sin(longitude);
+                float verticalOffset = (float)Math.Sin(latitude);
+                float horizontalOffset = (float)Math.Sin(longitude);
 
                 int heightMidpoint = bitmapHeight / 2;
                 int widthMidpoint = bitmapWidth / 2;

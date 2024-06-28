@@ -4,14 +4,14 @@
 #include <math_constants.h>
 #include <cmath>
 #include <stdio.h>
-#include "vector5Double.h"
+#include "vector5Single.h"
 #include "kernel.cuh"
 #include "inline.cuh"
 #include "cuda_interface.h"
 
 __constant__ RayTracingParams d_params;
 
-__device__ void VectorTrans2(double x, double y, double z, vector5Double* c) {
+__device__ void VectorTrans2(float x, float y, float z, vector5Single* c) {
     for (int i = 0; i < DimTotal; i++) {
         (*c).coords[i] = cudaTrans[i][0] * x +
             cudaTrans[i][1] * y +
@@ -20,9 +20,9 @@ __device__ void VectorTrans2(double x, double y, double z, vector5Double* c) {
     }
 }
 
-__device__ double vectorAngle(const vector5Double& A, const vector5Double& B, const vector5Double& C) {
-    vector5Double v1, v2;
-    double dotProduct = 0.0;
+__device__ float vectorAngle(const vector5Single& A, const vector5Single& B, const vector5Single& C) {
+    vector5Single v1, v2;
+    float dotProduct = 0.0;
 
     // Vector v1 = B - A 
     v1.coords[0] = B.coords[0] - A.coords[0];
@@ -31,12 +31,12 @@ __device__ double vectorAngle(const vector5Double& A, const vector5Double& B, co
     v1.coords[3] = B.coords[3] - A.coords[3];
     v1.coords[4] = B.coords[4] - A.coords[4];
 
-    double modulus = sqrt(v1.coords[0] * v1.coords[0] + v1.coords[1] * v1.coords[1] +
+    float modulus = sqrt(v1.coords[0] * v1.coords[0] + v1.coords[1] * v1.coords[1] +
         v1.coords[2] * v1.coords[2] + v1.coords[3] * v1.coords[3] +
         v1.coords[4] * v1.coords[4]);
 
     if (modulus != 0.0) {
-        double factor = 1.0 / modulus;
+        float factor = 1.0 / modulus;
 
         // Normalize v1 by dividing by mod(v1)
         v1.coords[0] *= factor;
@@ -74,7 +74,7 @@ __device__ double vectorAngle(const vector5Double& A, const vector5Double& B, co
     }
 
     // Clamp dotProduct to the range [-1, 1]
-    dotProduct = fmax(fmin(dotProduct, 1.0), -1.0);
+    dotProduct = fmaxf(fminf(dotProduct, 1.0f), -1.0f);
 
     // Return the angle in radians
     return acos(dotProduct);
@@ -82,13 +82,13 @@ __device__ double vectorAngle(const vector5Double& A, const vector5Double& B, co
 
 // Determine whether nD point c[] in within the set
 // Returns true if point is external to the set
-__device__ bool ExternalPoint2(vector5Double c, float bailout)
+__device__ bool ExternalPoint2(vector5Single c, float bailout)
 {
     const long MaxCount = (long)(1000);		        // Iteration count for external points
-    vector5Double z;										// Temporary 5-D vector
-    vector5Double diff;										// Temporary 5-D vector for orbit size
-    double ModulusTotal = 0;
-    double ModVal = 0;
+    vector5Single z;										// Temporary 5-D vector
+    vector5Single diff;										// Temporary 5-D vector for orbit size
+    float ModulusTotal = 0;
+    float ModVal = 0;
     long count;
 
     z.coords[DimTotal - 2] = 0;
@@ -119,22 +119,22 @@ __device__ bool ExternalPoint2(vector5Double c, float bailout)
     return (count < MaxCount);
 }
 
-__device__ bool ProcessPoint2(float* Modulus, float* Angle, float bailout, vector5Double c) {
-    double const PI = 3.1415926536;
+__device__ bool ProcessPoint2(float* Modulus, float* Angle, float bailout, vector5Single c) {
+    float const PI = 3.1415926536;
 
     const long MaxCount = 1000;
-    vector5Double z;
-    vector5Double diff;
-    double ModulusTotal = 0;
-    double ModVal = 0;
-    double AngleTotal = PI;
+    vector5Single z;
+    vector5Single diff;
+    float ModulusTotal = 0;
+    float ModVal = 0;
+    float AngleTotal = PI;
     long count;
 
     z.coords[3] = 0;
     z.coords[4] = 0;
 
     v_mov(c.coords, z.coords);
-    vector5Double vectorSet[3];
+    vector5Single vectorSet[3];
     v_mov(z.coords, vectorSet[1].coords);
 
     for (count = 0; count < MaxCount; count++) {
@@ -164,11 +164,11 @@ __device__ bool ProcessPoint2(float* Modulus, float* Angle, float bailout, vecto
     return (count < MaxCount);
 }
 
-__device__ bool SamplePoint2(double distance, float* Modulus, float* Angle, float bailout, double xFactor, double yFactor, double zFactor, vector5Double c) {
+__device__ bool SamplePoint2(float distance, float* Modulus, float* Angle, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c) {
     // Determine the x,y,z coord for this point
-    const double XPos = distance * xFactor;
-    const double YPos = distance * yFactor;
-    const double ZPos = distance * zFactor;
+    const float XPos = distance * xFactor;
+    const float YPos = distance * yFactor;
+    const float ZPos = distance * zFactor;
 
     // Transform 3D point x,y,z into nD fractal space at point c[]
     VectorTrans2(XPos, YPos, ZPos, &c);
@@ -177,11 +177,11 @@ __device__ bool SamplePoint2(double distance, float* Modulus, float* Angle, floa
     return ProcessPoint2(Modulus, Angle, bailout, c);
 }
 
-__device__ bool SamplePoint2(double distance, float bailout, double xFactor, double yFactor, double zFactor, vector5Double c) {
+__device__ bool SamplePoint2(float distance, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c) {
     // Determine the x,y,z coord for this point
-    const double XPos = distance * xFactor;
-    const double YPos = distance * yFactor;
-    const double ZPos = distance * zFactor;
+    const float XPos = distance * xFactor;
+    const float YPos = distance * yFactor;
+    const float ZPos = distance * zFactor;
 
     // Transform 3D point x,y,z into nD fractal space at point c[]
     VectorTrans2(XPos, YPos, ZPos, &c);
@@ -190,8 +190,8 @@ __device__ bool SamplePoint2(double distance, float bailout, double xFactor, dou
     return ExternalPoint2(c, bailout);
 }
 
-__device__ bool gapFound2(double currentDistance, double surfaceThickness, double xFactor, double yFactor, double zFactor, float bailout, vector5Double c) {
-    double testDistance;
+__device__ bool gapFound2(float currentDistance, float surfaceThickness, float xFactor, float yFactor, float zFactor, float bailout, vector5Single c) {
+    float testDistance;
 
     for (int factor = 1; factor <= 4; factor++) {
         testDistance = currentDistance + surfaceThickness * factor / 4;
@@ -203,11 +203,11 @@ __device__ bool gapFound2(double currentDistance, double surfaceThickness, doubl
     return false;
 }
 
-__device__ double FindSurface2(double increment, double smoothness, int binarySearchSteps, double currentDistance, double xFactor, double yFactor, double zFactor, float bailout) {
-    double stepFactor = smoothness / 10;
-    double stepSize = -increment * stepFactor;
-    double sampleDistance = currentDistance;
-    const vector5Double c = { 0, 0, 0, 0, 0 };
+__device__ float FindSurface2(float increment, float smoothness, int binarySearchSteps, float currentDistance, float xFactor, float yFactor, float zFactor, float bailout) {
+    float stepFactor = smoothness / 10;
+    float stepSize = -increment * stepFactor;
+    float sampleDistance = currentDistance;
+    const vector5Single c = { 0, 0, 0, 0, 0 };
 
     for (int i = 0; i < binarySearchSteps; i++) {
         sampleDistance += stepSize;
@@ -222,18 +222,18 @@ __device__ double FindSurface2(double increment, double smoothness, int binarySe
     return sampleDistance;
 }
 
-__device__ double FindBoundary2(double increment, int binarySearchSteps, double currentDistance, float previousAngle,
-    double boundaryInterval, bool* externalPoint, float* Modulus, float* Angle,
-    double xFactor, double yFactor, double zFactor, float bailout) {
-    double stepSize = -increment / 2;
-    double sampleDistance = currentDistance;
-    const vector5Double c = { 0, 0, 0, 0, 0 };
+__device__ float FindBoundary2(float increment, int binarySearchSteps, float currentDistance, float previousAngle,
+    float boundaryInterval, bool* externalPoint, float* Modulus, float* Angle,
+    float xFactor, float yFactor, float zFactor, float bailout) {
+    float stepSize = -increment / 2;
+    float sampleDistance = currentDistance;
+    const vector5Single c = { 0, 0, 0, 0, 0 };
 
     for (int i = 0; i < binarySearchSteps; i++) {
         sampleDistance += stepSize;
         *externalPoint = SamplePoint2(sampleDistance, Modulus, Angle, bailout, xFactor, yFactor, zFactor, c);
 
-        const double angleChange = fabs(*Angle - previousAngle);
+        const float angleChange = fabs(*Angle - previousAngle);
 
         if (angleChange > boundaryInterval) {
             stepSize = -fabs(stepSize) / 2;
@@ -246,18 +246,18 @@ __device__ double FindBoundary2(double increment, int binarySearchSteps, double 
 }
 
 __global__ void TraceRayKernel(
-    double xFactor, double yFactor, double zFactor,
-    int* externalPoints, float* modulusValues, float* angles, double* distances, int* recordedPointsOut) {
+    float xFactor, float yFactor, float zFactor,
+    int* externalPoints, float* modulusValues, float* angles, float* distances, int* recordedPointsOut) {
 
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     if (idx >= d_params.rayPoints) return;
 
     float Modulus, Angle;
-    double currentDistance = d_params.startDistance;
-    double sampleDistance;
+    float currentDistance = d_params.startDistance;
+    float sampleDistance;
     int recordedPoints = 0;
     int sampleCount = 0;
-    const vector5Double c = { 0, 0, 0, 0, 0 }; // 5D vector for ray point coordinates
+    const vector5Single c = { 0, 0, 0, 0, 0 }; // 5D vector for ray point coordinates
 
     // Determine orbit value for the starting point
     bool externalPoint = SamplePoint2(currentDistance, &Modulus, &Angle, d_params.bailout, xFactor, yFactor, zFactor, c);
@@ -304,7 +304,7 @@ __global__ void TraceRayKernel(
         else if (d_params.activeIndex == 1) {
             ///// Set value for external point /////
 
-            double angleChange = fabs(Angle - angles[recordedPoints - 1]);
+            float angleChange = fabs(Angle - angles[recordedPoints - 1]);
 
             // If orbit value is sufficiently different from the last recorded sample
             if (angleChange > d_params.boundaryInterval) {
@@ -350,49 +350,49 @@ extern "C" cudaError_t InitializeGPUKernel(const RayTracingParams* params)
     return error;
 }
 
-extern "C" cudaError_t InitializeTransformMatrix(const double* positionMatrix)
+extern "C" cudaError_t InitializeTransformMatrix(const float* positionMatrix)
 {
-    return cudaMemcpyToSymbol(cudaTrans, positionMatrix, sizeof(double) * DimTotal * 6);
+    return cudaMemcpyToSymbol(cudaTrans, positionMatrix, sizeof(float) * DimTotal * 6);
 }
 
 // Verification kernel
-__global__ void VerifyTransformMatrixKernel(double* output)
+__global__ void VerifyTransformMatrixKernel(float* output)
 {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx < DimTotal * 6) {
-        output[idx] = ((double*)cudaTrans)[idx];
+        output[idx] = ((float*)cudaTrans)[idx];
     }
 }
 
-extern "C" cudaError_t VerifyTransformMatrix(double* output)
+extern "C" cudaError_t VerifyTransformMatrix(float* output)
 {
-    double* d_output;
+    float* d_output;
     cudaError_t error;
 
-    error = cudaMalloc(&d_output, sizeof(double) * DimTotal * 6);
+    error = cudaMalloc(&d_output, sizeof(float) * DimTotal * 6);
     if (error != cudaSuccess) return error;
 
     VerifyTransformMatrixKernel<<<(DimTotal * 6 + 255) / 256, 256 >>>(d_output);
 
-    error = cudaMemcpy(output, d_output, sizeof(double) * DimTotal * 6, cudaMemcpyDeviceToHost);
+    error = cudaMemcpy(output, d_output, sizeof(float) * DimTotal * 6, cudaMemcpyDeviceToHost);
     if (error != cudaSuccess) return error;
 
     cudaFree(d_output);
     return cudaSuccess;
 }
 
-extern "C" int launchTraceRayKernel(double XFactor, double YFactor, double ZFactor, int rayPoints,
-    int* externalPoints, float* modulusValues, float* angles, double* distances)
+extern "C" int launchTraceRayKernel(float XFactor, float YFactor, float ZFactor, int rayPoints,
+    int* externalPoints, float* modulusValues, float* angles, float* distances)
 {
     // Allocate device memory
     int* d_externalPoints, * d_recordedPointsOut;
     float* d_modulusValues, * d_angles;
-    double* d_distances;
+    float* d_distances;
 
     cudaMalloc(&d_externalPoints, rayPoints * sizeof(int));
     cudaMalloc(&d_modulusValues, rayPoints * sizeof(float));
     cudaMalloc(&d_angles, rayPoints * sizeof(float));
-    cudaMalloc(&d_distances, rayPoints * sizeof(double));
+    cudaMalloc(&d_distances, rayPoints * sizeof(float));
     cudaMalloc(&d_recordedPointsOut, sizeof(int));
 
     int blockSize = 256;

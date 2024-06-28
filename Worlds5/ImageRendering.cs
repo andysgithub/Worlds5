@@ -16,74 +16,74 @@ namespace Worlds5
         [StructLayout(LayoutKind.Sequential)]
         public struct RayTracingParams
         {
-            public double startDistance;
-            public double increment;
-            public double smoothness;
-            public double surfaceThickness;
+            public float startDistance;
+            public float increment;
+            public float smoothness;
+            public float surfaceThickness;
             public float bailout;
             public int rayPoints;
             public int maxSamples;
-            public double boundaryInterval;
+            public float boundaryInterval;
             public int binarySearchSteps;
             public int activeIndex;
         }
 
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern int TraceRay(double startDistance, double increment, double smoothness, double surfaceThickness,
-            double xFactor, double yFactor, double zFactor, float bailout,
-            int[] externalsArray, float[] valuesArray, float[] anglesArray, double[] distancesArray,
-            int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
+        static extern int TraceRay(float startDistance, float increment, float smoothness, float surfaceThickness,
+            float xFactor, float yFactor, float zFactor, float bailout,
+            int[] externalsArray, float[] valuesArray, float[] anglesArray, float[] distancesArray,
+            int rayPoints, int maxSamples, float boundaryInterval, int binarySearchSteps,
             int activeIndex);
 
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool InitializeGPU(ref RayTracingParams parameters);
 
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool CopyTransformationMatrix([In] double[] positionMatrix);
+        public static extern bool CopyTransformationMatrix([In] float[] positionMatrix);
 
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool VerifyTransformationMatrix([Out] double[] output);
+        public static extern bool VerifyTransformationMatrix([Out] float[] output);
 
         //[DllImport("Unmanaged.dll")]
-        //static extern double[] ImageToFractalSpace (double startDistance, double xFactor, double yFactor, double zFactor);
+        //static extern float[] ImageToFractalSpace (float startDistance, float xFactor, float yFactor, float zFactor);
 
         private int[] externalPoints;
         private float[] modulusValues;
         private float[] angleValues;
-        private double[] distanceValues;
+        private float[] distanceValues;
 
         public RayProcessing()
         {
             externalPoints = new int[100];
             modulusValues = new float[100];
             angleValues = new float[100];
-            distanceValues = new double[100];
+            distanceValues = new float[100];
         }
 
         // Trace the ray on this latitude line
         public void ProcessRay(clsSphere sphere, int rayCountX, int rayCountY)
         {
             clsSphere.Settings settings = sphere.settings;
-            double latitude = settings.LatitudeStart - rayCountY * settings.AngularResolution;
-            double longitude = settings.LongitudeStart - rayCountX * settings.AngularResolution;
+            float latitude = settings.LatitudeStart - rayCountY * settings.AngularResolution;
+            float longitude = settings.LongitudeStart - rayCountX * settings.AngularResolution;
             int i = settings.ActiveIndex;
             int rayPoints = (int)(settings.MaxSamples[i] * settings.SamplingInterval[i]);
 
-            double latRadians = latitude * Globals.DEG_TO_RAD;
-            double longRadians = longitude * Globals.DEG_TO_RAD;
+            float latRadians = latitude * Globals.DEG_TO_RAD;
+            float longRadians = longitude * Globals.DEG_TO_RAD;
 
-            double xFactor = Math.Cos(latRadians) * Math.Sin(-longRadians);
-            double yFactor = Math.Sin(latRadians);
-            double zFactor = Math.Cos(latRadians) * Math.Cos(-longRadians);
+            float xFactor = (float)Math.Cos(latRadians) * (float)Math.Sin(-longRadians);
+            float yFactor = (float)Math.Sin(latRadians);
+            float zFactor = (float)Math.Cos(latRadians) * (float)Math.Cos(-longRadians);
 
             // Set the start distance to the sphere radius
-            double startDistance = settings.Radius;
+            float startDistance = settings.Radius;
 
             // If clipping is enabled
             if (settings.UseClipping)
             {
                 // Get the 5D coordinates for the intersection between this vector and the clipping plane
-                double distance = Clipping.CalculateDistance(latRadians, longRadians, settings.ClippingAxes, settings.ClippingOffset);
+                float distance = Clipping.CalculateDistance(latRadians, longRadians, settings.ClippingAxes, settings.ClippingOffset);
 
                 // Set the start distance to this value if larger than sphere radius
                 if (distance > startDistance) startDistance = distance;
@@ -145,7 +145,7 @@ namespace Worlds5
         //     set { m_SeqSize = value; }
         // }
 
-        //public static double ScaleValue
+        //public static float ScaleValue
         //{
         //    get { return m_ScaleValue; }
         //    set { m_ScaleValue = value; }
@@ -168,9 +168,9 @@ namespace Worlds5
         #region DLL Imports
 
         [DllImport("Unmanaged.dll")]
-        static extern void InitSphere(float fBailout, double Resolution,
-                                      double Latitude, double Longitude,
-                                      double Radius, double verticalView, double horizontalView, double[,] PositionMatrix);
+        static extern void InitSphere(float fBailout, float Resolution,
+                                      float Latitude, float Longitude,
+                                      float Radius, float verticalView, float horizontalView, float[,] PositionMatrix);
 
         #endregion
 
@@ -216,7 +216,7 @@ namespace Worlds5
             // Verify the matrix
             try
             {
-                double[,] verifiedMatrix = VerifyMatrix();
+                float[,] verifiedMatrix = VerifyMatrix();
 
                 Console.WriteLine("Verify matrix");
                 // TODO: Compare verifiedMatrix with positionMatrix to ensure they match
@@ -227,11 +227,11 @@ namespace Worlds5
             }*/
         }
 
-        public static bool CopyMatrix(double[,] positionMatrix)
+        public static bool CopyMatrix(float[,] positionMatrix)
         {
             int rows = positionMatrix.GetLength(0);
             int cols = positionMatrix.GetLength(1);
-            double[] flatMatrix = new double[rows * cols];
+            float[] flatMatrix = new float[rows * cols];
 
             for (int i = 0; i < rows; i++)
             {
@@ -244,11 +244,11 @@ namespace Worlds5
             return CopyTransformationMatrix(flatMatrix);
         }
 
-        public static double[,] VerifyMatrix()
+        public static float[,] VerifyMatrix()
         {
             int DimTotal = 5;
 
-            double[] flatOutput = new double[DimTotal * 6];
+            float[] flatOutput = new float[DimTotal * 6];
             bool success = VerifyTransformationMatrix(flatOutput);
 
             if (!success)
@@ -256,7 +256,7 @@ namespace Worlds5
                 throw new Exception("Failed to verify transform matrix");
             }
 
-            double[,] output = new double[DimTotal, 6];
+            float[,] output = new float[DimTotal, 6];
             for (int i = 0; i < DimTotal; i++)
             {
                 for (int j = 0; j < 6; j++)
@@ -462,7 +462,7 @@ namespace Worlds5
         //    int rayNumber = 0;
 
         //    // For each longitude point on this line working forwards
-        //    for (double longitude = sphere.settings.LongitudeStart - sphere.settings.Resolution;
+        //    for (float longitude = sphere.settings.LongitudeStart - sphere.settings.Resolution;
         //        longitude > sphere.settings.LongitudeEnd; longitude -= sphere.settings.Resolution)
         //    {
         //        // Get the ray from the ray map
@@ -478,7 +478,7 @@ namespace Worlds5
         //    // Start with the last ray
 
         //    // For each longitude point on this line working backwards
-        //    for (double longitude = sphere.settings.LongitudeEnd + sphere.settings.Resolution;
+        //    for (float longitude = sphere.settings.LongitudeEnd + sphere.settings.Resolution;
         //        longitude < sphere.settings.LongitudeStart; longitude += sphere.settings.Resolution)
         //    {
         //        // Get the ray from the ray map
@@ -501,12 +501,12 @@ namespace Worlds5
         ///// <returns></returns>
         //private void addNewBoundaries(TracedRay sourceRay, ref TracedRay targetRay)
         //{
-        //    List<double> newBoundaries = targetRay.Boundaries;
+        //    List<float> newBoundaries = targetRay.Boundaries;
         //    int sourcePos = -1;
         //    int targetPos = 0;
 
         //    // For each source boundary position value
-        //    foreach (double sourcePosition in sourceRay.Boundaries)
+        //    foreach (float sourcePosition in sourceRay.Boundaries)
         //    {
         //        sourcePos++;
         //        bool boundaryFound = false;
@@ -522,7 +522,7 @@ namespace Worlds5
         //            targetPos++;
         //        }
 
-        //        if (Double.IsPositiveInfinity(targetRay.Boundary(targetPos)))
+        //        if (Single.IsPositiveInfinity(targetRay.Boundary(targetPos)))
         //        {
         //            return;
         //        }
@@ -542,13 +542,13 @@ namespace Worlds5
         //        }
 
         //        // Set increment to the distance between the target and source points
-        //        double separation = sourcePosition - targetRay.Boundary(targetPos);
+        //        float separation = sourcePosition - targetRay.Boundary(targetPos);
 
         //        float Modulus, Angle;
         //        bool externalPoint;
 
         //        // Perform binary search between the target and the source points, to determine new boundary position
-        //        double newPosition = FindBoundary(separation, sphere.settings.BinarySearchSteps, sourcePosition, targetRay.Angle(targetPos),
+        //        float newPosition = FindBoundary(separation, sphere.settings.BinarySearchSteps, sourcePosition, targetRay.Angle(targetPos),
         //                              sphere.settings.BoundaryInterval, &externalPoint, &Modulus, &Angle);
 
         //        // Insert this new boundary data into the current position in the target ray

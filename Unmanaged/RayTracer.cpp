@@ -6,13 +6,13 @@
 #include "unmanaged.h"
 #include "declares.h"
 #include "vectors.h"
-#include "vector5Double.h"
+#include "vector5Single.h"
 
 #include <cuda_runtime.h>
 #include "kernel.cuh"
 #include "cuda_interface.h"
 
-const BYTE MAX_COLOURS = 1000;
+const BYTE MAX_COLOURS = 255;
 
 
 // Error checking macro
@@ -34,33 +34,33 @@ EXPORT bool InitializeGPU(const RayTracingParams* params)
 }
 
 // Host function to initialize the GPU with constant parameters
-EXPORT bool CopyTransformationMatrix(const double* positionMatrix)
+EXPORT bool CopyTransformationMatrix(const float* positionMatrix)
 {
     cudaError_t cudaStatus = InitializeTransformMatrix(positionMatrix);
     return cudaStatus == cudaSuccess;
 }
 
-EXPORT bool VerifyTransformationMatrix(double* output)
+EXPORT bool VerifyTransformationMatrix(float* output)
 {
     cudaError_t cudaStatus = VerifyTransformMatrix(output);
     return cudaStatus == cudaSuccess;
 }
 
-int TraceRayC(double startDistance, double increment, double smoothness, double surfaceThickness,
-    double XFactor, double YFactor, double ZFactor, float bailout,
-    int externalPoints[], float modulusValues[], float angles[], double distances[],
-    int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
+int TraceRayC(float startDistance, float increment, float smoothness, float surfaceThickness,
+    float XFactor, float YFactor, float ZFactor, float bailout,
+    int externalPoints[], float modulusValues[], float angles[], float distances[],
+    int rayPoints, int maxSamples, float boundaryInterval, int binarySearchSteps,
     int activeIndex)
 {
     float	Modulus, Angle;
-    double	currentDistance = startDistance;
-    double	sampleDistance;
+    float	currentDistance = startDistance;
+    float	sampleDistance;
     int	recordedPoints = 0;
     int sampleCount = 0;
-    const double xFactor = XFactor;
-    const double yFactor = YFactor;
-    const double zFactor = ZFactor;
-    const vector5Double c = { 0,0,0,0,0 };							// 5D vector for ray point coordinates
+    const float xFactor = XFactor;
+    const float yFactor = YFactor;
+    const float zFactor = ZFactor;
+    const vector5Single c = { 0,0,0,0,0 };							// 5D vector for ray point coordinates
 
     // Determine orbit value for the starting point
     bool externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, bailout, xFactor, yFactor, zFactor, c);
@@ -113,7 +113,7 @@ int TraceRayC(double startDistance, double increment, double smoothness, double 
         {
             ///// Set value for external point /////
 
-            const double angleChange = fabs(Angle - angles[recordedPoints - 1]);
+            const float angleChange = fabs(Angle - angles[recordedPoints - 1]);
 
             // If orbit value is sufficiently different from the last recorded sample
             if (angleChange > boundaryInterval)
@@ -137,15 +137,15 @@ int TraceRayC(double startDistance, double increment, double smoothness, double 
     return recordedPoints + 1;
 }
 
-int TraceRayCuda(double XFactor, double YFactor, double ZFactor, int rayPoints,
-    int externalPoints[], float modulusValues[], float angles[], double distances[])
+int TraceRayCuda(float XFactor, float YFactor, float ZFactor, int rayPoints,
+    int externalPoints[], float modulusValues[], float angles[], float distances[])
 {
     // Allocate host memory if not already done
     // Note: In a real-world scenario, you might want to manage this memory externally for better performance
     int* h_externalPoints = externalPoints;
     float* h_modulusValues = modulusValues;
     float* h_angles = angles;
-    double* h_distances = distances;
+    float* h_distances = distances;
 
     // Call the CUDA kernel wrapper
     int recordedPoints = launchTraceRayKernel(
@@ -163,10 +163,10 @@ int TraceRayCuda(double XFactor, double YFactor, double ZFactor, int rayPoints,
 }
 
 // Produce the collection of fractal point values for the given vector
-EXPORT int __stdcall TraceRay(double startDistance, double increment, double smoothness, double surfaceThickness,
-    double XFactor, double YFactor, double ZFactor, float bailout,
-    int externalPoints[], float modulusValues[], float angles[], double distances[],
-    int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
+EXPORT int __stdcall TraceRay(float startDistance, float increment, float smoothness, float surfaceThickness,
+    float XFactor, float YFactor, float ZFactor, float bailout,
+    int externalPoints[], float modulusValues[], float angles[], float distances[],
+    int rayPoints, int maxSamples, float boundaryInterval, int binarySearchSteps,
     int activeIndex)
 {
     return TraceRayC(startDistance, increment, smoothness, surfaceThickness,
@@ -179,12 +179,12 @@ EXPORT int __stdcall TraceRay(double startDistance, double increment, double smo
     //    externalPoints, modulusValues, angles, distances);
 }
 
-EXPORT double __stdcall FindSurface(double increment, double smoothness, int binarySearchSteps, double currentDistance, double xFactor, double yFactor, double zFactor, float bailout)
+EXPORT float __stdcall FindSurface(float increment, float smoothness, int binarySearchSteps, float currentDistance, float xFactor, float yFactor, float zFactor, float bailout)
 {
-    double stepFactor = smoothness / 10;
-	double	stepSize = -increment * stepFactor;
-	double	sampleDistance = currentDistance;
-	const vector5Double c = {0,0,0,0,0};							// 5D vector for ray point coordinates
+    float stepFactor = smoothness / 10;
+	float	stepSize = -increment * stepFactor;
+	float	sampleDistance = currentDistance;
+	const vector5Single c = {0,0,0,0,0};							// 5D vector for ray point coordinates
 
 
     // Perform binary search between the current and previous points, to determine boundary position
@@ -208,13 +208,13 @@ EXPORT double __stdcall FindSurface(double increment, double smoothness, int bin
     return sampleDistance;
 }
 
-EXPORT double __stdcall FindBoundary(double increment, int binarySearchSteps, double currentDistance, float previousAngle,
-                                      double boundaryInterval, bool *externalPoint, float *Modulus, float *Angle, 
-                                      double xFactor, double yFactor, double zFactor, float bailout)
+EXPORT float __stdcall FindBoundary(float increment, int binarySearchSteps, float currentDistance, float previousAngle,
+                                      float boundaryInterval, bool *externalPoint, float *Modulus, float *Angle, 
+                                      float xFactor, float yFactor, float zFactor, float bailout)
 {
-	double stepSize = -increment / 2;
-	double sampleDistance = currentDistance;
-	const vector5Double c = {0,0,0,0,0};			// 5D vector for ray point coordinates
+	float stepSize = -increment / 2;
+	float sampleDistance = currentDistance;
+	const vector5Single c = {0,0,0,0,0};			// 5D vector for ray point coordinates
 
     // Perform binary search between the current and previous points, to determine boundary position
     for (int i = 0; i < binarySearchSteps; i++)
@@ -224,7 +224,7 @@ EXPORT double __stdcall FindBoundary(double increment, int binarySearchSteps, do
         // Take a sample at this point
         *externalPoint = SamplePoint(sampleDistance, Modulus, Angle, bailout, xFactor, yFactor, zFactor, c);
 
-		const double angleChange = fabs(*Angle - previousAngle);
+		const float angleChange = fabs(*Angle - previousAngle);
 
         // If this point is sufficiently different from the last recorded sample
         if (angleChange > boundaryInterval)
@@ -241,14 +241,14 @@ EXPORT double __stdcall FindBoundary(double increment, int binarySearchSteps, do
     return sampleDistance;
 }
 
-EXPORT std::array<double, 5> __stdcall ImageToFractalSpace (double distance, double xFactor, double yFactor, double zFactor)
+EXPORT std::array<float, 5> __stdcall ImageToFractalSpace (float distance, float xFactor, float yFactor, float zFactor)
 {
     // Determine the x,y,z coord for this point
-    const double XPos = distance * xFactor;
-    const double YPos = distance * yFactor;
-    const double ZPos = distance * zFactor;
+    const float XPos = distance * xFactor;
+    const float YPos = distance * yFactor;
+    const float ZPos = distance * zFactor;
 
-    vector5Double c = { 0,0,0,0,0 };
+    vector5Single c = { 0,0,0,0,0 };
 
     // Transform 3D point x,y,z into nD fractal space at point c[]
     VectorTrans(XPos, YPos, ZPos, &c);
@@ -257,12 +257,12 @@ EXPORT std::array<double, 5> __stdcall ImageToFractalSpace (double distance, dou
     return c.toArray();
 }
 
-bool SamplePoint(double distance, float* Modulus, float* Angle, float bailout, double xFactor, double yFactor, double zFactor, vector5Double c)
+bool SamplePoint(float distance, float* Modulus, float* Angle, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c)
 {
     // Determine the x,y,z coord for this point
-    const double XPos = distance * xFactor;
-    const double YPos = distance * yFactor;
-    const double ZPos = distance * zFactor;
+    const float XPos = distance * xFactor;
+    const float YPos = distance * yFactor;
+    const float ZPos = distance * zFactor;
 
     // Transform 3D point x,y,z into nD fractal space at point c[]
     VectorTrans(XPos, YPos, ZPos, &c);
@@ -273,12 +273,12 @@ bool SamplePoint(double distance, float* Modulus, float* Angle, float bailout, d
 
 // Transform 3D coordinates to 5D point c[] in fractal
 // Returns true if point is external to the set
-EXPORT bool __stdcall SamplePoint(double distance, float bailout, double xFactor, double yFactor, double zFactor, vector5Double c)
+EXPORT bool __stdcall SamplePoint(float distance, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c)
 {
   // Determine the x,y,z coord for this point
-  const double XPos = distance * xFactor;
-  const double YPos = distance * yFactor;
-  const double ZPos = distance * zFactor;
+  const float XPos = distance * xFactor;
+  const float YPos = distance * yFactor;
+  const float ZPos = distance * zFactor;
 
   // Transform 3D point x,y,z into nD fractal space at point c[]
   VectorTrans(XPos, YPos, ZPos, &c);
@@ -298,13 +298,13 @@ void checkCudaErrors(cudaError_t err) {
 
 // Determine whether nD point c[] in within the set
 // Returns true if point is external to the set
-bool ExternalPoint(vector5Double c, float bailout)
+bool ExternalPoint(vector5Single c, float bailout)
 {
     const long MaxCount = (long)(MAX_COLOURS);		        // Iteration count for external points
-	vector5Double z;										// Temporary 5-D vector
-	vector5Double diff;										// Temporary 5-D vector for orbit size
-	double ModulusTotal = 0;
-	double ModVal = 0;
+	vector5Single z;										// Temporary 5-D vector
+	vector5Single diff;										// Temporary 5-D vector for orbit size
+	float ModulusTotal = 0;
+	float ModVal = 0;
 	long count;
 
     z.coords[DimTotal - 2] = 0;
@@ -337,24 +337,24 @@ bool ExternalPoint(vector5Double c, float bailout)
 
 // Determine orbital modulus at nD point c[] in fractal
 // Returns true if point is external to the set
-bool  ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Double c)
+bool  ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Single c)
 {
-    double const PI = 3.1415926536;
-    double const PI_OVER_2 = PI/2;
+    float const PI = 3.1415926536f;
+    float const PI_OVER_2 = PI/2;
 
 	const long MaxCount = (long)(100);		// Iteration count for external points
-	vector5Double	z;						// Temporary 5-D vector
-	vector5Double diff;						// Temporary 5-D vector for orbit size
-	double ModulusTotal = 0;
-	double ModVal = 0;
-	double AngleTotal = PI;		// Angle for first two vectors is 180 degrees
+	vector5Single	z;						// Temporary 5-D vector
+	vector5Single diff;						// Temporary 5-D vector for orbit size
+	float ModulusTotal = 0;
+	float ModVal = 0;
+	float AngleTotal = PI;		// Angle for first two vectors is 180 degrees
 	long count;
 
     z.coords[DimTotal - 2] = 0;
     z.coords[DimTotal - 1] = 0;
 
     v_mov(c.coords, z.coords);             // z = c
-    vector5Double vectorSet[3];            // Collection of the three most recent vectors for determining the angle between them
+    vector5Single vectorSet[3];            // Collection of the three most recent vectors for determining the angle between them
     v_mov(z.coords, vectorSet[1].coords);  // Store the first point in the vector set
 
     for (count = 0; count < MaxCount; count++)
@@ -396,9 +396,9 @@ bool  ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Double c)
     return (count < MaxCount);
 }
 
-bool gapFound(double currentDistance, double surfaceThickness, double xFactor, double yFactor, double zFactor, float bailout, vector5Double c)
+bool gapFound(float currentDistance, float surfaceThickness, float xFactor, float yFactor, float zFactor, float bailout, vector5Single c)
 {
-    double testDistance;
+    float testDistance;
 
     for (int factor = 1; factor <= 4; factor++)
     {
@@ -412,7 +412,7 @@ bool gapFound(double currentDistance, double surfaceThickness, double xFactor, d
     return false;
 }
 
-void VectorTrans(double x, double y, double z, vector5Double *c)
+void VectorTrans(float x, float y, float z, vector5Single *c)
 {
     for (int i = 0; i < DimTotal; i++)
     {
@@ -423,7 +423,7 @@ void VectorTrans(double x, double y, double z, vector5Double *c)
     }
 }
 
-//vertex VertexTrans(double x, double y, double z)
+//vertex VertexTrans(float x, float y, float z)
 //{
 //    vertex v;
 //

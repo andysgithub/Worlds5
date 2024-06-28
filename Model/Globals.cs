@@ -19,11 +19,11 @@ namespace Model
 
     public struct Vector3
     {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Z { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Z { get; set; }
 
-        public Vector3(double x, double y, double z)
+        public Vector3(float x, float y, float z)
         {
             X = x;
             Y = y;
@@ -35,13 +35,13 @@ namespace Model
             return new Vector3(v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z);
         }
 
-        public static Vector3 operator *(double scalar, Vector3 v)
+        public static Vector3 operator *(float scalar, Vector3 v)
         {
             return new Vector3(scalar * v.X, scalar * v.Y, scalar * v.Z);
         }
         public Vector3 Normalize()
         {
-            double magnitude = Math.Sqrt(X * X + Y * Y + Z * Z);
+            float magnitude = (float)Math.Sqrt(X * X + Y * Y + Z * Z);
             if (magnitude > 0)
             {
                 return new Vector3(X / magnitude, Y / magnitude, Z / magnitude);
@@ -52,13 +52,13 @@ namespace Model
 
     public struct Vector5
     {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Z { get; set; }
-        public double W { get; set; }
-        public double V { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Z { get; set; }
+        public float W { get; set; }
+        public float V { get; set; }
 
-        public Vector5(double x, double y, double z, double w, double v)
+        public Vector5(float x, float y, float z, float w, float v)
         {
             X = x;
             Y = y;
@@ -80,29 +80,29 @@ namespace Model
         }
 
         // Operator to multiply a 5D vector by a scalar value
-        public static Vector5 operator *(double scalar, Vector5 v)
+        public static Vector5 operator *(float scalar, Vector5 v)
         {
             return new Vector5(scalar * v.X, scalar * v.Y, scalar * v.Z, scalar * v.W, scalar * v.V);
         }
 
         // The dot product between two 5D vectors
-        public static double Dot(Vector5 v1, Vector5 v2)
+        public static float Dot(Vector5 v1, Vector5 v2)
         {
             return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z + v1.W * v2.W + v1.V * v2.V;
         }
 
         public Vector5 Normalize()
         {
-            double magnitude = Math.Sqrt(X * X + Y * Y + Z * Z + W * W + V * V);
+            float magnitude = (float)Math.Sqrt(X * X + Y * Y + Z * Z + W * W + V * V);
             if (magnitude > 0)
             {
                 return new Vector5(X / magnitude, Y / magnitude, Z / magnitude, W / magnitude, V / magnitude);
             }
             return this;
         }
-        public double Magnitude()
+        public float Magnitude()
         {
-            return Math.Sqrt(X * X + Y * Y + Z * Z + W * W + V * V);
+            return (float)Math.Sqrt(X * X + Y * Y + Z * Z + W * W + V * V);
         }
     }
 
@@ -115,7 +115,7 @@ namespace Model
 		public static int Dimensions = 5;	//  Total dimensions for the current location
         public static string CurrentAddress = "";
         public static clsSphere Sphere = null;
-        public const double DEG_TO_RAD = 0.0174532925;
+        public const float DEG_TO_RAD = 0.0174532925f;
 
         public struct PixelData
         {
@@ -141,18 +141,18 @@ namespace Model
 
         //public struct vertex
         //{
-        //    public double X;
-        //    public double Y;
-        //    public double Z;
+        //    public float X;
+        //    public float Y;
+        //    public float Z;
         //}
         
 	}
 
     //public class ImagePlane
     //{
-    //    public double Left, Right, Top, Bottom, Width, Height;
+    //    public float Left, Right, Top, Bottom, Width, Height;
 
-    //    public ImagePlane(double Left, double Top, double Width, double Height)
+    //    public ImagePlane(float Left, float Top, float Width, float Height)
     //    {
     //        this.Left = Left;
     //        this.Top = Top;

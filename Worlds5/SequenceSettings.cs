@@ -32,16 +32,16 @@ namespace Worlds5
             this.Close();
         }
 
-        public double[] CentreCoords
+        public float[] CentreCoords
         {
             get
             {
-                double[] coords = new double[5];
-                coords[0] = Double.Parse(txtCoord1.Text);
-                coords[1] = Double.Parse(txtCoord2.Text);
-                coords[2] = Double.Parse(txtCoord3.Text);
-                coords[3] = Double.Parse(txtCoord4.Text);
-                coords[4] = Double.Parse(txtCoord5.Text);
+                float[] coords = new float[5];
+                coords[0] = Single.Parse(txtCoord1.Text);
+                coords[1] = Single.Parse(txtCoord2.Text);
+                coords[2] = Single.Parse(txtCoord3.Text);
+                coords[3] = Single.Parse(txtCoord4.Text);
+                coords[4] = Single.Parse(txtCoord5.Text);
                 return coords;
             }
         }
@@ -51,36 +51,36 @@ namespace Worlds5
             get { return txtBaseName.Text; }
         }
 
-        public double[,] Angles
+        public float[,] Angles
         {
             get
             {
                 // Factor to convert total degrees into radians per frame
-                double factor = Globals.DEG_TO_RAD / Stages;
-                double[,] angles = new double[5, 6];
+                float factor = Globals.DEG_TO_RAD / Stages;
+                float[,] angles = new float[5, 6];
 
-                angles[1, 2] = Double.Parse(txtDegrees12.Text) * factor;
-                angles[1, 3] = Double.Parse(txtDegrees13.Text) * factor;
-                angles[1, 4] = Double.Parse(txtDegrees14.Text) * factor;
-                angles[1, 5] = Double.Parse(txtDegrees15.Text) * factor;
-                angles[2, 3] = Double.Parse(txtDegrees23.Text) * factor;
-                angles[2, 4] = Double.Parse(txtDegrees24.Text) * factor;
-                angles[2, 5] = Double.Parse(txtDegrees25.Text) * factor;
-                angles[3, 4] = Double.Parse(txtDegrees34.Text) * factor;
-                angles[3, 5] = Double.Parse(txtDegrees35.Text) * factor;
-                angles[4, 5] = Double.Parse(txtDegrees45.Text) * factor;
+                angles[1, 2] = Single.Parse(txtDegrees12.Text) * factor;
+                angles[1, 3] = Single.Parse(txtDegrees13.Text) * factor;
+                angles[1, 4] = Single.Parse(txtDegrees14.Text) * factor;
+                angles[1, 5] = Single.Parse(txtDegrees15.Text) * factor;
+                angles[2, 3] = Single.Parse(txtDegrees23.Text) * factor;
+                angles[2, 4] = Single.Parse(txtDegrees24.Text) * factor;
+                angles[2, 5] = Single.Parse(txtDegrees25.Text) * factor;
+                angles[3, 4] = Single.Parse(txtDegrees34.Text) * factor;
+                angles[3, 5] = Single.Parse(txtDegrees35.Text) * factor;
+                angles[4, 5] = Single.Parse(txtDegrees45.Text) * factor;
 
                 return angles;
             }
         }
 
-        public double[] SphereRadius
+        public float[] SphereRadius
         {
             get
             {
-                double[] radius = new double[2];
-                radius[0] = (double)updRadiusStart.Value;
-                radius[1] = (double)updRadiusEnd.Value;
+                float[] radius = new float[2];
+                radius[0] = (float)updRadiusStart.Value;
+                radius[1] = (float)updRadiusEnd.Value;
                 return radius;
             }
         }

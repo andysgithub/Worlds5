@@ -19,14 +19,14 @@ namespace Worlds5
         /// <param name="longRadians"></param> The longitude in radians of the point on the sphere to trace through
         /// <param name="axes"></param> The selected axis pair for the clipping plane
         /// <param name="offset"></param> The offset for the clipping plane in the remaining axes
-        /// <returns>The distance value as a double-precision float</returns>
-        public static double CalculateDistance(double latRadians, double longRadians, AxisPair axisPair, double offset)
+        /// <returns>The distance value as a float-precision float</returns>
+        public static float CalculateDistance(float latRadians, float longRadians, AxisPair axisPair, float offset)
         {
             // Convert latitude and longitude to a unit direction vector in 3D space
             Vector3 direction3D = new Vector3(
-                Math.Cos(latRadians) * Math.Sin(longRadians),
-                Math.Sin(latRadians),
-                Math.Cos(latRadians) * Math.Cos(longRadians)
+                (float)(float)Math.Cos(latRadians) * (float)Math.Sin(longRadians),
+                (float)Math.Sin(latRadians),
+                (float)(float)Math.Cos(latRadians) * (float)(float)Math.Cos(longRadians)
             );
 
             // Get the 5D coordinates in the fractal space for the sphere centre
@@ -36,16 +36,16 @@ namespace Worlds5
             Vector5 direction5D = Transformation.ImageToFractalSpace(5, direction3D);
 
             // Determine the intersection parameter t based on the selected axis pair
-            double t = getIntersection(axisPair, offset, viewpoint5D, direction5D);
+            float t = getIntersection(axisPair, offset, viewpoint5D, direction5D);
 
-            double distance = Math.Abs(t * direction5D.Magnitude());
+            float distance = Math.Abs(t * direction5D.Magnitude());
 
             return distance;
         }
 
-        private static double getIntersection(AxisPair axisPair, double offset, Vector5 viewpoint, Vector5 direction)
+        private static float getIntersection(AxisPair axisPair, float offset, Vector5 viewpoint, Vector5 direction)
         {
-            double t = 0;
+            float t = 0;
 
             switch (axisPair)
             {

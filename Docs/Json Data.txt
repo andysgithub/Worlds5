@@ -1,25 +1,25 @@
 {
     "Sphere": {
         "Navigation": {
-            "PositionMatrix": double[6,5]
+            "PositionMatrix": float[6,5]
         }
 
         "Viewing": {
-            "Radius": double
-            "CentreLatitude": double
-            "CentreLongitude": double
-            "VerticalView": double
-            "HorizontalView": double
-            "AngularResolution": double
+            "Radius": float
+            "CentreLatitude": float
+            "CentreLongitude": float
+            "VerticalView": float
+            "HorizontalView": float
+            "AngularResolution": float
         }
 
         "Raytracing": {
 			"Bailout": float
-            "SamplingInterval": double
+            "SamplingInterval": float
             "MaxSamples": int
-            "BoundaryInterval": double
+            "BoundaryInterval": float
             "BinarySearchSteps": int
-            "SurfaceThickness": double
+            "SurfaceThickness": float
             "ShowSurface": bool
             "ShowVolume": bool
         }
@@ -29,8 +29,8 @@
             "Saturation": float
             "SurfaceContrast": float
             "LightingAngle": float
-            "StartDistance": double
-            "EndDistance": double  
+            "StartDistance": float
+            "EndDistance": float  
         }
     }
 
@@ -38,7 +38,7 @@
         "externalPoints": List<int>
         "modulusValues": List<float>
         "angleValues": List<float>
-        "distanceValues": List<double>
+        "distanceValues": List<float>
         "xTiltValues": List<float>
         "yTiltValues": List<float>
     }
@@ -49,7 +49,7 @@
             "Dimensions": int
         }
 
-        "PositionMatrix": double[6,5]
+        "PositionMatrix": float[6,5]
 		"RayMap": TracedRay[,]
         "Boundary": ImageSettings
         "Volume": ImageSettings

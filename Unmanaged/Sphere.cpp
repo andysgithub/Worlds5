@@ -3,7 +3,7 @@
 #include "unmanaged.h"
 #include "declares.h"
 
-double  m_Trans[6][6],
+float  m_Trans[6][6],
         m_Resolution,       // Angular resolution of the sphere surface (degrees)
         m_Radius,           // Distance from centre to first ray tracing point
         m_Latitude,         // Latitude of the viewing centre (degrees)
@@ -12,10 +12,10 @@ double  m_Trans[6][6],
         m_horizontalView;   // Horizontal field of view (degrees)
 
 // Transformed reference points
-double leftEdge;            // Left edge of the viewing window as seen from the sphere centre
-double rightEdge;           // Right edge of the viewing window
-double topEdge;             // Top edge of the viewing window
-double bottomEdge;          // Bottom edge of the viewing window
+float leftEdge;            // Left edge of the viewing window as seen from the sphere centre
+float rightEdge;           // Right edge of the viewing window
+float topEdge;             // Top edge of the viewing window
+float bottomEdge;          // Bottom edge of the viewing window
 
 float   m_Offset0, m_Offset1,
         m_Bailout;
@@ -28,10 +28,10 @@ bool APIENTRY DllMain( HMODULE hModule,
 }
 
 EXPORT void __stdcall InitSphere(
-    float fBailout, double dResolution,
-    double dLatitude, double dLongitude, 
-    double sphereRadius, double verticalView, double horizontalView, 
-    double *pTransMatrix)
+    float fBailout, float dResolution,
+    float dLatitude, float dLongitude, 
+    float sphereRadius, float verticalView, float horizontalView, 
+    float *pTransMatrix)
 {
     m_Bailout        = fBailout*fBailout;
     m_Resolution     = dResolution;

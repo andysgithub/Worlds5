@@ -310,14 +310,14 @@ namespace Worlds5
         private Globals.BitmapSizeType getBitmapSize()
         {
             clsSphere sphere = Model.Globals.Sphere;
-            double sphereResolution = sphere.settings.AngularResolution * Globals.DEG_TO_RAD / 2;
-            double stepSize = Math.Sin(sphereResolution);
+            float sphereResolution = sphere.settings.AngularResolution * Globals.DEG_TO_RAD / 2;
+            float stepSize = (float)Math.Sin(sphereResolution);
 
-            double verticalView = sphere.settings.VerticalView * Globals.DEG_TO_RAD / 2;
-            double maxVertical = Math.Sin(verticalView);
+            float verticalView = sphere.settings.VerticalView * Globals.DEG_TO_RAD / 2;
+            float maxVertical = (float)Math.Sin(verticalView);
 
-            double horizontalView = sphere.settings.HorizontalView * Globals.DEG_TO_RAD / 2;
-            double maxHorizontal = Math.Sin(horizontalView);
+            float horizontalView = sphere.settings.HorizontalView * Globals.DEG_TO_RAD / 2;
+            float maxHorizontal = (float)Math.Sin(horizontalView);
 
             Globals.BitmapSize.Height = (int)(maxVertical / stepSize);
             Globals.BitmapSize.Width = (int)(maxHorizontal / stepSize);
@@ -328,11 +328,11 @@ namespace Worlds5
         private int getBitmapWidth()
         {
             clsSphere sphere = Model.Globals.Sphere;
-            double sphereResolution = sphere.settings.AngularResolution * Globals.DEG_TO_RAD / 2;
-            double stepSize = Math.Sin(sphereResolution);
+            float sphereResolution = sphere.settings.AngularResolution * Globals.DEG_TO_RAD / 2;
+            float stepSize = (float)Math.Sin(sphereResolution);
 
-            double horizontalView = sphere.settings.HorizontalView * Globals.DEG_TO_RAD / 2;
-            double maxHorizontal = Math.Sin(horizontalView);
+            float horizontalView = sphere.settings.HorizontalView * Globals.DEG_TO_RAD / 2;
+            float maxHorizontal = (float)Math.Sin(horizontalView);
 
             return (int)(maxHorizontal / stepSize);
         }
@@ -364,7 +364,7 @@ namespace Worlds5
             if (result == DialogResult.OK)
             {
                 // Retrieve centre point coords
-                double[] centreCoords = form.CentreCoords;
+                float[] centreCoords = form.CentreCoords;
 
                 // Record directory and base path for the sequence files
                 string sequenceDirectory = Path.Combine(Globals.SetUp.SeqPath, form.BaseName);
@@ -373,10 +373,10 @@ namespace Worlds5
                 string basePath = Path.Combine(sequenceDirectory, form.BaseName);
 
                 // Determine the number of radians to turn per frame
-                double[,] angles = form.Angles;
+                float[,] angles = form.Angles;
 
                 // Retrieve the start and end sphere radius
-                double[] sphereRadius = form.SphereRadius;
+                float[] sphereRadius = form.SphereRadius;
 
                 // Retrieve the total frames
                 int totalFrames = form.Stages;
