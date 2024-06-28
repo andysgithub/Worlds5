@@ -323,8 +323,8 @@ bool ExternalPoint(vector5Double c, float bailout)
         // Accumulate modulus value
         ModulusTotal += ModVal;
 
-        //    Stop accumulating values when modulus exceeds bailout value
-        if (ModVal > bailout)
+        // Stop accumulating values when modulus exceeds bailout value
+        if (ModVal > bailout * bailout)
         {
             count++;
             break;
@@ -337,13 +337,13 @@ bool ExternalPoint(vector5Double c, float bailout)
 
 // Determine orbital modulus at nD point c[] in fractal
 // Returns true if point is external to the set
-bool  ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Double c)
+bool ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Double c)
 {
     double const PI = 3.1415926536;
     double const PI_OVER_2 = PI/2;
 
 	const long MaxCount = (long)(100);		// Iteration count for external points
-	vector5Double	z;						// Temporary 5-D vector
+	vector5Double z;						// Temporary 5-D vector
 	vector5Double diff;						// Temporary 5-D vector for orbit size
 	double ModulusTotal = 0;
 	double ModVal = 0;
@@ -377,7 +377,7 @@ bool  ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Double c)
         ModulusTotal += ModVal;
 
         // Stop accumulating values when modulus exceeds bailout value
-        if (ModVal > bailout)
+        if (ModVal > bailout * bailout)
         {
             count++;
             break;
