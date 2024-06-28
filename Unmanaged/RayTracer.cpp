@@ -324,7 +324,7 @@ bool ExternalPoint(vector5Single c, float bailout)
         ModulusTotal += ModVal;
 
         //    Stop accumulating values when modulus exceeds bailout value
-        if (ModVal > bailout)
+        if (ModVal > bailout * bailout)
         {
             count++;
             break;
@@ -377,7 +377,7 @@ bool  ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Single c)
         ModulusTotal += ModVal;
 
         // Stop accumulating values when modulus exceeds bailout value
-        if (ModVal > bailout)
+        if (ModVal > bailout * bailout)
         {
             count++;
             break;

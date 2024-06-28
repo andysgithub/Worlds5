@@ -108,7 +108,7 @@ __device__ bool ExternalPoint2(vector5Single c, float bailout)
         ModulusTotal += ModVal;
 
         //    Stop accumulating values when modulus exceeds bailout value
-        if (ModVal > bailout)
+        if (ModVal > bailout * bailout)
         {
             count++;
             break;
@@ -150,7 +150,7 @@ __device__ bool ProcessPoint2(float* Modulus, float* Angle, float bailout, vecto
 
         ModulusTotal += ModVal;
 
-        if (ModVal > bailout) {
+        if (ModVal > bailout * bailout) {
             count++;
             break;
         }
