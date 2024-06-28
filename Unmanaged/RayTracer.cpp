@@ -12,7 +12,7 @@
 #include "kernel.cuh"
 #include "cuda_interface.h"
 
-const BYTE MAX_COLOURS = 1000;
+const BYTE MAX_COLOURS = 255;
 
 
 // Error checking macro
