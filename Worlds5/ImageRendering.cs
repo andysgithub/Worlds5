@@ -200,7 +200,7 @@ namespace Worlds5
             rayParams.boundaryInterval = sphere.settings.BoundaryInterval;
             rayParams.binarySearchSteps = sphere.settings.BinarySearchSteps[sphere.settings.ActiveIndex];
             rayParams.activeIndex = sphere.settings.ActiveIndex;
-/*
+
             bool success = InitializeGPU(ref rayParams);
             if (!success)
             {
@@ -224,7 +224,7 @@ namespace Worlds5
             catch (Exception ex)
             {
                 Console.WriteLine($"Error verifying matrix: {ex.Message}");
-            }*/
+            }
         }
 
         public static bool CopyMatrix(float[,] positionMatrix)
