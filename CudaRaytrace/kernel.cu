@@ -107,7 +107,7 @@ __device__ bool ExternalPoint2(vector5Single c, float bailout)
         // Accumulate modulus value
         ModulusTotal += ModVal;
 
-        //    Stop accumulating values when modulus exceeds bailout value
+        // Stop accumulating values when modulus exceeds bailout value
         if (ModVal > bailout * bailout)
         {
             count++;
@@ -122,7 +122,7 @@ __device__ bool ExternalPoint2(vector5Single c, float bailout)
 __device__ bool ProcessPoint2(float* Modulus, float* Angle, float bailout, vector5Single c) {
     float const PI = 3.1415926536;
 
-    const long MaxCount = 1000;
+    const long MaxCount = (long)100;
     vector5Single z;
     vector5Single diff;
     float ModulusTotal = 0;
@@ -130,8 +130,8 @@ __device__ bool ProcessPoint2(float* Modulus, float* Angle, float bailout, vecto
     float AngleTotal = PI;
     long count;
 
-    z.coords[3] = 0;
-    z.coords[4] = 0;
+    z.coords[DimTotal - 2] = 0;
+    z.coords[DimTotal - 1] = 0;
 
     v_mov(c.coords, z.coords);
     vector5Single vectorSet[3];
@@ -161,6 +161,7 @@ __device__ bool ProcessPoint2(float* Modulus, float* Angle, float bailout, vecto
 
     *Modulus = (float)(ModulusTotal / count);
     *Angle = (float)(AngleTotal / (count > 10 ? 10 : count + 1));
+
     return (count < MaxCount);
 }
 
@@ -249,9 +250,6 @@ __global__ void TraceRayKernel(
     float xFactor, float yFactor, float zFactor,
     int* externalPoints, float* modulusValues, float* angles, float* distances, int* recordedPointsOut) {
 
-    int idx = threadIdx.x + blockIdx.x * blockDim.x;
-    if (idx >= d_params.rayPoints) return;
-
     float Modulus, Angle;
     float currentDistance = d_params.startDistance;
     float sampleDistance;
@@ -263,10 +261,10 @@ __global__ void TraceRayKernel(
     bool externalPoint = SamplePoint2(currentDistance, &Modulus, &Angle, d_params.bailout, xFactor, yFactor, zFactor, c);
 
     // Record this point as the first sample
-    externalPoints[idx] = externalPoint ? 1 : 0;
-    modulusValues[idx] = Modulus;
-    angles[idx] = Angle;
-    distances[idx] = currentDistance;
+    externalPoints[recordedPoints] = externalPoint ? 1 : 0;
+    modulusValues[recordedPoints] = Modulus;
+    angles[recordedPoints] = Angle;
+    distances[recordedPoints] = currentDistance;
     recordedPoints++;
 
     // Begin loop
@@ -277,6 +275,8 @@ __global__ void TraceRayKernel(
 
         // Determine orbit properties for this point
         externalPoint = SamplePoint2(currentDistance, &Modulus, &Angle, d_params.bailout, xFactor, yFactor, zFactor, c);
+
+        //printf("surface point: %s\n", (!externalPoint && externalPoints[recordedPoints - 1] == 1) ? "true" : "false");
 
         // If this is an internal point and previous point is external
         if (d_params.activeIndex == 0 && !externalPoint && externalPoints[recordedPoints - 1] == 1) {
@@ -324,17 +324,14 @@ __global__ void TraceRayKernel(
     }
 
     distances[recordedPoints] = CUDART_INF;
-
-    if (threadIdx.x == 0 && blockIdx.x == 0) {
-        *recordedPointsOut = recordedPoints + 1;
-    }
+    *recordedPointsOut = recordedPoints + 1;
 }
 
 // Host function to initialize the GPU with constant parameters
 extern "C" cudaError_t InitializeGPUKernel(const RayTracingParams* params)
 {
     // Copy the parameters to the device's constant memory
-    //return cudaMemcpyToSymbol((const void*)&d_params, (const void*)params, sizeof(RayTracingParams));
+    return cudaMemcpyToSymbol((const void*)&d_params, (const void*)params, sizeof(RayTracingParams));
 
     void* d_addr;
     cudaError_t error;
@@ -395,11 +392,8 @@ extern "C" int launchTraceRayKernel(float XFactor, float YFactor, float ZFactor,
     cudaMalloc(&d_distances, rayPoints * sizeof(float));
     cudaMalloc(&d_recordedPointsOut, sizeof(int));
 
-    int blockSize = 256;
-    int numBlocks = (rayPoints + blockSize - 1) / blockSize;
-
     // Launch kernel
-    TraceRayKernel<<<numBlocks, blockSize>>>(XFactor, YFactor, ZFactor,
+    TraceRayKernel<<<1, 1>>>(XFactor, YFactor, ZFactor,
         d_externalPoints, d_modulusValues, d_angles, d_distances, d_recordedPointsOut);
 
     // Copy results back to host

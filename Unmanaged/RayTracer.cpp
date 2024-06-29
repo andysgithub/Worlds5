@@ -47,7 +47,7 @@ EXPORT bool VerifyTransformationMatrix(float* output)
 }
 
 int TraceRayC(float startDistance, float increment, float smoothness, float surfaceThickness,
-    float XFactor, float YFactor, float ZFactor, float bailout,
+    float xFactor, float yFactor, float zFactor, float bailout,
     int externalPoints[], float modulusValues[], float angles[], float distances[],
     int rayPoints, int maxSamples, float boundaryInterval, int binarySearchSteps,
     int activeIndex)
@@ -57,15 +57,10 @@ int TraceRayC(float startDistance, float increment, float smoothness, float surf
     float	sampleDistance;
     int	recordedPoints = 0;
     int sampleCount = 0;
-    const float xFactor = XFactor;
-    const float yFactor = YFactor;
-    const float zFactor = ZFactor;
-    const vector5Single c = { 0,0,0,0,0 };							// 5D vector for ray point coordinates
+    const vector5Single c = { 0, 0, 0, 0, 0 };							// 5D vector for ray point coordinates
 
     // Determine orbit value for the starting point
     bool externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, bailout, xFactor, yFactor, zFactor, c);
-
-    //printf("externalPoint: %d\n", externalPoint);
 
     // Record this point as the first sample
     externalPoints[recordedPoints] = externalPoint;
@@ -83,6 +78,8 @@ int TraceRayC(float startDistance, float increment, float smoothness, float surf
 
         // Determine orbit properties for this point
         externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, bailout, xFactor, yFactor, zFactor, c);
+
+        //printf("surface point: %s\n", (activeIndex == 0 && !externalPoint && externalPoints[recordedPoints - 1] == 1) ? "true" : "false");
 
         // If this is an internal point and previous point is external
         if (activeIndex == 0 && !externalPoint && externalPoints[recordedPoints - 1] == 1)
@@ -340,7 +337,6 @@ bool ExternalPoint(vector5Single c, float bailout)
 bool  ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Single c)
 {
     float const PI = 3.1415926536f;
-    float const PI_OVER_2 = PI/2;
 
 	const long MaxCount = (long)(100);		// Iteration count for external points
 	vector5Single	z;						// Temporary 5-D vector
@@ -392,6 +388,7 @@ bool  ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Single c)
     *Modulus = (float)(ModulusTotal / count);
     // Calculate the average angle over the orbit
     *Angle = (float)(AngleTotal / (count > 10 ? 10 : count + 1));
+
     // Return true if this point is external to the set
     return (count < MaxCount);
 }

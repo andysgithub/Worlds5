@@ -41,7 +41,7 @@ namespace Worlds5
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool CopyTransformationMatrix([In] float[] positionMatrix);
 
-        [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
+        //[DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool VerifyTransformationMatrix([Out] float[] output);
 
         //[DllImport("Unmanaged.dll")]
@@ -102,7 +102,7 @@ namespace Worlds5
             Array.Resize(ref angleValues, points);
             Array.Resize(ref distanceValues, points);
 
-            Console.Write("modulusValues: {0}\n", JsonConvert.SerializeObject(modulusValues, Formatting.Indented));
+            //Console.Write("modulusValues: {0}\n", JsonConvert.SerializeObject(modulusValues, Formatting.Indented));
 
             // Record the fractal value collection for this ray 
             TracedRay tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);
@@ -213,18 +213,16 @@ namespace Worlds5
                 Console.WriteLine("Failed to set transform matrix");
             }
 
-            // Verify the matrix
+/*            // Verify the matrix
             try
             {
                 float[,] verifiedMatrix = VerifyMatrix();
-
-                Console.WriteLine("Verify matrix");
                 // TODO: Compare verifiedMatrix with positionMatrix to ensure they match
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error verifying matrix: {ex.Message}");
-            }
+            }*/
         }
 
         public static bool CopyMatrix(float[,] positionMatrix)
@@ -240,6 +238,8 @@ namespace Worlds5
                     flatMatrix[i * cols + j] = positionMatrix[i, j];
                 }
             }
+
+            Console.WriteLine("CopyMatrix");
 
             return CopyTransformationMatrix(flatMatrix);
         }
