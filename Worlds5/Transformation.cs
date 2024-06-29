@@ -16,13 +16,10 @@ namespace Worlds5
         /// </summary>
         public static void ManipInit()
         {
-            int row, col;
-
-            for (row = 0; row <= DimTotal; ++row)
+            for (int row = 0; row <= DimTotal; ++row)
             {
-                for (col = 0; col <= DimTotal; ++col)
+                for (int col = 0; col <= DimTotal; ++col)
                 {
-                    manip[row, col] = 0;
                     manip[row, col] = 0;
                 }
                 manip[row, row] = 1;
@@ -72,20 +69,18 @@ namespace Worlds5
         {
             float[,] temp = new float[6, 6];
 
-            for (int row = 0; row < DimTotal; row++)
+            for (int row = 0; row <= DimTotal; row++)
             {
                 for (int col = 0; col < DimTotal; ++col)
                 {
-                    temp[row, col] = 0;
-
                     for (int count = 0; count < DimTotal; count++)
                     {
-                        temp[row, col] += manip[row, count] * sphereSettings.PositionMatrix[count, col];
+                        temp[row, col] += sphereSettings.PositionMatrix[row, count] * manip[count, col];
                     }
                 }
             }
 
-            for (int row = 0; row < DimTotal; row++)
+            for (int row = 0; row <= DimTotal; row++)
             {
                 for (int col = 0; col < DimTotal; col++)
                 {
@@ -97,16 +92,16 @@ namespace Worlds5
         // Matrix pre-multiply for translations
         public static void PreMulT()
         {
-            for (int col = 0; col < DimTotal; col++)
+            for (int row = 0; row < DimTotal; row++)
             {
-                for (int row = 0; row < DimTotal; row++)
+                for (int col = 0; col < DimTotal; col++)
                 {
                     sphereSettings.PositionMatrix[DimTotal, col] += manip[DimTotal, row] * sphereSettings.PositionMatrix[row, col];
                 }
             }
         }
 
-        // Matrix post-multiply for translations
+/*        // Matrix post-multiply for translations
         public static void PostMulT()
         {
             for (int col = 0; col < DimTotal; col++)
@@ -116,9 +111,9 @@ namespace Worlds5
                     sphereSettings.PositionMatrix[DimTotal, col] += sphereSettings.PositionMatrix[DimTotal, row] * manip[row, col];
                 }
             }
-        }
+        }*/
 
-        //	Matrix post-multiply for rotations
+/*        //	Matrix post-multiply for rotations
         public static void PostMulR()
         {
             float[,] temp = new float[6, 6];
@@ -142,7 +137,7 @@ namespace Worlds5
                     sphereSettings.PositionMatrix[row, col] = temp[row, col];
                 }
             }
-        }
+        }*/
 
         public static float[,] GetPositionMatrix()
         {

@@ -3,8 +3,6 @@
 
 #include <cuda_runtime.h>
 
-#define DimTotal 5
-
 __device__ inline void v_mov(const float* a, float* b) {
     for (int i = 0; i < DimTotal; ++i) {
         b[i] = a[i];

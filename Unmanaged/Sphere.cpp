@@ -2,8 +2,9 @@
 #include <math.h>
 #include "unmanaged.h"
 #include "declares.h"
+#include "kernel.cuh"
 
-float  m_Trans[6][6],
+float  m_Trans[DimTotal+1][DimTotal],
         m_Resolution,       // Angular resolution of the sphere surface (degrees)
         m_Radius,           // Distance from centre to first ray tracing point
         m_Latitude,         // Latitude of the viewing centre (degrees)
@@ -46,11 +47,11 @@ EXPORT void __stdcall InitSphere(
   bottomEdge = -verticalView / 2;
 
   // Copy the supplied transformation matrix into this class
-    for (int iYCount = 0; iYCount < 6; iYCount++)
+    for (int row = 0; row <= DimTotal; row++)
     {
-        for (int iXCount = 0; iXCount < 5; iXCount++)
+        for (int col = 0; col < DimTotal; col++)
         {
-            m_Trans[iXCount][iYCount] = *(pTransMatrix + iXCount + iYCount * 5);
+            m_Trans[row][col] = *(pTransMatrix + row * DimTotal + col);
         }
     }
 }

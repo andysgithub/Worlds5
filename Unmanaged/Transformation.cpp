@@ -19,10 +19,7 @@
 #include <math.h>
 #include "unmanaged.h"
 
-#define trans(a,b) m_Trans[b][a]        // Macro to address transformation matrix
-
-float manip[MAX_DIM+1][MAX_DIM+1];     // Manipulation matrix for fractal generation
-int DimTotal = 5;
+float manip[DimTotal+1][DimTotal];     // Manipulation matrix for fractal generation
 
 /*******************************
         Module functions
@@ -30,95 +27,90 @@ int DimTotal = 5;
 
 void ManipInit()                         // Initialise manipulation matrix
 {
-    int row,col;
-
-    for (row=0; row<=MAX_DIM; ++row)
-    {
-        for (col=0; col<=MAX_DIM; ++col)
+    for (int row=0; row < DimTotal; ++row) {
+        for (int col = 0; col < DimTotal; ++col) {
             manip[row][col] = 0;
+        }
         manip[row][row] = 1;
+    }
+    for (int col = 0; col < DimTotal; ++col) {
+        manip[DimTotal][col] = 0;
     }
 }
 
 void TransInit()                        // Initialise transformation matrix
 {
-    int row,col;
-
-    for (row=0; row<=DimTotal; ++row)
+    for (int row = 0; row < DimTotal; ++row)
     {
-        for (col=0; col<=DimTotal; ++col)
-            trans(row,col) = 0;
-        trans(row,row) = 1;
+        for (int col = 0; col < DimTotal; ++col) {
+            m_Trans[row][col] = 0;
+        }
+        m_Trans[row][row] = 1;
+    }
+    for (int col = 0; col < DimTotal; ++col) {
+        m_Trans[DimTotal][col] = 0;
     }
 }
 
 void PostMul()                          // Matrix post-multiply (general)
 {
-    int row,col,count;
-    float temp[MAX_DIM+1][MAX_DIM+1];
+    float result[6][5] = { 0 };
 
-    for (row=0;row<=DimTotal;++row)
-    {
-        for (col=0;col<=DimTotal;++col)
-        {
-            temp[row][col]=0;
-            for (count=0;count<=DimTotal;++count)
-                temp[row][col] += trans(row,count)*manip[count][col];
+    for (int i = 0; i < 6; i++) {
+        for (int j = 0; j < 5; j++) {
+            for (int k = 0; k < 5; k++) {
+                result[i][j] += m_Trans[i][k] * manip[k][j];
+            }
         }
     }
-    for (row=0;row<=DimTotal;++row)
-    {
-        for (col=0;col<=DimTotal;++col)
-            trans(row,col) = temp[row][col];
+
+    // Copy the result back to m_Trans
+    for (int i = 0; i < 6; i++) {
+        for (int j = 0; j < 5; j++) {
+            m_Trans[i][j] = result[i][j];
+        }
     }
 }
 
 void PostMulS(float Scale)            // Matrix post-multiply for scalings
 {
-    int row,col;
-
-    for (row=0;row<DimTotal;++row)
-    {
-        for (col=0;col<DimTotal;++col)
-            trans(row,col) *= Scale;
+    for (int row = 0; row < DimTotal; ++row) {
+        for (int col = 0; col < DimTotal; ++col) {
+            m_Trans[row][col] *= Scale;
+        }
     }
 }
 
 void PreMulR()                        // Matrix pre-multiply for rotations
 {
-    int row,col,count;
-    float temp[MAX_DIM+1][MAX_DIM+1];
+    float temp[DimTotal][DimTotal - 1] = { 0 };
 
-    for (row=0;row<DimTotal;++row)
-    {
-        for (col=0;col<DimTotal;++col)
-        {
-            temp[row][col]=0;
-            for (count=0;count<DimTotal;++count)
-                temp[row][col] += manip[row][count]*trans(count,col);
+    for (int row = 0; row <= DimTotal; row++) {
+        for (int col=0; col < DimTotal; col++) {
+            for (int count = 0; count < DimTotal; count++) {
+                temp[row][col] += m_Trans[row][count] * manip[count][col];
+            }
         }
     }
-    for (row=0;row<DimTotal;++row)
-    {
-        for (col=0;col<DimTotal;++col)
-            trans(row,col) = temp[row][col];
+    for (int row = 0; row <= DimTotal; row++) {
+        for (int col = 0; col < DimTotal; col++) {
+            m_Trans[row][col] = temp[row][col];
+        }
     }
 }
 
 void PreMulT()                        // Matrix pre-multiply for translations
 {
-    int row,col;
-
-    for (col=0;col<DimTotal;++col)
-    {
-        for (row=0;row<DimTotal;++row)
-            trans(DimTotal,col) += manip[DimTotal][row] * trans(row,col);
+    for (int row = 0; row < DimTotal; row++) {
+        for (int col = 0; col < DimTotal; col++) {
+            m_Trans[DimTotal][col] += manip[DimTotal][row] * m_Trans[row][col];
+        }
     }
 }
 
 void SetRot(int Axis1,int Axis2,float Angle)
 {
-    int a,b;
+    int a, b;
 
     if (Axis1 < Axis2)
     {
@@ -131,8 +123,6 @@ void SetRot(int Axis1,int Axis2,float Angle)
         b = Axis1;
     }
 
-    //Angle = Angle/57.2957795131;
-
     manip[a][a] = static_cast<float>(cos(Angle));
     manip[b][b] = static_cast<float>(cos(Angle));
     manip[b][a] = static_cast<float>(sin(Angle));
@@ -143,32 +133,4 @@ void SetRot(int Axis1,int Axis2,float Angle)
         manip[b][a] = -manip[b][a];
         manip[a][b] = -manip[a][b];
     }
-}
-
-/*********************************************************************
-    Resize the transformation matrix to the new dimensions defined
-    by DimCount. This is only called if the matrices are made larger
-    than their current size.
- *********************************************************************/
-void Redimension(int DimCount, float Scale)
-{
-    int row,col;
-
-    // Copy the translation row to the new position
-    for (col = 0; col < DimTotal; col++)
-        trans(DimCount, col) = trans(DimTotal, col);
-
-    // Re-initialise the rows & columns
-    for (row = DimTotal; row < DimCount; row++)
-    {
-        for (col=0; col<=DimCount; col++)
-        {
-            trans(row, col) = 0;
-            trans(col, row) = 0;
-        }
-        trans(row, row) = Scale;
-    }
-
-    // Record the new dimension count as the current value
-    DimTotal = DimCount;
 }

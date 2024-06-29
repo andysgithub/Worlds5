@@ -6,14 +6,11 @@
 #include "unmanaged.h"
 #include "declares.h"
 #include "vectors.h"
-#include "vector5Single.h"
 
 #include <cuda_runtime.h>
-#include "kernel.cuh"
 #include "cuda_interface.h"
 
 const BYTE MAX_COLOURS = 255;
-
 
 // Error checking macro
 #define cudaCheckError(ans) { gpuAssert((ans), __FILE__, __LINE__); }
@@ -411,12 +408,13 @@ bool gapFound(float currentDistance, float surfaceThickness, float xFactor, floa
 
 void VectorTrans(float x, float y, float z, vector5Single *c)
 {
-    for (int i = 0; i < DimTotal; i++)
+    for (int col = 0; col < DimTotal; col++)
     {
-        (*c).coords[i] = m_Trans[i][0]*x +          // Transforms 3D image space at point x,y,z
-               m_Trans[i][1]*y +                    // into nD vector space at point c[]
-               m_Trans[i][2]*z +
-               m_Trans[i][5];
+        (*c).coords[col] =
+            m_Trans[0][col]*x +          // Transforms 3D image space at point x,y,z
+            m_Trans[1][col]*y +          // into nD vector space at point c[]
+            m_Trans[2][col]*z +
+            m_Trans[5][col];
     }
 }
 

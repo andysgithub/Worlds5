@@ -6,6 +6,8 @@
  *	Andrew G Williams  April 1996
  */
 
+#include "vector5Single.h"
+
 #define v_mov(a,b)														\
 	b[0] = a[0];                                                        \
 	b[1] = a[1];                                                        \
@@ -68,7 +70,7 @@
 	(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]+a[3]*a[3]+a[4]*a[4])
 
 #define v_mandel(a,b)   \
-	if(DimTotal>5)		\
+	if (DimTotal > 5)		\
 		v_mandelx(a,b);	\
 	else				\
 	{					\
@@ -82,8 +84,6 @@
 
 void v_movx(float *a, float *b)
 {
-	extern int DimTotal;
-
   for(int i = 0; i < DimTotal; i++)
 	{	
 	  b[i] = a[i];
@@ -92,7 +92,6 @@ void v_movx(float *a, float *b)
 
 void v_mulx(float *a, float *b)
 {
-	extern int DimTotal;
 	float sum1,sum2;
 	float products;
 	float a0 = a[0];
@@ -122,7 +121,6 @@ void v_mulx(float *a, float *b)
 
 void v_mandelx(float *a, float *b)
 {
-	extern int DimTotal;
 	float sum1,sum2;
 	float products;
 	float a0 = a[0];

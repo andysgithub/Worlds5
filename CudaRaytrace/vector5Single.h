@@ -3,6 +3,8 @@
 
 #include <array>
 
+#define DimTotal 5
+
 struct vector5Single {
     float coords[5];
 

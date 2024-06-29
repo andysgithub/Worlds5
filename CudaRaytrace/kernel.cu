@@ -12,11 +12,12 @@
 __constant__ RayTracingParams d_params;
 
 __device__ void VectorTrans2(float x, float y, float z, vector5Single* c) {
-    for (int i = 0; i < DimTotal; i++) {
-        (*c).coords[i] = cudaTrans[i][0] * x +
-            cudaTrans[i][1] * y +
-            cudaTrans[i][2] * z +
-            cudaTrans[i][5];
+    for (int col = 0; col < DimTotal; col++) {
+        (*c).coords[col] = 
+            cudaTrans[0][col] * x +
+            cudaTrans[1][col] * y +
+            cudaTrans[2][col] * z +
+            cudaTrans[5][col];
     }
 }
 
@@ -349,8 +350,27 @@ extern "C" cudaError_t InitializeGPUKernel(const RayTracingParams* params)
 
 extern "C" cudaError_t InitializeTransformMatrix(const float* positionMatrix)
 {
-    return cudaMemcpyToSymbol(cudaTrans, positionMatrix, sizeof(float) * DimTotal * 6);
+    return cudaMemcpyToSymbol(cudaTrans, positionMatrix, sizeof(float) * DimTotal * (DimTotal + 1));
 }
+
+//extern "C" cudaError_t InitializeTransformMatrix(const float* positionMatrix)
+//{
+//    // Temporary host array to rearrange data
+//    float tempArray[6][5];
+//
+//    // Rearrange data from 1D array to 2D array
+//    for (int col = 0; col < 5; col++) {
+//        for (int row = 0; row < 5; row++) {
+//            tempArray[row][col] = positionMatrix[row * 5 + col];
+//        }
+//    }
+//    for (int col = 0; col < 5; col++) {
+//        tempArray[5][col] = positionMatrix[5 * 5 + col];
+//    }
+//
+//    // Copy the rearranged data to symbol
+//    return cudaMemcpyToSymbol(cudaTrans, tempArray, sizeof(float) * 5 * 6);
+//}
 
 // Verification kernel
 __global__ void VerifyTransformMatrixKernel(float* output)
