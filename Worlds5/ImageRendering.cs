@@ -41,9 +41,6 @@ namespace Worlds5
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool CopyTransformationMatrix([In] float[] positionMatrix);
 
-        [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool VerifyTransformationMatrix([Out] float[] output);
-
         //[DllImport("Unmanaged.dll")]
         //static extern float[] ImageToFractalSpace (float startDistance, float xFactor, float yFactor, float zFactor);
 
@@ -101,8 +98,6 @@ namespace Worlds5
             Array.Resize(ref modulusValues, points);
             Array.Resize(ref angleValues, points);
             Array.Resize(ref distanceValues, points);
-
-            Console.Write("modulusValues: {0}\n", JsonConvert.SerializeObject(modulusValues, Formatting.Indented));
 
             // Record the fractal value collection for this ray 
             TracedRay tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);
@@ -212,37 +207,7 @@ namespace Worlds5
             {
                 Console.WriteLine("Failed to set transform matrix");
             }
-
-            // Verify the matrix
-            try
-            {
-                float[,] verifiedMatrix = VerifyMatrix();
-                // Compare verifiedMatrix with positionMatrix to ensure they match
-                Console.Write("positionMatrix: {0}\n", JsonConvert.SerializeObject(sphere.settings.PositionMatrix, Formatting.None));
-                Console.Write("verifiedMatrix: {0}\n", JsonConvert.SerializeObject(verifiedMatrix, Formatting.None));
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error verifying matrix: {ex.Message}");
-            }
         }
-
-        /*        public static bool CopyMatrix(float[,] positionMatrix)
-                {
-                    int rows = positionMatrix.GetLength(0);
-                    int cols = positionMatrix.GetLength(1);
-                    float[] flatMatrix = new float[rows * cols];
-
-                    for (int i = 0; i < rows; i++)
-                    {
-                        for (int j = 0; j < cols; j++)
-                        {
-                            flatMatrix[i * cols + j] = positionMatrix[i, j];
-                        }
-                    }
-
-                    return CopyTransformationMatrix(flatMatrix);
-                }*/
 
         public static bool CopyMatrix(float[,] positionMatrix)
         {
@@ -258,30 +223,6 @@ namespace Worlds5
                 }
             }
             return CopyTransformationMatrix(flatMatrix);
-        }
-
-        public static float[,] VerifyMatrix()
-        {
-            int DimTotal = 5;
-
-            float[] flatOutput = new float[DimTotal * 6];
-            bool success = VerifyTransformationMatrix(flatOutput);
-
-            if (!success)
-            {
-                throw new Exception("Failed to verify transform matrix");
-            }
-
-            float[,] output = new float[6, DimTotal];
-            for (int i = 0; i < 6; i++)
-            {
-                for (int j = 0; j < DimTotal; j++)
-                {
-                    output[i, j] = flatOutput[i * DimTotal + j];
-                }
-            }
-
-            return output;
         }
 
         public async Task<bool> PerformRayTracing()

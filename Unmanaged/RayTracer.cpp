@@ -26,20 +26,14 @@ inline void gpuAssert(cudaError_t code, const char* file, int line, bool abort =
 // Host function to initialize the GPU with constant parameters
 EXPORT bool InitializeGPU(const RayTracingParams* params)
 {
-    cudaError_t cudaStatus = InitializeGPUKernel(params);
+    const cudaError_t cudaStatus = InitializeGPUKernel(params);
     return cudaStatus == cudaSuccess;
 }
 
 // Host function to initialize the GPU with constant parameters
 EXPORT bool CopyTransformationMatrix(const float* positionMatrix)
 {
-    cudaError_t cudaStatus = InitializeTransformMatrix(positionMatrix);
-    return cudaStatus == cudaSuccess;
-}
-
-EXPORT bool VerifyTransformationMatrix(float* output)
-{
-    cudaError_t cudaStatus = VerifyTransformMatrix(output);
+    const cudaError_t cudaStatus = InitializeTransformMatrix(positionMatrix);
     return cudaStatus == cudaSuccess;
 }
 
@@ -76,8 +70,6 @@ int TraceRayC(float startDistance, float increment, float smoothness, float surf
         // Determine orbit properties for this point
         externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, bailout, xFactor, yFactor, zFactor, c);
 
-        //printf("surface point: %s\n", (activeIndex == 0 && !externalPoint && externalPoints[recordedPoints - 1] == 1) ? "true" : "false");
-
         // If this is an internal point and previous point is external
         if (activeIndex == 0 && !externalPoint && externalPoints[recordedPoints - 1] == 1)
         {
@@ -85,9 +77,10 @@ int TraceRayC(float startDistance, float increment, float smoothness, float surf
 
             // Perform binary search between this and the previous point, to determine surface position
             sampleDistance = FindSurface(increment, smoothness, binarySearchSteps, currentDistance, xFactor, yFactor, zFactor, bailout);
-
+            bool foundGap = gapFound(sampleDistance, surfaceThickness, xFactor, yFactor, zFactor, bailout, c);
+                        
             // Test point a short distance further along, to determine whether this is still in the set
-            if (surfaceThickness > 0 && gapFound(sampleDistance, surfaceThickness, xFactor, yFactor, zFactor, bailout, c))
+            if (surfaceThickness > 0 && foundGap)
             {
                 // Back outside the set, so continue as normal for external points
                 externalPoint = true;

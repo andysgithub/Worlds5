@@ -25,7 +25,6 @@ extern "C" {
 	cudaError_t InitializeGPUKernel(const RayTracingParams* params);
 
     cudaError_t InitializeTransformMatrix(const float* positionMatrix);
-    cudaError_t VerifyTransformMatrix(float* output);
 
 	int launchTraceRayKernel(float XFactor, float YFactor, float ZFactor, int rayPoints,
 		int* externalPoints, float* modulusValues, float* angles, float* distances);

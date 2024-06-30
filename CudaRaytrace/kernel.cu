@@ -277,14 +277,13 @@ __global__ void TraceRayKernel(
         // Determine orbit properties for this point
         externalPoint = SamplePoint2(currentDistance, &Modulus, &Angle, d_params.bailout, xFactor, yFactor, zFactor, c);
 
-        //printf("surface point: %s\n", (!externalPoint && externalPoints[recordedPoints - 1] == 1) ? "true" : "false");
-
         // If this is an internal point and previous point is external
         if (d_params.activeIndex == 0 && !externalPoint && externalPoints[recordedPoints - 1] == 1) {
             ///// Set value for surface point /////
 
             // Perform binary search between this and the previous point, to determine surface position
             sampleDistance = FindSurface2(d_params.increment, d_params.smoothness, d_params.binarySearchSteps, currentDistance, xFactor, yFactor, zFactor, d_params.bailout);
+            bool foundGap = gapFound2(sampleDistance, d_params.surfaceThickness, xFactor, yFactor, zFactor, d_params.bailout, c);
 
             // Test point a short distance further along, to determine whether this is still in the set
             if (d_params.surfaceThickness > 0 && gapFound2(sampleDistance, d_params.surfaceThickness, xFactor, yFactor, zFactor, d_params.bailout, c)) {
@@ -353,51 +352,6 @@ extern "C" cudaError_t InitializeTransformMatrix(const float* positionMatrix)
     return cudaMemcpyToSymbol(cudaTrans, positionMatrix, sizeof(float) * DimTotal * (DimTotal + 1));
 }
 
-//extern "C" cudaError_t InitializeTransformMatrix(const float* positionMatrix)
-//{
-//    // Temporary host array to rearrange data
-//    float tempArray[6][5];
-//
-//    // Rearrange data from 1D array to 2D array
-//    for (int col = 0; col < 5; col++) {
-//        for (int row = 0; row < 5; row++) {
-//            tempArray[row][col] = positionMatrix[row * 5 + col];
-//        }
-//    }
-//    for (int col = 0; col < 5; col++) {
-//        tempArray[5][col] = positionMatrix[5 * 5 + col];
-//    }
-//
-//    // Copy the rearranged data to symbol
-//    return cudaMemcpyToSymbol(cudaTrans, tempArray, sizeof(float) * 5 * 6);
-//}
-
-// Verification kernel
-__global__ void VerifyTransformMatrixKernel(float* output)
-{
-    int idx = blockIdx.x * blockDim.x + threadIdx.x;
-    if (idx < DimTotal * 6) {
-        output[idx] = ((float*)cudaTrans)[idx];
-    }
-}
-
-extern "C" cudaError_t VerifyTransformMatrix(float* output)
-{
-    float* d_output;
-    cudaError_t error;
-
-    error = cudaMalloc(&d_output, sizeof(float) * DimTotal * 6);
-    if (error != cudaSuccess) return error;
-
-    VerifyTransformMatrixKernel<<<(DimTotal * 6 + 255) / 256, 256 >>>(d_output);
-
-    error = cudaMemcpy(output, d_output, sizeof(float) * DimTotal * 6, cudaMemcpyDeviceToHost);
-    if (error != cudaSuccess) return error;
-
-    cudaFree(d_output);
-    return cudaSuccess;
-}
-
 extern "C" int launchTraceRayKernel(float XFactor, float YFactor, float ZFactor, int rayPoints,
     int* externalPoints, float* modulusValues, float* angles, float* distances)
 {
@@ -418,6 +372,10 @@ extern "C" int launchTraceRayKernel(float XFactor, float YFactor, float ZFactor,
 
     // Copy results back to host
     int recordedPoints;
+    cudaMemcpy(externalPoints, d_externalPoints, rayPoints * sizeof(int), cudaMemcpyDeviceToHost);
+    cudaMemcpy(modulusValues, d_modulusValues, rayPoints * sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(angles, d_angles, rayPoints * sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(distances, d_distances, rayPoints * sizeof(float), cudaMemcpyDeviceToHost);
     cudaMemcpy(&recordedPoints, d_recordedPointsOut, sizeof(int), cudaMemcpyDeviceToHost);
 
     // Free device memory
