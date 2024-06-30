@@ -1,5 +1,5 @@
-#ifndef VECTOR5DOUBLE_H
-#define VECTOR5DOUBLE_H
+#ifndef VECTOR5SINGLE_H
+#define VECTOR5SINGLE_H
 
 #include <array>
 
@@ -14,4 +14,4 @@ struct vector5Single {
     }
 };
 
-#endif // VECTOR5DOUBLE_H
+#endif // VECTOR5SINGLE_H

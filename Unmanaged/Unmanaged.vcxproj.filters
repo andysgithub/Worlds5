@@ -50,8 +50,5 @@
     <ClInclude Include="Vectors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="vector5Single.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

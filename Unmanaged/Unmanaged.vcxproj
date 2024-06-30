@@ -199,7 +199,6 @@
     <ClInclude Include="Declares.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Unmanaged.h" />
-    <ClInclude Include="vector5Double.h" />
     <ClInclude Include="Vectors.h" />
   </ItemGroup>
   <ItemGroup>
