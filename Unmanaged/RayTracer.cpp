@@ -169,14 +169,14 @@ EXPORT int __stdcall TraceRay(double startDistance, double increment, double smo
     int rayPoints, int maxSamples, double boundaryInterval, int binarySearchSteps,
     int activeIndex)
 {
-    //return TraceRayC(startDistance, increment, smoothness, surfaceThickness,
-    //    XFactor, YFactor, ZFactor, bailout,
-    //    externalPoints, modulusValues, angles, distances,
-    //    rayPoints, maxSamples, boundaryInterval, binarySearchSteps,
-    //    activeIndex);
+    return TraceRayC(startDistance, increment, smoothness, surfaceThickness,
+        XFactor, YFactor, ZFactor, bailout,
+        externalPoints, modulusValues, angles, distances,
+        rayPoints, maxSamples, boundaryInterval, binarySearchSteps,
+        activeIndex);
 
-    return TraceRayCuda(XFactor, YFactor, ZFactor, rayPoints,
-        externalPoints, modulusValues, angles, distances);
+    //return TraceRayCuda(XFactor, YFactor, ZFactor, rayPoints,
+    //    externalPoints, modulusValues, angles, distances);
 }
 
 EXPORT double __stdcall FindSurface(double increment, double smoothness, int binarySearchSteps, double currentDistance, double xFactor, double yFactor, double zFactor, float bailout)
