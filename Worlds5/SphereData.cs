@@ -43,6 +43,7 @@ namespace Worlds5
             public float BoundaryInterval { get; set; }
             public float Bailout { get; set; }
             public int ActiveIndex { get; set; }
+            public bool CudaMode { get; set; }
         }
 
         public class Rendering

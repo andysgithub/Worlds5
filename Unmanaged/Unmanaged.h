@@ -49,7 +49,7 @@ EXPORT int __stdcall TraceRay(float startDistance, float increment, float smooth
 								float XFactor, float YFactor, float ZFactor, float bailout,
 								int externalPoints[], float modulusValues[], float angles[], float distances[],
 								int rayPoints, int maxSamples, float boundaryInterval, int binarySearchSteps,
-								int activeIndex);
+								int activeIndex, bool cudaMode);
 
 EXPORT float __stdcall FindSurface(float increment, float smoothness, int binarySearchSteps, float currentDistance,
 									float xFactor, float yFactor, float zFactor, float bailout);

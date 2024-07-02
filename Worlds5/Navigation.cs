@@ -118,6 +118,7 @@ namespace Worlds5
                     sphere.settings.BinarySearchSteps = raytracing.BinarySearchSteps;
                     sphere.settings.Bailout = raytracing.Bailout;
                     sphere.settings.ActiveIndex = raytracing.ActiveIndex;
+                    sphere.settings.CudaMode = raytracing.CudaMode;
 
                     // Rendering
                     sphere.settings.ExposureValue = rendering.ExposureValue;
@@ -207,6 +208,7 @@ namespace Worlds5
                 raytracing.BinarySearchSteps = sphere.settings.BinarySearchSteps;
                 raytracing.Bailout = sphere.settings.Bailout;
                 raytracing.ActiveIndex = sphere.settings.ActiveIndex;
+                raytracing.CudaMode = sphere.settings.CudaMode;
 
                 // Rendering
                 rendering.ExposureValue = sphere.settings.ExposureValue;

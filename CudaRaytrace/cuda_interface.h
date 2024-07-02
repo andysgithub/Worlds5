@@ -13,6 +13,7 @@ struct RayTracingParams {
     float boundaryInterval;
     int binarySearchSteps;
     int activeIndex;
+    bool cudaMode;
 };
 
 // Declare the constant symbol

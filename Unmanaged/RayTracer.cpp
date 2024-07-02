@@ -154,16 +154,19 @@ EXPORT int __stdcall TraceRay(float startDistance, float increment, float smooth
     float XFactor, float YFactor, float ZFactor, float bailout,
     int externalPoints[], float modulusValues[], float angles[], float distances[],
     int rayPoints, int maxSamples, float boundaryInterval, int binarySearchSteps,
-    int activeIndex)
+    int activeIndex, bool cudaMode)
 {
-    return TraceRayC(startDistance, increment, smoothness, surfaceThickness,
-        XFactor, YFactor, ZFactor, bailout,
-        externalPoints, modulusValues, angles, distances,
-        rayPoints, maxSamples, boundaryInterval, binarySearchSteps,
-        activeIndex);
-
-    //return TraceRayCuda(XFactor, YFactor, ZFactor, rayPoints,
-    //    externalPoints, modulusValues, angles, distances);
+    if (cudaMode) {
+        return TraceRayCuda(XFactor, YFactor, ZFactor, rayPoints,
+            externalPoints, modulusValues, angles, distances);
+    }
+    else {
+        return TraceRayC(startDistance, increment, smoothness, surfaceThickness,
+            XFactor, YFactor, ZFactor, bailout,
+            externalPoints, modulusValues, angles, distances,
+            rayPoints, maxSamples, boundaryInterval, binarySearchSteps,
+            activeIndex);
+    }
 }
 
 EXPORT float __stdcall FindSurface(float increment, float smoothness, int binarySearchSteps, float currentDistance, float xFactor, float yFactor, float zFactor, float bailout)

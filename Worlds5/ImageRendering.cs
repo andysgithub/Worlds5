@@ -26,6 +26,7 @@ namespace Worlds5
             public float boundaryInterval;
             public int binarySearchSteps;
             public int activeIndex;
+            public bool cudaMode;
         }
 
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -33,7 +34,7 @@ namespace Worlds5
             float xFactor, float yFactor, float zFactor, float bailout,
             int[] externalsArray, float[] valuesArray, float[] anglesArray, float[] distancesArray,
             int rayPoints, int maxSamples, float boundaryInterval, int binarySearchSteps,
-            int activeIndex);
+            int activeIndex, bool cudaMode);
 
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool InitializeGPU(ref RayTracingParams parameters);
@@ -91,7 +92,7 @@ namespace Worlds5
                         xFactor, yFactor, zFactor, settings.Bailout,
                         externalPoints, modulusValues, angleValues, distanceValues,
                         rayPoints, settings.MaxSamples[i], settings.BoundaryInterval, settings.BinarySearchSteps[i],
-                        i);
+                        i, settings.CudaMode);
 
             // Resize arrays to the recordedPoints value
             Array.Resize(ref externalPoints, points);
@@ -195,17 +196,21 @@ namespace Worlds5
             rayParams.boundaryInterval = sphere.settings.BoundaryInterval;
             rayParams.binarySearchSteps = sphere.settings.BinarySearchSteps[sphere.settings.ActiveIndex];
             rayParams.activeIndex = sphere.settings.ActiveIndex;
+            rayParams.cudaMode = sphere.settings.CudaMode;
 
-            bool success = InitializeGPU(ref rayParams);
-            if (!success)
+            if (rayParams.cudaMode)
             {
-                Console.WriteLine("Failed to initialize GPU parameters");
-            }
+                bool success = InitializeGPU(ref rayParams);
+                if (!success)
+                {
+                    Console.WriteLine("Failed to initialize GPU parameters");
+                }
 
-            success = CopyMatrix(sphere.settings.PositionMatrix);
-            if (!success)
-            {
-                Console.WriteLine("Failed to set transform matrix");
+                success = CopyMatrix(sphere.settings.PositionMatrix);
+                if (!success)
+                {
+                    Console.WriteLine("Failed to set transform matrix");
+                }
             }
         }
 
@@ -238,12 +243,12 @@ namespace Worlds5
                     sphere.InitialiseRayMap();
 
                     int totalLines = (int)(sphere.settings.VerticalView / sphere.settings.AngularResolution);
-                    int totalRays = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
+                    int raysPerLine = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
 
-                    raysProcessed = new int[totalRays];
+                    raysProcessed = new int[raysPerLine * totalLines];
                     linesProcessed = new int[totalLines];
 
-                    PerformParallel(totalLines, totalRays);
+                    PerformParallel(totalLines, raysPerLine);
                 }
                 catch (Exception e)
                 {
@@ -257,13 +262,13 @@ namespace Worlds5
             });
         }
 
-        private void PerformParallel(int totalLines, int totalRays)
+        private void PerformParallel(int totalLines, int raysPerLine)
         {
-            RayProcessing[,] rayProc = new RayProcessing[totalRays, totalLines];
+            RayProcessing[,] rayProc = new RayProcessing[raysPerLine, totalLines];
 
             for (int countY = 0; countY < totalLines; countY++)
             {
-                for (int countX = 0; countX < totalRays; countX++)
+                for (int countX = 0; countX < raysPerLine; countX++)
                 {
                     // Instantiate a class for this thread
                     rayProc[countX, countY] = new RayProcessing();
@@ -273,25 +278,31 @@ namespace Worlds5
             Parallel.For(0, totalLines, rayCountY =>
             {
                 // For each longitude point on this line
-                Parallel.For(0, totalRays, rayCountX =>
+                Parallel.For(0, raysPerLine, rayCountX =>
                 {
                     try
                     {
                         // Perform raytracing
                         rayProc[rayCountX, rayCountY].ProcessRay(sphere, rayCountX, rayCountY);
 
-                        //RayCompleted(rayCountY * totalRays + rayCountX);
+                        if (sphere.settings.CudaMode)
+                        {
+                            RayCompleted(rayCountY * raysPerLine + rayCountX);
+                        }
                     }
                     catch
                     { }
                 });
-                RowCompleted(rayCountY);
+                if (!sphere.settings.CudaMode)
+                {
+                    RowCompleted(rayCountY);
+                }
             });
 
             Parallel.For(0, totalLines, rayCountY =>
             {
                 // For each longitude point on this line
-                Parallel.For(0, totalRays, rayCountX =>
+                Parallel.For(0, raysPerLine, rayCountX =>
                  {
                      try
                      {
@@ -339,10 +350,10 @@ namespace Worlds5
         {
             if (ray != null)
             {
-                int totalRays = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
+                int raysPerLine = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
 
                 // If current row is still being processed
-                if (rayCountX < totalRays - 1)
+                if (rayCountX < raysPerLine - 1)
                 {
                     imageDisplay.updateImage(rayCountX, rayCountY, ray.bmiColors);
                 }
@@ -352,10 +363,11 @@ namespace Worlds5
         private void RayCompleted(int rayIndex)
         {
             raysProcessed[rayIndex] = 1;
-            int totalRays = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
+            int raysPerLine = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
+            int totalLines = (int)(sphere.settings.VerticalView / sphere.settings.AngularResolution);
 
             // Call the UpdateStatus function in Main
-            updateRayStatus(raysProcessed, totalRays);
+            updateRayStatus(raysProcessed, raysPerLine * totalLines);
         }
 
         private void RowCompleted(int lineIndex)
@@ -369,10 +381,10 @@ namespace Worlds5
 
         public void Redisplay(int rayCountY)
         {
-            int totalRays = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
+            int raysPerLine = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
 
             // For each longitude point on this line
-            for (int rayCountX = 0; rayCountX < totalRays; rayCountX++)
+            for (int rayCountX = 0; rayCountX < raysPerLine; rayCountX++)
             {
                 // Display the point on this line of latitude
                 TracedRay tracedRay = SetRayColour(sphere, rayCountX, rayCountY);

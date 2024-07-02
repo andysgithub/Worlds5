@@ -72,6 +72,7 @@
             this.updMaxSamples_0 = new System.Windows.Forms.NumericUpDown();
             this.updSamplingInterval_0 = new System.Windows.Forms.NumericUpDown();
             this.tabNavigation = new System.Windows.Forms.TabPage();
+            this.btnClearNav = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label18 = new System.Windows.Forms.Label();
             this.cmbNavCentre = new System.Windows.Forms.ComboBox();
@@ -101,6 +102,7 @@
             this.updResolution = new System.Windows.Forms.NumericUpDown();
             this.tabSettings = new System.Windows.Forms.TabControl();
             this.tabClipping = new System.Windows.Forms.TabPage();
+            this.btnClearClipping = new System.Windows.Forms.Button();
             this.chkUseClipping = new System.Windows.Forms.CheckBox();
             this.grpClipping = new System.Windows.Forms.GroupBox();
             this.updClipOffset = new System.Windows.Forms.NumericUpDown();
@@ -110,8 +112,7 @@
             this.updClipRotate = new System.Windows.Forms.NumericUpDown();
             this.cmbClipPlane = new System.Windows.Forms.ComboBox();
             this.label26 = new System.Windows.Forms.Label();
-            this.btnClearNav = new System.Windows.Forms.Button();
-            this.btnClearClipping = new System.Windows.Forms.Button();
+            this.chkCudaMode = new System.Windows.Forms.CheckBox();
             this.tabColour.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updOffset)).BeginInit();
@@ -816,6 +817,16 @@
             this.tabNavigation.Text = "Navigation";
             this.tabNavigation.UseVisualStyleBackColor = true;
             // 
+            // btnClearNav
+            // 
+            this.btnClearNav.Location = new System.Drawing.Point(19, 176);
+            this.btnClearNav.Name = "btnClearNav";
+            this.btnClearNav.Size = new System.Drawing.Size(75, 23);
+            this.btnClearNav.TabIndex = 45;
+            this.btnClearNav.Text = "Clear all";
+            this.btnClearNav.UseVisualStyleBackColor = true;
+            this.btnClearNav.Click += new System.EventHandler(this.btnClearNav_Click);
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.label18);
@@ -1259,6 +1270,16 @@
             this.tabClipping.Text = "Clipping";
             this.tabClipping.UseVisualStyleBackColor = true;
             // 
+            // btnClearClipping
+            // 
+            this.btnClearClipping.Location = new System.Drawing.Point(19, 176);
+            this.btnClearClipping.Name = "btnClearClipping";
+            this.btnClearClipping.Size = new System.Drawing.Size(75, 23);
+            this.btnClearClipping.TabIndex = 47;
+            this.btnClearClipping.Text = "Clear all";
+            this.btnClearClipping.UseVisualStyleBackColor = true;
+            this.btnClearClipping.Click += new System.EventHandler(this.btnClearClipping_Click);
+            // 
             // chkUseClipping
             // 
             this.chkUseClipping.AutoSize = true;
@@ -1387,25 +1408,16 @@
             this.label26.TabIndex = 44;
             this.label26.Text = "Plane";
             // 
-            // btnClearNav
+            // chkCudaMode
             // 
-            this.btnClearNav.Location = new System.Drawing.Point(19, 176);
-            this.btnClearNav.Name = "btnClearNav";
-            this.btnClearNav.Size = new System.Drawing.Size(75, 23);
-            this.btnClearNav.TabIndex = 45;
-            this.btnClearNav.Text = "Clear all";
-            this.btnClearNav.UseVisualStyleBackColor = true;
-            this.btnClearNav.Click += new System.EventHandler(this.btnClearNav_Click);
-            // 
-            // btnClearClipping
-            // 
-            this.btnClearClipping.Location = new System.Drawing.Point(19, 176);
-            this.btnClearClipping.Name = "btnClearClipping";
-            this.btnClearClipping.Size = new System.Drawing.Size(75, 23);
-            this.btnClearClipping.TabIndex = 47;
-            this.btnClearClipping.Text = "Clear all";
-            this.btnClearClipping.UseVisualStyleBackColor = true;
-            this.btnClearClipping.Click += new System.EventHandler(this.btnClearClipping_Click);
+            this.chkCudaMode.AutoSize = true;
+            this.chkCudaMode.Location = new System.Drawing.Point(16, 273);
+            this.chkCudaMode.Name = "chkCudaMode";
+            this.chkCudaMode.Size = new System.Drawing.Size(73, 17);
+            this.chkCudaMode.TabIndex = 32;
+            this.chkCudaMode.Text = "Use Cuda";
+            this.chkCudaMode.UseVisualStyleBackColor = true;
+            this.chkCudaMode.CheckedChanged += new System.EventHandler(this.chkCudaMode_CheckedChanged);
             // 
             // SphereSettings
             // 
@@ -1413,6 +1425,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(423, 308);
+            this.Controls.Add(this.chkCudaMode);
             this.Controls.Add(this.btnRaytrace);
             this.Controls.Add(this.tabSettings);
             this.Controls.Add(this.btnCancel);
@@ -1474,6 +1487,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.updClipOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updClipRotate)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -1563,5 +1577,6 @@
         private System.Windows.Forms.CheckBox chkUseClipping;
         private System.Windows.Forms.Button btnClearNav;
         private System.Windows.Forms.Button btnClearClipping;
+        private System.Windows.Forms.CheckBox chkCudaMode;
     }
 }

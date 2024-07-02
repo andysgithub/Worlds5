@@ -111,11 +111,12 @@ namespace Worlds5
                 sphereSettings.PositionMatrix[5, axis] += translationValues[axis];
                 //translationValues[axis] = 0;
             }
-/*            // Clear the translation input
-            updTranslate.Value = 0;*/
+            /*            // Clear the translation input
+                        updTranslate.Value = 0;*/
 
             // Raytracing
             sphereSettings.ActiveIndex = chkShowSurface.Checked ? 0 : 1;
+            sphereSettings.CudaMode = chkCudaMode.Checked;
 
             sphereSettings.SamplingInterval[0] = (float)updSamplingInterval_0.Value;
             sphereSettings.BinarySearchSteps[0] = (int)updBinarySearchSteps_0.Value;
@@ -179,6 +180,8 @@ namespace Worlds5
             // Raytracing
             chkShowSurface.Checked = sphereSettings.ActiveIndex == 0;
             chkShowVolume.Checked = sphereSettings.ActiveIndex == 1;
+
+            chkCudaMode.Checked = sphereSettings.CudaMode;
 
             updSamplingInterval_0.Value = (decimal)sphereSettings.SamplingInterval[0];
             updBinarySearchSteps_0.Value = sphereSettings.BinarySearchSteps[0];
@@ -433,6 +436,11 @@ namespace Worlds5
             updClipRotate.Value = 0;
             updClipOffset.Value = 0;
             chkUseClipping.Checked = false;
+        }
+
+        private void chkCudaMode_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
