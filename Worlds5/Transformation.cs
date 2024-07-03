@@ -1,14 +1,17 @@
-﻿using Model;
-using System;
+﻿using System;
+using Model;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Single;
 
 namespace Worlds5
 {
     public class Transformation
     {
-        // Matrix containing a single transformation
-        private static float[,] manip = new float[6, 6];
         // Total number of dimensions used
         private static int DimTotal = 5;
+
+        // Matrix containing a single transformation
+        private static float[,] manip = new float[DimTotal + 1, DimTotal];
         private static clsSphere.Settings sphereSettings = Model.Globals.Sphere.settings;
 
         /// <summary>
@@ -16,43 +19,33 @@ namespace Worlds5
         /// </summary>
         public static void ManipInit()
         {
-            for (int row = 0; row <= DimTotal; ++row)
-            {
-                for (int col = 0; col <= DimTotal; ++col)
-                {
-                    manip[row, col] = 0;
-                }
-                manip[row, row] = 1;
-            }
+            Matrix<float> manipMatrix = Matrix<float>.Build.Dense(6, 5, (i, j) => i == j ? 1 : 0);
+            manip = manipMatrix.ToArray();
         }
 
-        public static void SetRotation(int Axis1, int Axis2, float Angle)
+        public static Matrix<float> SetRotation(int axis1, int axis2, float angle)
         {
-            ManipInit();
+            // Set the manipulation matrix to a 5x5 identity
+            Matrix<float> rotationMatrix = Matrix<float>.Build.DenseIdentity(DimTotal);
 
-            int a, b;
+            int a = Math.Min(axis1, axis2);
+            int b = Math.Max(axis1, axis2);
 
-            if (Axis1 < Axis2)
-            {
-                a = Axis1;
-                b = Axis2;
-            }
-            else
-            {
-                a = Axis2;
-                b = Axis1;
-            }
+            double cosAngle = Math.Cos(angle);
+            double sinAngle = Math.Sin(angle);
 
-            manip[a, a] = (float)Math.Cos(Angle);
-            manip[b, b] = (float)Math.Cos(Angle);
-            manip[b, a] = (float)Math.Sin(Angle);
-            manip[a, b] = -(float)Math.Sin(Angle);
+            rotationMatrix[a, a] = (float)cosAngle;
+            rotationMatrix[b, b] = (float)cosAngle;
+            rotationMatrix[b, a] = (float)sinAngle;
+            rotationMatrix[a, b] = -(float)sinAngle;
 
+/*            // Adjust sign for certain higher-dimensional rotations
             if (((b - a) == 2) || ((b - a) == 4))
             {
-                manip[b, a] = -manip[b, a];
-                manip[a, b] = -manip[a, b];
-            }
+                rotationMatrix[b, a] = -rotationMatrix[b, a];
+                rotationMatrix[a, b] = -rotationMatrix[a, b];
+            }*/
+            return rotationMatrix;
         }
 
         public static void SetTranslation(float[] Position)
@@ -65,28 +58,13 @@ namespace Worlds5
         }
 
         // Matrix pre-multiply for rotations
-        public static void PreMulR()
+        public static float[,] PreMulR(Matrix<float> posMatrix, Matrix<float> manipMatrix)
         {
-            float[,] temp = new float[6, 6];
+            // Perform matrix multiplication
+            var result = posMatrix * manipMatrix;
 
-            for (int row = 0; row <= DimTotal; row++)
-            {
-                for (int col = 0; col < DimTotal; ++col)
-                {
-                    for (int count = 0; count < DimTotal; count++)
-                    {
-                        temp[row, col] += sphereSettings.PositionMatrix[row, count] * manip[count, col];
-                    }
-                }
-            }
-
-            for (int row = 0; row <= DimTotal; row++)
-            {
-                for (int col = 0; col < DimTotal; col++)
-                {
-                    sphereSettings.PositionMatrix[row, col] = temp[row, col];
-                }
-            }
+            // Convert back to float[,] and return
+            return result.ToArray();
         }
 
         // Matrix pre-multiply for translations
@@ -144,46 +122,22 @@ namespace Worlds5
             return sphereSettings.PositionMatrix;
         }
 
-        public static void RotateSphere(int rotationCentre, float[,] angles)
+        public static void RotateSphere(RotationCentre rotationCentre, float[,] angles)
         {
-            float[] Position = new float[DimTotal];
-
-            ManipInit();
-
-            if (rotationCentre == 1)
+            if (rotationCentre == RotationCentre.Origin)
             {
-                var settings = sphereSettings.Clone();
-
-                //  Invert the rotation
-                for (int col = 0; col < DimTotal; ++col)
-                {
-                    for (int row = 0; row < DimTotal; ++row)
-                    {
-                        if (row != col)
-                        {
-                            sphereSettings.PositionMatrix[row, col] = -sphereSettings.PositionMatrix[row, col];
-                        }
-                    }
-                    manip[DimTotal, col] = sphereSettings.PositionMatrix[DimTotal, col];
-                    sphereSettings.PositionMatrix[DimTotal, col] = 0;
-                }
-
-                PreMulT();
-
-                //  Extract the translation parameters
-                for (int col = 0; col < DimTotal; ++col)
-                {
-                    Position[col] = sphereSettings.PositionMatrix[DimTotal, col];
-                }
-
-                sphereSettings = settings.Clone();
-
-                // Translate to the centre coords
-                for (int col = 0; col < DimTotal; col++)
-                {
-                    sphereSettings.PositionMatrix[DimTotal, col] = 0;
-                }
+                //float[,] invertedMatrix = Invert6x5Matrix(sphereSettings.PositionMatrix);
+                sphereSettings.PositionMatrix = rotateByAngle(sphereSettings.PositionMatrix, angles, true);
             }
+            else
+            {
+                sphereSettings.PositionMatrix = rotateByAngle(sphereSettings.PositionMatrix, angles, false);
+            }
+        }
+
+        private static float[,] rotateByAngle(float[,] positionMatrix, float[,] angles, bool inverse)
+        {
+            Matrix<float> posMatrix = Matrix<float>.Build.DenseOfArray(positionMatrix);
 
             for (int axis1 = 1; axis1 < DimTotal; axis1++)
             {
@@ -193,18 +147,18 @@ namespace Worlds5
                     if (angles[axis1, axis2] != 0)
                     {
                         // Rotate by the given angle
-                        SetRotation(axis1 - 1, axis2 - 1, angles[axis1, axis2]);
-                        PreMulR();
+                        Matrix<float> rotationMatrix = SetRotation(axis1 - 1, axis2 - 1, angles[axis1, axis2]);
+                        //PreMulR(posMatrix, manipMatrix);
+
+                        if (inverse)
+                        {
+                            rotationMatrix = rotationMatrix.Inverse();
+                        }
+                        posMatrix = posMatrix * rotationMatrix;
                     }
                 }
             }
-
-            if (rotationCentre == 1)
-            {
-                // Translate back from the centre
-                SetTranslation(Position);
-                PreMulT();
-            }
+            return posMatrix.ToArray();
         }
 
         public static Vector5 ImageToFractalSpace(float distance, Vector3 vector3D)
@@ -236,6 +190,23 @@ namespace Worlds5
                        matrix[5, i];
             }
             return new Vector5(c[0], c[1], c[2], c[3], c[4]) ;
+        }
+
+        static float[,] Invert6x5Matrix(float[,] inputArray)
+        {
+            // Convert input array to Matrix<float>
+            var matrix = Matrix<float>.Build.DenseOfArray(inputArray);
+
+            // Create a 6x6 matrix by adding a column
+            var squareMatrix = Matrix<float>.Build.Dense(6, 6);
+            squareMatrix.SetSubMatrix(0, 0, matrix);
+            squareMatrix.SetColumn(5, Vector<float>.Build.DenseOfArray(new float[] { 0, 0, 0, 0, 0, 1 }));
+
+            // Invert the 6x6 matrix
+            var inverted6x6 = squareMatrix.Inverse();
+
+            // Extract the 6x5 portion and convert back to float[,]
+            return inverted6x6.SubMatrix(0, 6, 0, 5).ToArray();
         }
     }
 }

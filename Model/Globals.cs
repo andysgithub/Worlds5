@@ -16,6 +16,12 @@ namespace Model
         ZV,
         WV
     }
+    public enum RotationCentre
+    {
+        Sphere,
+        Origin,
+        Trace
+    }
 
     public struct Vector3
     {
