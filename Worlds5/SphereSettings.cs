@@ -86,7 +86,7 @@ namespace Worlds5
         private void SaveSettings()
         {
             // Transfer rotation values to position matrix
-            Transformation.RotateSphere((RotationCentre)cmbNavCentre.SelectedIndex, NavAngles);
+            Transformation.RotateImage((RotationCentre)cmbNavCentre.SelectedIndex, NavAngles);
             sphereSettings.PositionMatrix = Transformation.GetPositionMatrix();
 /*
             // Clear the rotation input
