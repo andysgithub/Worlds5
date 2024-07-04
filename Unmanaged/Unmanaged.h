@@ -35,15 +35,6 @@ EXPORT	void __stdcall InitSphere(float fBailout, float dResolution,
                                   float dLatitude, float dLongitude,
                                   float Radius, float verticalView, float horizontalView, float *pTransMatrix);
 
-//////  TRANSFORMATION  //////
-void	ManipInit(void);				//	Initialise manipulation matrix
-void	TransInit(void);				//	Initialise transformation matrix
-void	PostMul(void);  				//	Matrix post-multiply (general)
-void	PostMulS(float); 				//	Matrix post-multiply for scalings
-void	PreMulR(void);  				//	Matrix pre-multiply for rotations
-void	PreMulT(void);  				//	Matrix pre-multiply for translations
-void	SetRot(int,int,float);
-
 //////  RAY TRACER  //////
 EXPORT int __stdcall TraceRay(float startDistance, float increment, float smoothness, float surfaceThickness,
 								float XFactor, float YFactor, float ZFactor, float bailout,

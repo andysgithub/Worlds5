@@ -8,39 +8,8 @@ namespace Worlds5
     {
         // Total number of dimensions used
         private static int DimTotal = 5;
-        private static clsSphere.Settings sphereSettings = Model.Globals.Sphere.settings;
-
-/*        /// <summary>
-        /// Initialise the manipulation matrix.
-        /// </summary>
-        public static void ManipInit()
-        {
-            Matrix<float> manipMatrix = Matrix<float>.Build.Dense(6, 5, (i, j) => i == j ? 1 : 0);
-            manip = manipMatrix.ToArray();
-        }
-
-        public static Matrix<float> SetTranslation(float[] Position)
-        {
-            Matrix<float> translationMatrix = Matrix<float>.Build.DenseIdentity(DimTotal);
-
-            for (int col = 0; col < DimTotal; ++col)
-            {
-                translationMatrix[DimTotal, col] = Position[col];
-            }
-            return translationMatrix;
-        }
-
-        // Matrix pre-multiply for translations
-        public static void PreMulT()
-        {
-            for (int row = 0; row < DimTotal; row++)
-            {
-                for (int col = 0; col < DimTotal; col++)
-                {
-                    sphereSettings.PositionMatrix[DimTotal, col] += manip[DimTotal, row] * sphereSettings.PositionMatrix[row, col];
-                }
-            }
-        }*/
+        // Record the position matrix in the sphere
+        private static float[,] positionMatrix = Model.Globals.Sphere.settings.PositionMatrix;
 
         public static Matrix<float> SetRotation(int axis1, int axis2, float angle)
         {
@@ -61,19 +30,9 @@ namespace Worlds5
             return rotationMatrix;
         }
 
-        // Matrix pre-multiply for rotations
-        public static float[,] PreMulR(Matrix<float> posMatrix, Matrix<float> manipMatrix)
-        {
-            // Perform matrix multiplication
-            var result = posMatrix * manipMatrix;
-
-            // Convert back to float[,] and return
-            return result.ToArray();
-        }
-
         public static void RotateImage(RotationCentre rotationCentre, float[,] angles)
         {
-            Matrix<float> posMatrix = Matrix<float>.Build.DenseOfArray(sphereSettings.PositionMatrix);
+            Matrix<float> posMatrix = Matrix<float>.Build.DenseOfArray(positionMatrix);
             Matrix<float> rotationMatrix = CalculateRotationMatrix(angles);
 
             if (rotationCentre == RotationCentre.Origin)
@@ -87,7 +46,7 @@ namespace Worlds5
                 posMatrix = ApplyRotationToPositionMatrix(posMatrix, rotationMatrix);
             }
 
-            sphereSettings.PositionMatrix = posMatrix.ToArray();
+            positionMatrix = posMatrix.ToArray();
         }
 
         private static Matrix<float> CalculateRotationMatrix(float[,] angles)
@@ -139,7 +98,7 @@ namespace Worlds5
         public static Vector5 VectorTrans(float x, float y, float z)
         {
             float[] c = new float[DimTotal];
-            float[,] matrix = sphereSettings.PositionMatrix;
+            float[,] matrix = positionMatrix;
             for (int i = 0; i < DimTotal; i++)
             {
                 c[i] = matrix[0, i] * x +       // Transforms 3D image space at point x,y,z
@@ -152,7 +111,7 @@ namespace Worlds5
 
         public static float[,] GetPositionMatrix()
         {
-            return sphereSettings.PositionMatrix;
+            return positionMatrix;
         }
     }
 }
