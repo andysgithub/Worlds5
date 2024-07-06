@@ -37,7 +37,7 @@ EXPORT bool CopyTransformationMatrix(const float* positionMatrix)
     return cudaStatus == cudaSuccess;
 }
 
-int TraceRayC(float startDistance, float increment, float smoothness, float surfaceThickness,
+int TraceRayC(float startDistance, float samplingInterval, float surfaceSmoothing, float surfaceThickness,
     float xFactor, float yFactor, float zFactor, float bailout,
     int externalPoints[], float modulusValues[], float angles[], float distances[],
     int rayPoints, int maxSamples, float boundaryInterval, int binarySearchSteps,
@@ -64,7 +64,7 @@ int TraceRayC(float startDistance, float increment, float smoothness, float surf
     while (recordedPoints < rayPoints && sampleCount < maxSamples)
     {
         // Move on to the next point
-        currentDistance += increment;
+        currentDistance += samplingInterval;
         sampleCount++;
 
         // Determine orbit properties for this point
@@ -76,7 +76,7 @@ int TraceRayC(float startDistance, float increment, float smoothness, float surf
             ///// Set value for surface point /////
 
             // Perform binary search between this and the previous point, to determine surface position
-            sampleDistance = FindSurface(increment, smoothness, binarySearchSteps, currentDistance, xFactor, yFactor, zFactor, bailout);
+            sampleDistance = FindSurface(samplingInterval, surfaceSmoothing, binarySearchSteps, currentDistance, xFactor, yFactor, zFactor, bailout);
             bool foundGap = gapFound(sampleDistance, surfaceThickness, xFactor, yFactor, zFactor, bailout, c);
                         
             // Test point a short distance further along, to determine whether this is still in the set
@@ -106,7 +106,7 @@ int TraceRayC(float startDistance, float increment, float smoothness, float surf
             if (angleChange > boundaryInterval)
             {
                 // Perform binary search between this and the recorded point, to determine boundary position
-                sampleDistance = FindBoundary(increment, binarySearchSteps, currentDistance, angles[recordedPoints - 1],
+                sampleDistance = FindBoundary(samplingInterval, binarySearchSteps, currentDistance, angles[recordedPoints - 1],
                     boundaryInterval, &externalPoint, &Modulus, &Angle,
                     xFactor, yFactor, zFactor, bailout);
 
@@ -150,7 +150,7 @@ int TraceRayCuda(float XFactor, float YFactor, float ZFactor, int rayPoints,
 }
 
 // Produce the collection of fractal point values for the given vector
-EXPORT int __stdcall TraceRay(float startDistance, float increment, float smoothness, float surfaceThickness,
+EXPORT int __stdcall TraceRay(float startDistance, float samplingInterval, float surfaceSmoothing, float surfaceThickness,
     float XFactor, float YFactor, float ZFactor, float bailout,
     int externalPoints[], float modulusValues[], float angles[], float distances[],
     int rayPoints, int maxSamples, float boundaryInterval, int binarySearchSteps,
@@ -161,7 +161,7 @@ EXPORT int __stdcall TraceRay(float startDistance, float increment, float smooth
             externalPoints, modulusValues, angles, distances);
     }
     else {
-        return TraceRayC(startDistance, increment, smoothness, surfaceThickness,
+        return TraceRayC(startDistance, samplingInterval, surfaceSmoothing, surfaceThickness,
             XFactor, YFactor, ZFactor, bailout,
             externalPoints, modulusValues, angles, distances,
             rayPoints, maxSamples, boundaryInterval, binarySearchSteps,
@@ -169,10 +169,10 @@ EXPORT int __stdcall TraceRay(float startDistance, float increment, float smooth
     }
 }
 
-EXPORT float __stdcall FindSurface(float increment, float smoothness, int binarySearchSteps, float currentDistance, float xFactor, float yFactor, float zFactor, float bailout)
+EXPORT float __stdcall FindSurface(float samplingInterval, float surfaceSmoothing, int binarySearchSteps, float currentDistance, float xFactor, float yFactor, float zFactor, float bailout)
 {
-    float stepFactor = smoothness / 10;
-	float	stepSize = -increment * stepFactor;
+    float stepFactor = surfaceSmoothing / 10;
+	float	stepSize = -samplingInterval * stepFactor;
 	float	sampleDistance = currentDistance;
 	const vector5Single c = {0,0,0,0,0};							// 5D vector for ray point coordinates
 
@@ -198,11 +198,11 @@ EXPORT float __stdcall FindSurface(float increment, float smoothness, int binary
     return sampleDistance;
 }
 
-EXPORT float __stdcall FindBoundary(float increment, int binarySearchSteps, float currentDistance, float previousAngle,
+EXPORT float __stdcall FindBoundary(float samplingInterval, int binarySearchSteps, float currentDistance, float previousAngle,
                                       float boundaryInterval, bool *externalPoint, float *Modulus, float *Angle, 
                                       float xFactor, float yFactor, float zFactor, float bailout)
 {
-	float stepSize = -increment / 2;
+	float stepSize = -samplingInterval / 2;
 	float sampleDistance = currentDistance;
 	const vector5Single c = {0,0,0,0,0};			// 5D vector for ray point coordinates
 
@@ -413,23 +413,4 @@ void VectorTrans(float x, float y, float z, vector5Single *c)
             m_Trans[5][col];
     }
 }
-
-//vertex VertexTrans(float x, float y, float z)
-//{
-//    vertex v;
-//
-//    v.X = m_Trans[0][0]*x +                            // Transforms vertex at point x,y,z into new vertex
-//          m_Trans[0][1]*y +
-//          m_Trans[0][2]*z;
-//
-//    v.Y = m_Trans[1][0]*x +
-//          m_Trans[1][1]*y +
-//          m_Trans[1][2]*z;
-//
-//    v.Z = m_Trans[2][0]*x +
-//          m_Trans[2][1]*y +
-//          m_Trans[2][2]*z;
-//
-//    return v;
-//}
 

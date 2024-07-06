@@ -26,7 +26,7 @@ namespace Worlds5
         public class Viewing
         {
             public float AngularResolution { get; set; }
-            public float Radius { get; set; }
+            public float SphereRadius { get; set; }
             public float CentreLatitude { get; set; }
             public float CentreLongitude { get; set; }
             public float VerticalView { get; set; }
@@ -52,6 +52,7 @@ namespace Worlds5
             public float[] Saturation { get; set; }
             public float SurfaceContrast { get; set; }
             public float LightingAngle { get; set; }
+            public float LightElevationAngle { get; set; }
         }
 
         public class Colour

@@ -33,18 +33,18 @@ extern float
 //////  SPHERE  //////
 EXPORT	void __stdcall InitSphere(float fBailout, float dResolution,
                                   float dLatitude, float dLongitude,
-                                  float Radius, float verticalView, float horizontalView, float *pTransMatrix);
+                                  float SphereRadius, float verticalView, float horizontalView, float *pTransMatrix);
 
 //////  RAY TRACER  //////
-EXPORT int __stdcall TraceRay(float startDistance, float increment, float smoothness, float surfaceThickness,
+EXPORT int __stdcall TraceRay(float startDistance, float samplingInterval, float surfaceSmoothing, float surfaceThickness,
 								float XFactor, float YFactor, float ZFactor, float bailout,
 								int externalPoints[], float modulusValues[], float angles[], float distances[],
 								int rayPoints, int maxSamples, float boundaryInterval, int binarySearchSteps,
 								int activeIndex, bool cudaMode);
 
-EXPORT float __stdcall FindSurface(float increment, float smoothness, int binarySearchSteps, float currentDistance,
+EXPORT float __stdcall FindSurface(float samplingInterval, float surfaceSmoothing, int binarySearchSteps, float currentDistance,
 									float xFactor, float yFactor, float zFactor, float bailout);
-EXPORT float __stdcall FindBoundary(float increment, int binarySearchSteps, float currentDistance, float previousAngle,
+EXPORT float __stdcall FindBoundary(float samplingInterval, int binarySearchSteps, float currentDistance, float previousAngle,
 									 float boundaryInterval, bool *externalPoint, float *Modulus, float *Angle,
 									 float xFactor, float yFactor, float zFactor, float bailout);
 

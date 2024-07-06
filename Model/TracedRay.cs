@@ -53,7 +53,7 @@ namespace Model
             int activeIndex = sphere.settings.ActiveIndex;
 
             float totalPoints = sphere.settings.MaxSamples[activeIndex] * sphere.settings.SamplingInterval[activeIndex];
-            float startDistance = sphere.settings.Radius;
+            float startDistance = sphere.settings.SphereRadius;
             float endDistance = startDistance + totalPoints;
             float exposureValue = sphere.settings.ExposureValue[activeIndex];
             float saturation = sphere.settings.Saturation[activeIndex];
@@ -78,34 +78,50 @@ namespace Model
                                 || RayData.DistanceValues[i] > endDistance)
                                 break;
 
+                            // Light position parameters
+                            float lightingAngleXY = -sphere.settings.LightingAngle * (float)Globals.DEG_TO_RAD;
+                            float lightElevationAngle = sphere.settings.LightElevationAngle * (float)Globals.DEG_TO_RAD;
 
-                            float lightingAngle = (sphere.settings.LightingAngle + 90) * (float)Globals.DEG_TO_RAD;
+                            // Calculate light direction
+                            Vector3 lightDirection = new Vector3(
+                                (float)(Math.Cos(lightingAngleXY) * Math.Cos(lightElevationAngle)),
+                                (float)(Math.Sin(lightingAngleXY) * Math.Cos(lightElevationAngle)),
+                                (float)Math.Sin(lightElevationAngle)
+                            );
+                            lightDirection = lightDirection.Normalize();
 
-                            // Modify the exposure value according to the XTilt, YTilt values using Lambert's Cosine Law
+                            // Get tilt values
                             float xTilt = xTiltValues != null && xTiltValues.Count > 0 ? xTiltValues[i] : 0;
                             float yTilt = yTiltValues != null && yTiltValues.Count > 0 ? yTiltValues[i] : 0;
-                            float tiltX = xTilt + lightingAngle;
-                            float tiltY = yTilt + lightingAngle;
-                            float  tiltValue = (float)((float)Math.Cos(tiltX) * (float)Math.Cos(tiltY));
 
-                            float surfaceContrast = sphere.settings.SurfaceContrast / 10;
+                            // Calculate the surface normal
+                            Vector3 surfaceNormal = new Vector3(
+                                (float)-Math.Sin(xTilt),
+                                (float)-Math.Sin(yTilt),
+                                (float)Math.Sqrt(1 - Math.Sin(xTilt) * Math.Sin(xTilt) - Math.Sin(yTilt) * Math.Sin(yTilt))
+                            );
+                            surfaceNormal = surfaceNormal.Normalize();
 
-                            //// Increase contrast of the exposure value
-                            float contrastValue = (tiltValue * surfaceContrast * 2) - surfaceContrast;
+                            // Calculate the dot product
+                            float dotProduct = Vector3.Dot(lightDirection, surfaceNormal);
 
-                            float lightness = contrastValue * exposureValue / 10;
+                            // Ensure the dot product is in the range [0, 1]
+                            float tiltValue = Math.Max(0, dotProduct);
 
-                            if (lightness < 0) lightness = 0;
-                            if (lightness > 1) lightness = 1;
+                            float surfaceContrast = sphere.settings.SurfaceContrast / 10f;
+
+                            // Apply contrast
+                            float contrastValue = (tiltValue - 0.5f) * (1 + surfaceContrast) + 0.5f;
+                            contrastValue = Math.Max(0, Math.Min(1, contrastValue));
+
+                            // Calculate final lightness
+                            float lightness = contrastValue * exposureValue / 10f;
+                            lightness = Math.Max(0, Math.Min(1, lightness));
 
                             // Modify the exposure according to the position of the point between the start and end distances
                             //float range = (float)(endDistance - startDistance);
                             //float exposureFactor = (float)(RayData.DistanceValues[i] - startDistance) / range;
-
-                            //if (exposureFactor > 1)
-                            //{
-                            //    exposureFactor = 1;
-                            //}
+                            //exposureFactor = Math.Min(1, exposureFactor));
 
                             // S & V set by exposure value
                             float Lightness = lightness;// *(1 - exposureFactor);

@@ -17,7 +17,7 @@
 
                 // Trace each ray for this latitude line and store in the sphere
 				ProcessLatitudeLine(rayCountY, latitude)        <-- increments X
-					// Trace the ray from the sphere radius outwards
+					// Trace the ray from the sphere sphereRadius outwards
 					TraceRay()
 					// Record the fractal value collection for this ray
 					tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);
@@ -38,6 +38,6 @@ Unmanaged\RayTracer.cpp:
 		// Determine orbit value for the starting point
 		SamplePoint(currentDistance, &Modulus, &Angle, xFactor, yFactor, zFactor, c)
 			// Perform binary search between this and the previous point, to determine surface position
-			sampleDistance = FindSurface(increment, binarySearchSteps, currentDistance, xFactor, yFactor, zFactor)
+			sampleDistance = FindSurface(samplingInterval, binarySearchSteps, currentDistance, xFactor, yFactor, zFactor)
 			// Determine orbit properties for this point
 			externalPoint = SamplePoint(sampleDistance, &Modulus, &Angle, xFactor, yFactor, zFactor, c)

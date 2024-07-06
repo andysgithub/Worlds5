@@ -3,17 +3,18 @@
 #include "vector5Single.h"
 
 struct RayTracingParams {
-    float startDistance;
-    float increment;
-    float smoothness;
-    float surfaceThickness;
-    float bailout;
-    int rayPoints;
-    int maxSamples;
-    float boundaryInterval;
-    int binarySearchSteps;
     int activeIndex;
+    float angularResolution;
+    float bailout;
+    int binarySearchSteps;
+    float boundaryInterval;
     bool cudaMode;
+    int maxSamples;
+    int rayPoints;
+    float samplingInterval;
+    float sphereRadius;
+    float surfaceSmoothing;
+    float surfaceThickness;
 };
 
 // Declare the constant symbol

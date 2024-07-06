@@ -41,7 +41,7 @@ namespace Worlds5
             // For each frame in the sequence
             for (int frameCount = 0; frameCount < totalFrames; frameCount++)
             {
-                sphere.settings.Radius = sphereRadius[0] - (float)frameCount / (float)totalFrames * (sphereRadius[0] - sphereRadius[1]);
+                sphere.settings.SphereRadius = sphereRadius[0] - (float)frameCount / (float)totalFrames * (sphereRadius[0] - sphereRadius[1]);
 
                 Transformation.RotateImage(RotationCentre.Origin, angles);
                 sphere.settings.PositionMatrix = Transformation.GetPositionMatrix();

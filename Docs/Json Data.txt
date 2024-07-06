@@ -5,7 +5,7 @@
         }
 
         "Viewing": {
-            "Radius": float
+            "SphereRadius": float
             "CentreLatitude": float
             "CentreLongitude": float
             "VerticalView": float

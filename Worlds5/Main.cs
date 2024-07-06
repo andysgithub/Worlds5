@@ -375,7 +375,7 @@ namespace Worlds5
                 // Determine the number of radians to turn per frame
                 float[,] angles = form.Angles;
 
-                // Retrieve the start and end sphere radius
+                // Retrieve the start and end sphere sphereRadius
                 float[] sphereRadius = form.SphereRadius;
 
                 // Retrieve the total frames

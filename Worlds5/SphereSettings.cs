@@ -99,7 +99,7 @@ namespace Worlds5
 */
             // Sphere viewing window
             sphereSettings.AngularResolution = (float)updResolution.Value;
-            sphereSettings.Radius = (float)updSphereRadius.Value;
+            sphereSettings.SphereRadius = (float)updSphereRadius.Value;
             sphereSettings.CentreLatitude = (float)updCentreLatitude.Value;
             sphereSettings.CentreLongitude = (float)updCentreLongitude.Value;
             sphereSettings.VerticalView = (float)updViewportHeight.Value;
@@ -149,6 +149,7 @@ namespace Worlds5
 
             sphereSettings.SurfaceContrast = (float)updSurfaceContrast.Value;
             sphereSettings.LightingAngle = (float)updLightingAngle.Value;
+            sphereSettings.LightElevationAngle = (float)updLightElevationAngle.Value;
 
             sphereSettings.ColourCompression = (float)updCompression.Value;
             sphereSettings.ColourOffset = (float)updOffset.Value;
@@ -168,7 +169,7 @@ namespace Worlds5
 
             // Sphere Viewing window
             updResolution.Value = (decimal)sphereSettings.AngularResolution;
-            updSphereRadius.Value = (decimal)sphereSettings.Radius;
+            updSphereRadius.Value = (decimal)sphereSettings.SphereRadius;
             updCentreLatitude.Value = (decimal)sphereSettings.CentreLatitude;
             updCentreLongitude.Value = (decimal)sphereSettings.CentreLongitude;
             updViewportHeight.Value = (decimal)sphereSettings.VerticalView;
@@ -206,6 +207,7 @@ namespace Worlds5
 
             updSurfaceContrast.Value = (decimal)sphereSettings.SurfaceContrast;
             updLightingAngle.Value = (decimal)sphereSettings.LightingAngle;
+            updLightElevationAngle.Value = (decimal)sphereSettings.LightElevationAngle;
 
             updCompression.Value = (decimal)sphereSettings.ColourCompression;
             updOffset.Value = (decimal)sphereSettings.ColourOffset;
@@ -245,7 +247,7 @@ namespace Worlds5
 
         private void updSphereRadius_HelpRequested(object sender, HelpEventArgs hlpevent)
         {
-            showDetails("Sphere Radius", "The distance from the centre of the sphereSettings to first ray tracing point");
+            showDetails("Sphere Radius", "The distance from the centre of the sphere to first ray tracing point");
         }
 
         private void updCentreLatitude_HelpRequested(object sender, HelpEventArgs hlpevent)

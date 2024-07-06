@@ -45,6 +45,12 @@ namespace Model
         {
             return new Vector3(scalar * v.X, scalar * v.Y, scalar * v.Z);
         }
+
+        public static float Dot(Vector3 a, Vector3 b)
+        {
+            return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+        }
+
         public Vector3 Normalize()
         {
             float magnitude = (float)Math.Sqrt(X * X + Y * Y + Z * Z);

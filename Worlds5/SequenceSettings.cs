@@ -18,8 +18,8 @@ namespace Worlds5
             this.cmbFormat.SelectedIndex = 0;
 
             Model.clsSphere sphere = Model.Globals.Sphere;
-            this.updRadiusStart.Value = (decimal)sphere.settings.Radius;
-            this.updRadiusEnd.Value = (decimal)sphere.settings.Radius;
+            this.updRadiusStart.Value = (decimal)sphere.settings.SphereRadius;
+            this.updRadiusEnd.Value = (decimal)sphere.settings.SphereRadius;
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -78,10 +78,10 @@ namespace Worlds5
         {
             get
             {
-                float[] radius = new float[2];
-                radius[0] = (float)updRadiusStart.Value;
-                radius[1] = (float)updRadiusEnd.Value;
-                return radius;
+                float[] sphereRadius = new float[2];
+                sphereRadius[0] = (float)updRadiusStart.Value;
+                sphereRadius[1] = (float)updRadiusEnd.Value;
+                return sphereRadius;
             }
         }
 

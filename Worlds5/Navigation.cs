@@ -103,7 +103,7 @@ namespace Worlds5
                 {
                     // Viewing window
                     sphere.settings.AngularResolution = viewing.AngularResolution;
-                    sphere.settings.Radius = viewing.Radius;
+                    sphere.settings.SphereRadius = viewing.SphereRadius;
                     sphere.settings.CentreLatitude = viewing.CentreLatitude;
                     sphere.settings.CentreLongitude = viewing.CentreLongitude;
                     sphere.settings.VerticalView = viewing.VerticalView;
@@ -125,7 +125,8 @@ namespace Worlds5
                     sphere.settings.Saturation = rendering.Saturation;
                     sphere.settings.SurfaceContrast = rendering.SurfaceContrast;
                     sphere.settings.LightingAngle = rendering.LightingAngle;
-
+                    sphere.settings.LightElevationAngle = rendering.LightElevationAngle;
+                    
                     // Colour
                     sphere.settings.ColourCompression = colour.ColourCompression;
                     sphere.settings.ColourOffset = colour.ColourOffset;
@@ -193,7 +194,7 @@ namespace Worlds5
 
                 // Viewing window
                 viewing.AngularResolution = sphere.settings.AngularResolution;
-                viewing.Radius = sphere.settings.Radius;
+                viewing.SphereRadius = sphere.settings.SphereRadius;
                 viewing.CentreLatitude = sphere.settings.CentreLatitude;
                 viewing.CentreLongitude = sphere.settings.CentreLongitude;
                 viewing.VerticalView = sphere.settings.VerticalView;
@@ -215,7 +216,8 @@ namespace Worlds5
                 rendering.Saturation = sphere.settings.Saturation;
                 rendering.SurfaceContrast = sphere.settings.SurfaceContrast;
                 rendering.LightingAngle = sphere.settings.LightingAngle;
-
+                rendering.LightElevationAngle = sphere.settings.LightElevationAngle;
+                
                 // Colour
                 colour.ColourCompression = sphere.settings.ColourCompression;
                 colour.ColourOffset = sphere.settings.ColourOffset;

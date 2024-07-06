@@ -205,9 +205,9 @@ __device__ bool gapFound2(float currentDistance, float surfaceThickness, float x
     return false;
 }
 
-__device__ float FindSurface2(float increment, float smoothness, int binarySearchSteps, float currentDistance, float xFactor, float yFactor, float zFactor, float bailout) {
-    float stepFactor = smoothness / 10;
-    float stepSize = -increment * stepFactor;
+__device__ float FindSurface2(float samplingInterval, float surfaceSmoothing, int binarySearchSteps, float currentDistance, float xFactor, float yFactor, float zFactor, float bailout) {
+    float stepFactor = surfaceSmoothing / 10;
+    float stepSize = -samplingInterval * stepFactor;
     float sampleDistance = currentDistance;
     const vector5Single c = { 0, 0, 0, 0, 0 };
 
@@ -224,10 +224,10 @@ __device__ float FindSurface2(float increment, float smoothness, int binarySearc
     return sampleDistance;
 }
 
-__device__ float FindBoundary2(float increment, int binarySearchSteps, float currentDistance, float previousAngle,
+__device__ float FindBoundary2(float samplingInterval, int binarySearchSteps, float currentDistance, float previousAngle,
     float boundaryInterval, bool* externalPoint, float* Modulus, float* Angle,
     float xFactor, float yFactor, float zFactor, float bailout) {
-    float stepSize = -increment / 2;
+    float stepSize = -samplingInterval / 2;
     float sampleDistance = currentDistance;
     const vector5Single c = { 0, 0, 0, 0, 0 };
 
@@ -252,7 +252,7 @@ __global__ void TraceRayKernel(
     int* externalPoints, float* modulusValues, float* angles, float* distances, int* recordedPointsOut) {
 
     float Modulus, Angle;
-    float currentDistance = d_params.startDistance;
+    float currentDistance = d_params.sphereRadius;
     float sampleDistance;
     int recordedPoints = 0;
     int sampleCount = 0;
@@ -271,7 +271,7 @@ __global__ void TraceRayKernel(
     // Begin loop
     while (recordedPoints < d_params.rayPoints && sampleCount < d_params.maxSamples) {
         // Move on to the next point
-        currentDistance += d_params.increment;
+        currentDistance += d_params.samplingInterval;
         sampleCount++;
 
         // Determine orbit properties for this point
@@ -282,7 +282,7 @@ __global__ void TraceRayKernel(
             ///// Set value for surface point /////
 
             // Perform binary search between this and the previous point, to determine surface position
-            sampleDistance = FindSurface2(d_params.increment, d_params.smoothness, d_params.binarySearchSteps, currentDistance, xFactor, yFactor, zFactor, d_params.bailout);
+            sampleDistance = FindSurface2(d_params.samplingInterval, d_params.surfaceSmoothing, d_params.binarySearchSteps, currentDistance, xFactor, yFactor, zFactor, d_params.bailout);
             bool foundGap = gapFound2(sampleDistance, d_params.surfaceThickness, xFactor, yFactor, zFactor, d_params.bailout, c);
 
             // Test point a short distance further along, to determine whether this is still in the set
@@ -309,7 +309,7 @@ __global__ void TraceRayKernel(
             // If orbit value is sufficiently different from the last recorded sample
             if (angleChange > d_params.boundaryInterval) {
                 // Perform binary search between this and the recorded point, to determine boundary position
-                sampleDistance = FindBoundary2(d_params.increment, d_params.binarySearchSteps, currentDistance, angles[recordedPoints - 1],
+                sampleDistance = FindBoundary2(d_params.samplingInterval, d_params.binarySearchSteps, currentDistance, angles[recordedPoints - 1],
                     d_params.boundaryInterval, &externalPoint, &Modulus, &Angle,
                     xFactor, yFactor, zFactor, d_params.bailout);
 

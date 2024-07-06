@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 
 namespace Model
 {
@@ -49,7 +48,7 @@ namespace Model
             public float Bailout { get; set; }
             // Distance between sampling points during ray tracing
             public float[] SamplingInterval { get; set; }
-            // The smoothness of the surface
+            // The surfaceSmoothing of the surface
             public float SurfaceSmoothing { get; set; }
             // The minimum acceptable thickness of the detected surface, to avoid speckling
             public float SurfaceThickness { get; set; }
@@ -71,6 +70,8 @@ namespace Model
             public float SurfaceContrast { get; set; }
             // The lighting angle for surface shading (0 to 180 degrees)
             public float LightingAngle { get; set; }
+            // The elevation angle from the xy plane for surface shading (0 to 90 degrees)
+            public float LightElevationAngle { get; set; }
 
             #endregion
 
@@ -103,7 +104,7 @@ namespace Model
             // Longitude of the viewing centre (degrees)
             public float CentreLongitude { get; set; }
             // Distance from centre to first ray tracing point
-            public float Radius { get; set; }
+            public float SphereRadius { get; set; }
 
             // Vertical field of view (degrees)
             public float VerticalView
@@ -144,13 +145,6 @@ namespace Model
 
             #endregion
         }
-
-        //public void InitialiseSurfaceMap()
-        //{
-        //    // Initialise the surface mapping to correspond to the viewport
-        //    surfaceMap = new SurfacePoint[(int)(HorizontalView / settings.AngularResolution) + 1, (int)(settings.VerticalView / settings.AngularResolution) + 1];
-        //    incrementFactor = 2 * (float)Math.Sin(settings.AngularResolution / 2);
-        //}
 
         public void InitialiseRayMap()
         {
@@ -195,7 +189,7 @@ namespace Model
                                 // Get the distance to the surface
                                 float lastDistance = lastRay.RayData.DistanceValues[testCount];
 
-                                // If the distance on the previous ray has overshot the current ray
+/*                                // If the distance on the previous ray has overshot the current ray
                                 if (lastDistance > currentDistance + settings.SurfaceThickness * 10.0)
                                 {
                                     // Go on to the next current ray surface distance
@@ -207,7 +201,7 @@ namespace Model
                                 {
                                     // Go on to the next test ray surface distance
                                     continue;
-                                }
+                                }*/
 
                                 // Calculate the longitudinal tilt value
                                 float separation = lastDistance - currentDistance;
@@ -222,31 +216,5 @@ namespace Model
             }
             return tiltValues;
         }
-
-        //public void addSurfacePoint(SurfacePoint surfacePoint, int xIndex, int yIndex)
-        //{
-        //    surfaceMap[xIndex, yIndex] = surfacePoint;
-
-        //    float increment = surfacePoint.Distance * incrementFactor;
-        //    float lastDistance;
-        //    float separation;
-
-        //    if (xIndex > 0)
-        //    {
-        //        // Calculate the longitudinal tilt value from the previous longitude point
-        //        lastDistance = surfaceMap[xIndex - 1, yIndex].Distance;
-        //        separation = lastDistance - surfacePoint.Distance;
-        //        surfaceMap[xIndex, yIndex].XTilt = (float)(Math.Atan(separation / increment));
-        //    }
-
-        //    if (yIndex > 0)
-        //    {
-        //        // Calculate the latitudinal tilt value from the previous latitude point
-        //        lastDistance = surfaceMap[xIndex, yIndex - 1].Distance;
-        //        separation = lastDistance - surfacePoint.Distance;
-        //        surfaceMap[xIndex, yIndex].YTilt = (float)(Math.Atan(separation / increment));
-        //    } 
-        //}
-
     }
 }
