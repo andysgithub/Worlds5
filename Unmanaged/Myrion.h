@@ -1,5 +1,5 @@
-#ifndef WORLDS5_APEIRON_H
-#define WORLDS5_APEIRON_H
+#pragma once
+
 /*
  *	Myrion Engine:  5-dimensional routines
  *
@@ -185,5 +185,4 @@ void v_invm(float *a, float *b)
 		}
 	}
 }
-#endif
 

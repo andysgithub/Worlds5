@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 
 namespace Model
 {
@@ -151,7 +150,7 @@ namespace Model
             }
             catch (Exception e)
             {
-                MessageBox.Show("Error tracing ray: " + e.Message, "Trace Ray Error");
+                Console.WriteLine("Error tracing ray: {0} ", e.Message);
             }
 
             // Colour the inside of the set if visible

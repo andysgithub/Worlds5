@@ -37,21 +37,20 @@ EXPORT bool CopyTransformationMatrix(const float* positionMatrix)
     return cudaStatus == cudaSuccess;
 }
 
-int TraceRayC(float startDistance, float samplingInterval, float surfaceSmoothing, float surfaceThickness,
-    float xFactor, float yFactor, float zFactor, float bailout,
-    int externalPoints[], float modulusValues[], float angles[], float distances[],
-    int rayPoints, int maxSamples, float boundaryInterval, int binarySearchSteps,
-    int activeIndex)
+int TraceRayC(float startDistance, RayTracingParams rayParams,
+    float xFactor, float yFactor, float zFactor,
+    int externalPoints[], float modulusValues[], float angles[], float distances[])
 {
     float	Modulus, Angle;
     float	currentDistance = startDistance;
     float	sampleDistance;
+    int rayPoints = (int)(rayParams.maxSamples * rayParams.samplingInterval);
     int	recordedPoints = 0;
     int sampleCount = 0;
     const vector5Single c = { 0, 0, 0, 0, 0 };							// 5D vector for ray point coordinates
 
     // Determine orbit value for the starting point
-    bool externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, bailout, xFactor, yFactor, zFactor, c);
+    bool externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, rayParams.bailout, xFactor, yFactor, zFactor, c);
 
     // Record this point as the first sample
     externalPoints[recordedPoints] = externalPoint;
@@ -61,33 +60,36 @@ int TraceRayC(float startDistance, float samplingInterval, float surfaceSmoothin
     recordedPoints++;
 
     // Begin loop
-    while (recordedPoints < rayPoints && sampleCount < maxSamples)
+    while (recordedPoints < rayPoints && sampleCount < rayParams.maxSamples)
     {
         // Move on to the next point
-        currentDistance += samplingInterval;
+        currentDistance += rayParams.samplingInterval;
         sampleCount++;
 
         // Determine orbit properties for this point
-        externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, bailout, xFactor, yFactor, zFactor, c);
+        externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, rayParams.bailout, xFactor, yFactor, zFactor, c);
 
         // If this is an internal point and previous point is external
-        if (activeIndex == 0 && !externalPoint && externalPoints[recordedPoints - 1] == 1)
+        if (rayParams.activeIndex == 0 && !externalPoint && externalPoints[recordedPoints - 1] == 1)
         {
             ///// Set value for surface point /////
 
             // Perform binary search between this and the previous point, to determine surface position
-            sampleDistance = FindSurface(samplingInterval, surfaceSmoothing, binarySearchSteps, currentDistance, xFactor, yFactor, zFactor, bailout);
-            bool foundGap = gapFound(sampleDistance, surfaceThickness, xFactor, yFactor, zFactor, bailout, c);
+            sampleDistance = FindSurface(
+                rayParams.samplingInterval, rayParams.surfaceSmoothing, rayParams.binarySearchSteps, 
+                currentDistance, xFactor, yFactor, zFactor, rayParams.bailout);
+
+            bool foundGap = gapFound(sampleDistance, rayParams.surfaceThickness, xFactor, yFactor, zFactor, rayParams.bailout, c);
                         
             // Test point a short distance further along, to determine whether this is still in the set
-            if (surfaceThickness > 0 && foundGap)
+            if (rayParams.surfaceThickness > 0 && foundGap)
             {
                 // Back outside the set, so continue as normal for external points
                 externalPoint = true;
                 continue;
             }
             // Determine orbit properties for this point
-            externalPoint = SamplePoint(sampleDistance, &Modulus, &Angle, bailout, xFactor, yFactor, zFactor, c);
+            externalPoint = SamplePoint(sampleDistance, &Modulus, &Angle, rayParams.bailout, xFactor, yFactor, zFactor, c);
 
             // Save this point value in the ray collection
             externalPoints[recordedPoints] = externalPoint ? 1 : 0;
@@ -96,19 +98,19 @@ int TraceRayC(float startDistance, float samplingInterval, float surfaceSmoothin
             distances[recordedPoints] = sampleDistance;
             recordedPoints++;
         }
-        else if (activeIndex == 1)
+        else if (rayParams.activeIndex == 1)
         {
             ///// Set value for external point /////
 
             const float angleChange = fabs(Angle - angles[recordedPoints - 1]);
 
             // If orbit value is sufficiently different from the last recorded sample
-            if (angleChange > boundaryInterval)
+            if (angleChange > rayParams.boundaryInterval)
             {
                 // Perform binary search between this and the recorded point, to determine boundary position
-                sampleDistance = FindBoundary(samplingInterval, binarySearchSteps, currentDistance, angles[recordedPoints - 1],
-                    boundaryInterval, &externalPoint, &Modulus, &Angle,
-                    xFactor, yFactor, zFactor, bailout);
+                sampleDistance = FindBoundary(rayParams.samplingInterval, rayParams.binarySearchSteps, currentDistance, angles[recordedPoints - 1],
+                    rayParams.boundaryInterval, &externalPoint, &Modulus, &Angle,
+                    xFactor, yFactor, zFactor, rayParams.bailout);
 
                 // Save this point value in the ray collection
                 externalPoints[recordedPoints] = externalPoint ? 1 : 0;
@@ -150,22 +152,20 @@ int TraceRayCuda(float XFactor, float YFactor, float ZFactor, int rayPoints,
 }
 
 // Produce the collection of fractal point values for the given vector
-EXPORT int __stdcall TraceRay(float startDistance, float samplingInterval, float surfaceSmoothing, float surfaceThickness,
-    float XFactor, float YFactor, float ZFactor, float bailout,
-    int externalPoints[], float modulusValues[], float angles[], float distances[],
-    int rayPoints, int maxSamples, float boundaryInterval, int binarySearchSteps,
-    int activeIndex, bool cudaMode)
+EXPORT int __stdcall TraceRay(float startDistance, RayTracingParams rayParams,
+    float XFactor, float YFactor, float ZFactor,
+    int externalPoints[], float modulusValues[], float angles[], float distances[])
 {
-    if (cudaMode) {
+    if (rayParams.cudaMode) {
+        int rayPoints = (int)(rayParams.maxSamples * rayParams.samplingInterval);
+
         return TraceRayCuda(XFactor, YFactor, ZFactor, rayPoints,
             externalPoints, modulusValues, angles, distances);
     }
     else {
-        return TraceRayC(startDistance, samplingInterval, surfaceSmoothing, surfaceThickness,
-            XFactor, YFactor, ZFactor, bailout,
-            externalPoints, modulusValues, angles, distances,
-            rayPoints, maxSamples, boundaryInterval, binarySearchSteps,
-            activeIndex);
+        return TraceRayC(startDistance, rayParams,
+            XFactor, YFactor, ZFactor,
+            externalPoints, modulusValues, angles, distances);
     }
 }
 

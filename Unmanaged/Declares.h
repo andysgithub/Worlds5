@@ -1,8 +1,6 @@
-#ifndef _DECLARES_H
-#define _DECLARES_H
+#pragma once
 
 /* Type structures */
 
 const float inv60 = (float)0.01667;
 
-#endif

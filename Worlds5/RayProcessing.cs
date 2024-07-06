@@ -14,13 +14,17 @@ namespace Worlds5
             public float bailout;
             public int binarySearchSteps;
             public float boundaryInterval;
+            public AxisPair clippingAxes;
+            public float clippingOffset;
             public bool cudaMode;
+            public float latitudeStart;
+            public float longitudeStart;
             public int maxSamples;
-            public int rayPoints;
             public float samplingInterval;
             public float sphereRadius;
             public float surfaceSmoothing;
             public float surfaceThickness;
+            public bool useClipping;
 
             public RayTracingParams(clsSphere.Settings settings)
             {
@@ -29,23 +33,26 @@ namespace Worlds5
                 bailout = settings.Bailout;
                 binarySearchSteps = settings.BinarySearchSteps[settings.ActiveIndex];
                 boundaryInterval = settings.BoundaryInterval;
+                clippingAxes = settings.ClippingAxes;
+                clippingOffset = settings.ClippingOffset;
                 cudaMode = settings.CudaMode;
+                latitudeStart = settings.LatitudeStart;
+                longitudeStart = settings.LongitudeStart;
                 maxSamples = settings.MaxSamples[settings.ActiveIndex];
-                rayPoints = (int)(settings.MaxSamples[settings.ActiveIndex] * settings.SamplingInterval[settings.ActiveIndex]);
                 samplingInterval = settings.SamplingInterval[settings.ActiveIndex];
                 sphereRadius = settings.SphereRadius;
                 surfaceSmoothing = settings.SurfaceSmoothing;
                 surfaceThickness = settings.SurfaceThickness;
+                useClipping = settings.UseClipping;
             }
         }
 
 
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern int TraceRay(float startDistance, float samplingInterval, float surfaceSmoothing, float surfaceThickness,
-            float xFactor, float yFactor, float zFactor, float bailout,
-            int[] externalsArray, float[] valuesArray, float[] anglesArray, float[] distancesArray,
-            int rayPoints, int maxSamples, float boundaryInterval, int binarySearchSteps,
-            int activeIndex, bool cudaMode);
+        static extern int TraceRay(
+            float startDistance, RayTracingParams rayParams,
+            float xFactor, float yFactor, float zFactor,
+            int[] externalsArray, float[] valuesArray, float[] anglesArray, float[] distancesArray);
 
         private int[] externalPoints;
         private float[] modulusValues;
@@ -61,13 +68,10 @@ namespace Worlds5
         }
 
         // Trace the ray on this latitude line
-        public void ProcessRay(clsSphere sphere, int rayCountX, int rayCountY)
+        public TracedRay.RayDataType ProcessRay(RayTracingParams rayParams, int rayCountX, int rayCountY)
         {
-            clsSphere.Settings settings = sphere.settings;
-            float latitude = settings.LatitudeStart - rayCountY * settings.AngularResolution;
-            float longitude = settings.LongitudeStart - rayCountX * settings.AngularResolution;
-            int i = settings.ActiveIndex;
-            int rayPoints = (int)(settings.MaxSamples[i] * settings.SamplingInterval[i]);
+            float latitude = rayParams.latitudeStart - rayCountY * rayParams.angularResolution;
+            float longitude = rayParams.longitudeStart - rayCountX * rayParams.angularResolution;
 
             float latRadians = latitude * Globals.DEG_TO_RAD;
             float longRadians = longitude * Globals.DEG_TO_RAD;
@@ -77,24 +81,23 @@ namespace Worlds5
             float zFactor = (float)Math.Cos(latRadians) * (float)Math.Cos(-longRadians);
 
             // Set the start distance to the sphere sphereRadius
-            float startDistance = settings.SphereRadius;
+            float startDistance = rayParams.sphereRadius;
 
             // If clipping is enabled
-            if (settings.UseClipping)
+            if (rayParams.useClipping)
             {
                 // Get the 5D coordinates for the intersection between this vector and the clipping plane
-                float distance = Clipping.CalculateDistance(latRadians, longRadians, settings.ClippingAxes, settings.ClippingOffset);
+                float distance = Clipping.CalculateDistance(latRadians, longRadians, rayParams.clippingAxes, rayParams.clippingOffset);
 
-                // Set the start distance to this value if larger than sphere sphereRadius
+                // Set the start distance to this value if larger than the sphere radius
                 if (distance > startDistance) startDistance = distance;
             }         
 
             // Trace the ray from the starting point outwards
-            int points = TraceRay(startDistance, settings.SamplingInterval[i], settings.SurfaceSmoothing, settings.SurfaceThickness,
-                        xFactor, yFactor, zFactor, settings.Bailout,
-                        externalPoints, modulusValues, angleValues, distanceValues,
-                        rayPoints, settings.MaxSamples[i], settings.BoundaryInterval, settings.BinarySearchSteps[i],
-                        i, settings.CudaMode);
+            int points = TraceRay(
+                startDistance, rayParams,
+                xFactor, yFactor, zFactor,
+                externalPoints, modulusValues, angleValues, distanceValues);
 
             // Resize arrays to the recordedPoints value
             Array.Resize(ref externalPoints, points);
@@ -106,7 +109,7 @@ namespace Worlds5
             TracedRay tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);
 
             // Add this ray to the ray map in the sphere
-            sphere.RayMap[rayCountX, rayCountY] = tracedRay.RayData;
+            return tracedRay.RayData;
         }
     }
 }

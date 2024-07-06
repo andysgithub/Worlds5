@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Model;
+using Syncfusion.Windows.Forms;
 using static Worlds5.RayProcessing;
 
 namespace Worlds5
@@ -159,6 +160,7 @@ namespace Worlds5
         {
             // Initialise an array of RayProcessing classes for the collection of vectors
             RayProcessing[,] rayProc = new RayProcessing[raysPerLine, totalLines];
+            RayTracingParams rayParams = new RayTracingParams(sphere.settings);
 
             for (int countY = 0; countY < totalLines; countY++)
             {
@@ -177,7 +179,8 @@ namespace Worlds5
                     try
                     {
                         // Perform raytracing in this thread
-                        rayProc[rayCountX, rayCountY].ProcessRay(sphere, rayCountX, rayCountY);
+                        TracedRay.RayDataType rayData = rayProc[rayCountX, rayCountY].ProcessRay(rayParams, rayCountX, rayCountY);
+                        sphere.RayMap[rayCountX, rayCountY] = rayData;
 
                         if (sphere.settings.CudaMode)
                         {

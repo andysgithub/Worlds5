@@ -2,9 +2,9 @@
 #include <cmath>
 #include <thread>
 #include <mutex>
-
-// Forward declaration of clsSphere (you'll need to define this class in C++)
-class clsSphere;
+#include "stdafx.h"
+#include "unmanaged.h"
+#include "TracedRay.h" 
 
 class RayProcessing {
 
@@ -13,31 +13,14 @@ class RayProcessing {
 public:
     RayProcessing(ProgressCallback callback) : progressCallback(callback) {}
 
-    struct RayTracingParams {
-        int activeIndex;
-        float angularResolution;
-        float bailout;
-        int binarySearchSteps;
-        float boundaryInterval;
-        bool cudaMode;
-        int maxSamples;
-        int rayPoints;
-        float samplingInterval;
-        float sphereRadius;
-        float surfaceSmoothing;
-        float surfaceThickness;
-    };
-
     RayProcessing()
         : externalPoints(100), modulusValues(100), angleValues(100), distanceValues(100) {}
 
-    void ProcessRay(clsSphere& sphere, int rayCountX, int rayCountY) {
-        // You'll need to implement clsSphere and its Settings in C++
-        auto& settings = sphere.settings;
-        float latitude = settings.LatitudeStart - rayCountY * settings.AngularResolution;
-        float longitude = settings.LongitudeStart - rayCountX * settings.AngularResolution;
-        int i = settings.ActiveIndex;
-        int rayPoints = static_cast<int>(settings.MaxSamples[i] * settings.SamplingInterval[i]);
+    TracedRay::RayDataType ProcessRay(RayTracingParams rayParams, int rayCountX, int rayCountY) {
+
+        float latitude = rayParams.latitudeStart - rayCountY * rayParams.angularResolution;
+        float longitude = rayParams.longitudeStart - rayCountX * rayParams.angularResolution;
+        int rayPoints = static_cast<int>(rayParams.maxSamples * rayParams.samplingInterval);
 
         constexpr float DEG_TO_RAD = 3.14159265358979323846f / 180.0f;
         float latRadians = latitude * DEG_TO_RAD;
@@ -47,30 +30,34 @@ public:
         float yFactor = std::sin(latRadians);
         float zFactor = std::cos(latRadians) * std::cos(-longRadians);
 
-        float startDistance = settings.SphereRadius;
+        float startDistance = rayParams.sphereRadius;
 
-        if (settings.UseClipping) {
+        if (rayParams.useClipping) {
             // Implement Clipping::CalculateDistance in C++
-            float distance = Clipping::CalculateDistance(latRadians, longRadians, settings.ClippingAxes, settings.ClippingOffset);
+            float distance = Clipping::CalculateDistance(latRadians, longRadians, rayParams.clippingAxes, rayParams.clippingOffset);
             if (distance > startDistance) startDistance = distance;
         }
 
-        int points = TraceRay(startDistance, settings.SamplingInterval[i], settings.SurfaceSmoothing, settings.SurfaceThickness,
-            xFactor, yFactor, zFactor, settings.Bailout,
-            externalPoints.data(), modulusValues.data(), angleValues.data(), distanceValues.data(),
-            rayPoints, settings.MaxSamples[i], settings.BoundaryInterval, settings.BinarySearchSteps[i],
-            i, settings.CudaMode);
+        int points = TraceRay(startDistance, rayParams,
+            xFactor, yFactor, zFactor,
+            externalPoints.data(), modulusValues.data(), angleValues.data(), distanceValues.data());
 
         externalPoints.resize(points);
         modulusValues.resize(points);
         angleValues.resize(points);
         distanceValues.resize(points);
 
-        // Implement TracedRay in C++
+        // Define the TracedRay object
         TracedRay tracedRay(externalPoints, modulusValues, angleValues, distanceValues);
 
-        // Update sphere's RayMap (you'll need to implement this in C++)
-        sphere.UpdateRayMap(rayCountX, rayCountY, tracedRay.RayData);
+        // Create and return a RayDataType directly
+        return TracedRay::RayDataType{
+            tracedRay.ExternalPoints(),
+            tracedRay.ModulusValues(),
+            tracedRay.AngleValues(),
+            tracedRay.Boundaries(),
+            tracedRay.BoundaryTotal()
+        };
     }
 
 private:
@@ -80,11 +67,4 @@ private:
     std::vector<float> distanceValues;
 
     ProgressCallback progressCallback;
-
-    // Declare TraceRay as a member function or keep it as an external function
-    static int TraceRay(float startDistance, float samplingInterval, float surfaceSmoothing, float surfaceThickness,
-        float xFactor, float yFactor, float zFactor, float bailout,
-        int* externalsArray, float* valuesArray, float* anglesArray, float* distancesArray,
-        int rayPoints, int maxSamples, float boundaryInterval, int binarySearchSteps,
-        int activeIndex, bool cudaMode);
 };

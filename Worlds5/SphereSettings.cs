@@ -346,6 +346,7 @@ namespace Worlds5
 
                 updSurfaceContrast.Enabled = (regionIndex == 0);
                 updLightingAngle.Enabled = (regionIndex == 0);
+                updLightElevationAngle.Enabled = (regionIndex == 0);
             }
         }
 

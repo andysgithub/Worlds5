@@ -439,6 +439,11 @@
             // 
             this.updExposureValue.DecimalPlaces = 1;
             this.updExposureValue.Location = new System.Drawing.Point(142, 27);
+            this.updExposureValue.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.updExposureValue.Name = "updExposureValue";
             this.updExposureValue.Size = new System.Drawing.Size(93, 20);
             this.updExposureValue.TabIndex = 14;

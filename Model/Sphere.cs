@@ -48,7 +48,7 @@ namespace Model
             public float Bailout { get; set; }
             // Distance between sampling points during ray tracing
             public float[] SamplingInterval { get; set; }
-            // The surfaceSmoothing of the surface
+            // The smoothing of the surface
             public float SurfaceSmoothing { get; set; }
             // The minimum acceptable thickness of the detected surface, to avoid speckling
             public float SurfaceThickness { get; set; }
@@ -149,7 +149,10 @@ namespace Model
         public void InitialiseRayMap()
         {
             // Initialise the ray trace mapping to correspond to the viewport
-            RayMap = new TracedRay.RayDataType[(int)(settings.HorizontalView / settings.AngularResolution) + 1, (int)(settings.VerticalView / settings.AngularResolution) + 1];
+            RayMap = new TracedRay.RayDataType[
+                (int)(settings.HorizontalView / settings.AngularResolution) + 1,
+                (int)(settings.VerticalView / settings.AngularResolution) + 1
+            ];
             incrementFactor = 2 * (float)Math.Sin(settings.AngularResolution / 2);
         }
 

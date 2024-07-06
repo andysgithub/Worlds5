@@ -33,6 +33,12 @@
     <ClCompile Include="RayProcessing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TracedRay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TracedRay.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Myrion.h">

@@ -1,5 +1,4 @@
-#ifndef KERNEL_CUH
-#define KERNEL_CUH
+#pragma once
 
 #include <cuda_runtime.h> // Include CUDA runtime header for device functions and types
 #include "vector5Single.h"
@@ -14,5 +13,3 @@ __device__ float FindSurface(float samplingInterval, float surfaceSmoothing, int
 __device__ float FindBoundary(float samplingInterval, int binarySearchSteps, float currentDistance, float previousAngle,
     float boundaryInterval, bool* externalPoint, float* Modulus, float* Angle,
     float xFactor, float yFactor, float zFactor, float bailout);
-
-#endif // KERNEL_CUH

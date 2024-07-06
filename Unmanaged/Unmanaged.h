@@ -1,5 +1,4 @@
-#ifndef WORLDS5_UNMANAGED_H
-#define WORLDS5_UNMANAGED_H
+#pragma once
 
 #define EXPORT extern "C" __declspec(dllexport)
 
@@ -7,6 +6,7 @@
 #include "declares.h"
 #include "Vectors.h"
 #include "vector5Single.h"
+#include "cuda_interface.h"
 
 ///////  CONSTANTS  ///////
 const int MAX_DIM = 20;
@@ -36,11 +36,9 @@ EXPORT	void __stdcall InitSphere(float fBailout, float dResolution,
                                   float SphereRadius, float verticalView, float horizontalView, float *pTransMatrix);
 
 //////  RAY TRACER  //////
-EXPORT int __stdcall TraceRay(float startDistance, float samplingInterval, float surfaceSmoothing, float surfaceThickness,
-								float XFactor, float YFactor, float ZFactor, float bailout,
-								int externalPoints[], float modulusValues[], float angles[], float distances[],
-								int rayPoints, int maxSamples, float boundaryInterval, int binarySearchSteps,
-								int activeIndex, bool cudaMode);
+EXPORT int __stdcall TraceRay(float startDistance, RayTracingParams rayParams,
+								float XFactor, float YFactor, float ZFactor,
+								int externalPoints[], float modulusValues[], float angles[], float distances[]);
 
 EXPORT float __stdcall FindSurface(float samplingInterval, float surfaceSmoothing, int binarySearchSteps, float currentDistance,
 									float xFactor, float yFactor, float zFactor, float bailout);
@@ -59,5 +57,3 @@ void VectorTrans(float x, float y, float z, vector5Single *c);
 
 //////  COLOUR  //////
 EXPORT void __stdcall HSVtoRGB(float h, float s, float v, BYTE *rval, BYTE *gval, BYTE *bval);
-
-#endif

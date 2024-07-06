@@ -248,7 +248,7 @@ __device__ float FindBoundary2(float samplingInterval, int binarySearchSteps, fl
 }
 
 __global__ void TraceRayKernel(
-    float xFactor, float yFactor, float zFactor,
+    float xFactor, float yFactor, float zFactor, int rayPoints,
     int* externalPoints, float* modulusValues, float* angles, float* distances, int* recordedPointsOut) {
 
     float Modulus, Angle;
@@ -269,7 +269,7 @@ __global__ void TraceRayKernel(
     recordedPoints++;
 
     // Begin loop
-    while (recordedPoints < d_params.rayPoints && sampleCount < d_params.maxSamples) {
+    while (recordedPoints < rayPoints && sampleCount < d_params.maxSamples) {
         // Move on to the next point
         currentDistance += d_params.samplingInterval;
         sampleCount++;
@@ -367,7 +367,7 @@ extern "C" int launchTraceRayKernel(float XFactor, float YFactor, float ZFactor,
     cudaMalloc(&d_recordedPointsOut, sizeof(int));
 
     // Launch kernel
-    TraceRayKernel<<<1, 1>>>(XFactor, YFactor, ZFactor,
+    TraceRayKernel<<<1, 1>>>(XFactor, YFactor, ZFactor, rayPoints,
         d_externalPoints, d_modulusValues, d_angles, d_distances, d_recordedPointsOut);
 
     // Copy results back to host

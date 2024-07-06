@@ -1,5 +1,4 @@
-#ifndef VECTOR5SINGLE_H
-#define VECTOR5SINGLE_H
+#pragma once
 
 #include <array>
 
@@ -13,5 +12,3 @@ struct vector5Single {
         return { coords[0], coords[1], coords[2], coords[3], coords[4] };
     }
 };
-
-#endif // VECTOR5SINGLE_H

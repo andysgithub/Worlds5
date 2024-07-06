@@ -1,5 +1,4 @@
-#ifndef INLINE_FUNCTIONS_CUH
-#define INLINE_FUNCTIONS_CUH
+#pragma once
 
 #include <cuda_runtime.h>
 
@@ -73,4 +72,3 @@ __device__ inline void v_mandel(float* a, const float* b) {
     a[4] = 2 * a0 * a[4] + b[4];
 }
 
-#endif // INLINE_FUNCTIONS_CUH

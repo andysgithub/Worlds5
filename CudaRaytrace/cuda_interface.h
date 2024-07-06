@@ -1,6 +1,22 @@
 #pragma once
 
+#include <cuda_runtime.h>
 #include "vector5Single.h"
+#include <vector>
+
+enum class AxisPair
+{
+    XY,
+    XZ,
+    XW,
+    XV,
+    YZ,
+    YW,
+    YV,
+    ZW,
+    ZV,
+    WV
+};
 
 struct RayTracingParams {
     int activeIndex;
@@ -8,13 +24,26 @@ struct RayTracingParams {
     float bailout;
     int binarySearchSteps;
     float boundaryInterval;
+    AxisPair clippingAxes;
+    float clippingOffset;
     bool cudaMode;
+    float latitudeStart;
+    float longitudeStart;
     int maxSamples;
-    int rayPoints;
     float samplingInterval;
     float sphereRadius;
     float surfaceSmoothing;
     float surfaceThickness;
+    bool useClipping;
+};
+
+struct RayDataType
+{
+    std::vector<int> ExternalPoints;
+    std::vector<float> ModulusValues;
+    std::vector<float> AngleValues;
+    std::vector<float> DistanceValues;
+    int BoundaryTotal;
 };
 
 // Declare the constant symbol
