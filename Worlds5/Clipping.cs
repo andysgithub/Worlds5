@@ -22,56 +22,44 @@ namespace Worlds5
         /// <returns>The distance value as a float-precision float</returns>
         public static float CalculateDistance(float latRadians, float longRadians, AxisPair axisPair, float offset)
         {
-            // Convert latitude and longitude to a unit direction vector in 3D space
             Vector3 direction3D = new Vector3(
-                (float)(float)Math.Cos(latRadians) * (float)Math.Sin(longRadians),
+                (float)Math.Cos(latRadians) * (float)Math.Sin(longRadians),
                 (float)Math.Sin(latRadians),
-                (float)(float)Math.Cos(latRadians) * (float)(float)Math.Cos(longRadians)
+                (float)Math.Cos(latRadians) * (float)Math.Cos(longRadians)
             );
-
-            // Get the 5D coordinates in the fractal space for the sphere centre
             Vector5 viewpoint5D = Transformation.ImageToFractalSpace(0, new Vector3(0, 0, 0));
-
-            // Get the 5D coordinates in the fractal space for the vector
             Vector5 direction5D = Transformation.ImageToFractalSpace(5, direction3D);
 
-            // Determine the intersection parameter t based on the selected axis pair
-            float t = getIntersection(axisPair, offset, viewpoint5D, direction5D);
+            // Calculate the plane normal in 5D space
+            Vector5 planeNormal = GetPlaneNormal(axisPair);
 
+            // Calculate the dot product of the direction with the plane normal
+            float dotProduct = Vector5.Dot(direction5D, planeNormal);
+
+            // Calculate t
+            float t = (dotProduct != 0) ? (offset - Vector5.Dot(viewpoint5D, planeNormal)) / dotProduct : 0;
+
+            // Calculate distance
             float distance = Math.Abs(t * direction5D.Magnitude());
-
             return distance;
         }
 
-        private static float getIntersection(AxisPair axisPair, float offset, Vector5 viewpoint, Vector5 direction)
+        private static Vector5 GetPlaneNormal(AxisPair axisPair)
         {
-            float t = 0;
-
             switch (axisPair)
             {
-                case AxisPair.XY:
-                    if (direction.Z != 0) t = (offset - viewpoint.Z) / direction.Z;
-                    break;
-                case AxisPair.XZ:
-                    if (direction.Y != 0) t = (offset - viewpoint.Y) / direction.Y;
-                    break;
-                case AxisPair.XW:
-                case AxisPair.YW:
-                case AxisPair.ZW:
-                    if (direction.V != 0) t = (offset - viewpoint.V) / direction.V;
-                    break;
-                case AxisPair.XV:
-                case AxisPair.YV:
-                case AxisPair.ZV:
-                    if (direction.W != 0) t = (offset - viewpoint.W) / direction.W;
-                    break;
-                case AxisPair.YZ:
-                case AxisPair.WV:
-                    if (direction.X != 0) t = (offset - viewpoint.X) / direction.X;
-                    break;
+                case AxisPair.XY: return new Vector5(0, 0, 1, 0, 0);
+                case AxisPair.XZ: return new Vector5(0, 1, 0, 0, 0);
+                case AxisPair.XW: return new Vector5(0, 0, 0, 1, 0);
+                case AxisPair.XV: return new Vector5(0, 0, 0, 0, 1);
+                case AxisPair.YZ: return new Vector5(1, 0, 0, 0, 0);
+                case AxisPair.YW: return new Vector5(0, 1, 0, 1, 0);
+                case AxisPair.YV: return new Vector5(0, 1, 0, 0, 1);
+                case AxisPair.ZW: return new Vector5(0, 0, 1, 1, 0);
+                case AxisPair.ZV: return new Vector5(0, 0, 1, 0, 1);
+                case AxisPair.WV: return new Vector5(0, 0, 0, 1, 1);
+                default: throw new ArgumentException("Invalid AxisPair");
             }
-
-            return t;
         }
     }
 }
