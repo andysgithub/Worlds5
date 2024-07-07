@@ -13,10 +13,12 @@ class RayProcessing {
 public:
     RayProcessing(ProgressCallback callback) : progressCallback(callback) {}
 
-    RayProcessing()
-        : externalPoints(100), modulusValues(100), angleValues(100), distanceValues(100) {}
+    // Constructor 
+    RayProcessing() :
+    // Initialiser list
+    externalPoints(100), modulusValues(100), angleValues(100), distanceValues(100) {}
 
-    TracedRay::RayDataType ProcessRay(RayTracingParams rayParams, int rayCountX, int rayCountY) {
+    TracedRay::RayDataType ProcessRay(RayTracingParams rayParams, RenderingParams renderParams, int rayCountX, int rayCountY) {
 
         float latitude = rayParams.latitudeStart - rayCountY * rayParams.angularResolution;
         float longitude = rayParams.longitudeStart - rayCountX * rayParams.angularResolution;
@@ -48,7 +50,7 @@ public:
         distanceValues.resize(points);
 
         // Define the TracedRay object
-        TracedRay tracedRay(externalPoints, modulusValues, angleValues, distanceValues);
+        TracedRay tracedRay(externalPoints, modulusValues, angleValues, distanceValues, renderParams);
 
         // Create and return a RayDataType directly
         return TracedRay::RayDataType{

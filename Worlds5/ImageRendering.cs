@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Model;
-using Syncfusion.Windows.Forms;
+using static Model.TracedRay;
 using static Worlds5.RayProcessing;
 
 namespace Worlds5
@@ -103,7 +103,7 @@ namespace Worlds5
                 success = CopyMatrix(sphere.settings.PositionMatrix);
                 if (!success)
                 {
-                    Console.WriteLine("Failed to set transform matrix");
+                    Console.WriteLine("Failed to set position matrix");
                 }
             }
         }
@@ -161,6 +161,7 @@ namespace Worlds5
             // Initialise an array of RayProcessing classes for the collection of vectors
             RayProcessing[,] rayProc = new RayProcessing[raysPerLine, totalLines];
             RayTracingParams rayParams = new RayTracingParams(sphere.settings);
+            RenderingParams renderParams = new RenderingParams(sphere.settings);
 
             for (int countY = 0; countY < totalLines; countY++)
             {
@@ -179,7 +180,7 @@ namespace Worlds5
                     try
                     {
                         // Perform raytracing in this thread
-                        TracedRay.RayDataType rayData = rayProc[rayCountX, rayCountY].ProcessRay(rayParams, rayCountX, rayCountY);
+                        TracedRay.RayDataType rayData = rayProc[rayCountX, rayCountY].ProcessRay(rayParams, renderParams, rayCountX, rayCountY);
                         sphere.RayMap[rayCountX, rayCountY] = rayData;
 
                         if (sphere.settings.CudaMode)
@@ -204,7 +205,7 @@ namespace Worlds5
                      try
                      {
                          // Set the colour and display the point
-                         TracedRay tracedRay = SetRayColour(sphere, rayCountX, rayCountY);
+                         TracedRay tracedRay = SetRayColour(sphere, renderParams, rayCountX, rayCountY);
                          imageDisplay.updateImage(rayCountX, rayCountY, tracedRay.bmiColors);
                      }
                      catch
@@ -279,17 +280,18 @@ namespace Worlds5
         public void Redisplay(int rayCountY)
         {
             int raysPerLine = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
+            RenderingParams renderParams = new RenderingParams(sphere.settings);
 
             // For each longitude point on this line
             for (int rayCountX = 0; rayCountX < raysPerLine; rayCountX++)
             {
                 // Display the point on this line of latitude
-                TracedRay tracedRay = SetRayColour(sphere, rayCountX, rayCountY);
+                TracedRay tracedRay = SetRayColour(sphere, renderParams, rayCountX, rayCountY);
                 ProgressChanged(rayCountX, rayCountY, tracedRay);
             }
         }
 
-        private TracedRay SetRayColour(clsSphere sphere, int rayCountX, int rayCountY)
+        private TracedRay SetRayColour(clsSphere sphere, RenderingParams renderParams, int rayCountX, int rayCountY)
         {
             if (rayCountX >= sphere.RayMap.GetUpperBound(0) || rayCountY >= sphere.RayMap.GetUpperBound(1))
             {
@@ -297,16 +299,16 @@ namespace Worlds5
             }
             // Get the ray from the ray map
             TracedRay.RayDataType rayData = sphere.RayMap[rayCountX++, rayCountY];
-            TracedRay tracedRay = new TracedRay(rayData.ExternalPoints, rayData.ModulusValues, rayData.AngleValues, rayData.DistanceValues);
+            TracedRay tracedRay = new TracedRay(rayData.ExternalPoints, rayData.ModulusValues, rayData.AngleValues, rayData.DistanceValues, renderParams);
 
             // Calculate the tilt values from the previous rays
             if (rayCountX > 0)
             {
-                tracedRay.xTiltValues = sphere.addTiltValues(tracedRay, rayCountX - 1, rayCountY);
+                tracedRay.xTiltValues = sphere.addTiltValues(tracedRay, renderParams, rayCountX - 1, rayCountY);
             }
             if (rayCountY > 0)
             {
-                tracedRay.yTiltValues = sphere.addTiltValues(tracedRay, rayCountX, rayCountY - 1);
+                tracedRay.yTiltValues = sphere.addTiltValues(tracedRay, renderParams, rayCountX, rayCountY - 1);
             }
 
             if (tracedRay != null)

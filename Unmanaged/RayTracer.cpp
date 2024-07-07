@@ -169,12 +169,14 @@ EXPORT int __stdcall TraceRay(float startDistance, RayTracingParams rayParams,
     }
 }
 
-EXPORT float __stdcall FindSurface(float samplingInterval, float surfaceSmoothing, int binarySearchSteps, float currentDistance, float xFactor, float yFactor, float zFactor, float bailout)
+EXPORT float __stdcall FindSurface(
+    float samplingInterval, float surfaceSmoothing, int binarySearchSteps, float currentDistance, 
+    float xFactor, float yFactor, float zFactor, float bailout)
 {
     float stepFactor = surfaceSmoothing / 10;
 	float	stepSize = -samplingInterval * stepFactor;
 	float	sampleDistance = currentDistance;
-	const vector5Single c = {0,0,0,0,0};							// 5D vector for ray point coordinates
+	const vector5Single c = {0,0,0,0,0};        // 5D vector for ray point coordinates
 
 
     // Perform binary search between the current and previous points, to determine boundary position
@@ -231,20 +233,21 @@ EXPORT float __stdcall FindBoundary(float samplingInterval, int binarySearchStep
     return sampleDistance;
 }
 
-EXPORT std::array<float, 5> __stdcall ImageToFractalSpace (float distance, float xFactor, float yFactor, float zFactor)
+Vector5 ImageToFractalSpace(float distance, Vector3 coord)
 {
     // Determine the x,y,z coord for this point
-    const float XPos = distance * xFactor;
-    const float YPos = distance * yFactor;
-    const float ZPos = distance * zFactor;
+    const float XPos = distance * coord.X;
+    const float YPos = distance * coord.Y;
+    const float ZPos = distance * coord.Z;
 
     vector5Single c = { 0,0,0,0,0 };
 
     // Transform 3D point x,y,z into nD fractal space at point c[]
     VectorTrans(XPos, YPos, ZPos, &c);
 
-    // Return the nD fractal space point
-    return c.toArray();
+    // Return the 5D fractal space point
+    std::array<float, 5> arr = c.toArray();
+    return Vector5(arr[0], arr[1], arr[2], arr[3], arr[4]);
 }
 
 bool SamplePoint(float distance, float* Modulus, float* Angle, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c)

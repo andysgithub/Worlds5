@@ -1,7 +1,9 @@
 #pragma once
 
+#include "stdafx.h"
 #include <vector>
 #include <windows.h>
+#include "cuda_interface.h"
 
 class TracedRay {
 public:
@@ -13,10 +15,12 @@ public:
         int BoundaryTotal;
     };
 
-    TracedRay(const std::vector<int>& externalPoints,
-        const std::vector<float>& modulusValues,
-        const std::vector<float>& angleValues,
-        const std::vector<float>& distanceValues);
+    //TracedRay(
+    //    const std::vector<int>& externalPoints,
+    //    const std::vector<float>& modulusValues,
+    //    const std::vector<float>& angleValues,
+    //    const std::vector<float>& distanceValues,
+    //    RenderingParams renderParams);
 
     void SetColour();
 
@@ -37,6 +41,7 @@ public:
 
 private:
     RayDataType RayData;
+    RenderingParams m_renderParams;
 
     void IncreaseRGB(RGBTRIPLE& totalRGB, int i, float Saturation, float Lightness);
     void HSVtoRGB(float h, float s, float v, unsigned char& r, unsigned char& g, unsigned char& b);

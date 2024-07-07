@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Model;
+using static Model.TracedRay;
 
 namespace Worlds5
 {
@@ -68,7 +69,7 @@ namespace Worlds5
         }
 
         // Trace the ray on this latitude line
-        public TracedRay.RayDataType ProcessRay(RayTracingParams rayParams, int rayCountX, int rayCountY)
+        public TracedRay.RayDataType ProcessRay(RayTracingParams rayParams, RenderingParams renderParams, int rayCountX, int rayCountY)
         {
             float latitude = rayParams.latitudeStart - rayCountY * rayParams.angularResolution;
             float longitude = rayParams.longitudeStart - rayCountX * rayParams.angularResolution;
@@ -106,7 +107,7 @@ namespace Worlds5
             Array.Resize(ref distanceValues, points);
 
             // Record the fractal value collection for this ray 
-            TracedRay tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);
+            TracedRay tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues, renderParams);
 
             // Add this ray to the ray map in the sphere
             return tracedRay.RayData;

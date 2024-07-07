@@ -37,6 +37,21 @@ struct RayTracingParams {
     bool useClipping;
 };
 
+struct RenderingParams {
+    int activeIndex;
+    float startDistance;
+    float endDistance;
+    float exposureValue;
+    float interiorExposure;
+    float saturation;
+    float interiorSaturation;
+    float lightingAngle;
+    float lightElevationAngle;
+    float surfaceContrast;
+    float colourCompression;
+    float colourOffset;
+};
+
 struct RayDataType
 {
     std::vector<int> ExternalPoints;

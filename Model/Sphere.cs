@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using static Model.TracedRay;
 
 namespace Model
 {
@@ -162,12 +163,14 @@ namespace Model
             RayMap[xIndex, yIndex] = tracedRay.RayData;
         }
 
-        public List<float> addTiltValues(TracedRay tracedRay, int xIndex, int yIndex)
+        public List<float> addTiltValues(TracedRay tracedRay, RenderingParams renderParams, int xIndex, int yIndex)
         {
             // Initialise the tilt values list
             List<float> tiltValues = new List<float>();
-            TracedRay.RayDataType rayData = RayMap[xIndex, yIndex];
-            TracedRay lastRay = new TracedRay(rayData.ExternalPoints, rayData.ModulusValues, rayData.AngleValues, rayData.DistanceValues);
+            RayDataType rayData = RayMap[xIndex, yIndex];
+
+            TracedRay lastRay = new TracedRay(rayData.ExternalPoints, rayData.ModulusValues, rayData.AngleValues, rayData.DistanceValues, renderParams);
+
             if (lastRay != null)
             {
                 int lastRayStart = 0;

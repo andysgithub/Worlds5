@@ -16,6 +16,38 @@ namespace Model
         // Overall RGB colour for this ray
         public Globals.RGBQUAD bmiColors;
 
+        public struct RenderingParams
+        {
+            public int activeIndex;
+            public float startDistance;
+            public float endDistance;
+            public float exposureValue;
+            public float interiorExposure;
+            public float saturation;
+            public float interiorSaturation;
+            public float lightingAngle;
+            public float lightElevationAngle;
+            public float surfaceContrast;
+            public float colourCompression;
+            public float colourOffset;
+
+            public RenderingParams(clsSphere.Settings settings)
+            {
+                activeIndex = settings.ActiveIndex;
+                startDistance = settings.SphereRadius;
+                endDistance = settings.SphereRadius + settings.MaxSamples[activeIndex] * settings.SamplingInterval[activeIndex];
+                exposureValue = settings.ExposureValue[activeIndex];
+                interiorExposure = settings.ExposureValue[1];
+                saturation = settings.Saturation[activeIndex];
+                interiorSaturation = settings.Saturation[1];
+                lightingAngle = settings.LightingAngle;
+                lightElevationAngle = settings.LightElevationAngle;
+                surfaceContrast = settings.SurfaceContrast;
+                colourCompression = settings.ColourCompression;
+                colourOffset = settings.ColourOffset;
+            }
+        };
+
         [StructLayout(LayoutKind.Sequential)]
         [Serializable]
         public struct RayDataType
@@ -28,14 +60,16 @@ namespace Model
         }
 
         public RayDataType RayData;
+        private RenderingParams m_renderParams;
 
-        public TracedRay(int[] externalPoints, float[] modulusValues, float[] angleValues, float[] distanceValues)
+        public TracedRay(int[] externalPoints, float[] modulusValues, float[] angleValues, float[] distanceValues, RenderingParams renderParams)
         {
             RayData.ExternalPoints = externalPoints;
             RayData.ModulusValues = modulusValues;
             RayData.AngleValues = angleValues;
             RayData.DistanceValues = distanceValues;
             RayData.BoundaryTotal = distanceValues == null ? 0 : distanceValues.Length;
+            m_renderParams = renderParams;
         }
 
         public void SetColour()
@@ -50,14 +84,12 @@ namespace Model
             clsSphere sphere = Model.Globals.Sphere;
 
             int activeIndex = sphere.settings.ActiveIndex;
-
-            float totalPoints = sphere.settings.MaxSamples[activeIndex] * sphere.settings.SamplingInterval[activeIndex];
-            float startDistance = sphere.settings.SphereRadius;
-            float endDistance = startDistance + totalPoints;
-            float exposureValue = sphere.settings.ExposureValue[activeIndex];
-            float saturation = sphere.settings.Saturation[activeIndex];
-            float interiorExposure = sphere.settings.ExposureValue[2];
-            float interiorSaturation = sphere.settings.Saturation[2];
+            float startDistance = m_renderParams.startDistance;
+            float endDistance = m_renderParams.endDistance;
+            float exposureValue = m_renderParams.exposureValue;
+            float saturation = m_renderParams.saturation;
+            float interiorExposure = m_renderParams.interiorExposure;
+            float interiorSaturation = m_renderParams.interiorSaturation;
 
             try
             {

@@ -46,7 +46,7 @@ EXPORT float __stdcall FindBoundary(float samplingInterval, int binarySearchStep
 									 float boundaryInterval, bool *externalPoint, float *Modulus, float *Angle,
 									 float xFactor, float yFactor, float zFactor, float bailout);
 
-EXPORT std::array<float, 5> __stdcall ImageToFractalSpace (float distance, float xFactor, float yFactor, float zFactor);
+Vector5 ImageToFractalSpace (float distance, Vector3 coord);
 EXPORT bool __stdcall SamplePoint(float distance, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c);
 
 bool ExternalPoint(vector5Single c, float bailout);

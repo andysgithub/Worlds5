@@ -3,21 +3,34 @@
 #include <algorithm>
 #include <stdexcept>
 #include <limits>
+#include "vectors.h"
+#include "cuda_interface.h"
 
 // Forward declarations
 struct RGBQUAD;
 struct RGBTRIPLE;
-class Vector3;
 class clsSphere;
-
-// You'll need to define these types and constants in your C++ code
-namespace Globals {
-    extern const double DEG_TO_RAD;
-    // Add other global variables/constants as needed
-}
 
 class TracedRay {
 public:
+
+#ifndef RGBQUAD
+    struct RGBQUAD {
+        unsigned char rgbBlue;
+        unsigned char rgbGreen;
+        unsigned char rgbRed;
+        unsigned char rgbReserved;
+    };
+#endif
+
+#ifndef RGBTRIPLE
+    struct RGBTRIPLE {
+        unsigned char rgbtBlue;
+        unsigned char rgbtGreen;
+        unsigned char rgbtRed;
+    };
+#endif
+
     struct RayDataType {
         std::vector<int> ExternalPoints;
         std::vector<float> ModulusValues;
@@ -26,11 +39,15 @@ public:
         int BoundaryTotal;
     };
 
-    TracedRay(const std::vector<int>& externalPoints,
+    // Constructor taking 4 references to vector objects
+    TracedRay(RayTracingParams rayParams, RenderingParams renderParams,
+        const std::vector<int>& externalPoints,
         const std::vector<float>& modulusValues,
         const std::vector<float>& angleValues,
-        const std::vector<float>& distanceValues)
-        : RayData{ externalPoints, modulusValues, angleValues, distanceValues } {
+        const std::vector<float>& distanceValues) : 
+    // Initialiser list - initialise RayData object from the vectors
+    RayData{ externalPoints, modulusValues, angleValues, distanceValues }, m_renderParams(renderParams) {
+        // Constructor body - set the BoundaryTotal member
         RayData.BoundaryTotal = distanceValues.empty() ? 0 : distanceValues.size();
     }
 
@@ -53,6 +70,7 @@ public:
 
 private:
     RayDataType RayData;
+    RenderingParams m_renderParams;
 
     void IncreaseRGB(RGBTRIPLE& totalRGB, int i, float Saturation, float Lightness);
     void HSVtoRGB(float h, float s, float v, unsigned char& r, unsigned char& g, unsigned char& b);
@@ -67,15 +85,13 @@ void TracedRay::SetColour() {
 
     clsSphere& sphere = Globals::Sphere;
 
-    int activeIndex = sphere.settings.ActiveIndex;
-
-    float totalPoints = sphere.settings.MaxSamples[activeIndex] * sphere.settings.SamplingInterval[activeIndex];
-    float startDistance = sphere.settings.SphereRadius;
-    float endDistance = startDistance + totalPoints;
-    float exposureValue = sphere.settings.ExposureValue[activeIndex];
-    float saturation = sphere.settings.Saturation[activeIndex];
-    float interiorExposure = sphere.settings.ExposureValue[2];
-    float interiorSaturation = sphere.settings.Saturation[2];
+    int activeIndex = m_renderParams.activeIndex;
+    float startDistance = m_renderParams.startDistance;
+    float endDistance = m_renderParams.endDistance;
+    float exposureValue = m_renderParams.exposureValue;
+    float saturation = m_renderParams.saturation;
+    float interiorExposure = m_renderParams.interiorExposure;
+    float interiorSaturation = m_renderParams.interiorSaturation;
 
     try {
         for (int i = 0; i < RayData.ModulusValues.size() - 1; i++) {
@@ -91,8 +107,8 @@ void TracedRay::SetColour() {
                         break;
 
                     // Light position parameters
-                    float lightingAngleXY = -sphere.settings.LightingAngle * static_cast<float>(Globals::DEG_TO_RAD);
-                    float lightElevationAngle = sphere.settings.LightElevationAngle * static_cast<float>(Globals::DEG_TO_RAD);
+                    float lightingAngleXY = -m_renderParams.lightingAngle * static_cast<float>(Globals::DEG_TO_RAD);
+                    float lightElevationAngle = m_renderParams.lightElevationAngle * static_cast<float>(Globals::DEG_TO_RAD);
 
                     // Calculate light direction
                     Vector3 lightDirection(
@@ -120,7 +136,7 @@ void TracedRay::SetColour() {
                     // Ensure the dot product is in the range [0, 1]
                     float tiltValue = std::max(0.0f, dotProduct);
 
-                    float surfaceContrast = sphere.settings.SurfaceContrast / 10.0f;
+                    float surfaceContrast = m_renderParams.surfaceContrast / 10.0f;
 
                     // Apply contrast
                     float contrastValue = (tiltValue - 0.5f) * (1 + surfaceContrast) + 0.5f;
@@ -182,8 +198,8 @@ void TracedRay::IncreaseRGB(RGBTRIPLE& totalRGB, int i, float Saturation, float 
     unsigned char r, g, b;
     clsSphere& sphere = Globals::Sphere;
 
-    float compression = sphere.settings.ColourCompression;
-    float offset = sphere.settings.ColourOffset;
+    float compression = m_renderParams.colourCompression;
+    float offset = m_renderParams.colourOffset;
 
     float Hue = (RayData.AngleValues[i] * 57.2957795f * compression) + offset;
 

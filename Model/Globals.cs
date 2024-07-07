@@ -150,28 +150,5 @@ namespace Model
             public int rgbGreen;
             public int rgbRed;
         }
-
-        //public struct vertex
-        //{
-        //    public float X;
-        //    public float Y;
-        //    public float Z;
-        //}
-        
 	}
-
-    //public class ImagePlane
-    //{
-    //    public float Left, Right, Top, Bottom, Width, Height;
-
-    //    public ImagePlane(float Left, float Top, float Width, float Height)
-    //    {
-    //        this.Left = Left;
-    //        this.Top = Top;
-    //        this.Width = Width;
-    //        this.Height = Height;
-    //        this.Right = Left + Width;
-    //        this.Bottom = Top + Height;
-    //    }
-    //}
 }
