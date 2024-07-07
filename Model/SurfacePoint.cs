@@ -7,9 +7,6 @@ namespace Model
 {
     public unsafe class SurfacePoint
     {
-        [DllImport("Unmanaged.dll")]
-        static extern void HSVtoRGB(float h, float s, float v, byte* r, byte* g, byte* b);
-
         private float modulus; 
         private float angle;
         private float distance;
@@ -18,7 +15,7 @@ namespace Model
         private float yTilt;
 
         // RGB colour
-        public Globals.RGBQUAD bmiColors;
+        public Globals.RGB_QUAD bmiColors;
 
         public SurfacePoint(float modulus, float angle, float distance)
         {
@@ -26,40 +23,6 @@ namespace Model
             this.angle = angle;
             this.distance = distance;
         }
-
-/*        public void SetColour(float exposureValue, float saturation, float startDistance, float endDistance)
-        {
-            byte r = 0, g = 0, b = 0;
-
-            if (Math.Abs(modulus) < 10)
-            {
-                // Get Hue from the orbit angle
-                float Hue = (float)(angle * 57.2957795 * 2);
-
-                // Modify the exposure according to the position of the point between the start and end distances
-                float range = (float)(endDistance - startDistance);
-                float exposureFactor = (float)(distance - startDistance) / range;
-
-                if (exposureFactor > 1)
-                {
-                    exposureFactor = 1;
-                }
-
-                float Lightness = exposureValue * (1 - exposureFactor);
-                float Saturation = Lightness * saturation / 10;
-
-                // Limit S & V to 1 maximum
-                Saturation = Saturation > 1 ? 1 : Saturation;
-                Lightness = Lightness > 1 ? 1 : Lightness;
-
-                // Convert HSV to RGB
-                HSVtoRGB(Hue, Saturation, Lightness, &r, &g, &b);
-            }
-
-            bmiColors.rgbRed = r;
-            bmiColors.rgbGreen = g;
-            bmiColors.rgbBlue = b;
-        }*/
 
         /// <summary>
         /// The modulus value at the surface point

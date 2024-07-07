@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "unmanaged.h"
 #include "TracedRay.h" 
+#include "Clipping.h" 
 
 class RayProcessing {
 
@@ -22,9 +23,7 @@ public:
 
         float latitude = rayParams.latitudeStart - rayCountY * rayParams.angularResolution;
         float longitude = rayParams.longitudeStart - rayCountX * rayParams.angularResolution;
-        int rayPoints = static_cast<int>(rayParams.maxSamples * rayParams.samplingInterval);
 
-        constexpr float DEG_TO_RAD = 3.14159265358979323846f / 180.0f;
         float latRadians = latitude * DEG_TO_RAD;
         float longRadians = longitude * DEG_TO_RAD;
 
@@ -35,8 +34,7 @@ public:
         float startDistance = rayParams.sphereRadius;
 
         if (rayParams.useClipping) {
-            // Implement Clipping::CalculateDistance in C++
-            float distance = Clipping::CalculateDistance(latRadians, longRadians, rayParams.clippingAxes, rayParams.clippingOffset);
+            float distance = Worlds5::Clipping::CalculateDistance(latRadians, longRadians, rayParams.clippingAxes, rayParams.clippingOffset);
             if (distance > startDistance) startDistance = distance;
         }
 

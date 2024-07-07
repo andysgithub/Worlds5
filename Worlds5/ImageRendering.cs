@@ -180,7 +180,7 @@ namespace Worlds5
                     try
                     {
                         // Perform raytracing in this thread
-                        TracedRay.RayDataType rayData = rayProc[rayCountX, rayCountY].ProcessRay(rayParams, renderParams, rayCountX, rayCountY);
+                        RayDataType rayData = rayProc[rayCountX, rayCountY].ProcessRay(rayParams, renderParams, rayCountX, rayCountY);
                         sphere.RayMap[rayCountX, rayCountY] = rayData;
 
                         if (sphere.settings.CudaMode)

@@ -2,9 +2,12 @@
 
 #include <array>
 #include <cmath>
+#include <numbers>
 #include "vector5Single.h"
 
 float vectorAngle(vector5Single A, vector5Single B, vector5Single C);
+
+inline constexpr float DEG_TO_RAD = (float)std::numbers::pi / 180.0f;
 
 struct Vector3 {
     float X, Y, Z;

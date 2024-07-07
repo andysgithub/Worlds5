@@ -26,7 +26,7 @@ namespace Worlds5
 		public static string ReleaseNumber; //  Major, minor & revision
         
 		public static byte bRegion; //  Surface/volume of fractal selected
-		public static RGBTRIPLE[] RGBValues; //  Array to hold true colour bitmap (3 bytes per pixel)
+		public static RGB_TRIPLE[] RGBValues; //  Array to hold true colour bitmap (3 bytes per pixel)
 		public static Bitmap bmpImage;	// Bitmap object to hold true colour image
 		public static bool UpdatingBitmap = false;
 
@@ -83,7 +83,7 @@ namespace Worlds5
 			public int biClrImportant; 
 		} 
         
-		public struct RGBQUAD 
+		public struct RGB_QUAD 
 		{ 
 			public byte rgbBlue; 
 			public byte rgbGreen; 
@@ -91,7 +91,7 @@ namespace Worlds5
 			public byte rgbReserved; 
 		} 
         
-		public struct RGBTRIPLE 
+		public struct RGB_TRIPLE 
 		{ 
 			public byte rgbBlue; 
 			public byte rgbGreen; 
@@ -101,18 +101,18 @@ namespace Worlds5
 		public struct BITMAPINFO_8 
 		{ 
 			public BITMAPINFOHEADER bmiHeader; 
-			public RGBQUAD[] bmiColors; 
+			public RGB_QUAD[] bmiColors; 
             
 			public void Initialize() 
 			{ 
-				bmiColors = new RGBQUAD[256]; 
+				bmiColors = new RGB_QUAD[256]; 
 			} 
 		} 
         
 		public struct BITMAPINFO_24 
 		{ 
 			public BITMAPINFOHEADER bmiHeader; 
-			public RGBQUAD bmiColors; 
+			public RGB_QUAD bmiColors; 
 		} 
         
 		public static SetUpType SetUp;

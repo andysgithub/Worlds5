@@ -18,6 +18,7 @@
 #include <math.h>
 #include "declares.h"
 #include "unmanaged.h"
+#include "Colour.h"
 
 /*
 	Inputs:	 h in [0,360]
@@ -25,7 +26,7 @@
 			 v in [0,1]
 	Outputs: r,g,b each in [0,255]
 */
-EXPORT void __stdcall HSVtoRGB(float h, float s, float v, BYTE* rval, BYTE* gval, BYTE* bval)
+COLOUR_API void __stdcall HSVtoRGB(float h, float s, float v, unsigned char* rval, unsigned char* gval, unsigned char* bval)
 {
 	float f, i;
 	float p, q, t;
@@ -67,8 +68,8 @@ EXPORT void __stdcall HSVtoRGB(float h, float s, float v, BYTE* rval, BYTE* gval
 	}
 
 	// Normalise the values to [0,255]
-	*rval = (BYTE)(r * 255);
-	*gval = (BYTE)(g * 255);
-	*bval = (BYTE)(b * 255);
+	*rval = static_cast<unsigned char>(r * 255);
+	*gval = static_cast<unsigned char>(g * 255);
+	*bval = static_cast<unsigned char>(b * 255);
 	return;
 }

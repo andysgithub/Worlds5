@@ -136,7 +136,7 @@ namespace Model
             public byte red;
         }
 
-        public struct RGBQUAD
+        public struct RGB_QUAD
         {
             public byte rgbBlue;
             public byte rgbGreen;
@@ -144,7 +144,7 @@ namespace Model
             public byte rgbReserved;
         }
 
-        public struct RGBTRIPLE
+        public struct RGB_TRIPLE
         {
             public int rgbBlue;
             public int rgbGreen;

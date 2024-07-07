@@ -36,7 +36,7 @@ namespace Worlds5
             FinalBitmap = new Bitmap(bitmapWidth, bitmapHeight, PixelFormat.Format32bppRgb);
         }
 
-        public void updateImage(float rayCountX, float rayCountY, Model.Globals.RGBQUAD colours)
+        public void updateImage(float rayCountX, float rayCountY, Model.Globals.RGB_QUAD colours)
         {
             // Get lat/long from rayCountX/Y
             float latitude = sphere.settings.LatitudeStart - rayCountY * sphere.settings.AngularResolution;

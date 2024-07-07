@@ -14,7 +14,7 @@ namespace Model
         // The vertical tilt of the surface at this point (-90 to 90 degrees)
         public List<float> yTiltValues { get; set; }
         // Overall RGB colour for this ray
-        public Globals.RGBQUAD bmiColors;
+        public Globals.RGB_QUAD bmiColors;
 
         public struct RenderingParams
         {
@@ -74,7 +74,7 @@ namespace Model
 
         public void SetColour()
         {
-            Globals.RGBTRIPLE totalRGB;
+            Globals.RGB_TRIPLE totalRGB;
 
             // Initialise RGB to 0,0,0
             totalRGB.rgbRed = 0;
@@ -198,7 +198,7 @@ namespace Model
             bmiColors.rgbBlue = (byte)totalRGB.rgbBlue;
         }
 
-        private void IncreaseRGB(ref Globals.RGBTRIPLE totalRGB, int i, float Saturation, float Lightness)
+        private void IncreaseRGB(ref Globals.RGB_TRIPLE totalRGB, int i, float Saturation, float Lightness)
         {
             byte r, g, b;
             clsSphere sphere = Model.Globals.Sphere;

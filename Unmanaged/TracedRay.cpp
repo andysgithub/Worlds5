@@ -1,89 +1,65 @@
+#define NOMINMAX
+
+#include "TracedRay.h"
+#include "Colour.h"
+
 #include <vector>
 #include <cmath>
 #include <algorithm>
 #include <stdexcept>
 #include <limits>
+#include <iostream>
+#include <Windows.h>
 #include "vectors.h"
 #include "cuda_interface.h"
 
-// Forward declarations
-struct RGBQUAD;
-struct RGBTRIPLE;
-class clsSphere;
-
-class TracedRay {
-public:
-
-#ifndef RGBQUAD
-    struct RGBQUAD {
-        unsigned char rgbBlue;
-        unsigned char rgbGreen;
-        unsigned char rgbRed;
-        unsigned char rgbReserved;
-    };
-#endif
-
-#ifndef RGBTRIPLE
-    struct RGBTRIPLE {
-        unsigned char rgbtBlue;
-        unsigned char rgbtGreen;
-        unsigned char rgbtRed;
-    };
-#endif
-
-    struct RayDataType {
-        std::vector<int> ExternalPoints;
-        std::vector<float> ModulusValues;
-        std::vector<float> AngleValues;
-        std::vector<float> DistanceValues;
-        int BoundaryTotal;
-    };
-
-    // Constructor taking 4 references to vector objects
-    TracedRay(RayTracingParams rayParams, RenderingParams renderParams,
-        const std::vector<int>& externalPoints,
-        const std::vector<float>& modulusValues,
-        const std::vector<float>& angleValues,
-        const std::vector<float>& distanceValues) : 
+// Constructor taking 4 references to vector objects
+TracedRay::TracedRay(
+    const std::vector<int>& externalPoints,
+    const std::vector<float>& modulusValues,
+    const std::vector<float>& angleValues,
+    const std::vector<float>& distanceValues,
+    RenderingParams renderParams) 
+    :
     // Initialiser list - initialise RayData object from the vectors
-    RayData{ externalPoints, modulusValues, angleValues, distanceValues }, m_renderParams(renderParams) {
+    RayData{ externalPoints, modulusValues, angleValues, distanceValues, 0 }, m_renderParams(renderParams)
+    {
         // Constructor body - set the BoundaryTotal member
-        RayData.BoundaryTotal = distanceValues.empty() ? 0 : distanceValues.size();
+        RayData.BoundaryTotal = distanceValues.empty() ? 0 : (int)distanceValues.size();
     }
 
-    void SetColour();
-
-    // Getter methods
-    int Length() const { return RayData.ExternalPoints.size(); }
-    const std::vector<float>& Boundaries() const { return RayData.DistanceValues; }
-    const std::vector<float>& AngleValues() const { return RayData.AngleValues; }
-    const std::vector<float>& ModulusValues() const { return RayData.ModulusValues; }
-    const std::vector<int>& ExternalPoints() const { return RayData.ExternalPoints; }
-    int BoundaryTotal() const { return RayData.DistanceValues.empty() ? 0 : RayData.DistanceValues.size(); }
-    float Boundary(int index) const { return RayData.DistanceValues[index]; }
-    float Angle(int index) const { return RayData.AngleValues[index]; }
-    bool IsSurfacePoint(int index) const;
-
-    std::vector<float> xTiltValues;
-    std::vector<float> yTiltValues;
-    RGBQUAD bmiColors;
-
-private:
-    RayDataType RayData;
-    RenderingParams m_renderParams;
-
-    void IncreaseRGB(RGBTRIPLE& totalRGB, int i, float Saturation, float Lightness);
-    void HSVtoRGB(float h, float s, float v, unsigned char& r, unsigned char& g, unsigned char& b);
-};
 
 bool IsPositiveInfinity(float value) {
     return value == std::numeric_limits<float>::infinity();
 }
 
-void TracedRay::SetColour() {
-    RGBTRIPLE totalRGB = { 0, 0, 0 };
+void TracedRay::IncreaseRGB(RGB_TRIPLE& totalRGB, int i, float Saturation, float Lightness) {
+    unsigned char r, g, b;
 
-    clsSphere& sphere = Globals::Sphere;
+    float compression = m_renderParams.colourCompression;
+    float offset = m_renderParams.colourOffset;
+
+    float Hue = (RayData.AngleValues[i] * 57.2957795f * compression) + offset;
+
+    Saturation = std::min(1.0f, Saturation);
+    Lightness = std::min(1.0f, Lightness);
+
+    HSVtoRGB(Hue, Saturation, Lightness, r, g, b);
+
+    totalRGB.rgbRed = static_cast<unsigned char>(std::min(255, totalRGB.rgbRed + r));
+    totalRGB.rgbGreen = static_cast<unsigned char>(std::min(255, totalRGB.rgbGreen + g));
+    totalRGB.rgbBlue = static_cast<unsigned char>(std::min(255, totalRGB.rgbBlue + b));
+}
+
+bool TracedRay::IsSurfacePoint(int index) const {
+    if (index > 0 && index < BoundaryTotal() && !std::isinf(RayData.DistanceValues[index])) {
+        return RayData.ExternalPoints[index - 1] == 1 && RayData.ExternalPoints[index] == 0;
+    }
+    return false;
+}
+
+void TracedRay::SetColour() {
+    RGB_TRIPLE totalRGB = { 0, 0, 0 };
 
     int activeIndex = m_renderParams.activeIndex;
     float startDistance = m_renderParams.startDistance;
@@ -107,8 +83,8 @@ void TracedRay::SetColour() {
                         break;
 
                     // Light position parameters
-                    float lightingAngleXY = -m_renderParams.lightingAngle * static_cast<float>(Globals::DEG_TO_RAD);
-                    float lightElevationAngle = m_renderParams.lightElevationAngle * static_cast<float>(Globals::DEG_TO_RAD);
+                    float lightingAngleXY = -m_renderParams.lightingAngle * DEG_TO_RAD;
+                    float lightElevationAngle = m_renderParams.lightElevationAngle * DEG_TO_RAD;
 
                     // Calculate light direction
                     Vector3 lightDirection(
@@ -178,8 +154,7 @@ void TracedRay::SetColour() {
         }
     }
     catch (const std::exception& e) {
-        // Handle error (you might want to use a logging framework instead of MessageBox)
-        // std::cerr << "Error tracing ray: " << e.what() << std::endl;
+        std::cerr << "Error tracing ray: " << e.what() << std::endl;
     }
 
     // Color the inside of the set if visible
@@ -192,30 +167,4 @@ void TracedRay::SetColour() {
     bmiColors.rgbRed = static_cast<unsigned char>(totalRGB.rgbRed);
     bmiColors.rgbGreen = static_cast<unsigned char>(totalRGB.rgbGreen);
     bmiColors.rgbBlue = static_cast<unsigned char>(totalRGB.rgbBlue);
-}
-
-void TracedRay::IncreaseRGB(RGBTRIPLE& totalRGB, int i, float Saturation, float Lightness) {
-    unsigned char r, g, b;
-    clsSphere& sphere = Globals::Sphere;
-
-    float compression = m_renderParams.colourCompression;
-    float offset = m_renderParams.colourOffset;
-
-    float Hue = (RayData.AngleValues[i] * 57.2957795f * compression) + offset;
-
-    Saturation = std::min(1.0f, Saturation);
-    Lightness = std::min(1.0f, Lightness);
-
-    HSVtoRGB(Hue, Saturation, Lightness, r, g, b);
-
-    totalRGB.rgbRed = std::min(255, totalRGB.rgbRed + r);
-    totalRGB.rgbGreen = std::min(255, totalRGB.rgbGreen + g);
-    totalRGB.rgbBlue = std::min(255, totalRGB.rgbBlue + b);
-}
-
-bool TracedRay::IsSurfacePoint(int index) const {
-    if (index > 0 && index < BoundaryTotal() && !std::isinf(RayData.DistanceValues[index])) {
-        return RayData.ExternalPoints[index - 1] == 1 && RayData.ExternalPoints[index] == 0;
-    }
-    return false;
 }
