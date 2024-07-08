@@ -37,9 +37,9 @@ namespace Model
                 startDistance = settings.SphereRadius;
                 endDistance = settings.SphereRadius + settings.MaxSamples[activeIndex] * settings.SamplingInterval[activeIndex];
                 exposureValue = settings.ExposureValue[activeIndex];
-                interiorExposure = settings.ExposureValue[1];
+                interiorExposure = settings.ExposureValue[2];
                 saturation = settings.Saturation[activeIndex];
-                interiorSaturation = settings.Saturation[1];
+                interiorSaturation = settings.Saturation[2];
                 lightingAngle = settings.LightingAngle;
                 lightElevationAngle = settings.LightElevationAngle;
                 surfaceContrast = settings.SurfaceContrast;

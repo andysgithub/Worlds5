@@ -139,6 +139,8 @@ namespace Model
 
             // Clipping plane rotation angles for each dimension
             public AxisPair ClippingAxes { get; set; }
+            // Constant value for the clipping plane angle
+            public float ClippingAngle { get; set; }
             // Constant value for the clipping plane offset
             public float ClippingOffset { get; set; }
             // Flag to indicate if clipping should be used

@@ -1,9 +1,3 @@
-using System;
-using System.Drawing;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Model;
 
 namespace Worlds5
@@ -31,6 +25,14 @@ namespace Worlds5
             public float CentreLongitude { get; set; }
             public float VerticalView { get; set; }
             public float HorizontalView { get; set; }
+        }
+
+        public class Clipping
+        {
+            public bool UseClipping { get; set; }
+            public AxisPair ClippingAxes { get; set; }
+            public float ClippingAngle { get; set; }
+            public float ClippingOffset { get; set; }
         }
 
         public class Raytracing
@@ -66,6 +68,7 @@ namespace Worlds5
             public Type Type { get; set; }
             public Navigation Navigation { get; set; }
             public Viewing Viewing { get; set; }
+            public Clipping Clipping { get; set; }
             public Raytracing Raytracing { get; set; }
             public Rendering Rendering { get; set; }
             public Colour Colour { get; set; }

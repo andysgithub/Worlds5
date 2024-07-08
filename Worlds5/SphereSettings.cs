@@ -88,15 +88,7 @@ namespace Worlds5
             // Transfer rotation values to position matrix
             Transformation.RotateImage((RotationCentre)cmbNavCentre.SelectedIndex, NavAngles);
             sphereSettings.PositionMatrix = Transformation.GetPositionMatrix();
-/*
-            // Clear the rotation input
-            updNavRotate.Value = 0;
-            // Clear the rotation values
-            for (int i = 0; i < 10; ++i)
-            {
-                navRotationValues[i] = 0;
-            }
-*/
+
             // Sphere viewing window
             sphereSettings.AngularResolution = (float)updResolution.Value;
             sphereSettings.SphereRadius = (float)updSphereRadius.Value;
@@ -109,10 +101,16 @@ namespace Worlds5
             for (int axis = 0; axis < 5; axis++)
             {
                 sphereSettings.PositionMatrix[5, axis] += translationValues[axis];
-                //translationValues[axis] = 0;
             }
-            /*            // Clear the translation input
-                        updTranslate.Value = 0;*/
+
+            // Navigation - These settings are incorporated into the
+            // position matrix which is saved with the sphere file
+
+            // Clipping
+            sphereSettings.UseClipping = chkUseClipping.Checked;
+            sphereSettings.ClippingAxes = Clipping.GetAxes(cmbClipPlane.SelectedIndex);
+            sphereSettings.ClippingAngle = (float)updClipRotate.Value;
+            sphereSettings.ClippingOffset = (float)updClipOffset.Value;
 
             // Raytracing
             sphereSettings.ActiveIndex = chkShowSurface.Checked ? 0 : 1;
@@ -126,20 +124,11 @@ namespace Worlds5
             sphereSettings.BinarySearchSteps[1] = (int)updBinarySearchSteps_1.Value;
             sphereSettings.MaxSamples[1] = (int)updMaxSamples_1.Value;
 
-            // Clipping
-            sphereSettings.ClippingAxes = Clipping.GetAxes(cmbClipPlane.SelectedIndex);
-            sphereSettings.ClippingOffset = (float)updClipOffset.Value;
-            sphereSettings.UseClipping = chkUseClipping.Checked;
-
             // Surface
             sphereSettings.Bailout = (float)updBailout.Value;
             sphereSettings.BoundaryInterval = (float)updBoundaryInterval.Value;
             sphereSettings.SurfaceSmoothing = (float)updSurfaceSmoothing.Value;
             sphereSettings.SurfaceThickness = (float)updSurfaceThickness.Value;
-
-/*            // Clear the rotation and offset inputs
-            updClipRotate.Value = 0;
-            updClipOffset.Value = 0;*/
         }
 
         private void SaveRendering()
@@ -194,6 +183,10 @@ namespace Worlds5
 
             // Clipping
             chkUseClipping.Checked = sphereSettings.UseClipping;
+            cmbClipPlane.SelectedIndex = Clipping.GetIndex(sphereSettings.ClippingAxes);
+            updClipRotate.Value = (decimal)sphereSettings.ClippingAngle;
+            updClipOffset.Value = (decimal)sphereSettings.ClippingOffset;
+            
 
             // Surface
             updBoundaryInterval.Value = (decimal)sphereSettings.BoundaryInterval;

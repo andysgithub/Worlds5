@@ -12,6 +12,7 @@ using System.IO.Compression;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
+using static Worlds5.SphereData;
 
 namespace Worlds5
 {
@@ -60,6 +61,7 @@ namespace Worlds5
                 SphereData.Type fileInfo = sphereRoot.Type;
                 SphereData.Navigation navigation = sphereRoot.Navigation;
                 SphereData.Viewing viewing = sphereRoot.Viewing;
+                SphereData.Clipping clipping = sphereRoot.Clipping;
                 SphereData.Raytracing raytracing = sphereRoot.Raytracing;
                 SphereData.Rendering rendering = sphereRoot.Rendering;
                 SphereData.Colour colour = sphereRoot.Colour;
@@ -108,6 +110,12 @@ namespace Worlds5
                     sphere.settings.CentreLongitude = viewing.CentreLongitude;
                     sphere.settings.VerticalView = viewing.VerticalView;
                     sphere.settings.HorizontalView = viewing.HorizontalView;
+
+                    // Clipping
+                    sphere.settings.UseClipping = clipping.UseClipping;
+                    sphere.settings.ClippingAxes = clipping.ClippingAxes;
+                    sphere.settings.ClippingAngle = clipping.ClippingAngle;
+                    sphere.settings.ClippingOffset = clipping.ClippingOffset;
 
                     // Raytracing
                     sphere.settings.SamplingInterval = raytracing.SamplingInterval;
@@ -160,6 +168,7 @@ namespace Worlds5
             SphereData.Type fileInfo = new SphereData.Type();
             SphereData.Navigation navigation = new SphereData.Navigation();
             SphereData.Viewing viewing = new SphereData.Viewing();
+            SphereData.Clipping clipping = new SphereData.Clipping();
             SphereData.Raytracing raytracing = new SphereData.Raytracing();
             SphereData.Rendering rendering = new SphereData.Rendering();
             SphereData.Colour colour = new SphereData.Colour();
@@ -200,6 +209,12 @@ namespace Worlds5
                 viewing.VerticalView = sphere.settings.VerticalView;
                 viewing.HorizontalView = sphere.settings.HorizontalView;
 
+                // Clipping
+                clipping.UseClipping = sphere.settings.UseClipping;
+                clipping.ClippingAxes = sphere.settings.ClippingAxes;
+                clipping.ClippingAngle = sphere.settings.ClippingAngle;
+                clipping.ClippingOffset = sphere.settings.ClippingOffset;
+
                 // Raytracing
                 raytracing.SamplingInterval = sphere.settings.SamplingInterval;
                 raytracing.SurfaceSmoothing = sphere.settings.SurfaceSmoothing;
@@ -226,6 +241,7 @@ namespace Worlds5
                 sphereRoot.Type = fileInfo;
                 sphereRoot.Navigation = navigation;
                 sphereRoot.Viewing = viewing;
+                sphereRoot.Clipping = clipping;
                 sphereRoot.Raytracing = raytracing;
                 sphereRoot.Rendering = rendering;
                 sphereRoot.Colour = colour;

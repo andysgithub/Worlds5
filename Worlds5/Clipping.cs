@@ -9,6 +9,10 @@ namespace Worlds5
         {
             return (AxisPair)Enum.ToObject(typeof(AxisPair), axesIndex);
         }
+        public static int GetIndex(AxisPair axisPair)
+        {
+            return (int)axisPair;
+        }
 
         /// <summary>
         /// Find the distance between the viewpoint and clipping plane
