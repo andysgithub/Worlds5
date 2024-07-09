@@ -27,10 +27,7 @@ namespace Worlds5
 
         #region Delegates
 
-        public delegate void UpdateRowStatusDelegate(int[] rowArray, int totalLines);
-        public event UpdateRowStatusDelegate updateRowStatus;
-
-        public delegate void UpdateRayStatusDelegate(int[] rayArray, int totalRays);
+        public delegate void UpdateRayStatusDelegate(int count, int totalRays);
         public event UpdateRayStatusDelegate updateRayStatus;
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
@@ -150,7 +147,7 @@ namespace Worlds5
                     int totalLines = (int)(sphere.settings.VerticalView / sphere.settings.AngularResolution);
                     int raysPerLine = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
 
-                    raysProcessed = new int[raysPerLine * totalLines];
+                    raysProcessed = new int[raysPerLine * totalLines + 1];
                     linesProcessed = new int[totalLines + 10];
 
                     PerformParallel(totalLines, raysPerLine);
@@ -172,6 +169,8 @@ namespace Worlds5
             RayTracingParams rayParams = new RayTracingParams(sphere.settings);
             RenderingParams renderParams = new RenderingParams(sphere.settings);
 
+            int rayCount = 0;
+
             ProgressCallback progressCallback = (rayCountX, rayCountY, rayDataPtr) =>
             {
                 RayDataTypeIntermediate intermediateData = Marshal.PtrToStructure<RayDataTypeIntermediate>(rayDataPtr);
@@ -181,9 +180,7 @@ namespace Worlds5
                     RayDataType rayData = Helpers.ConvertFromIntermediate(intermediateData);
                     sphere.RayMap[rayCountX, rayCountY] = rayData;
 
-                    // Set the colour and display the point
-                    TracedRay tracedRay = SetRayColour(sphere, renderParams, rayCountX, rayCountY);
-                    imageDisplay.updateImage(rayCountX, rayCountY, tracedRay.bmiColors);
+                    if (rayCount++ % 100 == 0) RayCompleted(rayCount);
                 }
                 finally
                 {
@@ -192,8 +189,9 @@ namespace Worlds5
             };
 
             ProcessRays(rayParams, renderParams, raysPerLine, totalLines, progressCallback);
+            RayCompleted(raysPerLine * totalLines);
 
-/*            Parallel.For(0, totalLines, rayCountY =>
+            Parallel.For(0, totalLines, rayCountY =>
             {
                 // For each longitude point on this line
                 Parallel.For(0, raysPerLine, rayCountX =>
@@ -207,7 +205,7 @@ namespace Worlds5
                      catch
                      { }
                  });
-            });*/
+            });
         }
 
         public async Task<bool> Redisplay()
@@ -219,6 +217,7 @@ namespace Worlds5
                 {
                     int totalLines = (int)(sphere.settings.VerticalView / sphere.settings.AngularResolution);
                     linesProcessed = new int[totalLines];
+                    int rayCount = 0;
 
                     try
                     {
@@ -226,7 +225,7 @@ namespace Worlds5
                         {
                             // Set pixel colours for this line
                             Redisplay(lineIndex);
-                            RowCompleted((int)lineIndex);
+                            if (rayCount++ % 100 == 0) RayCompleted(rayCount);
                         });
                         sphere.ViewportImage = imageDisplay.GetBitmap();
                     }
@@ -255,21 +254,11 @@ namespace Worlds5
 
         private void RayCompleted(int rayIndex)
         {
-            raysProcessed[rayIndex] = 1;
             int raysPerLine = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
             int totalLines = (int)(sphere.settings.VerticalView / sphere.settings.AngularResolution);
 
             // Call the UpdateStatus function in Main
-            updateRayStatus(raysProcessed, raysPerLine * totalLines);
-        }
-
-        private void RowCompleted(int lineIndex)
-        {
-            linesProcessed[lineIndex] = 1;
-            int totalLines = (int)(sphere.settings.VerticalView / sphere.settings.AngularResolution);
-
-            // Call the UpdateStatus function in Main
-            updateRowStatus(linesProcessed, totalLines);
+            updateRayStatus(rayIndex, raysPerLine * totalLines);
         }
 
         public void Redisplay(int rayCountY)

@@ -34,7 +34,6 @@ namespace Worlds5
             // Instantiate a new sphere before setting properties
             Model.Globals.Sphere = new clsSphere();
             imageRendering = new ImageRendering();
-            imageRendering.updateRowStatus += new ImageRendering.UpdateRowStatusDelegate(UpdateRowStatus);
             imageRendering.updateRayStatus += new ImageRendering.UpdateRayStatusDelegate(UpdateRayStatus);
 
             WindowState state = Initialisation.LoadSettings();
@@ -153,33 +152,9 @@ namespace Worlds5
         /// <summary>
         /// Callback to update the status after a line has been processed.
         /// </summary>
-        /// <param name="rowCount"></param>
-        private void UpdateRowStatus(int[] rowArray, int totalLines)
-        {
-            int rowCount = rowArray.Count(c => c == 1);
-            if (staStatus != null && staStatus.Items != null && staStatus.Items.Count > 0)
-            {
-                string statusMessage = (rowCount < totalLines) ? rowCount + " of " + totalLines + " rows processed" : "Rendering completed";
-
-                if (staStatus.InvokeRequired)
-                {
-                    staStatus.Invoke(new MethodInvoker(() => staStatus.Items[0].Text = statusMessage));
-                }
-                else
-                {
-                    staStatus.Items[0].Text = statusMessage;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Callback to update the status after a line has been processed.
-        /// </summary>
         /// <param name="rayCount"></param>
-        private void UpdateRayStatus(int[] rayArray, int totalRays)
+        private void UpdateRayStatus(int rayCount, int totalRays)
         {
-            int rayCount = rayArray.Count(c => c == 1);
-
             if (staStatus != null && staStatus.Items != null && staStatus.Items.Count > 0)
             {
                 string statusMessage = (rayCount < totalRays) ? rayCount + " of " + totalRays + " rays processed" : "Rendering completed";
