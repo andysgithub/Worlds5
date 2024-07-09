@@ -34,9 +34,7 @@ extern float
 typedef void (__stdcall *ProgressCallback)(int rayCount, int rowCount, RayDataTypeIntermediate* rayData);
 
 //////  SPHERE  //////
-EXPORT	void __stdcall InitSphere(float fBailout, float dResolution,
-                                  float dLatitude, float dLongitude,
-                                  float SphereRadius, float verticalView, float horizontalView, float *pTransMatrix);
+EXPORT	void __stdcall InitSphere(float *pTransMatrix);
 
 //////  RAY TRACER  //////
 EXPORT void __stdcall ProcessRays(RayTracingParams rayParams, RenderingParams renderParams,

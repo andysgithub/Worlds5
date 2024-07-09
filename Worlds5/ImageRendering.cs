@@ -16,8 +16,6 @@ namespace Worlds5
 
         private clsSphere sphere;
         private ImageDisplay imageDisplay;
-        private int[] raysProcessed;
-        private int[] linesProcessed;
 
         //  Sequence playback
         // private static int m_CurrentKey;		// Current key frame for sequence
@@ -66,9 +64,7 @@ namespace Worlds5
         #region DLL Imports
 
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern void InitSphere(float fBailout, float Resolution,
-                                      float Latitude, float Longitude,
-                                      float SphereRadius, float verticalView, float horizontalView, float[,] PositionMatrix);
+        static extern void InitSphere(float[,] PositionMatrix);
 
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool InitializeGPU(ref RayTracingParams rayParams);
@@ -94,9 +90,7 @@ namespace Worlds5
             sphere = Model.Globals.Sphere;
 
             // Initialise the sphere in the dll from the ImageRendering sphere
-            InitSphere(sphere.settings.Bailout, sphere.settings.AngularResolution,
-                       sphere.settings.CentreLatitude, sphere.settings.CentreLongitude,
-                       sphere.settings.SphereRadius, sphere.settings.VerticalView, sphere.settings.HorizontalView, sphere.settings.PositionMatrix);
+            InitSphere(sphere.settings.PositionMatrix);
 
             RayTracingParams rayParams = new RayTracingParams(sphere.settings);
 
@@ -146,9 +140,6 @@ namespace Worlds5
 
                     int totalLines = (int)(sphere.settings.VerticalView / sphere.settings.AngularResolution);
                     int raysPerLine = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
-
-                    raysProcessed = new int[raysPerLine * totalLines + 1];
-                    linesProcessed = new int[totalLines + 10];
 
                     PerformParallel(totalLines, raysPerLine);
                 }
@@ -216,7 +207,6 @@ namespace Worlds5
                 if (Model.Globals.Sphere.RayMap != null)
                 {
                     int totalLines = (int)(sphere.settings.VerticalView / sphere.settings.AngularResolution);
-                    linesProcessed = new int[totalLines];
                     int rayCount = 0;
 
                     try

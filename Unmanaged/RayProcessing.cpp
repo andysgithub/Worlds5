@@ -3,7 +3,7 @@
 #include <thread>
 #include <mutex>
 #include "stdafx.h"
-#include "unmanaged.h"
+#include "RayProcessing.h"
 #include "TracedRay.h" 
 #include "Clipping.h" 
 

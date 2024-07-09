@@ -17,7 +17,7 @@
 #include "stdafx.h"
 #include <math.h>
 #include "declares.h"
-#include "unmanaged.h"
+#include "RayProcessing.h"
 #include "Colour.h"
 
 /*

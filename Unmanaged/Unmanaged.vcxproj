@@ -210,7 +210,7 @@
     <ClInclude Include="Myrion.h" />
     <ClInclude Include="Declares.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Unmanaged.h" />
+    <ClInclude Include="RayProcessing.h" />
     <ClInclude Include="Vectors.h" />
   </ItemGroup>
   <ItemGroup>
