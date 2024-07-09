@@ -32,6 +32,9 @@ namespace Worlds5
         public delegate void UpdateRayStatusDelegate(int[] rayArray, int totalRays);
         public event UpdateRayStatusDelegate updateRayStatus;
 
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        public delegate void ProgressCallback(int rayCount, int rowCount);
+
         #endregion
 
         #region Class Properties
@@ -74,6 +77,11 @@ namespace Worlds5
 
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool CopyTransformationMatrix([In] float[] positionMatrix);
+
+        [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void ProcessRays(RayTracingParams rayParams, RenderingParams renderParams, int raysPerLine, int totalLines, ProgressCallback callback);
+
+
         #endregion
 
         public ImageRendering()
@@ -140,7 +148,7 @@ namespace Worlds5
                     int raysPerLine = (int)(sphere.settings.HorizontalView / sphere.settings.AngularResolution);
 
                     raysProcessed = new int[raysPerLine * totalLines];
-                    linesProcessed = new int[totalLines];
+                    linesProcessed = new int[totalLines + 10];
 
                     PerformParallel(totalLines, raysPerLine);
                 }
@@ -159,10 +167,25 @@ namespace Worlds5
         private void PerformParallel(int totalLines, int raysPerLine)
         {
             // Initialise an array of RayProcessing classes for the collection of vectors
-            RayProcessing[,] rayProc = new RayProcessing[raysPerLine, totalLines];
+            //RayProcessing[,] rayProc = new RayProcessing[raysPerLine, totalLines];
+
             RayTracingParams rayParams = new RayTracingParams(sphere.settings);
             RenderingParams renderParams = new RenderingParams(sphere.settings);
 
+            ProgressCallback progressCallback = (rayCount, rowCount) =>
+            {
+                if (sphere.settings.CudaMode)
+                {
+                    RayCompleted(rayCount);
+                }
+                else
+                {
+                    RowCompleted(rowCount);
+                }
+            };
+
+            ProcessRays(rayParams, renderParams, raysPerLine, totalLines, progressCallback);
+/*
             for (int countY = 0; countY < totalLines; countY++)
             {
                 for (int countX = 0; countX < raysPerLine; countX++)
@@ -195,7 +218,7 @@ namespace Worlds5
                 {
                     RowCompleted(rayCountY);
                 }
-            });
+            });*/
 
             Parallel.For(0, totalLines, rayCountY =>
             {

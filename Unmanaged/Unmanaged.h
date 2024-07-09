@@ -30,21 +30,26 @@ extern float
 		m_Hue1, m_Saturation1, m_Lightness1,
 		m_Bailout;
 
+typedef void (*ProgressCallback)(int rayCount, int rowCount);
+
 //////  SPHERE  //////
 EXPORT	void __stdcall InitSphere(float fBailout, float dResolution,
                                   float dLatitude, float dLongitude,
                                   float SphereRadius, float verticalView, float horizontalView, float *pTransMatrix);
 
 //////  RAY TRACER  //////
+EXPORT void __stdcall ProcessRays(RayTracingParams rayParams, RenderingParams renderParams,
+	int raysPerLine, int totalLines, ProgressCallback progressCallback);
+
 EXPORT int __stdcall TraceRay(float startDistance, RayTracingParams rayParams,
-								float XFactor, float YFactor, float ZFactor,
-								int externalPoints[], float modulusValues[], float angles[], float distances[]);
+	float XFactor, float YFactor, float ZFactor,
+	int externalPoints[], float modulusValues[], float angles[], float distances[]);
 
 EXPORT float __stdcall FindSurface(float samplingInterval, float surfaceSmoothing, int binarySearchSteps, float currentDistance,
-									float xFactor, float yFactor, float zFactor, float bailout);
+	float xFactor, float yFactor, float zFactor, float bailout);
 EXPORT float __stdcall FindBoundary(float samplingInterval, int binarySearchSteps, float currentDistance, float previousAngle,
-									 float boundaryInterval, bool *externalPoint, float *Modulus, float *Angle,
-									 float xFactor, float yFactor, float zFactor, float bailout);
+	float boundaryInterval, bool *externalPoint, float *Modulus, float *Angle,
+	float xFactor, float yFactor, float zFactor, float bailout);
 
 Vector5 ImageToFractalSpace (float distance, Vector3 coord);
 EXPORT bool __stdcall SamplePoint(float distance, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c);

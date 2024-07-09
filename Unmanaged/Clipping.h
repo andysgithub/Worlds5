@@ -1,5 +1,6 @@
 #pragma once
 
+#include "cuda_interface.h"
 #include "Vectors.h"  // This should include Vector3, Vector5, and AxisPair definitions
 
 namespace Worlds5 {

@@ -9,8 +9,6 @@
 
 class RayProcessing {
 
-    typedef void (*ProgressCallback)(int rayCount, int rowCount);
-
 public:
     RayProcessing(ProgressCallback callback) : progressCallback(callback) {}
 
@@ -68,3 +66,38 @@ private:
 
     ProgressCallback progressCallback;
 };
+
+// Example of how to use std::thread for parallel processing in C++
+EXPORT void __stdcall ProcessRays(RayTracingParams rayParams, RenderingParams renderParams, int raysPerLine, int totalLines, ProgressCallback progressCallback) {
+    std::vector<std::vector<RayProcessing>> rayProc(raysPerLine, std::vector<RayProcessing>(totalLines));
+
+    std::vector<std::thread> threads;
+    std::mutex mtx;
+    std::atomic<int> completedRays(0);
+    std::atomic<int> completedRows(0);
+
+    for (int rayCountY = 0; rayCountY < totalLines; ++rayCountY) {
+        threads.emplace_back([&, rayCountY]() {
+            for (int rayCountX = 0; rayCountX < raysPerLine; ++rayCountX) {
+                try {
+                    rayProc[rayCountX][rayCountY].ProcessRay(rayParams, renderParams, rayCountX, rayCountY);
+                    if (rayParams.cudaMode) {
+                        int completed = ++completedRays;
+                        progressCallback(completed, completedRows);
+                    }
+                }
+                catch (...) {
+                    // Handle exceptions
+                }
+            }
+            if (!rayParams.cudaMode) {
+                int completed = ++completedRows;
+                progressCallback(completedRays, completed);
+            }
+            });
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
+    }
+}
