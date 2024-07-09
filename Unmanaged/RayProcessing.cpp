@@ -17,7 +17,7 @@ public:
     // Initialiser list
     externalPoints(100), modulusValues(100), angleValues(100), distanceValues(100) {}
 
-    TracedRay::RayDataType ProcessRay(RayTracingParams rayParams, RenderingParams renderParams, int rayCountX, int rayCountY) {
+    RayDataTypeIntermediate ProcessRay(RayTracingParams rayParams, RenderingParams renderParams, int rayCountX, int rayCountY) {
 
         float latitude = rayParams.latitudeStart - rayCountY * rayParams.angularResolution;
         float longitude = rayParams.longitudeStart - rayCountX * rayParams.angularResolution;
@@ -49,13 +49,33 @@ public:
         TracedRay tracedRay(externalPoints, modulusValues, angleValues, distanceValues, renderParams);
 
         // Create and return a RayDataType directly
-        return TracedRay::RayDataType{
+        TracedRay::RayDataType result = TracedRay::RayDataType{
             tracedRay.ExternalPoints(),
             tracedRay.ModulusValues(),
             tracedRay.AngleValues(),
             tracedRay.Boundaries(),
             tracedRay.BoundaryTotal()
         };
+
+        return ConvertToIntermediate(result);
+    }
+
+    RayDataTypeIntermediate ConvertToIntermediate(const TracedRay::RayDataType& original) {
+        RayDataTypeIntermediate result;
+        result.ArraySize = original.ExternalPoints.size();
+        result.BoundaryTotal = original.BoundaryTotal;
+
+        result.ExternalPoints = new int[result.ArraySize];
+        result.ModulusValues = new float[result.ArraySize];
+        result.AngleValues = new float[result.ArraySize];
+        result.DistanceValues = new float[result.ArraySize];
+
+        std::copy(original.ExternalPoints.begin(), original.ExternalPoints.end(), result.ExternalPoints);
+        std::copy(original.ModulusValues.begin(), original.ModulusValues.end(), result.ModulusValues);
+        std::copy(original.AngleValues.begin(), original.AngleValues.end(), result.AngleValues);
+        std::copy(original.DistanceValues.begin(), original.DistanceValues.end(), result.DistanceValues);
+
+        return result;
     }
 
 private:
@@ -68,31 +88,26 @@ private:
 };
 
 // Example of how to use std::thread for parallel processing in C++
-EXPORT void __stdcall ProcessRays(RayTracingParams rayParams, RenderingParams renderParams, int raysPerLine, int totalLines, ProgressCallback progressCallback) {
+EXPORT void __stdcall ProcessRays(RayTracingParams rayParams, RenderingParams renderParams, int raysPerLine, int totalLines, ProgressCallback callback) {
     std::vector<std::vector<RayProcessing>> rayProc(raysPerLine, std::vector<RayProcessing>(totalLines));
 
     std::vector<std::thread> threads;
     std::mutex mtx;
-    std::atomic<int> completedRays(0);
-    std::atomic<int> completedRows(0);
 
     for (int rayCountY = 0; rayCountY < totalLines; ++rayCountY) {
         threads.emplace_back([&, rayCountY]() {
             for (int rayCountX = 0; rayCountX < raysPerLine; ++rayCountX) {
                 try {
-                    rayProc[rayCountX][rayCountY].ProcessRay(rayParams, renderParams, rayCountX, rayCountY);
-                    if (rayParams.cudaMode) {
-                        int completed = ++completedRays;
-                        progressCallback(completed, completedRows);
+                    RayDataTypeIntermediate rayData = rayProc[rayCountX][rayCountY].ProcessRay(rayParams, renderParams, rayCountX, rayCountY);
+
+                    if (callback) {
+                        std::lock_guard<std::mutex> lock(mtx);
+                        callback(rayCountX, rayCountY, &rayData);
                     }
                 }
                 catch (...) {
                     // Handle exceptions
                 }
-            }
-            if (!rayParams.cudaMode) {
-                int completed = ++completedRows;
-                progressCallback(completedRays, completed);
             }
             });
     }
@@ -100,4 +115,15 @@ EXPORT void __stdcall ProcessRays(RayTracingParams rayParams, RenderingParams re
     for (auto& thread : threads) {
         thread.join();
     }
+}
+
+void FreeIntermediateData(RayDataTypeIntermediate& data) {
+    delete[] data.ExternalPoints;
+    delete[] data.ModulusValues;
+    delete[] data.AngleValues;
+    delete[] data.DistanceValues;
+}
+
+EXPORT void __stdcall FreeRayData(RayDataTypeIntermediate * data) {
+    FreeIntermediateData(*data);
 }

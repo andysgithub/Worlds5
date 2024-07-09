@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Model;
+using Syncfusion.Windows.Forms.Tools;
 using static Model.TracedRay;
 using static Worlds5.RayProcessing;
 
@@ -33,7 +34,7 @@ namespace Worlds5
         public event UpdateRayStatusDelegate updateRayStatus;
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        public delegate void ProgressCallback(int rayCount, int rowCount);
+        public delegate void ProgressCallback(int rayCount, int rowCount, IntPtr rayDataPtr);
 
         #endregion
 
@@ -81,6 +82,8 @@ namespace Worlds5
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ProcessRays(RayTracingParams rayParams, RenderingParams renderParams, int raysPerLine, int totalLines, ProgressCallback callback);
 
+        [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern void FreeRayData(ref RayDataTypeIntermediate data);
 
         #endregion
 
@@ -166,61 +169,31 @@ namespace Worlds5
 
         private void PerformParallel(int totalLines, int raysPerLine)
         {
-            // Initialise an array of RayProcessing classes for the collection of vectors
-            //RayProcessing[,] rayProc = new RayProcessing[raysPerLine, totalLines];
-
             RayTracingParams rayParams = new RayTracingParams(sphere.settings);
             RenderingParams renderParams = new RenderingParams(sphere.settings);
 
-            ProgressCallback progressCallback = (rayCount, rowCount) =>
+            ProgressCallback progressCallback = (rayCountX, rayCountY, rayDataPtr) =>
             {
-                if (sphere.settings.CudaMode)
+                RayDataTypeIntermediate intermediateData = Marshal.PtrToStructure<RayDataTypeIntermediate>(rayDataPtr);
+
+                try
                 {
-                    RayCompleted(rayCount);
+                    RayDataType rayData = Helpers.ConvertFromIntermediate(intermediateData);
+                    sphere.RayMap[rayCountX, rayCountY] = rayData;
+
+                    // Set the colour and display the point
+                    TracedRay tracedRay = SetRayColour(sphere, renderParams, rayCountX, rayCountY);
+                    imageDisplay.updateImage(rayCountX, rayCountY, tracedRay.bmiColors);
                 }
-                else
+                finally
                 {
-                    RowCompleted(rowCount);
+                    FreeRayData(ref intermediateData);
                 }
             };
 
             ProcessRays(rayParams, renderParams, raysPerLine, totalLines, progressCallback);
-/*
-            for (int countY = 0; countY < totalLines; countY++)
-            {
-                for (int countX = 0; countX < raysPerLine; countX++)
-                {
-                    // Instantiate a class for this thread
-                    rayProc[countX, countY] = new RayProcessing();
-                }
-            }
-            // For each latitude line in the viewport
-            Parallel.For(0, totalLines, rayCountY =>
-            {
-                // For each longitude point on this line
-                Parallel.For(0, raysPerLine, rayCountX =>
-                {
-                    try
-                    {
-                        // Perform raytracing in this thread
-                        RayDataType rayData = rayProc[rayCountX, rayCountY].ProcessRay(rayParams, renderParams, rayCountX, rayCountY);
-                        sphere.RayMap[rayCountX, rayCountY] = rayData;
 
-                        if (sphere.settings.CudaMode)
-                        {
-                            RayCompleted(rayCountY * raysPerLine + rayCountX);
-                        }
-                    }
-                    catch
-                    { }
-                });
-                if (!sphere.settings.CudaMode)
-                {
-                    RowCompleted(rayCountY);
-                }
-            });*/
-
-            Parallel.For(0, totalLines, rayCountY =>
+/*            Parallel.For(0, totalLines, rayCountY =>
             {
                 // For each longitude point on this line
                 Parallel.For(0, raysPerLine, rayCountX =>
@@ -234,7 +207,7 @@ namespace Worlds5
                      catch
                      { }
                  });
-            });
+            });*/
         }
 
         public async Task<bool> Redisplay()
@@ -249,7 +222,6 @@ namespace Worlds5
 
                     try
                     {
-                        // for (int lineIndex = 0; lineIndex < totalLines; lineIndex++)
                         Parallel.For(0, totalLines, lineIndex =>
                         {
                             // Set pixel colours for this line
@@ -334,7 +306,7 @@ namespace Worlds5
                 tracedRay.yTiltValues = sphere.addTiltValues(tracedRay, renderParams, rayCountX, rayCountY - 1);
             }
 
-            if (tracedRay != null)
+            if (tracedRay != null && rayData.ModulusValues != null)
             {
                 // Convert the fractal value collection into an rgb colour value
                 tracedRay.SetColour();

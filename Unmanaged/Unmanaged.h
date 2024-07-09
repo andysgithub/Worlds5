@@ -4,6 +4,7 @@
 
 #include <windows.h>
 #include "declares.h"
+#include "TracedRay.h"
 #include "Vectors.h"
 #include "vector5Single.h"
 #include "cuda_interface.h"
@@ -30,7 +31,7 @@ extern float
 		m_Hue1, m_Saturation1, m_Lightness1,
 		m_Bailout;
 
-typedef void (*ProgressCallback)(int rayCount, int rowCount);
+typedef void (__stdcall *ProgressCallback)(int rayCount, int rowCount, RayDataTypeIntermediate* rayData);
 
 //////  SPHERE  //////
 EXPORT	void __stdcall InitSphere(float fBailout, float dResolution,

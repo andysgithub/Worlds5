@@ -26,6 +26,15 @@ struct RGB_TRIPLE {
     unsigned char rgbRed;
 };
 
+struct RayDataTypeIntermediate {
+    int* ExternalPoints;
+    float* ModulusValues;
+    float* AngleValues;
+    float* DistanceValues;
+    int BoundaryTotal;
+    int ArraySize;
+};
+
 class TracedRay {
 public:
 

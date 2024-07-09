@@ -59,6 +59,17 @@ namespace Model
             public int BoundaryTotal;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RayDataTypeIntermediate
+        {
+            public IntPtr ExternalPoints;
+            public IntPtr ModulusValues;
+            public IntPtr AngleValues;
+            public IntPtr DistanceValues;
+            public int BoundaryTotal;
+            public int ArraySize;
+        }
+
         public RayDataType RayData;
         private RenderingParams m_renderParams;
 

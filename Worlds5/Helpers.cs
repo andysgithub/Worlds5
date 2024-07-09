@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static Model.TracedRay;
 
 namespace Worlds5
 {
@@ -44,6 +45,25 @@ namespace Worlds5
                 dstream.CopyTo(output);
             }
             return output.ToArray();
+        }
+
+        public static RayDataType ConvertFromIntermediate(RayDataTypeIntermediate intermediate)
+        {
+            RayDataType result = new RayDataType
+            {
+                BoundaryTotal = intermediate.BoundaryTotal,
+                ExternalPoints = new int[intermediate.ArraySize],
+                ModulusValues = new float[intermediate.ArraySize],
+                AngleValues = new float[intermediate.ArraySize],
+                DistanceValues = new float[intermediate.ArraySize]
+            };
+
+            Marshal.Copy(intermediate.ExternalPoints, result.ExternalPoints, 0, intermediate.ArraySize);
+            Marshal.Copy(intermediate.ModulusValues, result.ModulusValues, 0, intermediate.ArraySize);
+            Marshal.Copy(intermediate.AngleValues, result.AngleValues, 0, intermediate.ArraySize);
+            Marshal.Copy(intermediate.DistanceValues, result.DistanceValues, 0, intermediate.ArraySize);
+
+            return result;
         }
     }
 }

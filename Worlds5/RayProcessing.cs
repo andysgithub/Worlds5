@@ -69,7 +69,7 @@ namespace Worlds5
         }
 
         // Trace the ray on this latitude line
-        public TracedRay.RayDataType ProcessRay(RayTracingParams rayParams, RenderingParams renderParams, int rayCountX, int rayCountY)
+        public RayDataType ProcessRay(RayTracingParams rayParams, RenderingParams renderParams, int rayCountX, int rayCountY)
         {
             float latitude = rayParams.latitudeStart - rayCountY * rayParams.angularResolution;
             float longitude = rayParams.longitudeStart - rayCountX * rayParams.angularResolution;
