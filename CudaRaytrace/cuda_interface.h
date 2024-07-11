@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cuda_runtime.h>
-#include "vector5Single.h"
 #include <vector>
 
 enum class AxisPair

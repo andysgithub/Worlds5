@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cuda_runtime.h>
+#include "vector5Single.h"
 
 __device__ inline void v_mov(const float* a, float* b) {
     for (int i = 0; i < DimTotal; ++i) {

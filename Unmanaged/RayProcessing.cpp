@@ -62,7 +62,7 @@ public:
 
     RayDataTypeIntermediate ConvertToIntermediate(const TracedRay::RayDataType& original) {
         RayDataTypeIntermediate result;
-        result.ArraySize = original.ExternalPoints.size();
+        result.ArraySize = (int)original.ExternalPoints.size();
         result.BoundaryTotal = original.BoundaryTotal;
 
         result.ExternalPoints = new int[result.ArraySize];

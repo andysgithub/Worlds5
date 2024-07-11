@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef VECTOR_5_SINGLE_H
+#define VECTOR_5_SINGLE_H
+
 #include <array>
 
 #define DimTotal 5
@@ -12,3 +15,5 @@ struct vector5Single {
         return { coords[0], coords[1], coords[2], coords[3], coords[4] };
     }
 };
+
+#endif

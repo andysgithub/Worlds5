@@ -65,6 +65,7 @@
       <CodeGeneration>compute_61,sm_61</CodeGeneration>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalOptions>-v %(AdditionalOptions)</AdditionalOptions>
+      <GenerateRelocatableDeviceCode>true</GenerateRelocatableDeviceCode>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -84,16 +85,32 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
+      <GenerateRelocatableDeviceCode>true</GenerateRelocatableDeviceCode>
+      <CodeGeneration>compute_61,sm_61</CodeGeneration>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="cuda_interface.h" />
     <ClInclude Include="kernel.cuh" />
     <ClInclude Include="inline.cuh" />
+    <ClInclude Include="RayTracer.cuh" />
     <ClInclude Include="vector5Single.h" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="kernel.cu" />
+    <CudaCompile Include="helpers.cu" />
+    <CudaCompile Include="kernel.cu">
+      <GenerateRelocatableDeviceCode Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateRelocatableDeviceCode>
+      <GenerateRelocatableDeviceCode Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateRelocatableDeviceCode>
+      <FastMath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</FastMath>
+      <FastMath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</FastMath>
+      <Include Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.</Include>
+      <Include Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.</Include>
+    </CudaCompile>
+    <CudaCompile Include="RayProcessing.cu" />
+    <CudaCompile Include="RayTracer.cu">
+      <Include Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.</Include>
+      <Include Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.</Include>
+    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
