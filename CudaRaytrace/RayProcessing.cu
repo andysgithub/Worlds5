@@ -1,128 +1,123 @@
-//#include <vector>
-//#include <cmath>
-//#include <thread>
-//#include <mutex>
-//#include "RayProcessing.h"
-//#include "TracedRay.h" 
+#include <cuda_runtime.h>
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
+#include <vector>
+#include <cmath>
+#include "RayProcessing.h"
+#include "TracedRay.h" 
 //#include "Clipping.h" 
-//#include "Vectors.h" 
-//#include "cuda_interface.h"
-//
-//RayDataTypeIntermediate ProcessRay(RayTracingParams rayParams, RenderingParams renderParams, int rayCountX, int rayCountY) {
-//
-//    float latitude = rayParams.latitudeStart - rayCountY * rayParams.angularResolution;
-//    float longitude = rayParams.longitudeStart - rayCountX * rayParams.angularResolution;
-//
-//    float latRadians = latitude * DEG_TO_RAD;
-//    float longRadians = longitude * DEG_TO_RAD;
-//
-//    float xFactor = std::cos(latRadians) * std::sin(-longRadians);
-//    float yFactor = std::sin(latRadians);
-//    float zFactor = std::cos(latRadians) * std::cos(-longRadians);
-//
-//    float startDistance = rayParams.sphereRadius;
-//
-//    if (rayParams.useClipping) {
-//        float distance = Worlds5::Clipping::CalculateDistance2(latRadians, longRadians, rayParams.clippingAxes, rayParams.clippingOffset);
-//        if (distance > startDistance) startDistance = distance;
-//    }
-//
-//    int points = TraceRay(startDistance, rayParams,
-//        xFactor, yFactor, zFactor,
-//        externalPoints.data(), modulusValues.data(), angleValues.data(), distanceValues.data());
-//
-//    externalPoints.resize(points);
-//    modulusValues.resize(points);
-//    angleValues.resize(points);
-//    distanceValues.resize(points);
-//
-//    // Define the TracedRay object
-//    TracedRay tracedRay(externalPoints, modulusValues, angleValues, distanceValues, renderParams);
-//
-//    // Create and return a RayDataType directly
-//    TracedRay::RayDataType result = TracedRay::RayDataType{
-//        tracedRay.ExternalPoints(),
-//        tracedRay.ModulusValues(),
-//        tracedRay.AngleValues(),
-//        tracedRay.Boundaries(),
-//        tracedRay.BoundaryTotal()
-//    };
-//
-//    return ConvertToIntermediate(result);
-//}
-//
-//RayDataTypeIntermediate ConvertToIntermediate(const TracedRay::RayDataType& original) {
-//    RayDataTypeIntermediate result;
-//    result.ArraySize = original.ExternalPoints.size();
-//    result.BoundaryTotal = original.BoundaryTotal;
-//
-//    result.ExternalPoints = new int[result.ArraySize];
-//    result.ModulusValues = new float[result.ArraySize];
-//    result.AngleValues = new float[result.ArraySize];
-//    result.DistanceValues = new float[result.ArraySize];
-//
-//    std::copy(original.ExternalPoints.begin(), original.ExternalPoints.end(), result.ExternalPoints);
-//    std::copy(original.ModulusValues.begin(), original.ModulusValues.end(), result.ModulusValues);
-//    std::copy(original.AngleValues.begin(), original.AngleValues.end(), result.AngleValues);
-//    std::copy(original.DistanceValues.begin(), original.DistanceValues.end(), result.DistanceValues);
-//
-//    return result;
-//}
-//
-///**
-//    * Find the distance between the viewpoint and clipping plane
-//    * along a vector defined by the lat/long point on the sphere
-//    * @param latRadians The latitude in radians of the point on the sphere to trace through
-//    * @param longRadians The longitude in radians of the point on the sphere to trace through
-//    * @param axisPair The selected axis pair for the clipping plane
-//    * @param offset The offset for the clipping plane in the remaining axes
-//    * @return The distance value as a float-precision float
-//    */
-//float CalculateDistance2(float latRadians, float longRadians, AxisPair axisPair, float offset) {
-//    // Convert latitude and longitude to a unit direction vector in 3D space
-//    Vector3 direction3D(
-//        std::cos(latRadians) * std::sin(longRadians),
-//        std::sin(latRadians),
-//        std::cos(latRadians) * std::cos(longRadians)
-//    );
-//
-//    // Get the 5D coordinates in the fractal space for the sphere centre
-//    Vector5 viewpoint5D = ImageToFractalSpace(0, Vector3(0, 0, 0));
-//
-//    // Get the 5D coordinates in the fractal space for the vector
-//    Vector5 direction5D = ImageToFractalSpace(5, direction3D);
-//
-//    // Determine the intersection parameter t based on the selected axis pair
-//    float t = getIntersection2(axisPair, offset, viewpoint5D, direction5D);
-//    float distance = std::abs(t * direction5D.Magnitude());
-//    return distance;
-//}
-//
-//float getIntersection2(AxisPair axisPair, float offset, const Vector5& viewpoint, const Vector5& direction) {
-//    float t = 0;
-//    switch (axisPair) {
-//    case AxisPair::XY:
-//        if (direction.Z != 0) t = (offset - viewpoint.Z) / direction.Z;
-//        break;
-//    case AxisPair::XZ:
-//        if (direction.Y != 0) t = (offset - viewpoint.Y) / direction.Y;
-//        break;
-//    case AxisPair::XW:
-//    case AxisPair::YW:
-//    case AxisPair::ZW:
-//        if (direction.V != 0) t = (offset - viewpoint.V) / direction.V;
-//        break;
-//    case AxisPair::XV:
-//    case AxisPair::YV:
-//    case AxisPair::ZV:
-//        if (direction.W != 0) t = (offset - viewpoint.W) / direction.W;
-//        break;
-//    case AxisPair::YZ:
-//    case AxisPair::WV:
-//        if (direction.X != 0) t = (offset - viewpoint.X) / direction.X;
-//        break;
-//    default:
-//        throw std::runtime_error("Invalid AxisPair");
-//    }
-//    return t;
-//}
+
+typedef void(__stdcall* ProgressCallback)(int rayCount, int rowCount, RayDataTypeIntermediate* rayData);
+
+const float DEG_TO_RAD = 0.0174532925F;
+
+__device__ RayDataTypeIntermediate ProcessRay(RayTracingParams rayParams, RenderingParams renderParams, int rayCountX, int rayCountY)
+{
+    float latitude = rayParams.latitudeStart - rayCountY * rayParams.angularResolution;
+    float longitude = rayParams.longitudeStart - rayCountX * rayParams.angularResolution;
+
+    float latRadians = latitude * DEG_TO_RAD;
+    float longRadians = longitude * DEG_TO_RAD;
+
+    float xFactor = cosf(latRadians) * sinf(-longRadians);
+    float yFactor = sinf(latRadians);
+    float zFactor = cosf(latRadians) * cosf(-longRadians);
+
+    float startDistance = rayParams.sphereRadius;
+
+    //if (rayParams.useClipping) {
+    //    float distance = CalculateDistance(latRadians, longRadians, rayParams.clippingAxes, rayParams.clippingOffset);
+    //    if (distance > startDistance) startDistance = distance;
+    //}
+
+    int externalPoints[MAX_POINTS];
+    float modulusValues[MAX_POINTS];
+    float angleValues[MAX_POINTS];
+    float distanceValues[MAX_POINTS];
+
+    int points = TraceRay2(startDistance, rayParams,
+        xFactor, yFactor, zFactor,
+        externalPoints, modulusValues, angleValues, distanceValues);
+
+    // Create and return a RayDataType directly
+    RayDataType result;
+    result.BoundaryTotal = points;
+    result.ArraySize = points;
+
+    // Copy arrays element by element
+    for (int i = 0; i < points && i < MAX_POINTS; ++i) {
+        result.ExternalPoints[i] = externalPoints[i];
+        result.ModulusValues[i] = modulusValues[i];
+        result.AngleValues[i] = angleValues[i];
+        result.DistanceValues[i] = distanceValues[i];
+    }
+
+    return ConvertToIntermediate(result, MAX_POINTS);
+}
+
+// CUDA kernel function
+__global__ void ProcessRayKernel(RayTracingParams rayParams, RenderingParams renderParams,
+    int raysPerLine, int totalLines, RayDataTypeIntermediate* results)
+{
+    int rayCountX = blockIdx.x * blockDim.x + threadIdx.x;
+    int rayCountY = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (rayCountX >= raysPerLine || rayCountY >= totalLines)
+        return;
+
+    RayDataTypeIntermediate rayData = ProcessRay(rayParams, renderParams, rayCountX, rayCountY);
+
+    // Store results in global memory
+    int index = rayCountY * raysPerLine + rayCountX;
+    results[index] = rayData;
+}
+
+extern "C" __declspec(dllexport) void ProcessRays(RayTracingParams rayParams, RenderingParams renderParams,
+    int raysPerLine, int totalLines, ProgressCallback callback)
+{
+    // Allocate device memory
+    RayDataTypeIntermediate* d_results;
+    cudaMalloc(&d_results, raysPerLine * totalLines * sizeof(RayDataTypeIntermediate));
+
+    // Define grid and block dimensions
+    dim3 blockDim(16, 16);
+    dim3 gridDim((raysPerLine + blockDim.x - 1) / blockDim.x,
+        (totalLines + blockDim.y - 1) / blockDim.y);
+
+    // Launch kernel
+    ProcessRayKernel << <gridDim, blockDim >> > (rayParams, renderParams, raysPerLine, totalLines, d_results);
+
+    // Allocate host memory and copy results back
+    RayDataTypeIntermediate* h_results = new RayDataTypeIntermediate[raysPerLine * totalLines];
+    cudaMemcpy(h_results, d_results, raysPerLine * totalLines * sizeof(RayDataTypeIntermediate), cudaMemcpyDeviceToHost);
+
+    // Call callback function for each result
+    for (int rayCountY = 0; rayCountY < totalLines; ++rayCountY) {
+        for (int rayCountX = 0; rayCountX < raysPerLine; ++rayCountX) {
+            int index = rayCountY * raysPerLine + rayCountX;
+            if (callback) {
+                callback(rayCountX, rayCountY, &h_results[index]);
+            }
+        }
+    }
+
+    // Free memory
+    delete[] h_results;
+    cudaFree(d_results);
+}
+
+__device__ RayDataTypeIntermediate ConvertToIntermediate(const RayDataType& original, int maxSize) {
+    RayDataTypeIntermediate result;
+    result.ArraySize = original.ArraySize;
+    result.BoundaryTotal = original.BoundaryTotal;
+
+    // Assuming RayDataTypeIntermediate has been modified to use fixed-size arrays
+    for (int i = 0; i < result.ArraySize && i < maxSize; ++i) {
+        result.ExternalPoints[i] = original.ExternalPoints[i];
+        result.ModulusValues[i] = original.ModulusValues[i];
+        result.AngleValues[i] = original.AngleValues[i];
+        result.DistanceValues[i] = original.DistanceValues[i];
+    }
+
+    return result;
+}

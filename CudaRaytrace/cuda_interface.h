@@ -17,7 +17,7 @@ enum class AxisPair
     WV
 };
 
-struct RayTracingParams {
+struct __align__(8) RayTracingParams {
     int activeIndex;
     float angularResolution;
     float bailout;
@@ -36,7 +36,7 @@ struct RayTracingParams {
     bool useClipping;
 };
 
-struct RenderingParams {
+struct __align__(8) RenderingParams {
     int activeIndex;
     float startDistance;
     float endDistance;

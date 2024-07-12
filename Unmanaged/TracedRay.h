@@ -11,8 +11,6 @@
 #include "cuda_interface.h"
 #include "Colour.h"
 
-// Define RGB_QUAD and RGB_TRIPLE if they're not already defined elsewhere
-
 struct RGB_QUAD {
     unsigned char rgbBlue;
     unsigned char rgbGreen;

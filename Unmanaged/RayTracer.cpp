@@ -37,7 +37,8 @@ EXPORT bool CopyTransformationMatrix(const float* positionMatrix)
     return cudaStatus == cudaSuccess;
 }
 
-int TraceRayC(float startDistance, RayTracingParams rayParams,
+// Produce the collection of fractal point values for the given vector
+int TraceRay(float startDistance, RayTracingParams rayParams,
     float xFactor, float yFactor, float zFactor,
     int externalPoints[], float modulusValues[], float angles[], float distances[])
 {
@@ -76,14 +77,13 @@ int TraceRayC(float startDistance, RayTracingParams rayParams,
 
             // Perform binary search between this and the previous point, to determine surface position
             sampleDistance = FindSurface(
-                rayParams.samplingInterval, rayParams.surfaceSmoothing, rayParams.binarySearchSteps, 
+                rayParams.samplingInterval, rayParams.surfaceSmoothing, rayParams.binarySearchSteps,
                 currentDistance, xFactor, yFactor, zFactor, rayParams.bailout);
 
             bool foundGap = gapFound(sampleDistance, rayParams.surfaceThickness, xFactor, yFactor, zFactor, rayParams.bailout, c);
-                        
+
             // Test point a short distance further along, to determine whether this is still in the set
-            if (rayParams.surfaceThickness > 0 && foundGap)
-            {
+            if (rayParams.surfaceThickness > 0 && foundGap) {
                 // Back outside the set, so continue as normal for external points
                 externalPoint = true;
                 continue;
@@ -124,41 +124,6 @@ int TraceRayC(float startDistance, RayTracingParams rayParams,
 
     distances[recordedPoints] = HUGE_VAL;
     return recordedPoints + 1;
-}
-
-//int TraceRayCuda(float XFactor, float YFactor, float ZFactor, int rayPoints,
-//    int externalPoints[], float modulusValues[], float angles[], float distances[])
-//{
-//    // Allocate host memory if not already done
-//    // Note: In a real-world scenario, you might want to manage this memory externally for better performance
-//    int* h_externalPoints = externalPoints;
-//    float* h_modulusValues = modulusValues;
-//    float* h_angles = angles;
-//    float* h_distances = distances;
-//
-//    // Call the CUDA kernel wrapper
-//    int recordedPoints = launchTraceRayKernel(
-//        XFactor, YFactor, ZFactor, rayPoints,
-//        h_externalPoints, h_modulusValues, h_angles, h_distances
-//    );
-//
-//    // Check for CUDA errors
-//    cudaCheckError(cudaGetLastError());
-//    cudaCheckError(cudaDeviceSynchronize());
-//
-//    distances[recordedPoints] = HUGE_VAL;
-//
-//    return recordedPoints + 1;
-//}
-
-// Produce the collection of fractal point values for the given vector
-EXPORT int __stdcall TraceRay(float startDistance, RayTracingParams rayParams,
-    float XFactor, float YFactor, float ZFactor,
-    int externalPoints[], float modulusValues[], float angles[], float distances[])
-{
-    return TraceRayC(startDistance, rayParams,
-        XFactor, YFactor, ZFactor,
-        externalPoints, modulusValues, angles, distances);
 }
 
 EXPORT float __stdcall FindSurface(
@@ -225,23 +190,6 @@ EXPORT float __stdcall FindBoundary(float samplingInterval, int binarySearchStep
     return sampleDistance;
 }
 
-Vector5 ImageToFractalSpace(float distance, Vector3 coord)
-{
-    // Determine the x,y,z coord for this point
-    const float XPos = distance * coord.X;
-    const float YPos = distance * coord.Y;
-    const float ZPos = distance * coord.Z;
-
-    vector5Single c = { 0,0,0,0,0 };
-
-    // Transform 3D point x,y,z into nD fractal space at point c[]
-    VectorTrans(XPos, YPos, ZPos, &c);
-
-    // Return the 5D fractal space point
-    std::array<float, 5> arr = c.toArray();
-    return Vector5(arr[0], arr[1], arr[2], arr[3], arr[4]);
-}
-
 bool SamplePoint(float distance, float* Modulus, float* Angle, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c)
 {
     // Determine the x,y,z coord for this point
@@ -270,15 +218,6 @@ EXPORT bool __stdcall SamplePoint(float distance, float bailout, float xFactor, 
 
   // Determine orbit value for this point
   return ExternalPoint(c, bailout) ? 1 : 0;
-}
-
-
-// Function to handle CUDA errors
-void checkCudaErrors(cudaError_t err) {
-    if (err != cudaSuccess) {
-        fprintf(stderr, "CUDA error: %s\n", cudaGetErrorString(err));
-        exit(-1);
-    }
 }
 
 // Determine whether nD point c[] in within the set
@@ -409,3 +348,27 @@ void VectorTrans(float x, float y, float z, vector5Single *c)
     }
 }
 
+Vector5 ImageToFractalSpace(float distance, Vector3 coord)
+{
+    // Determine the x,y,z coord for this point
+    const float XPos = distance * coord.X;
+    const float YPos = distance * coord.Y;
+    const float ZPos = distance * coord.Z;
+
+    vector5Single c = { 0,0,0,0,0 };
+
+    // Transform 3D point x,y,z into nD fractal space at point c[]
+    VectorTrans(XPos, YPos, ZPos, &c);
+
+    // Return the 5D fractal space point
+    std::array<float, 5> arr = c.toArray();
+    return Vector5(arr[0], arr[1], arr[2], arr[3], arr[4]);
+}
+
+// Function to handle CUDA errors
+void checkCudaErrors(cudaError_t err) {
+    if (err != cudaSuccess) {
+        fprintf(stderr, "CUDA error: %s\n", cudaGetErrorString(err));
+        exit(-1);
+    }
+}

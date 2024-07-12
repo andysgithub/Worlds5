@@ -40,7 +40,7 @@ EXPORT	void __stdcall InitSphere(float *pTransMatrix);
 EXPORT void __stdcall ProcessRays(RayTracingParams rayParams, RenderingParams renderParams,
 	int raysPerLine, int totalLines, ProgressCallback progressCallback);
 
-EXPORT int __stdcall TraceRay(float startDistance, RayTracingParams rayParams,
+int TraceRay(float startDistance, RayTracingParams rayParams,
 	float XFactor, float YFactor, float ZFactor,
 	int externalPoints[], float modulusValues[], float angles[], float distances[]);
 

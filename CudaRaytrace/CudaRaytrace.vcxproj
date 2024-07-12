@@ -94,6 +94,7 @@
     <ClInclude Include="kernel.cuh" />
     <ClInclude Include="inline.cuh" />
     <ClInclude Include="RayTracer.cuh" />
+    <ClInclude Include="TracedRay.h" />
     <ClInclude Include="vector5Single.h" />
     <ClInclude Include="Vectors.h" />
   </ItemGroup>

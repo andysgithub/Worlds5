@@ -11,74 +11,157 @@
 __constant__ float cudaTrans[6][DimTotal];
 
 namespace RayTracer {
-    __device__ void VectorTrans2(float x, float y, float z, vector5Single* c) {
-        for (int col = 0; col < DimTotal; col++) {
-            (*c).coords[col] =
-                cudaTrans[0][col] * x +
-                cudaTrans[1][col] * y +
-                cudaTrans[2][col] * z +
-                cudaTrans[5][col];
-        }
-    }
+    __device__ void TraceRay2(float startDistance, RayTracingParams rayParams,
+        float xFactor, float yFactor, float zFactor, int rayPoints,
+        int* externalPoints, float* modulusValues, float* angles, float* distances, int* recordedPointsOut) {
 
-    __device__ float vectorAngle(const vector5Single& A, const vector5Single& B, const vector5Single& C) {
-        vector5Single v1, v2;
-        float dotProduct = 0.0;
+        float Modulus, Angle;
+        float currentDistance = startDistance;
+        float sampleDistance;
+        int recordedPoints = 0;
+        int sampleCount = 0;
+        const vector5Single c = { 0, 0, 0, 0, 0 }; // 5D vector for ray point coordinates
 
-        // Vector v1 = B - A 
-        v1.coords[0] = B.coords[0] - A.coords[0];
-        v1.coords[1] = B.coords[1] - A.coords[1];
-        v1.coords[2] = B.coords[2] - A.coords[2];
-        v1.coords[3] = B.coords[3] - A.coords[3];
-        v1.coords[4] = B.coords[4] - A.coords[4];
+        // Determine orbit value for the starting point
+        bool externalPoint = RayTracer::SamplePoint2(currentDistance, &Modulus, &Angle, rayParams.bailout, xFactor, yFactor, zFactor, c);
 
-        float modulus = sqrt(v1.coords[0] * v1.coords[0] + v1.coords[1] * v1.coords[1] +
-            v1.coords[2] * v1.coords[2] + v1.coords[3] * v1.coords[3] +
-            v1.coords[4] * v1.coords[4]);
+        // Record this point as the first sample
+        externalPoints[recordedPoints] = externalPoint ? 1 : 0;
+        modulusValues[recordedPoints] = Modulus;
+        angles[recordedPoints] = Angle;
+        distances[recordedPoints] = currentDistance;
+        recordedPoints++;
 
-        if (modulus != 0.0) {
-            float factor = 1.0 / modulus;
+        // Begin loop
+        while (recordedPoints < rayPoints && sampleCount < rayParams.maxSamples) {
+            // Move on to the next point
+            currentDistance += rayParams.samplingInterval;
+            sampleCount++;
 
-            // Normalize v1 by dividing by mod(v1)
-            v1.coords[0] *= factor;
-            v1.coords[1] *= factor;
-            v1.coords[2] *= factor;
-            v1.coords[3] *= factor;
-            v1.coords[4] *= factor;
+            // Determine orbit properties for this point
+            externalPoint = RayTracer::SamplePoint2(currentDistance, &Modulus, &Angle, rayParams.bailout, xFactor, yFactor, zFactor, c);
 
-            // Vector v2 = B - C 
-            v2.coords[0] = B.coords[0] - C.coords[0];
-            v2.coords[1] = B.coords[1] - C.coords[1];
-            v2.coords[2] = B.coords[2] - C.coords[2];
-            v2.coords[3] = B.coords[3] - C.coords[3];
-            v2.coords[4] = B.coords[4] - C.coords[4];
+            // If this is an internal point and previous point is external
+            if (rayParams.activeIndex == 0 && !externalPoint && externalPoints[recordedPoints - 1] == 1) {
+                ///// Set value for surface point /////
 
-            modulus = sqrt(v2.coords[0] * v2.coords[0] + v2.coords[1] * v2.coords[1] +
-                v2.coords[2] * v2.coords[2] + v2.coords[3] * v2.coords[3] +
-                v2.coords[4] * v2.coords[4]);
+                // Perform binary search between this and the previous point, to determine surface position
+                sampleDistance = RayTracer::FindSurface2(
+                    rayParams.samplingInterval, rayParams.surfaceSmoothing, rayParams.binarySearchSteps,
+                    currentDistance, xFactor, yFactor, zFactor, rayParams.bailout);
+                bool foundGap = gapFound2(sampleDistance, rayParams.surfaceThickness, xFactor, yFactor, zFactor, rayParams.bailout, c);
 
-            if (modulus != 0.0) {
-                factor = 1.0 / modulus;
+                // Test point a short distance further along, to determine whether this is still in the set
+                if (rayParams.surfaceThickness > 0 && foundGap) {
+                    // Back outside the set, so continue as normal for external points
+                    externalPoint = true;
+                    continue;
+                }
+                // Determine orbit properties for this point
+                externalPoint = SamplePoint2(sampleDistance, &Modulus, &Angle, rayParams.bailout, xFactor, yFactor, zFactor, c);
 
-                // Normalize v2 by dividing by mod(v2)
-                v2.coords[0] *= factor;
-                v2.coords[1] *= factor;
-                v2.coords[2] *= factor;
-                v2.coords[3] *= factor;
-                v2.coords[4] *= factor;
+                // Save this point value in the ray collection
+                externalPoints[recordedPoints] = externalPoint ? 1 : 0;
+                modulusValues[recordedPoints] = Modulus;
+                angles[recordedPoints] = Angle;
+                distances[recordedPoints] = sampleDistance;
+                recordedPoints++;
+            }
+            else if (rayParams.activeIndex == 1) {
+                ///// Set value for external point /////
 
-                // Calculate dot product of v1 and v2
-                dotProduct = v1.coords[0] * v2.coords[0] + v1.coords[1] * v2.coords[1] +
-                    v1.coords[2] * v2.coords[2] + v1.coords[3] * v2.coords[3] +
-                    v1.coords[4] * v2.coords[4];
+                float angleChange = fabs(Angle - angles[recordedPoints - 1]);
+
+                // If orbit value is sufficiently different from the last recorded sample
+                if (angleChange > rayParams.boundaryInterval) {
+                    // Perform binary search between this and the recorded point, to determine boundary position
+                    sampleDistance = RayTracer::FindBoundary2(rayParams.samplingInterval, rayParams.binarySearchSteps, currentDistance, angles[recordedPoints - 1],
+                        rayParams.boundaryInterval, &externalPoint, &Modulus, &Angle,
+                        xFactor, yFactor, zFactor, rayParams.bailout);
+
+                    // Save this point value in the ray collection
+                    externalPoints[recordedPoints] = externalPoint ? 1 : 0;
+                    modulusValues[recordedPoints] = Modulus;
+                    angles[recordedPoints] = Angle;
+                    distances[recordedPoints] = sampleDistance;
+                    recordedPoints++;
+                }
             }
         }
 
-        // Clamp dotProduct to the range [-1, 1]
-        dotProduct = fmaxf(fminf(dotProduct, 1.0f), -1.0f);
+        distances[recordedPoints] = CUDART_INF_F;
+        *recordedPointsOut = recordedPoints + 1;
+    }
 
-        // Return the angle in radians
-        return acos(dotProduct);
+    __device__ float FindSurface2(
+        float samplingInterval, float surfaceSmoothing, int binarySearchSteps, float currentDistance,
+        float xFactor, float yFactor, float zFactor, float bailout) {
+
+        float stepFactor = surfaceSmoothing / 10;
+        float stepSize = -samplingInterval * stepFactor;
+        float sampleDistance = currentDistance;
+        const vector5Single c = { 0, 0, 0, 0, 0 };
+
+        for (int i = 0; i < binarySearchSteps; i++) {
+            sampleDistance += stepSize;
+
+            if (!SamplePoint2(sampleDistance, bailout, xFactor, yFactor, zFactor, c)) {
+                stepSize = -fabs(stepSize) * stepFactor;
+            }
+            else {
+                stepSize = fabs(stepSize) * stepFactor;
+            }
+        }
+        return sampleDistance;
+    }
+
+    __device__ float FindBoundary2(float samplingInterval, int binarySearchSteps, float currentDistance, float previousAngle,
+        float boundaryInterval, bool* externalPoint, float* Modulus, float* Angle,
+        float xFactor, float yFactor, float zFactor, float bailout) {
+        float stepSize = -samplingInterval / 2;
+        float sampleDistance = currentDistance;
+        const vector5Single c = { 0, 0, 0, 0, 0 };
+
+        for (int i = 0; i < binarySearchSteps; i++) {
+            sampleDistance += stepSize;
+            *externalPoint = SamplePoint2(sampleDistance, Modulus, Angle, bailout, xFactor, yFactor, zFactor, c);
+
+            const float angleChange = fabs(*Angle - previousAngle);
+
+            if (angleChange > boundaryInterval) {
+                stepSize = -fabs(stepSize) / 2;
+            }
+            else {
+                stepSize = fabs(stepSize) / 2;
+            }
+        }
+        return sampleDistance;
+    }
+
+    __device__ bool SamplePoint2(float distance, float* Modulus, float* Angle, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c) {
+        // Determine the x,y,z coord for this point
+        const float XPos = distance * xFactor;
+        const float YPos = distance * yFactor;
+        const float ZPos = distance * zFactor;
+
+        // Transform 3D point x,y,z into nD fractal space at point c[]
+        VectorTrans2(XPos, YPos, ZPos, &c);
+
+        // Determine orbit value for this point
+        return ProcessPoint2(Modulus, Angle, bailout, c);
+    }
+
+    __device__ bool SamplePoint2(float distance, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c) {
+        // Determine the x,y,z coord for this point
+        const float XPos = distance * xFactor;
+        const float YPos = distance * yFactor;
+        const float ZPos = distance * zFactor;
+
+        // Transform 3D point x,y,z into nD fractal space at point c[]
+        VectorTrans2(XPos, YPos, ZPos, &c);
+
+        // Determine orbit value for this point
+        return ExternalPoint2(c, bailout);
     }
 
     // Determine whether nD point c[] in within the set
@@ -166,32 +249,6 @@ namespace RayTracer {
         return (count < MaxCount);
     }
 
-    __device__ bool SamplePoint2(float distance, float* Modulus, float* Angle, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c) {
-        // Determine the x,y,z coord for this point
-        const float XPos = distance * xFactor;
-        const float YPos = distance * yFactor;
-        const float ZPos = distance * zFactor;
-
-        // Transform 3D point x,y,z into nD fractal space at point c[]
-        VectorTrans2(XPos, YPos, ZPos, &c);
-
-        // Determine orbit value for this point
-        return ProcessPoint2(Modulus, Angle, bailout, c);
-    }
-
-    __device__ bool SamplePoint2(float distance, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c) {
-        // Determine the x,y,z coord for this point
-        const float XPos = distance * xFactor;
-        const float YPos = distance * yFactor;
-        const float ZPos = distance * zFactor;
-
-        // Transform 3D point x,y,z into nD fractal space at point c[]
-        VectorTrans2(XPos, YPos, ZPos, &c);
-
-        // Determine orbit value for this point
-        return ExternalPoint2(c, bailout);
-    }
-
     __device__ bool gapFound2(float currentDistance, float surfaceThickness, float xFactor, float yFactor, float zFactor, float bailout, vector5Single c) {
         float testDistance;
 
@@ -205,48 +262,73 @@ namespace RayTracer {
         return false;
     }
 
-    __device__ float FindSurface2(
-        float samplingInterval, float surfaceSmoothing, int binarySearchSteps, float currentDistance,
-        float xFactor, float yFactor, float zFactor, float bailout) {
-
-        float stepFactor = surfaceSmoothing / 10;
-        float stepSize = -samplingInterval * stepFactor;
-        float sampleDistance = currentDistance;
-        const vector5Single c = { 0, 0, 0, 0, 0 };
-
-        for (int i = 0; i < binarySearchSteps; i++) {
-            sampleDistance += stepSize;
-
-            if (!SamplePoint2(sampleDistance, bailout, xFactor, yFactor, zFactor, c)) {
-                stepSize = -fabs(stepSize) * stepFactor;
-            }
-            else {
-                stepSize = fabs(stepSize) * stepFactor;
-            }
+    __device__ void VectorTrans2(float x, float y, float z, vector5Single* c) {
+        for (int col = 0; col < DimTotal; col++) {
+            (*c).coords[col] =
+                cudaTrans[0][col] * x +
+                cudaTrans[1][col] * y +
+                cudaTrans[2][col] * z +
+                cudaTrans[5][col];
         }
-        return sampleDistance;
     }
 
-    __device__ float FindBoundary2(float samplingInterval, int binarySearchSteps, float currentDistance, float previousAngle,
-        float boundaryInterval, bool* externalPoint, float* Modulus, float* Angle,
-        float xFactor, float yFactor, float zFactor, float bailout) {
-        float stepSize = -samplingInterval / 2;
-        float sampleDistance = currentDistance;
-        const vector5Single c = { 0, 0, 0, 0, 0 };
+    __device__ float vectorAngle(const vector5Single& A, const vector5Single& B, const vector5Single& C) {
+        vector5Single v1, v2;
+        float dotProduct = 0.0;
 
-        for (int i = 0; i < binarySearchSteps; i++) {
-            sampleDistance += stepSize;
-            *externalPoint = SamplePoint2(sampleDistance, Modulus, Angle, bailout, xFactor, yFactor, zFactor, c);
+        // Vector v1 = B - A 
+        v1.coords[0] = B.coords[0] - A.coords[0];
+        v1.coords[1] = B.coords[1] - A.coords[1];
+        v1.coords[2] = B.coords[2] - A.coords[2];
+        v1.coords[3] = B.coords[3] - A.coords[3];
+        v1.coords[4] = B.coords[4] - A.coords[4];
 
-            const float angleChange = fabs(*Angle - previousAngle);
+        float modulus = sqrt(v1.coords[0] * v1.coords[0] + v1.coords[1] * v1.coords[1] +
+            v1.coords[2] * v1.coords[2] + v1.coords[3] * v1.coords[3] +
+            v1.coords[4] * v1.coords[4]);
 
-            if (angleChange > boundaryInterval) {
-                stepSize = -fabs(stepSize) / 2;
-            }
-            else {
-                stepSize = fabs(stepSize) / 2;
+        if (modulus != 0.0) {
+            float factor = 1.0 / modulus;
+
+            // Normalize v1 by dividing by mod(v1)
+            v1.coords[0] *= factor;
+            v1.coords[1] *= factor;
+            v1.coords[2] *= factor;
+            v1.coords[3] *= factor;
+            v1.coords[4] *= factor;
+
+            // Vector v2 = B - C 
+            v2.coords[0] = B.coords[0] - C.coords[0];
+            v2.coords[1] = B.coords[1] - C.coords[1];
+            v2.coords[2] = B.coords[2] - C.coords[2];
+            v2.coords[3] = B.coords[3] - C.coords[3];
+            v2.coords[4] = B.coords[4] - C.coords[4];
+
+            modulus = sqrt(v2.coords[0] * v2.coords[0] + v2.coords[1] * v2.coords[1] +
+                v2.coords[2] * v2.coords[2] + v2.coords[3] * v2.coords[3] +
+                v2.coords[4] * v2.coords[4]);
+
+            if (modulus != 0.0) {
+                factor = 1.0 / modulus;
+
+                // Normalize v2 by dividing by mod(v2)
+                v2.coords[0] *= factor;
+                v2.coords[1] *= factor;
+                v2.coords[2] *= factor;
+                v2.coords[3] *= factor;
+                v2.coords[4] *= factor;
+
+                // Calculate dot product of v1 and v2
+                dotProduct = v1.coords[0] * v2.coords[0] + v1.coords[1] * v2.coords[1] +
+                    v1.coords[2] * v2.coords[2] + v1.coords[3] * v2.coords[3] +
+                    v1.coords[4] * v2.coords[4];
             }
         }
-        return sampleDistance;
+
+        // Clamp dotProduct to the range [-1, 1]
+        dotProduct = fmaxf(fminf(dotProduct, 1.0f), -1.0f);
+
+        // Return the angle in radians
+        return acos(dotProduct);
     }
 }

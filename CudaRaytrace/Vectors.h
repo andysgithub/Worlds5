@@ -1,9 +1,8 @@
 #pragma once
 
-#define _USE_MATH_DEFINES
-
 #include <array>
 #include <cmath>
+#include <numbers>
 #include "vector5Single.h"
 
 float vectorAngle(vector5Single A, vector5Single B, vector5Single C);
