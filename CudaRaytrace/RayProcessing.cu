@@ -5,6 +5,8 @@
 //#include "RayProcessing.h"
 //#include "TracedRay.h" 
 //#include "Clipping.h" 
+//#include "Vectors.h" 
+//#include "cuda_interface.h"
 //
 //RayDataTypeIntermediate ProcessRay(RayTracingParams rayParams, RenderingParams renderParams, int rayCountX, int rayCountY) {
 //

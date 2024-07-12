@@ -87,10 +87,9 @@ private:
     ProgressCallback progressCallback;
 };
 
-// Example of how to use std::thread for parallel processing in C++
-EXPORT void __stdcall ProcessRays(RayTracingParams rayParams, RenderingParams renderParams, int raysPerLine, int totalLines, ProgressCallback callback) {
-    std::vector<std::vector<RayProcessing>> rayProc(raysPerLine, std::vector<RayProcessing>(totalLines));
+void ProcessRaysC(RayTracingParams rayParams, RenderingParams renderParams, int raysPerLine, int totalLines, ProgressCallback callback) {
 
+    std::vector<std::vector<RayProcessing>> rayProc(raysPerLine, std::vector<RayProcessing>(totalLines));
     std::vector<std::thread> threads;
     std::mutex mtx;
 
@@ -114,6 +113,19 @@ EXPORT void __stdcall ProcessRays(RayTracingParams rayParams, RenderingParams re
 
     for (auto& thread : threads) {
         thread.join();
+    }
+}
+
+// Example of how to use std::thread for parallel processing in C++
+EXPORT void __stdcall ProcessRays(RayTracingParams rayParams, RenderingParams renderParams, int raysPerLine, int totalLines, ProgressCallback callback) {
+    if (rayParams.cudaMode) {
+        //int rayPoints = (int)(rayParams.maxSamples * rayParams.samplingInterval);
+
+        // ProcessRaysCuda(XFactor, YFactor, ZFactor, rayPoints,
+        //    externalPoints, modulusValues, angles, distances);
+    }
+    else {
+        ProcessRaysC(rayParams, renderParams, raysPerLine, totalLines, callback);
     }
 }
 

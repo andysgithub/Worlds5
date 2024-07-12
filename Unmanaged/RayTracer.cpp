@@ -126,47 +126,39 @@ int TraceRayC(float startDistance, RayTracingParams rayParams,
     return recordedPoints + 1;
 }
 
-int TraceRayCuda(float XFactor, float YFactor, float ZFactor, int rayPoints,
-    int externalPoints[], float modulusValues[], float angles[], float distances[])
-{
-    // Allocate host memory if not already done
-    // Note: In a real-world scenario, you might want to manage this memory externally for better performance
-    int* h_externalPoints = externalPoints;
-    float* h_modulusValues = modulusValues;
-    float* h_angles = angles;
-    float* h_distances = distances;
-
-    // Call the CUDA kernel wrapper
-    int recordedPoints = launchTraceRayKernel(
-        XFactor, YFactor, ZFactor, rayPoints,
-        h_externalPoints, h_modulusValues, h_angles, h_distances
-    );
-
-    // Check for CUDA errors
-    cudaCheckError(cudaGetLastError());
-    cudaCheckError(cudaDeviceSynchronize());
-
-    distances[recordedPoints] = HUGE_VAL;
-
-    return recordedPoints + 1;
-}
+//int TraceRayCuda(float XFactor, float YFactor, float ZFactor, int rayPoints,
+//    int externalPoints[], float modulusValues[], float angles[], float distances[])
+//{
+//    // Allocate host memory if not already done
+//    // Note: In a real-world scenario, you might want to manage this memory externally for better performance
+//    int* h_externalPoints = externalPoints;
+//    float* h_modulusValues = modulusValues;
+//    float* h_angles = angles;
+//    float* h_distances = distances;
+//
+//    // Call the CUDA kernel wrapper
+//    int recordedPoints = launchTraceRayKernel(
+//        XFactor, YFactor, ZFactor, rayPoints,
+//        h_externalPoints, h_modulusValues, h_angles, h_distances
+//    );
+//
+//    // Check for CUDA errors
+//    cudaCheckError(cudaGetLastError());
+//    cudaCheckError(cudaDeviceSynchronize());
+//
+//    distances[recordedPoints] = HUGE_VAL;
+//
+//    return recordedPoints + 1;
+//}
 
 // Produce the collection of fractal point values for the given vector
 EXPORT int __stdcall TraceRay(float startDistance, RayTracingParams rayParams,
     float XFactor, float YFactor, float ZFactor,
     int externalPoints[], float modulusValues[], float angles[], float distances[])
 {
-    if (rayParams.cudaMode) {
-        int rayPoints = (int)(rayParams.maxSamples * rayParams.samplingInterval);
-
-        return TraceRayCuda(XFactor, YFactor, ZFactor, rayPoints,
-            externalPoints, modulusValues, angles, distances);
-    }
-    else {
-        return TraceRayC(startDistance, rayParams,
-            XFactor, YFactor, ZFactor,
-            externalPoints, modulusValues, angles, distances);
-    }
+    return TraceRayC(startDistance, rayParams,
+        XFactor, YFactor, ZFactor,
+        externalPoints, modulusValues, angles, distances);
 }
 
 EXPORT float __stdcall FindSurface(

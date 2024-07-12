@@ -95,6 +95,7 @@
     <ClInclude Include="inline.cuh" />
     <ClInclude Include="RayTracer.cuh" />
     <ClInclude Include="vector5Single.h" />
+    <ClInclude Include="Vectors.h" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="helpers.cu" />
@@ -105,6 +106,7 @@
       <FastMath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</FastMath>
       <Include Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.</Include>
       <Include Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.</Include>
+      <FileType>CppCode</FileType>
     </CudaCompile>
     <CudaCompile Include="RayProcessing.cu" />
     <CudaCompile Include="RayTracer.cu">
