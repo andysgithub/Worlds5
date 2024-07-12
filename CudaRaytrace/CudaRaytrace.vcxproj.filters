@@ -33,7 +33,7 @@
     <ClInclude Include="Vectors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TracedRay.h">
+    <ClInclude Include="RayProcessing.cuh">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,6 +3,8 @@
 #include <cuda_runtime.h>
 #include "vector5Single.h"
 
+#define EXPORT extern "C" __declspec(dllexport)
+
 __device__ bool ProcessPoint(float* Modulus, float* Angle, float bailout, vector5Single c);
 
 __device__ float FindSurface(

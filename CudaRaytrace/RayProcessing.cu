@@ -3,13 +3,29 @@
 #include "device_launch_parameters.h"
 #include <vector>
 #include <cmath>
-#include "RayProcessing.h"
-#include "TracedRay.h" 
+#include <stdio.h>
+#include "cuda_interface.h"
+#include "RayTracer.cuh"
+#include "RayProcessing.cuh"
 //#include "Clipping.h" 
 
-typedef void(__stdcall* ProgressCallback)(int rayCount, int rowCount, RayDataTypeIntermediate* rayData);
+__device__ const float DEG_TO_RAD = 0.0174532925F;
 
-const float DEG_TO_RAD = 0.0174532925F;
+__device__ RayDataTypeIntermediate ConvertToIntermediate(const RayDataType& original, int maxSize) {
+    RayDataTypeIntermediate result;
+    result.ArraySize = original.ArraySize;
+    result.BoundaryTotal = original.BoundaryTotal;
+
+    // Assuming RayDataTypeIntermediate has been modified to use fixed-size arrays
+    for (int i = 0; i < result.ArraySize && i < maxSize; ++i) {
+        result.ExternalPoints[i] = original.ExternalPoints[i];
+        result.ModulusValues[i] = original.ModulusValues[i];
+        result.AngleValues[i] = original.AngleValues[i];
+        result.DistanceValues[i] = original.DistanceValues[i];
+    }
+
+    return result;
+}
 
 __device__ RayDataTypeIntermediate ProcessRay(RayTracingParams rayParams, RenderingParams renderParams, int rayCountX, int rayCountY)
 {
@@ -35,8 +51,8 @@ __device__ RayDataTypeIntermediate ProcessRay(RayTracingParams rayParams, Render
     float angleValues[MAX_POINTS];
     float distanceValues[MAX_POINTS];
 
-    int points = TraceRay2(startDistance, rayParams,
-        xFactor, yFactor, zFactor,
+    int points = RayTracer::TraceRay2(startDistance, rayParams,
+        xFactor, yFactor, zFactor, (int)MAX_POINTS,
         externalPoints, modulusValues, angleValues, distanceValues);
 
     // Create and return a RayDataType directly
@@ -67,57 +83,9 @@ __global__ void ProcessRayKernel(RayTracingParams rayParams, RenderingParams ren
 
     RayDataTypeIntermediate rayData = ProcessRay(rayParams, renderParams, rayCountX, rayCountY);
 
+    printf("ModulusValue: %f, BoundaryTotal: %f\n", rayData.ModulusValues[0], rayData.BoundaryTotal);
+
     // Store results in global memory
     int index = rayCountY * raysPerLine + rayCountX;
     results[index] = rayData;
-}
-
-extern "C" __declspec(dllexport) void ProcessRays(RayTracingParams rayParams, RenderingParams renderParams,
-    int raysPerLine, int totalLines, ProgressCallback callback)
-{
-    // Allocate device memory
-    RayDataTypeIntermediate* d_results;
-    cudaMalloc(&d_results, raysPerLine * totalLines * sizeof(RayDataTypeIntermediate));
-
-    // Define grid and block dimensions
-    dim3 blockDim(16, 16);
-    dim3 gridDim((raysPerLine + blockDim.x - 1) / blockDim.x,
-        (totalLines + blockDim.y - 1) / blockDim.y);
-
-    // Launch kernel
-    ProcessRayKernel << <gridDim, blockDim >> > (rayParams, renderParams, raysPerLine, totalLines, d_results);
-
-    // Allocate host memory and copy results back
-    RayDataTypeIntermediate* h_results = new RayDataTypeIntermediate[raysPerLine * totalLines];
-    cudaMemcpy(h_results, d_results, raysPerLine * totalLines * sizeof(RayDataTypeIntermediate), cudaMemcpyDeviceToHost);
-
-    // Call callback function for each result
-    for (int rayCountY = 0; rayCountY < totalLines; ++rayCountY) {
-        for (int rayCountX = 0; rayCountX < raysPerLine; ++rayCountX) {
-            int index = rayCountY * raysPerLine + rayCountX;
-            if (callback) {
-                callback(rayCountX, rayCountY, &h_results[index]);
-            }
-        }
-    }
-
-    // Free memory
-    delete[] h_results;
-    cudaFree(d_results);
-}
-
-__device__ RayDataTypeIntermediate ConvertToIntermediate(const RayDataType& original, int maxSize) {
-    RayDataTypeIntermediate result;
-    result.ArraySize = original.ArraySize;
-    result.BoundaryTotal = original.BoundaryTotal;
-
-    // Assuming RayDataTypeIntermediate has been modified to use fixed-size arrays
-    for (int i = 0; i < result.ArraySize && i < maxSize; ++i) {
-        result.ExternalPoints[i] = original.ExternalPoints[i];
-        result.ModulusValues[i] = original.ModulusValues[i];
-        result.AngleValues[i] = original.AngleValues[i];
-        result.DistanceValues[i] = original.DistanceValues[i];
-    }
-
-    return result;
 }

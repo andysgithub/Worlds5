@@ -3,6 +3,8 @@
 #include <cuda_runtime.h>
 #include <vector>
 
+#define MAX_POINTS 100
+
 enum class AxisPair
 {
     XY,
@@ -51,18 +53,6 @@ struct __align__(8) RenderingParams {
     float colourOffset;
 };
 
-struct RayDataType
-{
-    std::vector<int> ExternalPoints;
-    std::vector<float> ModulusValues;
-    std::vector<float> AngleValues;
-    std::vector<float> DistanceValues;
-    int BoundaryTotal;
-};
-
-// Declare the constant symbol
-//extern __constant__ RayTracingParams d_params;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -71,8 +61,8 @@ extern "C" {
 
     cudaError_t InitializeTransformMatrix(const float* positionMatrix);
 
-	int launchTraceRayKernel(float XFactor, float YFactor, float ZFactor, int rayPoints,
-		int* externalPoints, float* modulusValues, float* angles, float* distances);
+    void launchProcessRayKernel(RayTracingParams rayParams, RenderingParams renderParams,
+        int raysPerLine, int totalLines);
 
 #ifdef __cplusplus
 }

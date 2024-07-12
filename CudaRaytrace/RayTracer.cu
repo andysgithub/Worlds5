@@ -11,9 +11,9 @@
 __constant__ float cudaTrans[6][DimTotal];
 
 namespace RayTracer {
-    __device__ void TraceRay2(float startDistance, RayTracingParams rayParams,
+    __device__ int TraceRay2(float startDistance, RayTracingParams rayParams,
         float xFactor, float yFactor, float zFactor, int rayPoints,
-        int* externalPoints, float* modulusValues, float* angles, float* distances, int* recordedPointsOut) {
+        int* externalPoints, float* modulusValues, float* angles, float* distances) {
 
         float Modulus, Angle;
         float currentDistance = startDistance;
@@ -90,7 +90,7 @@ namespace RayTracer {
         }
 
         distances[recordedPoints] = CUDART_INF_F;
-        *recordedPointsOut = recordedPoints + 1;
+        return recordedPoints + 1;
     }
 
     __device__ float FindSurface2(

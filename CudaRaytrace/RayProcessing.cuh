@@ -1,8 +1,7 @@
 #pragma once
 
+#include <cuda_runtime.h>
 #include "cuda_interface.h"
-
-#define MAX_POINTS 100
 
 struct RayDataTypeIntermediate {
     int ExternalPoints[MAX_POINTS];
@@ -21,3 +20,6 @@ struct RayDataType {
     float BoundaryTotal;
     int ArraySize;
 };
+
+__global__ void ProcessRayKernel(RayTracingParams rayParams, RenderingParams renderParams,
+    int raysPerLine, int totalLines, RayDataTypeIntermediate* results);

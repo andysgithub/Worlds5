@@ -7,6 +7,7 @@
 #include "inline.cuh"
 #include "cuda_interface.h"
 #include "RayTracer.cuh"
+#include "RayProcessing.cuh"
 
 __constant__ RayTracingParams d_params;
 
@@ -35,38 +36,26 @@ extern "C" cudaError_t InitializeTransformMatrix(const float* positionMatrix)
     return cudaMemcpyToSymbol(cudaTrans, positionMatrix, sizeof(float) * DimTotal * (DimTotal + 1));
 }
 
-extern "C" int launchTraceRayKernel(float XFactor, float YFactor, float ZFactor, int rayPoints,
-    int* externalPoints, float* modulusValues, float* angles, float* distances)
+extern "C" void launchProcessRayKernel(RayTracingParams rayParams, RenderingParams renderParams,
+    int raysPerLine, int totalLines)
 {
     // Allocate device memory
-    int* d_externalPoints, * d_recordedPointsOut;
-    float* d_modulusValues, * d_angles;
-    float* d_distances;
+    RayDataTypeIntermediate* d_results;
+    cudaMalloc(&d_results, raysPerLine * totalLines * sizeof(RayDataTypeIntermediate));
 
-    cudaMalloc(&d_externalPoints, rayPoints * sizeof(int));
-    cudaMalloc(&d_modulusValues, rayPoints * sizeof(float));
-    cudaMalloc(&d_angles, rayPoints * sizeof(float));
-    cudaMalloc(&d_distances, rayPoints * sizeof(float));
-    cudaMalloc(&d_recordedPointsOut, sizeof(int));
+    // Define grid and block dimensions
+    dim3 blockDim(16, 16);
+    dim3 gridDim((raysPerLine + blockDim.x - 1) / blockDim.x,
+        (totalLines + blockDim.y - 1) / blockDim.y);
 
     // Launch kernel
-    TraceRayKernel<<<1, 1>>>(XFactor, YFactor, ZFactor, rayPoints,
-        d_externalPoints, d_modulusValues, d_angles, d_distances, d_recordedPointsOut);
+    ProcessRayKernel << <gridDim, blockDim >> > (rayParams, renderParams, raysPerLine, totalLines, d_results);
 
-    // Copy results back to host
-    int recordedPoints;
-    cudaMemcpy(externalPoints, d_externalPoints, rayPoints * sizeof(int), cudaMemcpyDeviceToHost);
-    cudaMemcpy(modulusValues, d_modulusValues, rayPoints * sizeof(float), cudaMemcpyDeviceToHost);
-    cudaMemcpy(angles, d_angles, rayPoints * sizeof(float), cudaMemcpyDeviceToHost);
-    cudaMemcpy(distances, d_distances, rayPoints * sizeof(float), cudaMemcpyDeviceToHost);
-    cudaMemcpy(&recordedPoints, d_recordedPointsOut, sizeof(int), cudaMemcpyDeviceToHost);
+    // Allocate host memory and copy results back
+    RayDataTypeIntermediate* h_results = new RayDataTypeIntermediate[raysPerLine * totalLines];
+    cudaMemcpy(h_results, d_results, raysPerLine * totalLines * sizeof(RayDataTypeIntermediate), cudaMemcpyDeviceToHost);
 
-    // Free device memory
-    cudaFree(d_externalPoints);
-    cudaFree(d_modulusValues);
-    cudaFree(d_angles);
-    cudaFree(d_distances);
-    cudaFree(d_recordedPointsOut);
-
-    return recordedPoints;
+    // Free memory
+    delete[] h_results;
+    cudaFree(d_results);
 }

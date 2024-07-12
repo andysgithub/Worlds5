@@ -64,7 +64,7 @@
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <CodeGeneration>compute_61,sm_61</CodeGeneration>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalOptions>-v %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-v --std c++20 %(AdditionalOptions)</AdditionalOptions>
       <GenerateRelocatableDeviceCode>true</GenerateRelocatableDeviceCode>
     </CudaCompile>
   </ItemDefinitionGroup>
@@ -87,14 +87,15 @@
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <GenerateRelocatableDeviceCode>true</GenerateRelocatableDeviceCode>
       <CodeGeneration>compute_61,sm_61</CodeGeneration>
+      <AdditionalOptions>-v --std c++20 %(AdditionalOptions)</AdditionalOptions>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="cuda_interface.h" />
     <ClInclude Include="kernel.cuh" />
     <ClInclude Include="inline.cuh" />
+    <ClInclude Include="RayProcessing.cuh" />
     <ClInclude Include="RayTracer.cuh" />
-    <ClInclude Include="TracedRay.h" />
     <ClInclude Include="vector5Single.h" />
     <ClInclude Include="Vectors.h" />
   </ItemGroup>
