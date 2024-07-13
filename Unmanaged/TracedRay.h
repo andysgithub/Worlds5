@@ -25,10 +25,10 @@ struct RGB_TRIPLE {
 };
 
 struct RayDataTypeIntermediate {
-    int* ExternalPoints;
-    float* ModulusValues;
-    float* AngleValues;
-    float* DistanceValues;
+    int ExternalPoints[MAX_POINTS];
+    float ModulusValues[MAX_POINTS];
+    float AngleValues[MAX_POINTS];
+    float DistanceValues[MAX_POINTS];
     int BoundaryTotal;
     int ArraySize;
 };

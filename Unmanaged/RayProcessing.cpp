@@ -69,11 +69,6 @@ public:
         result.ArraySize = (int)original.ExternalPoints.size();
         result.BoundaryTotal = original.BoundaryTotal;
 
-        result.ExternalPoints = new int[result.ArraySize];
-        result.ModulusValues = new float[result.ArraySize];
-        result.AngleValues = new float[result.ArraySize];
-        result.DistanceValues = new float[result.ArraySize];
-
         std::copy(original.ExternalPoints.begin(), original.ExternalPoints.end(), result.ExternalPoints);
         std::copy(original.ModulusValues.begin(), original.ModulusValues.end(), result.ModulusValues);
         std::copy(original.AngleValues.begin(), original.AngleValues.end(), result.AngleValues);
