@@ -88,5 +88,5 @@ __global__ void ProcessRaysKernel(RayTracingParams rayParams, RenderingParams re
     int index = rayCountY * raysPerLine + rayCountX;
     ProcessRayKernel(rayParams, renderParams, rayCountX, rayCountY, &results[index]);
 
-    printf("Ray %d processed\n", index);
+    //printf("Ray %d processed\n", index);
 }

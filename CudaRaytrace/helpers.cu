@@ -22,7 +22,7 @@ void checkCudaError2(cudaError_t error, const char* message) {
 //    vector5Single c = { 0,0,0,0,0 };
 //
 //    // Transform 3D point x,y,z into nD fractal space at point c[]
-//    RayTracer::VectorTrans2(XPos, YPos, ZPos, &c);
+//    RayTracer::VectorTrans(XPos, YPos, ZPos, &c);
 //
 //    // Return the 5D fractal space point
 //    std::array<float, 5> arr = c.toArray();

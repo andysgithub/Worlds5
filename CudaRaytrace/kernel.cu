@@ -39,24 +39,12 @@ extern "C" cudaError_t InitializeTransformMatrix(const float* positionMatrix)
     return cudaMemcpyToSymbol(cudaTrans, positionMatrix, sizeof(float) * DimTotal * (DimTotal + 1));
 }
 
-extern "C" cudaError_t LaunchProcessRaysKernel(const RayTracingParams* rayParams, const RenderingParams* renderParams,
-    int raysPerLine, int totalLines, ProgressCallback callback)
-{
-    // Allocate device memory
-    RayDataTypeIntermediate* d_results;
-    cudaError_t cudaStatus = cudaMalloc(&d_results, raysPerLine * totalLines * sizeof(RayDataTypeIntermediate));
-    if (cudaStatus != cudaSuccess) {
-        return cudaStatus;
-    }
+static int getGridX(int raysPerLine, int totalLines, int xBlocks) {
 
-    //// Define grid and block dimensions
     const int threadsPerBlock = 256; // 32 * 8 * 1
     const int warpsPerBlock = threadsPerBlock / 32;
     const int blocksPerSM = 8; // This is a general value, might need tuning
     const int numSMs = 20; // For GTX 1080
-
-    dim3 blockDim(32, 8, 1);
-    dim3 gridDim;
 
     // Calculate total threads needed
     int totalThreadsNeeded = raysPerLine * totalLines;
@@ -68,9 +56,24 @@ extern "C" cudaError_t LaunchProcessRaysKernel(const RayTracingParams* rayParams
     int limitedNumBlocks = std::min(optimalNumBlocks, blocksPerSM * numSMs);
     limitedNumBlocks = (limitedNumBlocks + warpsPerBlock - 1) / warpsPerBlock * warpsPerBlock;
 
-    // Calculate grid dimensions
-    gridDim.x = std::min(limitedNumBlocks, (int)((raysPerLine + blockDim.x - 1) / blockDim.x));
-    gridDim.y = (limitedNumBlocks + gridDim.x - 1) / gridDim.x;
+    // Return grid X dimension
+    return std::min(limitedNumBlocks, (int)((raysPerLine + xBlocks - 1) / xBlocks));
+}
+
+extern "C" cudaError_t LaunchProcessRaysKernel(const RayTracingParams* rayParams, const RenderingParams* renderParams,
+    int raysPerLine, int totalLines, ProgressCallback callback)
+{
+    // Allocate device memory
+    RayDataTypeIntermediate* d_results;
+    cudaError_t cudaStatus = cudaMalloc(&d_results, raysPerLine * totalLines * sizeof(RayDataTypeIntermediate));
+    if (cudaStatus != cudaSuccess) {
+        return cudaStatus;
+    }
+ 
+    dim3 blockDim(32, 8, 1);
+    dim3 gridDim(
+        getGridX(raysPerLine, totalLines, blockDim.x),
+        (totalLines + blockDim.y - 1) / blockDim.y);
 
     // Launch kernel
     ProcessRaysKernel << <gridDim, blockDim >> > (*rayParams, *renderParams, raysPerLine, totalLines, d_results);
