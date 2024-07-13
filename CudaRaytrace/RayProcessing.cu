@@ -2,6 +2,7 @@
 #include "device_launch_parameters.h"
 #include <vector>
 #include <cmath>
+#include <iostream>
 #include <stdio.h>
 #include "cuda_interface.h"
 #include "RayTracer.cuh"
@@ -66,24 +67,9 @@ __device__ void ProcessRayKernel(
     float angleValues[MAX_POINTS];
     float distanceValues[MAX_POINTS];
 
-    int points = RayTracer::TraceRay2(startDistance, rayParams,
+    int points = RayTracer::TraceRay(startDistance, &rayParams,
         xFactor, yFactor, zFactor, (int)MAX_POINTS,
         externalPoints, modulusValues, angleValues, distanceValues);
-
-    //// Create and return a RayDataType directly
-    //RayDataType result;
-    //result.BoundaryTotal = points;
-    //result.ArraySize = points;
-
-    //// Copy arrays element by element
-    //for (int i = 0; i < points && i < MAX_POINTS; ++i) {
-    //    result.ExternalPoints[i] = externalPoints[i];
-    //    result.ModulusValues[i] = modulusValues[i];
-    //    result.AngleValues[i] = angleValues[i];
-    //    result.DistanceValues[i] = distanceValues[i];
-    //}
-
-    //return ConvertToIntermediate(result, MAX_POINTS);
 
     // Directly fill the intermediate result
     FillIntermediateResult(externalPoints, modulusValues, angleValues, distanceValues, points, MAX_POINTS, result);
@@ -99,7 +85,8 @@ __global__ void ProcessRaysKernel(RayTracingParams rayParams, RenderingParams re
     if (rayCountX >= raysPerLine || rayCountY >= totalLines)
         return;
 
-
     int index = rayCountY * raysPerLine + rayCountX;
     ProcessRayKernel(rayParams, renderParams, rayCountX, rayCountY, &results[index]);
+
+    printf("Ray %d processed\n", index);
 }

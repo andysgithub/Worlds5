@@ -3,6 +3,7 @@
 #include <cuda_runtime.h>
 #include <math_constants.h>
 #include <vector_types.h>
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <stdio.h>
@@ -48,10 +49,28 @@ extern "C" cudaError_t LaunchProcessRaysKernel(const RayTracingParams* rayParams
         return cudaStatus;
     }
 
-    // Define grid and block dimensions
-    dim3 blockDim(16, 16);
-    dim3 gridDim((raysPerLine + blockDim.x - 1) / blockDim.x,
-        (totalLines + blockDim.y - 1) / blockDim.y);
+    //// Define grid and block dimensions
+    const int threadsPerBlock = 256; // 32 * 8 * 1
+    const int warpsPerBlock = threadsPerBlock / 32;
+    const int blocksPerSM = 8; // This is a general value, might need tuning
+    const int numSMs = 20; // For GTX 1080
+
+    dim3 blockDim(32, 8, 1);
+    dim3 gridDim;
+
+    // Calculate total threads needed
+    int totalThreadsNeeded = raysPerLine * totalLines;
+
+    // Calculate optimal number of blocks
+    int optimalNumBlocks = (totalThreadsNeeded + threadsPerBlock - 1) / threadsPerBlock;
+
+    // Limit the number of blocks to a multiple of the optimal blocks per SM
+    int limitedNumBlocks = std::min(optimalNumBlocks, blocksPerSM * numSMs);
+    limitedNumBlocks = (limitedNumBlocks + warpsPerBlock - 1) / warpsPerBlock * warpsPerBlock;
+
+    // Calculate grid dimensions
+    gridDim.x = std::min(limitedNumBlocks, (int)((raysPerLine + blockDim.x - 1) / blockDim.x));
+    gridDim.y = (limitedNumBlocks + gridDim.x - 1) / gridDim.x;
 
     // Launch kernel
     ProcessRaysKernel << <gridDim, blockDim >> > (*rayParams, *renderParams, raysPerLine, totalLines, d_results);

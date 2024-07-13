@@ -11,54 +11,53 @@
 __constant__ float cudaTrans[6][DimTotal];
 
 namespace RayTracer {
-    __device__ int TraceRay2(float startDistance, RayTracingParams rayParams,
+    __device__ int TraceRay(float startDistance, const RayTracingParams* __restrict__ rayParams,
         float xFactor, float yFactor, float zFactor, int rayPoints,
-        int* externalPoints, float* modulusValues, float* angles, float* distances) {
+        int* __restrict__ externalPoints, float* __restrict__ modulusValues,
+        float* __restrict__ angles, float* __restrict__ distances) {
 
-        float Modulus, Angle;
-        float currentDistance = startDistance;
-        float sampleDistance;
-        int recordedPoints = 0;
-        int sampleCount = 0;
-        const vector5Single c = { 0, 0, 0, 0, 0 }; // 5D vector for ray point coordinates
+        const vector5Single c = { 0, 0, 0, 0, 0 }; // Keep this as a local constant
+
+        float Modulus, Angle, currentDistance = startDistance;
+        int recordedPoints = 0, sampleCount = 0;
 
         // Determine orbit value for the starting point
-        bool externalPoint = RayTracer::SamplePoint2(currentDistance, &Modulus, &Angle, rayParams.bailout, xFactor, yFactor, zFactor, c);
+        bool externalPoint = RayTracer::SamplePoint2(currentDistance, &Modulus, &Angle, rayParams->bailout, xFactor, yFactor, zFactor, c);
 
         // Record this point as the first sample
-        externalPoints[recordedPoints] = externalPoint ? 1 : 0;
-        modulusValues[recordedPoints] = Modulus;
-        angles[recordedPoints] = Angle;
-        distances[recordedPoints] = currentDistance;
-        recordedPoints++;
+        if (recordedPoints < rayPoints) {
+            externalPoints[recordedPoints] = externalPoint ? 1 : 0;
+            modulusValues[recordedPoints] = Modulus;
+            angles[recordedPoints] = Angle;
+            distances[recordedPoints] = currentDistance;
+            recordedPoints++;
+        }
 
         // Begin loop
-        while (recordedPoints < rayPoints && sampleCount < rayParams.maxSamples) {
-            // Move on to the next point
-            currentDistance += rayParams.samplingInterval;
+        while (recordedPoints < rayPoints && sampleCount < rayParams->maxSamples) {
+            currentDistance += rayParams->samplingInterval;
             sampleCount++;
 
-            // Determine orbit properties for this point
-            externalPoint = RayTracer::SamplePoint2(currentDistance, &Modulus, &Angle, rayParams.bailout, xFactor, yFactor, zFactor, c);
+            externalPoint = RayTracer::SamplePoint2(currentDistance, &Modulus, &Angle, rayParams->bailout, xFactor, yFactor, zFactor, c);
 
             // If this is an internal point and previous point is external
-            if (rayParams.activeIndex == 0 && !externalPoint && externalPoints[recordedPoints - 1] == 1) {
+            if (rayParams->activeIndex == 0 && !externalPoint && externalPoints[recordedPoints - 1] == 1) {
                 ///// Set value for surface point /////
 
                 // Perform binary search between this and the previous point, to determine surface position
-                sampleDistance = RayTracer::FindSurface2(
-                    rayParams.samplingInterval, rayParams.surfaceSmoothing, rayParams.binarySearchSteps,
-                    currentDistance, xFactor, yFactor, zFactor, rayParams.bailout);
-                bool foundGap = gapFound2(sampleDistance, rayParams.surfaceThickness, xFactor, yFactor, zFactor, rayParams.bailout, c);
+                float sampleDistance = RayTracer::FindSurface2(
+                    rayParams->samplingInterval, rayParams->surfaceSmoothing, rayParams->binarySearchSteps,
+                    currentDistance, xFactor, yFactor, zFactor, rayParams->bailout);
+                bool foundGap = gapFound2(sampleDistance, rayParams->surfaceThickness, xFactor, yFactor, zFactor, rayParams->bailout, c);
 
                 // Test point a short distance further along, to determine whether this is still in the set
-                if (rayParams.surfaceThickness > 0 && foundGap) {
+                if (rayParams->surfaceThickness > 0 && foundGap) {
                     // Back outside the set, so continue as normal for external points
                     externalPoint = true;
                     continue;
                 }
                 // Determine orbit properties for this point
-                externalPoint = SamplePoint2(sampleDistance, &Modulus, &Angle, rayParams.bailout, xFactor, yFactor, zFactor, c);
+                externalPoint = SamplePoint2(sampleDistance, &Modulus, &Angle, rayParams->bailout, xFactor, yFactor, zFactor, c);
 
                 // Save this point value in the ray collection
                 externalPoints[recordedPoints] = externalPoint ? 1 : 0;
@@ -67,17 +66,17 @@ namespace RayTracer {
                 distances[recordedPoints] = sampleDistance;
                 recordedPoints++;
             }
-            else if (rayParams.activeIndex == 1) {
+            else if (rayParams->activeIndex == 1) {
                 ///// Set value for external point /////
 
                 float angleChange = fabs(Angle - angles[recordedPoints - 1]);
 
                 // If orbit value is sufficiently different from the last recorded sample
-                if (angleChange > rayParams.boundaryInterval) {
+                if (angleChange > rayParams->boundaryInterval) {
                     // Perform binary search between this and the recorded point, to determine boundary position
-                    sampleDistance = RayTracer::FindBoundary2(rayParams.samplingInterval, rayParams.binarySearchSteps, currentDistance, angles[recordedPoints - 1],
-                        rayParams.boundaryInterval, &externalPoint, &Modulus, &Angle,
-                        xFactor, yFactor, zFactor, rayParams.bailout);
+                    float sampleDistance = RayTracer::FindBoundary2(rayParams->samplingInterval, rayParams->binarySearchSteps, currentDistance, angles[recordedPoints - 1],
+                        rayParams->boundaryInterval, &externalPoint, &Modulus, &Angle,
+                        xFactor, yFactor, zFactor, rayParams->bailout);
 
                     // Save this point value in the ray collection
                     externalPoints[recordedPoints] = externalPoint ? 1 : 0;
@@ -89,7 +88,9 @@ namespace RayTracer {
             }
         }
 
-        distances[recordedPoints] = CUDART_INF_F;
+        if (recordedPoints < rayPoints) {
+            distances[recordedPoints] = CUDART_INF_F;
+        }
         return recordedPoints + 1;
     }
 

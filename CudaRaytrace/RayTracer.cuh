@@ -9,9 +9,10 @@
 extern __constant__ float cudaTrans[6][DimTotal];
 
 namespace RayTracer {
-    __device__ int TraceRay2(float startDistance, RayTracingParams rayParams,
+    __device__ int TraceRay(float startDistance, const RayTracingParams* __restrict__ rayParams,
         float xFactor, float yFactor, float zFactor, int rayPoints,
-        int* externalPoints, float* modulusValues, float* angles, float* distances);
+        int* __restrict__ externalPoints, float* __restrict__ modulusValues,
+        float* __restrict__ angles, float* __restrict__ distances);
 
     __device__ float FindSurface2(
         float samplingInterval, float surfaceSmoothing, int binarySearchSteps, float currentDistance,

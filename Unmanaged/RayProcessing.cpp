@@ -119,8 +119,6 @@ void ProcessRaysC(RayTracingParams rayParams, RenderingParams renderParams, int 
 EXPORT void __stdcall ProcessRays(RayTracingParams rayParams, RenderingParams renderParams, int raysPerLine, int totalLines, ProgressCallback callback) {
     if (rayParams.cudaMode) {
         // Call the CUDA kernel wrapper
-        printf("LaunchProcessRaysKernel\n");
-        std::cout << "LaunchProcessRaysKernel2" << std::endl;
         LaunchProcessRaysKernel(&rayParams, &renderParams, raysPerLine, totalLines, callback);
     }
     else {
