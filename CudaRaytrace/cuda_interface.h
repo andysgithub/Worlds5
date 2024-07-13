@@ -53,6 +53,14 @@ struct __align__(8) RenderingParams {
     float colourOffset;
 };
 
+// Forward declarations
+struct RayTracingParams;
+struct RenderingParams;
+struct RayDataTypeIntermediate;
+
+// Define the callback type after RayDataTypeIntermediate is declared
+typedef void(__stdcall* ProgressCallback)(int rayCount, int rowCount, RayDataTypeIntermediate* rayData);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -61,8 +69,8 @@ extern "C" {
 
     cudaError_t InitializeTransformMatrix(const float* positionMatrix);
 
-    void launchProcessRayKernel(RayTracingParams rayParams, RenderingParams renderParams,
-        int raysPerLine, int totalLines);
+    cudaError_t LaunchProcessRaysKernel(const RayTracingParams* rayParams, const RenderingParams* renderParams,
+        int raysPerLine, int totalLines, ProgressCallback callback);
 
 #ifdef __cplusplus
 }

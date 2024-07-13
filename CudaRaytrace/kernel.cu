@@ -2,7 +2,9 @@
 #include <device_launch_parameters.h>
 #include <cuda_runtime.h>
 #include <math_constants.h>
+#include <vector_types.h>
 #include <cmath>
+#include <iostream>
 #include <stdio.h>
 #include "inline.cuh"
 #include "cuda_interface.h"
@@ -36,12 +38,15 @@ extern "C" cudaError_t InitializeTransformMatrix(const float* positionMatrix)
     return cudaMemcpyToSymbol(cudaTrans, positionMatrix, sizeof(float) * DimTotal * (DimTotal + 1));
 }
 
-extern "C" void launchProcessRayKernel(RayTracingParams rayParams, RenderingParams renderParams,
-    int raysPerLine, int totalLines)
+extern "C" cudaError_t LaunchProcessRaysKernel(const RayTracingParams* rayParams, const RenderingParams* renderParams,
+    int raysPerLine, int totalLines, ProgressCallback callback)
 {
     // Allocate device memory
     RayDataTypeIntermediate* d_results;
-    cudaMalloc(&d_results, raysPerLine * totalLines * sizeof(RayDataTypeIntermediate));
+    cudaError_t cudaStatus = cudaMalloc(&d_results, raysPerLine * totalLines * sizeof(RayDataTypeIntermediate));
+    if (cudaStatus != cudaSuccess) {
+        return cudaStatus;
+    }
 
     // Define grid and block dimensions
     dim3 blockDim(16, 16);
@@ -49,13 +54,40 @@ extern "C" void launchProcessRayKernel(RayTracingParams rayParams, RenderingPara
         (totalLines + blockDim.y - 1) / blockDim.y);
 
     // Launch kernel
-    ProcessRayKernel << <gridDim, blockDim >> > (rayParams, renderParams, raysPerLine, totalLines, d_results);
+    ProcessRaysKernel << <gridDim, blockDim >> > (*rayParams, *renderParams, raysPerLine, totalLines, d_results);
 
-    // Allocate host memory and copy results back
+    cudaStatus = cudaGetLastError();
+    if (cudaStatus != cudaSuccess) {      
+        cudaFree(d_results);
+        return cudaStatus;
+    }
+
+    // Allocate host memory
     RayDataTypeIntermediate* h_results = new RayDataTypeIntermediate[raysPerLine * totalLines];
-    cudaMemcpy(h_results, d_results, raysPerLine * totalLines * sizeof(RayDataTypeIntermediate), cudaMemcpyDeviceToHost);
+
+    // Copy results back to host
+    cudaStatus = cudaMemcpy(h_results, d_results, raysPerLine * totalLines * sizeof(RayDataTypeIntermediate), cudaMemcpyDeviceToHost);
+
+    if (cudaStatus != cudaSuccess) {
+        std::cout << "Cuda error:" << cudaGetErrorString(cudaStatus) << std::endl;
+        delete[] h_results;
+        cudaFree(d_results);
+        return cudaStatus;
+    }
+
+    // Process results and call the callback for each ray
+    for (int rowCount = 0; rowCount < totalLines; ++rowCount) {
+        for (int rayCount = 0; rayCount < raysPerLine; ++rayCount) {
+            int index = rowCount * raysPerLine + rayCount;
+            if (callback) {
+                callback(rayCount, rowCount, &h_results[index]);
+            }
+        }
+    }
 
     // Free memory
     delete[] h_results;
     cudaFree(d_results);
+
+    return cudaSuccess;
 }

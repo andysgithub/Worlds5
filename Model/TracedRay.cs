@@ -59,13 +59,19 @@ namespace Model
             public int BoundaryTotal;
         }
 
+        private const int MAX_POINTS = 100;
+
         [StructLayout(LayoutKind.Sequential)]
         public struct RayDataTypeIntermediate
         {
-            public IntPtr ExternalPoints;
-            public IntPtr ModulusValues;
-            public IntPtr AngleValues;
-            public IntPtr DistanceValues;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_POINTS)]
+            public int[] ExternalPoints;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_POINTS)]
+            public float[] ModulusValues;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_POINTS)]
+            public float[] AngleValues;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_POINTS)]
+            public float[] DistanceValues;
             public int BoundaryTotal;
             public int ArraySize;
         }

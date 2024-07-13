@@ -1,5 +1,4 @@
 #include <cuda_runtime.h>
-#include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include <vector>
 #include <cmath>
@@ -10,6 +9,21 @@
 //#include "Clipping.h" 
 
 __device__ const float DEG_TO_RAD = 0.0174532925F;
+
+__device__ void FillIntermediateResult(
+    int* externalPoints, float* modulusValues, float* angleValues, float* distanceValues, 
+    int points, int maxPoints, RayDataTypeIntermediate* result)
+{
+    result->ArraySize = (points < maxPoints) ? points : maxPoints;
+    result->BoundaryTotal = points;
+
+    for (int i = 0; i < result->ArraySize; ++i) {
+        result->ExternalPoints[i] = externalPoints[i];
+        result->ModulusValues[i] = modulusValues[i];
+        result->AngleValues[i] = angleValues[i];
+        result->DistanceValues[i] = distanceValues[i];
+    }
+}
 
 __device__ RayDataTypeIntermediate ConvertToIntermediate(const RayDataType& original, int maxSize) {
     RayDataTypeIntermediate result;
@@ -27,7 +41,8 @@ __device__ RayDataTypeIntermediate ConvertToIntermediate(const RayDataType& orig
     return result;
 }
 
-__device__ RayDataTypeIntermediate ProcessRay(RayTracingParams rayParams, RenderingParams renderParams, int rayCountX, int rayCountY)
+__device__ void ProcessRayKernel(
+    RayTracingParams rayParams, RenderingParams renderParams, int rayCountX, int rayCountY, RayDataTypeIntermediate* result)
 {
     float latitude = rayParams.latitudeStart - rayCountY * rayParams.angularResolution;
     float longitude = rayParams.longitudeStart - rayCountX * rayParams.angularResolution;
@@ -55,24 +70,27 @@ __device__ RayDataTypeIntermediate ProcessRay(RayTracingParams rayParams, Render
         xFactor, yFactor, zFactor, (int)MAX_POINTS,
         externalPoints, modulusValues, angleValues, distanceValues);
 
-    // Create and return a RayDataType directly
-    RayDataType result;
-    result.BoundaryTotal = points;
-    result.ArraySize = points;
+    //// Create and return a RayDataType directly
+    //RayDataType result;
+    //result.BoundaryTotal = points;
+    //result.ArraySize = points;
 
-    // Copy arrays element by element
-    for (int i = 0; i < points && i < MAX_POINTS; ++i) {
-        result.ExternalPoints[i] = externalPoints[i];
-        result.ModulusValues[i] = modulusValues[i];
-        result.AngleValues[i] = angleValues[i];
-        result.DistanceValues[i] = distanceValues[i];
-    }
+    //// Copy arrays element by element
+    //for (int i = 0; i < points && i < MAX_POINTS; ++i) {
+    //    result.ExternalPoints[i] = externalPoints[i];
+    //    result.ModulusValues[i] = modulusValues[i];
+    //    result.AngleValues[i] = angleValues[i];
+    //    result.DistanceValues[i] = distanceValues[i];
+    //}
 
-    return ConvertToIntermediate(result, MAX_POINTS);
+    //return ConvertToIntermediate(result, MAX_POINTS);
+
+    // Directly fill the intermediate result
+    FillIntermediateResult(externalPoints, modulusValues, angleValues, distanceValues, points, MAX_POINTS, result);
 }
 
 // CUDA kernel function
-__global__ void ProcessRayKernel(RayTracingParams rayParams, RenderingParams renderParams,
+__global__ void ProcessRaysKernel(RayTracingParams rayParams, RenderingParams renderParams,
     int raysPerLine, int totalLines, RayDataTypeIntermediate* results)
 {
     int rayCountX = blockIdx.x * blockDim.x + threadIdx.x;
@@ -81,11 +99,7 @@ __global__ void ProcessRayKernel(RayTracingParams rayParams, RenderingParams ren
     if (rayCountX >= raysPerLine || rayCountY >= totalLines)
         return;
 
-    RayDataTypeIntermediate rayData = ProcessRay(rayParams, renderParams, rayCountX, rayCountY);
 
-    printf("ModulusValue: %f, BoundaryTotal: %f\n", rayData.ModulusValues[0], rayData.BoundaryTotal);
-
-    // Store results in global memory
     int index = rayCountY * raysPerLine + rayCountX;
-    results[index] = rayData;
+    ProcessRayKernel(rayParams, renderParams, rayCountX, rayCountY, &results[index]);
 }

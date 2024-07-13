@@ -2,10 +2,13 @@
 #include <cmath>
 #include <thread>
 #include <mutex>
+#include <iostream>
+#include <stdio.h>
 #include "stdafx.h"
 #include "RayProcessing.h"
 #include "TracedRay.h" 
 #include "Clipping.h" 
+#include "cuda_interface.h"
 
 class RayProcessing {
 
@@ -57,7 +60,8 @@ public:
             tracedRay.BoundaryTotal()
         };
 
-        return ConvertToIntermediate(result);
+        RayDataTypeIntermediate final = ConvertToIntermediate(result);
+        return final;
     }
 
     RayDataTypeIntermediate ConvertToIntermediate(const TracedRay::RayDataType& original) {
@@ -119,23 +123,12 @@ void ProcessRaysC(RayTracingParams rayParams, RenderingParams renderParams, int 
 // Example of how to use std::thread for parallel processing in C++
 EXPORT void __stdcall ProcessRays(RayTracingParams rayParams, RenderingParams renderParams, int raysPerLine, int totalLines, ProgressCallback callback) {
     if (rayParams.cudaMode) {
-        //int rayPoints = (int)(rayParams.maxSamples * rayParams.samplingInterval);
-
-        // ProcessRaysCuda(XFactor, YFactor, ZFactor, rayPoints,
-        //    externalPoints, modulusValues, angles, distances);
+        // Call the CUDA kernel wrapper
+        printf("LaunchProcessRaysKernel\n");
+        std::cout << "LaunchProcessRaysKernel2" << std::endl;
+        LaunchProcessRaysKernel(&rayParams, &renderParams, raysPerLine, totalLines, callback);
     }
     else {
         ProcessRaysC(rayParams, renderParams, raysPerLine, totalLines, callback);
     }
-}
-
-void FreeIntermediateData(RayDataTypeIntermediate& data) {
-    delete[] data.ExternalPoints;
-    delete[] data.ModulusValues;
-    delete[] data.AngleValues;
-    delete[] data.DistanceValues;
-}
-
-EXPORT void __stdcall FreeRayData(RayDataTypeIntermediate * data) {
-    FreeIntermediateData(*data);
 }

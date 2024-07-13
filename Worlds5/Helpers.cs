@@ -58,10 +58,10 @@ namespace Worlds5
                 DistanceValues = new float[intermediate.ArraySize]
             };
 
-            Marshal.Copy(intermediate.ExternalPoints, result.ExternalPoints, 0, intermediate.ArraySize);
-            Marshal.Copy(intermediate.ModulusValues, result.ModulusValues, 0, intermediate.ArraySize);
-            Marshal.Copy(intermediate.AngleValues, result.AngleValues, 0, intermediate.ArraySize);
-            Marshal.Copy(intermediate.DistanceValues, result.DistanceValues, 0, intermediate.ArraySize);
+            Array.Copy(intermediate.ExternalPoints, result.ExternalPoints, intermediate.ArraySize);
+            Array.Copy(intermediate.ModulusValues, result.ModulusValues, intermediate.ArraySize);
+            Array.Copy(intermediate.AngleValues, result.AngleValues, intermediate.ArraySize);
+            Array.Copy(intermediate.DistanceValues, result.DistanceValues, intermediate.ArraySize);
 
             return result;
         }

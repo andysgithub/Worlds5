@@ -56,6 +56,7 @@ namespace Worlds5
             SaveSettings();
             SaveRendering();
             UpdateStatus("");
+
             await RaytraceImage();
             enableButtons(true);
         }

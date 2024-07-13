@@ -142,6 +142,7 @@ namespace Worlds5
             {
                 staStatus.Items[0].Text = "Raytracing started...";
             }
+
             await imageRendering.PerformRayTracing();
 
             // Display the bitmap

@@ -8,7 +8,7 @@ struct RayDataTypeIntermediate {
     float ModulusValues[MAX_POINTS];
     float AngleValues[MAX_POINTS];
     float DistanceValues[MAX_POINTS];
-    float BoundaryTotal;
+    int BoundaryTotal;
     int ArraySize;
 };
 
@@ -17,9 +17,9 @@ struct RayDataType {
     float ModulusValues[MAX_POINTS];
     float AngleValues[MAX_POINTS];
     float DistanceValues[MAX_POINTS];
-    float BoundaryTotal;
+    int BoundaryTotal;
     int ArraySize;
 };
 
-__global__ void ProcessRayKernel(RayTracingParams rayParams, RenderingParams renderParams,
+__global__ void ProcessRaysKernel(RayTracingParams rayParams, RenderingParams renderParams,
     int raysPerLine, int totalLines, RayDataTypeIntermediate* results);

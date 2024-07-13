@@ -75,9 +75,6 @@ namespace Worlds5
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ProcessRays(RayTracingParams rayParams, RenderingParams renderParams, int raysPerLine, int totalLines, ProgressCallback callback);
 
-        [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.StdCall)]
-        public static extern void FreeRayData(ref RayDataTypeIntermediate data);
-
         #endregion
 
         public ImageRendering()
@@ -166,17 +163,10 @@ namespace Worlds5
             {
                 RayDataTypeIntermediate intermediateData = Marshal.PtrToStructure<RayDataTypeIntermediate>(rayDataPtr);
 
-                try
-                {
-                    RayDataType rayData = Helpers.ConvertFromIntermediate(intermediateData);
-                    sphere.RayMap[rayCountX, rayCountY] = rayData;
+                RayDataType rayData = Helpers.ConvertFromIntermediate(intermediateData);
+                sphere.RayMap[rayCountX, rayCountY] = rayData;
 
-                    if (rayCount++ % 100 == 0) RayCompleted(rayCount);
-                }
-                finally
-                {
-                    FreeRayData(ref intermediateData);
-                }
+                if (rayCount++ % 100 == 0) RayCompleted(rayCount);
             };
 
             ProcessRays(rayParams, renderParams, raysPerLine, totalLines, progressCallback);
