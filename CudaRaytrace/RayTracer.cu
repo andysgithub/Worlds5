@@ -32,6 +32,10 @@ namespace RayTracer {
 
         if (rayParams->activeIndex == 0) {
             bool previousPointExternal = true;
+
+            float stepFactor = rayParams->surfaceSmoothing / 10;
+            float stepSize = -rayParams->samplingInterval * stepFactor;
+
             while (recordedPoints < rayPoints && sampleCount < rayParams->maxSamples) {
                 currentDistance += rayParams->samplingInterval;
                 sampleCount++;
@@ -39,19 +43,20 @@ namespace RayTracer {
                 externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, rayParams->bailout, xFactor, yFactor, zFactor, c);
 
                 bool shouldRecord = !externalPoint && previousPointExternal;
-                float sampleDistance = currentDistance;
 
                 if (shouldRecord) {
-                    //sampleDistance = FindSurface(
-                    //    rayParams->samplingInterval, rayParams->surfaceSmoothing, rayParams->binarySearchSteps,
+                    //float sampleDistance = FindSurface(
+                    //    stepSize, stepFactor, rayParams->binarySearchSteps,
                     //    currentDistance, xFactor, yFactor, zFactor, rayParams->bailout);
-                    //bool foundGap = gapFound(sampleDistance, rayParams->surfaceThickness, xFactor, yFactor, zFactor, rayParams->bailout, c);
+                    float sampleDistance = currentDistance;
+                    
+                    bool foundGap = gapFound(sampleDistance, rayParams->surfaceThickness, xFactor, yFactor, zFactor, rayParams->bailout, c);
 
-                    //if (rayParams->surfaceThickness > 0 && foundGap) {
-                    //    previousPointExternal = true;
-                    //    continue;
-                    //}
-                    //externalPoint = SamplePoint(sampleDistance, &Modulus, &Angle, rayParams->bailout, xFactor, yFactor, zFactor, c);
+                    if (rayParams->surfaceThickness > 0 && foundGap) {
+                        previousPointExternal = true;
+                        continue;
+                    }
+                    externalPoint = SamplePoint(sampleDistance, &Modulus, &Angle, rayParams->bailout, xFactor, yFactor, zFactor, c);
 
                     externalPoints[recordedPoints] = externalPoint ? 1 : 0;
                     modulusValues[recordedPoints] = Modulus;
@@ -99,22 +104,18 @@ namespace RayTracer {
     }
 
     __device__ float FindSurface(
-        float samplingInterval, float surfaceSmoothing, int binarySearchSteps, float currentDistance,
+        float stepSize, float stepFactor, int binarySearchSteps, float currentDistance,
         float xFactor, float yFactor, float zFactor, float bailout) {
 
-        float stepFactor = surfaceSmoothing / 10;
-        float stepSize = -samplingInterval * stepFactor;
         float sampleDistance = currentDistance;
         const vector5Single c = { 0, 0, 0, 0, 0 };
 
         for (int i = 0; i < binarySearchSteps; i++) {
             sampleDistance += stepSize;
+            stepSize = fabs(stepSize) * stepFactor;
 
             if (!SamplePoint(sampleDistance, bailout, xFactor, yFactor, zFactor, c)) {
-                stepSize = -fabs(stepSize) * stepFactor;
-            }
-            else {
-                stepSize = fabs(stepSize) * stepFactor;
+                stepSize = -stepSize;
             }
         }
         return sampleDistance;

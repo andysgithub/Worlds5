@@ -92,7 +92,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="cuda_interface.h" />
-    <ClInclude Include="kernel.cuh" />
     <ClInclude Include="inline.cuh" />
     <ClInclude Include="RayProcessing.cuh" />
     <ClInclude Include="RayTracer.cuh" />

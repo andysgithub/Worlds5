@@ -2,7 +2,6 @@
 #include <math.h>
 #include "RayProcessing.h"
 #include "declares.h"
-#include "kernel.cuh"
 
 float  m_Trans[DimTotal + 1][DimTotal];
 

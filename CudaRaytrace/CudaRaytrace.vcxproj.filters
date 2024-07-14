@@ -21,9 +21,6 @@
     <ClInclude Include="cuda_interface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="kernel.cuh">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="vector5Single.h">
       <Filter>Header Files</Filter>
     </ClInclude>
