@@ -49,7 +49,7 @@ namespace RayTracer {
                     //    stepSize, stepFactor, rayParams->binarySearchSteps,
                     //    currentDistance, xFactor, yFactor, zFactor, rayParams->bailout);
                     float sampleDistance = currentDistance;
-                    
+
                     bool foundGap = gapFound(sampleDistance, rayParams->surfaceThickness, xFactor, yFactor, zFactor, rayParams->bailout, c);
 
                     if (rayParams->surfaceThickness > 0 && foundGap) {
@@ -67,36 +67,36 @@ namespace RayTracer {
 
                 previousPointExternal = externalPoint;
             }
+        }
 
-            if (rayParams->activeIndex == 1) {
-                while (recordedPoints < rayPoints && sampleCount < rayParams->maxSamples) {
-                    currentDistance += rayParams->samplingInterval;
-                    sampleCount++;
+        if (rayParams->activeIndex == 1) {
+            while (recordedPoints < rayPoints && sampleCount < rayParams->maxSamples) {
+                currentDistance += rayParams->samplingInterval;
+                sampleCount++;
 
-                    externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, rayParams->bailout, xFactor, yFactor, zFactor, c);
+                externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, rayParams->bailout, xFactor, yFactor, zFactor, c);
 
-                    ///// Set value for external point /////
+                ///// Set value for external point /////
 
-                    float angleChange = fabs(Angle - angles[recordedPoints - 1]);
+                float angleChange = fabs(Angle - angles[recordedPoints - 1]);
 
-                    // If orbit value is sufficiently different from the last recorded sample
-                    if (angleChange > rayParams->boundaryInterval) {
-                        // Perform binary search between this and the recorded point, to determine boundary position
-                        float sampleDistance = FindBoundary(rayParams->samplingInterval, rayParams->binarySearchSteps, currentDistance, angles[recordedPoints - 1],
-                            rayParams->boundaryInterval, &externalPoint, &Modulus, &Angle,
-                            xFactor, yFactor, zFactor, rayParams->bailout);
+                // If orbit value is sufficiently different from the last recorded sample
+                if (angleChange > rayParams->boundaryInterval) {
+                    // Perform binary search between this and the recorded point, to determine boundary position
+                    float sampleDistance = FindBoundary(rayParams->samplingInterval, rayParams->binarySearchSteps, currentDistance, angles[recordedPoints - 1],
+                        rayParams->boundaryInterval, &externalPoint, &Modulus, &Angle,
+                        xFactor, yFactor, zFactor, rayParams->bailout);
 
-                        // Save this point value in the ray collection
-                        externalPoints[recordedPoints] = externalPoint ? 1 : 0;
-                        modulusValues[recordedPoints] = Modulus;
-                        angles[recordedPoints] = Angle;
-                        distances[recordedPoints] = sampleDistance;
-                        recordedPoints++;
-                    }
+                    // Save this point value in the ray collection
+                    externalPoints[recordedPoints] = externalPoint ? 1 : 0;
+                    modulusValues[recordedPoints] = Modulus;
+                    angles[recordedPoints] = Angle;
+                    distances[recordedPoints] = sampleDistance;
+                    recordedPoints++;
                 }
             }
         }
-
+        
         if (recordedPoints < rayPoints) {
             distances[recordedPoints] = CUDART_INF_F;
         }
