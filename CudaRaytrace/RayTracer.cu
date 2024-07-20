@@ -8,6 +8,12 @@
 #include "cuda_interface.h"
 #include "RayTracer.cuh"
 
+#ifdef __INTELLISENSE__
+#define __any_sync(x, y) (y)
+#define __activemask() 0
+#define CUDART_INF_F 0
+#endif
+
 __constant__ float cudaTrans[6][DimTotal];
 
 namespace RayTracer {
@@ -33,8 +39,8 @@ namespace RayTracer {
         if (rayParams->activeIndex == 0) {
             bool previousPointExternal = true;
 
-            float stepFactor = rayParams->surfaceSmoothing / 10;
-            float stepSize = -rayParams->samplingInterval * stepFactor;
+            //float stepFactor = rayParams->surfaceSmoothing / 10;
+            //float stepSize = -rayParams->samplingInterval * stepFactor;
 
             while (recordedPoints < rayPoints && sampleCount < rayParams->maxSamples) {
                 currentDistance += rayParams->samplingInterval;
@@ -103,6 +109,7 @@ namespace RayTracer {
         return recordedPoints + 1;
     }
 
+    // Perform a binary search to refine the surface position
     __device__ float FindSurface(
         float stepSize, float stepFactor, int binarySearchSteps, float currentDistance,
         float xFactor, float yFactor, float zFactor, float bailout) {
@@ -114,7 +121,10 @@ namespace RayTracer {
             sampleDistance += stepSize;
             stepSize = fabs(stepSize) * stepFactor;
 
-            if (!SamplePoint(sampleDistance, bailout, xFactor, yFactor, zFactor, c)) {
+            bool isExternal = SamplePoint(sampleDistance, bailout, xFactor, yFactor, zFactor, c);
+
+            // If inside the fractal, step back next time
+            if (!isExternal) {
                 stepSize = -stepSize;
             }
         }
@@ -124,23 +134,24 @@ namespace RayTracer {
     __device__ float FindBoundary(float samplingInterval, int binarySearchSteps, float currentDistance, float previousAngle,
         float boundaryInterval, bool* externalPoint, float* Modulus, float* Angle,
         float xFactor, float yFactor, float zFactor, float bailout) {
+
         float stepSize = -samplingInterval / 2;
         float sampleDistance = currentDistance;
         const vector5Single c = { 0, 0, 0, 0, 0 };
 
+        #pragma unroll 1
         for (int i = 0; i < binarySearchSteps; i++) {
             sampleDistance += stepSize;
             *externalPoint = SamplePoint(sampleDistance, Modulus, Angle, bailout, xFactor, yFactor, zFactor, c);
 
-            const float angleChange = fabs(*Angle - previousAngle);
+            float angleChange = fabsf(*Angle - previousAngle);
+            bool exceedsBoundary = (angleChange > boundaryInterval);
 
-            if (angleChange > boundaryInterval) {
-                stepSize = -fabs(stepSize) / 2;
-            }
-            else {
-                stepSize = fabs(stepSize) / 2;
-            }
+            // Use a branchless approach to update stepSize
+            float stepSizeAbs = fabsf(stepSize);
+            stepSize = copysignf(stepSizeAbs / 2, exceedsBoundary ? -stepSizeAbs : stepSizeAbs);
         }
+
         return sampleDistance;
     }
 
@@ -153,8 +164,51 @@ namespace RayTracer {
         // Transform 3D point x,y,z into nD fractal space at point c[]
         VectorTrans(XPos, YPos, ZPos, &c);
 
-        // Determine orbit value for this point
-        return ProcessPoint(Modulus, Angle, bailout, c);
+        constexpr float PI = 3.1415926536f;
+        constexpr int MaxCount = 100;
+        vector5Single z = { 0 };
+        vector5Single diff;
+        float ModulusTotal = 0;
+        float AngleTotal = PI;
+
+        z.coords[DimTotal - 2] = 0;
+        z.coords[DimTotal - 1] = 0;
+        v_mov(c.coords, z.coords);
+
+        vector5Single vectorSet[3];
+        v_mov(z.coords, vectorSet[1].coords);
+
+        float bailout_squared = bailout * bailout;
+        int count = 0;
+        bool escaped = false;
+
+        #pragma unroll 1
+        for (; count < MaxCount; count++) {
+            v_mandel(z.coords, c.coords);
+            v_mov(z.coords, vectorSet[2].coords);
+
+            if (count > 0 && count < 10) {
+                AngleTotal += vectorAngle(vectorSet[0], vectorSet[1], vectorSet[2]);
+            }
+
+            v_subm(c.coords, z.coords, diff.coords);
+            float ModVal = v_mod(diff.coords);
+            ModulusTotal += ModVal;
+
+            escaped = (ModVal > bailout_squared);
+            if (__any_sync(__activemask(), escaped)) {
+                if (!escaped) count = MaxCount;
+                break;
+            }
+
+            v_mov(vectorSet[1].coords, vectorSet[0].coords);
+            v_mov(vectorSet[2].coords, vectorSet[1].coords);
+        }
+
+        *Modulus = ModulusTotal / (count + 1);
+        *Angle = AngleTotal / (count < 10 ? count + 1 : 10);
+
+        return escaped;
     }
 
     __device__ bool SamplePoint(float distance, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c) {
@@ -167,106 +221,45 @@ namespace RayTracer {
         VectorTrans(XPos, YPos, ZPos, &c);
 
         // Determine orbit value for this point
-        return ExternalPoint(c, bailout);
-    }
-
-    // Determine whether nD point c[] in within the set
-    // Returns true if point is external to the set
-    __device__ bool ExternalPoint(vector5Single c, float bailout)
-    {
-        const long MaxCount = (long)(1000);		        // Iteration count for external points
-        vector5Single z;										// Temporary 5-D vector
-        vector5Single diff;										// Temporary 5-D vector for orbit size
-        float ModulusTotal = 0;
-        float ModVal = 0;
-        long count;
-
-        z.coords[DimTotal - 2] = 0;
-        z.coords[DimTotal - 1] = 0;
-
-        v_mov(c.coords, z.coords);        // z = c
-
-        for (count = 0; count < MaxCount; count++)
-        {
-            v_mandel(z.coords, c.coords);                   //    z = z*z + c
-
-            // Determine modulus for this point in orbit
-            v_subm(c.coords, z.coords, diff.coords);        // Current orbit size = mod(z - c)
-            ModVal = v_mod(diff.coords);
-
-            // Accumulate modulus value
-            ModulusTotal += ModVal;
-
-            // Stop accumulating values when modulus exceeds bailout value
-            if (ModVal > bailout * bailout)
-            {
-                count++;
-                break;
-            }
-        }
-
-        // Return true if this point is external to the set
-        return (count < MaxCount);
-    }
-
-    __device__ bool ProcessPoint(float* Modulus, float* Angle, float bailout, vector5Single c) {
-        constexpr float PI = 3.1415926536f;
-
-        constexpr int MaxCount = 100;
+        constexpr int MaxCount = 1000;  // Use int instead of long for better performance on GPUs
         vector5Single z = { 0 };
         vector5Single diff;
         float ModulusTotal = 0;
-        float ModVal = 0;
-        float AngleTotal = PI;
-        int count;
+        float bailout_squared = bailout * bailout;
 
         z.coords[DimTotal - 2] = 0;
         z.coords[DimTotal - 1] = 0;
-
         v_mov(c.coords, z.coords);
-        vector5Single vectorSet[3];
-        v_mov(z.coords, vectorSet[1].coords);
 
-        float bailout_squared = bailout * bailout;
+        #pragma unroll 1
+        for (int count = 0; count < MaxCount; ++count) {
+            v_mandel(z.coords, c.coords);  // z = z*z + c
 
-        for (count = 0; count < MaxCount; count++) {
-            v_mandel(z.coords, c.coords);
-            v_mov(z.coords, vectorSet[2].coords);
+            // Determine modulus for this point in orbit
+            v_subm(c.coords, z.coords, diff.coords);  // Current orbit size = mod(z - c)
+            float ModVal = v_mod(diff.coords);
 
-            if (count > 0 && count < 10) {
-                AngleTotal += vectorAngle(vectorSet[0], vectorSet[1], vectorSet[2]);
-            }
+            // Check if point has escaped
+            if (ModVal > bailout_squared) return true;
 
-            v_subm(c.coords, z.coords, diff.coords);
-            ModVal = v_mod(diff.coords);
-
+            // Accumulate modulus value
             ModulusTotal += ModVal;
-
-            if (ModVal > bailout_squared) {
-                count++;
-                break;
-            }
-
-            v_mov(vectorSet[1].coords, vectorSet[0].coords);
-            v_mov(vectorSet[2].coords, vectorSet[1].coords);
         }
 
-        *Modulus = ModulusTotal / count;
-        *Angle = AngleTotal / (count > 10 ? 10 : count + 1);
-
-        return (count < MaxCount);
+        return false;
     }
 
     __device__ bool gapFound(float currentDistance, float surfaceThickness, float xFactor, float yFactor, float zFactor, float bailout, vector5Single c) {
         float testDistance;
 
+        #pragma unroll
         for (int factor = 1; factor <= 4; factor++) {
             testDistance = currentDistance + surfaceThickness * factor / 4;
-
             if (SamplePoint(testDistance, bailout, xFactor, yFactor, zFactor, c)) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -281,62 +274,29 @@ namespace RayTracer {
     }
 
     __device__ float vectorAngle(const vector5Single& A, const vector5Single& B, const vector5Single& C) {
-        vector5Single v1, v2;
-        float dotProduct = 0.0;
+        float v1[5], v2[5];
+        float dot1 = 0.0f, dot2 = 0.0f, dotProduct = 0.0f;
 
-        // Vector v1 = B - A 
-        v1.coords[0] = B.coords[0] - A.coords[0];
-        v1.coords[1] = B.coords[1] - A.coords[1];
-        v1.coords[2] = B.coords[2] - A.coords[2];
-        v1.coords[3] = B.coords[3] - A.coords[3];
-        v1.coords[4] = B.coords[4] - A.coords[4];
-
-        float modulus = sqrt(v1.coords[0] * v1.coords[0] + v1.coords[1] * v1.coords[1] +
-            v1.coords[2] * v1.coords[2] + v1.coords[3] * v1.coords[3] +
-            v1.coords[4] * v1.coords[4]);
-
-        if (modulus != 0.0) {
-            float factor = 1.0 / modulus;
-
-            // Normalize v1 by dividing by mod(v1)
-            v1.coords[0] *= factor;
-            v1.coords[1] *= factor;
-            v1.coords[2] *= factor;
-            v1.coords[3] *= factor;
-            v1.coords[4] *= factor;
-
-            // Vector v2 = B - C 
-            v2.coords[0] = B.coords[0] - C.coords[0];
-            v2.coords[1] = B.coords[1] - C.coords[1];
-            v2.coords[2] = B.coords[2] - C.coords[2];
-            v2.coords[3] = B.coords[3] - C.coords[3];
-            v2.coords[4] = B.coords[4] - C.coords[4];
-
-            modulus = sqrt(v2.coords[0] * v2.coords[0] + v2.coords[1] * v2.coords[1] +
-                v2.coords[2] * v2.coords[2] + v2.coords[3] * v2.coords[3] +
-                v2.coords[4] * v2.coords[4]);
-
-            if (modulus != 0.0) {
-                factor = 1.0 / modulus;
-
-                // Normalize v2 by dividing by mod(v2)
-                v2.coords[0] *= factor;
-                v2.coords[1] *= factor;
-                v2.coords[2] *= factor;
-                v2.coords[3] *= factor;
-                v2.coords[4] *= factor;
-
-                // Calculate dot product of v1 and v2
-                dotProduct = v1.coords[0] * v2.coords[0] + v1.coords[1] * v2.coords[1] +
-                    v1.coords[2] * v2.coords[2] + v1.coords[3] * v2.coords[3] +
-                    v1.coords[4] * v2.coords[4];
-            }
+        #pragma unroll
+        for (int i = 0; i < 5; ++i) {
+            v1[i] = B.coords[i] - A.coords[i];
+            v2[i] = B.coords[i] - C.coords[i];
+            dot1 += v1[i] * v1[i];
+            dot2 += v2[i] * v2[i];
         }
 
-        // Clamp dotProduct to the range [-1, 1]
-        dotProduct = fmaxf(fminf(dotProduct, 1.0f), -1.0f);
+        // Use a small epsilon value to avoid division by zero
+        const float epsilon = 1e-6f;
+        float invMod1 = 1.0f / sqrtf(fmaxf(dot1, epsilon));
+        float invMod2 = 1.0f / sqrtf(fmaxf(dot2, epsilon));
 
-        // Return the angle in radians
-        return acos(dotProduct);
+        #pragma unroll
+        for (int i = 0; i < 5; ++i) {
+            dotProduct += (v1[i] * invMod1) * (v2[i] * invMod2);
+        }
+
+        // Clamp dotProduct to [-1, 1] range
+        dotProduct = fmaxf(-1.0f, fminf(1.0f, dotProduct));
+        return acosf(dotProduct);
     }
 }
