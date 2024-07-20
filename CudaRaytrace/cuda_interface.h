@@ -65,12 +65,12 @@ typedef void(__stdcall* ProgressCallback)(int rayCount, int rowCount, RayDataTyp
 extern "C" {
 #endif
 
-	cudaError_t InitializeGPUKernel(const RayTracingParams* params);
+    cudaError_t InitializeRayTracingKernel(const RayTracingParams* params);
+    cudaError_t InitializeRenderingKernel(const RenderingParams* params);
 
     cudaError_t InitializeTransformMatrix(const float* positionMatrix);
 
-    cudaError_t LaunchProcessRaysKernel(const RayTracingParams* rayParams, const RenderingParams* renderParams,
-        int raysPerLine, int totalLines, ProgressCallback callback);
+    cudaError_t LaunchProcessRaysKernel(int raysPerLine, int totalLines, ProgressCallback callback);
 
 #ifdef __cplusplus
 }

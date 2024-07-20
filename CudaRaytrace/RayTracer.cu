@@ -15,10 +15,12 @@
 #endif
 
 __constant__ float cudaTrans[6][DimTotal];
+__constant__ RayTracingParams d_rayParams;
+__constant__ RenderingParams d_renderParams;
 
 namespace RayTracer {
 
-    __device__ int TraceRay(float startDistance, const RayTracingParams* __restrict__ rayParams,
+    __device__ int TraceRay(float startDistance,
         float xFactor, float yFactor, float zFactor, int rayPoints,
         int* __restrict__ externalPoints, float* __restrict__ modulusValues,
         float* __restrict__ angles, float* __restrict__ distances) {
@@ -26,7 +28,7 @@ namespace RayTracer {
         const vector5Single c = { 0, 0, 0, 0, 0 };
         float Modulus, Angle, currentDistance = startDistance;
         int recordedPoints = 0, sampleCount = 0;
-        bool externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, rayParams->bailout, xFactor, yFactor, zFactor, c);
+        bool externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, d_rayParams.bailout, xFactor, yFactor, zFactor, c);
 
         if (recordedPoints < rayPoints) {
             externalPoints[recordedPoints] = externalPoint ? 1 : 0;
@@ -36,33 +38,33 @@ namespace RayTracer {
             recordedPoints++;
         }
 
-        if (rayParams->activeIndex == 0) {
+        if (d_rayParams.activeIndex == 0) {
             bool previousPointExternal = true;
 
-            //float stepFactor = rayParams->surfaceSmoothing / 10;
-            //float stepSize = -rayParams->samplingInterval * stepFactor;
+            //float stepFactor = d_rayParams.surfaceSmoothing / 10;
+            //float stepSize = -d_rayParams.samplingInterval * stepFactor;
 
-            while (recordedPoints < rayPoints && sampleCount < rayParams->maxSamples) {
-                currentDistance += rayParams->samplingInterval;
+            while (recordedPoints < rayPoints && sampleCount < d_rayParams.maxSamples) {
+                currentDistance += d_rayParams.samplingInterval;
                 sampleCount++;
 
-                externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, rayParams->bailout, xFactor, yFactor, zFactor, c);
+                externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, d_rayParams.bailout, xFactor, yFactor, zFactor, c);
 
                 bool shouldRecord = !externalPoint && previousPointExternal;
 
                 if (shouldRecord) {
                     //float sampleDistance = FindSurface(
-                    //    stepSize, stepFactor, rayParams->binarySearchSteps,
-                    //    currentDistance, xFactor, yFactor, zFactor, rayParams->bailout);
+                    //    stepSize, stepFactor, d_rayParams.binarySearchSteps,
+                    //    currentDistance, xFactor, yFactor, zFactor, d_rayParams.bailout);
                     float sampleDistance = currentDistance;
 
-                    bool foundGap = gapFound(sampleDistance, rayParams->surfaceThickness, xFactor, yFactor, zFactor, rayParams->bailout, c);
+                    bool foundGap = gapFound(sampleDistance, d_rayParams.surfaceThickness, xFactor, yFactor, zFactor, d_rayParams.bailout, c);
 
-                    if (rayParams->surfaceThickness > 0 && foundGap) {
+                    if (d_rayParams.surfaceThickness > 0 && foundGap) {
                         previousPointExternal = true;
                         continue;
                     }
-                    externalPoint = SamplePoint(sampleDistance, &Modulus, &Angle, rayParams->bailout, xFactor, yFactor, zFactor, c);
+                    externalPoint = SamplePoint(sampleDistance, &Modulus, &Angle, d_rayParams.bailout, xFactor, yFactor, zFactor, c);
 
                     externalPoints[recordedPoints] = externalPoint ? 1 : 0;
                     modulusValues[recordedPoints] = Modulus;
@@ -75,23 +77,23 @@ namespace RayTracer {
             }
         }
 
-        if (rayParams->activeIndex == 1) {
-            while (recordedPoints < rayPoints && sampleCount < rayParams->maxSamples) {
-                currentDistance += rayParams->samplingInterval;
+        if (d_rayParams.activeIndex == 1) {
+            while (recordedPoints < rayPoints && sampleCount < d_rayParams.maxSamples) {
+                currentDistance += d_rayParams.samplingInterval;
                 sampleCount++;
 
-                externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, rayParams->bailout, xFactor, yFactor, zFactor, c);
+                externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, d_rayParams.bailout, xFactor, yFactor, zFactor, c);
 
                 ///// Set value for external point /////
 
                 float angleChange = fabs(Angle - angles[recordedPoints - 1]);
 
                 // If orbit value is sufficiently different from the last recorded sample
-                if (angleChange > rayParams->boundaryInterval) {
+                if (angleChange > d_rayParams.boundaryInterval) {
                     // Perform binary search between this and the recorded point, to determine boundary position
-                    float sampleDistance = FindBoundary(rayParams->samplingInterval, rayParams->binarySearchSteps, currentDistance, angles[recordedPoints - 1],
-                        rayParams->boundaryInterval, &externalPoint, &Modulus, &Angle,
-                        xFactor, yFactor, zFactor, rayParams->bailout);
+                    float sampleDistance = FindBoundary(d_rayParams.samplingInterval, d_rayParams.binarySearchSteps, currentDistance, angles[recordedPoints - 1],
+                        d_rayParams.boundaryInterval, &externalPoint, &Modulus, &Angle,
+                        xFactor, yFactor, zFactor, d_rayParams.bailout);
 
                     // Save this point value in the ray collection
                     externalPoints[recordedPoints] = externalPoint ? 1 : 0;

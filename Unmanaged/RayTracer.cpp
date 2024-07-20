@@ -24,9 +24,10 @@ inline void gpuAssert(cudaError_t code, const char* file, int line, bool abort =
 }
 
 // Host function to initialize the GPU with constant parameters
-EXPORT bool InitializeGPU(const RayTracingParams* params)
+EXPORT bool InitializeGPU(const RayTracingParams* rayParams, const RenderingParams* renderParams)
 {
-    const cudaError_t cudaStatus = InitializeGPUKernel(params);
+    const cudaError_t cudaStatus = InitializeRayTracingKernel(rayParams);
+    const cudaError_t cudaStatus = InitializeRenderingKernel(renderParams);
     return cudaStatus == cudaSuccess;
 }
 

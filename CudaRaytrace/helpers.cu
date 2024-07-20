@@ -1,16 +1,16 @@
-#include <cuda_runtime.h>
-#include <device_launch_parameters.h>
-#include <stdexcept>
-#include "vector5Single.h"
-#include "Vectors.h"
-#include "RayTracer.cuh"
-
-// Helper function to check CUDA errors
-void checkCudaError2(cudaError_t error, const char* message) {
-    if (error != cudaSuccess) {
-        throw std::runtime_error(std::string(message) + ": " + cudaGetErrorString(error));
-    }
-}
+//#include <cuda_runtime.h>
+//#include <device_launch_parameters.h>
+//#include <stdexcept>
+//#include "vector5Single.h"
+//#include "Vectors.h"
+//#include "RayTracer.cuh"
+//
+//// Helper function to check CUDA errors
+//void checkCudaError2(cudaError_t error, const char* message) {
+//    if (error != cudaSuccess) {
+//        throw std::runtime_error(std::string(message) + ": " + cudaGetErrorString(error));
+//    }
+//}
 
 // Vector5 ImageToFractalSpace2(float distance, Vector3 coord)
 //{

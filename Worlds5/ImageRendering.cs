@@ -67,7 +67,7 @@ namespace Worlds5
         static extern void InitSphere(float[,] PositionMatrix);
 
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool InitializeGPU(ref RayTracingParams rayParams);
+        public static extern bool InitializeGPU(ref RayTracingParams rayParams, ref RenderingParams renderingParams);
 
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool CopyTransformationMatrix([In] float[] positionMatrix);
@@ -90,10 +90,11 @@ namespace Worlds5
             InitSphere(sphere.settings.PositionMatrix);
 
             RayTracingParams rayParams = new RayTracingParams(sphere.settings);
+            RenderingParams renderParams = new RenderingParams(sphere.settings);
 
             if (rayParams.cudaMode)
             {
-                bool success = InitializeGPU(ref rayParams);
+                bool success = InitializeGPU(ref rayParams, ref renderParams);
                 if (!success)
                 {
                     Console.WriteLine("Failed to initialize GPU parameters");

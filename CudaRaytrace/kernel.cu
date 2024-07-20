@@ -12,25 +12,44 @@
 #include "RayTracer.cuh"
 #include "RayProcessing.cuh"
 
-__constant__ RayTracingParams d_params;
 
-// Host function to initialize the GPU with constant parameters
-extern "C" cudaError_t InitializeGPUKernel(const RayTracingParams* params)
+// Host function to initialize the GPU with ray tracing parameters
+extern "C" cudaError_t InitializeRayTracingKernel(const RayTracingParams * params)
 {
     // Copy the parameters to the device's constant memory
-    return cudaMemcpyToSymbol((const void*)&d_params, (const void*)params, sizeof(RayTracingParams));
+    return cudaMemcpyToSymbol((const void*)&d_rayParams, (const void*)params, sizeof(RayTracingParams));
 
     void* d_addr;
     cudaError_t error;
 
     // Get the address of the symbol in device memory
-    error = cudaGetSymbolAddress(&d_addr, (const void*)&d_params);
+    error = cudaGetSymbolAddress(&d_addr, (const void*)&d_rayParams);
     if (error != cudaSuccess) {
         return error;
     }
 
     // Copy the data to the symbol
     error = cudaMemcpy(d_addr, params, sizeof(RayTracingParams), cudaMemcpyHostToDevice);
+    return error;
+}
+
+// Host function to initialize the GPU with rendering parameters
+extern "C" cudaError_t InitializeRenderingKernel(const RenderingParams * params)
+{
+    // Copy the parameters to the device's constant memory
+    return cudaMemcpyToSymbol((const void*)&d_renderParams, (const void*)params, sizeof(RenderingParams));
+
+    void* d_addr;
+    cudaError_t error;
+
+    // Get the address of the symbol in device memory
+    error = cudaGetSymbolAddress(&d_addr, (const void*)&d_renderParams);
+    if (error != cudaSuccess) {
+        return error;
+    }
+
+    // Copy the data to the symbol
+    error = cudaMemcpy(d_addr, params, sizeof(RenderingParams), cudaMemcpyHostToDevice);
     return error;
 }
 
@@ -60,8 +79,7 @@ static int getGridX(int raysPerLine, int totalLines, int xBlocks) {
     return std::min(limitedNumBlocks, (int)((raysPerLine + xBlocks - 1) / xBlocks));
 }
 
-extern "C" cudaError_t LaunchProcessRaysKernel(const RayTracingParams* rayParams, const RenderingParams* renderParams,
-    int raysPerLine, int totalLines, ProgressCallback callback)
+extern "C" cudaError_t LaunchProcessRaysKernel(int raysPerLine, int totalLines, ProgressCallback callback)
 {
     // Allocate device memory
     RayDataTypeIntermediate* d_results;
@@ -76,7 +94,7 @@ extern "C" cudaError_t LaunchProcessRaysKernel(const RayTracingParams* rayParams
         (totalLines + blockDim.y - 1) / blockDim.y);
 
     // Launch kernel
-    ProcessRaysKernel << <gridDim, blockDim >> > (*rayParams, *renderParams, raysPerLine, totalLines, d_results);
+    ProcessRaysKernel << <gridDim, blockDim >> > (raysPerLine, totalLines, d_results);
 
     cudaStatus = cudaGetLastError();
     if (cudaStatus != cudaSuccess) {      

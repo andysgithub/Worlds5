@@ -21,5 +21,4 @@ struct RayDataType {
     int ArraySize;
 };
 
-__global__ void ProcessRaysKernel(RayTracingParams rayParams, RenderingParams renderParams,
-    int raysPerLine, int totalLines, RayDataTypeIntermediate* results);
+__global__ void ProcessRaysKernel(int raysPerLine, int totalLines, RayDataTypeIntermediate* results);
