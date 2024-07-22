@@ -96,6 +96,7 @@
     <ClInclude Include="RayProcessing.cuh" />
     <ClInclude Include="RayTracer.cuh" />
     <ClInclude Include="vector5Single.h" />
+    <ClInclude Include="vectors.cuh" />
     <ClInclude Include="Vectors.h" />
   </ItemGroup>
   <ItemGroup>

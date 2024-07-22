@@ -27,7 +27,7 @@ inline void gpuAssert(cudaError_t code, const char* file, int line, bool abort =
 EXPORT bool InitializeGPU(const RayTracingParams* rayParams, const RenderingParams* renderParams)
 {
     const cudaError_t cudaStatus = InitializeRayTracingKernel(rayParams);
-    const cudaError_t cudaStatus = InitializeRenderingKernel(renderParams);
+    const cudaError_t cudaStatus2 = InitializeRenderingKernel(renderParams);
     return cudaStatus == cudaSuccess;
 }
 
@@ -45,7 +45,6 @@ int TraceRay(float startDistance, RayTracingParams rayParams,
 {
     float	Modulus, Angle;
     float	currentDistance = startDistance;
-    float	sampleDistance;
     int rayPoints = (int)(rayParams.maxSamples * rayParams.samplingInterval);
     int	recordedPoints = 0;
     int sampleCount = 0;
@@ -77,9 +76,10 @@ int TraceRay(float startDistance, RayTracingParams rayParams,
             ///// Set value for surface point /////
 
             // Perform binary search between this and the previous point, to determine surface position
-            sampleDistance = FindSurface(
+            float sampleDistance = FindSurface(
                 rayParams.samplingInterval, rayParams.surfaceSmoothing, rayParams.binarySearchSteps,
                 currentDistance, xFactor, yFactor, zFactor, rayParams.bailout);
+            //float sampleDistance = currentDistance;
 
             bool foundGap = gapFound(sampleDistance, rayParams.surfaceThickness, xFactor, yFactor, zFactor, rayParams.bailout, c);
 
@@ -109,7 +109,7 @@ int TraceRay(float startDistance, RayTracingParams rayParams,
             if (angleChange > rayParams.boundaryInterval)
             {
                 // Perform binary search between this and the recorded point, to determine boundary position
-                sampleDistance = FindBoundary(rayParams.samplingInterval, rayParams.binarySearchSteps, currentDistance, angles[recordedPoints - 1],
+                float sampleDistance = FindBoundary(rayParams.samplingInterval, rayParams.binarySearchSteps, currentDistance, angles[recordedPoints - 1],
                     rayParams.boundaryInterval, &externalPoint, &Modulus, &Angle,
                     xFactor, yFactor, zFactor, rayParams.bailout);
 

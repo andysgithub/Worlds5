@@ -33,6 +33,9 @@
     <ClInclude Include="RayProcessing.cuh">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="vectors.cuh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

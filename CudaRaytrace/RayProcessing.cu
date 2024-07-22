@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stdio.h>
 #include "cuda_interface.h"
+#include "vectors.cuh"
 #include "RayTracer.cuh"
 #include "RayProcessing.cuh"
 //#include "Clipping.h" 
@@ -50,9 +51,14 @@ __device__ void ProcessRayKernel(int rayCountX, int rayCountY, RayDataTypeInterm
     float latRadians = latitude * DEG_TO_RAD;
     float longRadians = longitude * DEG_TO_RAD;
 
-    float xFactor = cosf(latRadians) * sinf(-longRadians);
-    float yFactor = sinf(latRadians);
-    float zFactor = cosf(latRadians) * cosf(-longRadians);
+    Vector3 rayPoint = Vector3(
+        cosf(latRadians) * sinf(-longRadians),
+        sinf(latRadians),
+        cosf(latRadians) * cosf(-longRadians));
+
+    //float xFactor = cosf(latRadians) * sinf(-longRadians);
+    //float yFactor = sinf(latRadians);
+    //float zFactor = cosf(latRadians) * cosf(-longRadians);
 
     float startDistance = d_rayParams.sphereRadius;
 
@@ -67,7 +73,7 @@ __device__ void ProcessRayKernel(int rayCountX, int rayCountY, RayDataTypeInterm
     float distanceValues[MAX_POINTS];
 
     int points = RayTracer::TraceRay(startDistance,
-        xFactor, yFactor, zFactor, (int)MAX_POINTS,
+        rayPoint, (int)MAX_POINTS,
         externalPoints, modulusValues, angleValues, distanceValues);
 
     // Directly fill the intermediate result
