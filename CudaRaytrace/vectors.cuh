@@ -104,15 +104,7 @@ struct Vector5 {
     }
 
     __host__ __device__ float dot(const Vector5& o) const {
-        float result = 0;
-
-        result += m[0] * o.m[0];
-        result += m[1] * o.m[1];
-        result += m[2] * o.m[2];
-        result += m[3] * o.m[3];
-        result += m[4] * o.m[4];
-
-        return result;
+        return m[0] * o.m[0] + m[1] * o.m[1] + m[2] * o.m[2] + m[3] * o.m[3] + m[4] * o.m[4];
     }
 
     __host__ __device__ Vector5 scale(const float s) const {
@@ -120,23 +112,12 @@ struct Vector5 {
     }
 
     __host__ __device__ Vector5 normalize() const {
-        const float mag = magnitude();
-        if (mag > 0) {
-            Vector5 result;
-
-            result.m[0] = this->m[0] / mag;
-            result.m[1] = this->m[1] / mag;
-            result.m[2] = this->m[2] / mag;
-            result.m[3] = this->m[3] / mag;
-            result.m[4] = this->m[4] / mag;
-
-            return result;
-        }
-        return *this;
+        float mag = magnitude();
+        return mag > 0 ? (*this) * (1.0f / mag) : *this;
     }
 
 	__host__ __device__ float magnitude() const {
-        return m[0] * m[0] + m[1] * m[1] + m[2] * m[2] + m[3] * m[3] + m[4] * m[4];
+        return dot(*this);
     }
 
     __host__ __device__ static float clamp(float x, float lower, float upper) {
