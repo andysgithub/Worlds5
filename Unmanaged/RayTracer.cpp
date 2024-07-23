@@ -5,7 +5,6 @@
 #include "myrion.h"
 #include "RayProcessing.h"
 #include "declares.h"
-#include "vectors.h"
 
 #include <cuda_runtime.h>
 #include "cuda_interface.h"
@@ -48,7 +47,7 @@ int TraceRay(float startDistance, RayTracingParams rayParams,
     int rayPoints = (int)(rayParams.maxSamples * rayParams.samplingInterval);
     int	recordedPoints = 0;
     int sampleCount = 0;
-    const vector5Single c = { 0, 0, 0, 0, 0 };							// 5D vector for ray point coordinates
+    const Vector5 c = { 0, 0, 0, 0, 0 };							// 5D vector for ray point coordinates
 
     // Determine orbit value for the starting point
     bool externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, rayParams.bailout, xFactor, yFactor, zFactor, c);
@@ -134,7 +133,7 @@ EXPORT float __stdcall FindSurface(
     float stepFactor = surfaceSmoothing / 10;
 	float	stepSize = -samplingInterval * stepFactor;
 	float	sampleDistance = currentDistance;
-	const vector5Single c = {0,0,0,0,0};        // 5D vector for ray point coordinates
+	const Vector5 c = {0,0,0,0,0};        // 5D vector for ray point coordinates
 
 
     // Perform binary search between the current and previous points, to determine boundary position
@@ -164,7 +163,7 @@ EXPORT float __stdcall FindBoundary(float samplingInterval, int binarySearchStep
 {
 	float stepSize = -samplingInterval / 2;
 	float sampleDistance = currentDistance;
-	const vector5Single c = {0,0,0,0,0};			// 5D vector for ray point coordinates
+	const Vector5 c = {0,0,0,0,0};			// 5D vector for ray point coordinates
 
     // Perform binary search between the current and previous points, to determine boundary position
     for (int i = 0; i < binarySearchSteps; i++)
@@ -191,7 +190,7 @@ EXPORT float __stdcall FindBoundary(float samplingInterval, int binarySearchStep
     return sampleDistance;
 }
 
-bool SamplePoint(float distance, float* Modulus, float* Angle, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c)
+bool SamplePoint(float distance, float* Modulus, float* Angle, float bailout, float xFactor, float yFactor, float zFactor, Vector5 c)
 {
     // Determine the x,y,z coord for this point
     const float XPos = distance * xFactor;
@@ -207,7 +206,7 @@ bool SamplePoint(float distance, float* Modulus, float* Angle, float bailout, fl
 
 // Transform 3D coordinates to 5D point c[] in fractal
 // Returns true if point is external to the set
-EXPORT bool __stdcall SamplePoint(float distance, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c)
+EXPORT bool __stdcall SamplePoint(float distance, float bailout, float xFactor, float yFactor, float zFactor, Vector5 c)
 {
   // Determine the x,y,z coord for this point
   const float XPos = distance * xFactor;
@@ -223,27 +222,27 @@ EXPORT bool __stdcall SamplePoint(float distance, float bailout, float xFactor, 
 
 // Determine whether nD point c[] in within the set
 // Returns true if point is external to the set
-bool ExternalPoint(vector5Single c, float bailout)
+bool ExternalPoint(Vector5 c, float bailout)
 {
     const long MaxCount = (long)(MAX_COLOURS);		        // Iteration count for external points
-	vector5Single z;										// Temporary 5-D vector
-	vector5Single diff;										// Temporary 5-D vector for orbit size
+	Vector5 z;										// Temporary 5-D vector
+	Vector5 diff;										// Temporary 5-D vector for orbit size
 	float ModulusTotal = 0;
 	float ModVal = 0;
 	long count;
 
-    z.coords[DimTotal - 2] = 0;
-    z.coords[DimTotal - 1] = 0;
+    z.m[DimTotal - 2] = 0;
+    z.m[DimTotal - 1] = 0;
 
-    v_mov(c.coords, z.coords);        // z = c
+    v_mov(c.m, z.m);        // z = c
 
     for (count = 0; count < MaxCount; count++)
     {
-        v_mandel(z.coords, c.coords);                   //    z = z*z + c
+        v_mandel(z.m, c.m);                   //    z = z*z + c
 
         // Determine modulus for this point in orbit
-        v_subm(c.coords, z.coords, diff.coords);        // Current orbit size = mod(z - c)
-        ModVal = v_mod(diff.coords);
+        v_subm(c.m, z.m, diff.m);        // Current orbit size = mod(z - c)
+        ModVal = v_mod(diff.m);
 
         // Accumulate modulus value
         ModulusTotal += ModVal;
@@ -262,29 +261,29 @@ bool ExternalPoint(vector5Single c, float bailout)
 
 // Determine orbital modulus at nD point c[] in fractal
 // Returns true if point is external to the set
-bool  ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Single c)
+bool  ProcessPoint(float *Modulus, float *Angle, float bailout, Vector5 c)
 {
     float const PI = 3.1415926536f;
 
 	const long MaxCount = (long)(100);		// Iteration count for external points
-	vector5Single	z;						// Temporary 5-D vector
-	vector5Single diff;						// Temporary 5-D vector for orbit size
+	Vector5	z;						// Temporary 5-D vector
+	Vector5 diff;						// Temporary 5-D vector for orbit size
 	float ModulusTotal = 0;
 	float ModVal = 0;
 	float AngleTotal = PI;		// Angle for first two vectors is 180 degrees
 	long count;
 
-    z.coords[DimTotal - 2] = 0;
-    z.coords[DimTotal - 1] = 0;
+    z.m[DimTotal - 2] = 0;
+    z.m[DimTotal - 1] = 0;
 
-    v_mov(c.coords, z.coords);             // z = c
-    vector5Single vectorSet[3];            // Collection of the three most recent vectors for determining the angle between them
-    v_mov(z.coords, vectorSet[1].coords);  // Store the first point in the vector set
+    v_mov(c.m, z.m);             // z = c
+    Vector5 vectorSet[3];            // Collection of the three most recent vectors for determining the angle between them
+    v_mov(z.m, vectorSet[1].m);  // Store the first point in the vector set
 
     for (count = 0; count < MaxCount; count++)
     {
-        v_mandel(z.coords, c.coords);                // z = z*z + c
-        v_mov(z.coords, vectorSet[2].coords);        // Store the new point in the vector set
+        v_mandel(z.m, c.m);                // z = z*z + c
+        v_mov(z.m, vectorSet[2].m);        // Store the new point in the vector set
 
         // Determine vector angle for the last three positions
         if (count > 0 && count < 10)
@@ -294,8 +293,8 @@ bool  ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Single c)
         }
 
         // Determine modulus for this point in orbit
-        v_subm(c.coords, z.coords, diff.coords);        // Current orbit size = mod(z - c)
-        ModVal = v_mod(diff.coords);
+        v_subm(c.m, z.m, diff.m);        // Current orbit size = mod(z - c)
+        ModVal = v_mod(diff.m);
 
         // Accumulate modulus value
         ModulusTotal += ModVal;
@@ -308,8 +307,8 @@ bool  ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Single c)
         }
 
         // Move the vectors down in the list for the next angle
-        v_mov(vectorSet[1].coords, vectorSet[0].coords);
-        v_mov(vectorSet[2].coords, vectorSet[1].coords);
+        v_mov(vectorSet[1].m, vectorSet[0].m);
+        v_mov(vectorSet[2].m, vectorSet[1].m);
     }
 
     // Calculate the average modulus over the orbit
@@ -321,7 +320,7 @@ bool  ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Single c)
     return (count < MaxCount);
 }
 
-bool gapFound(float currentDistance, float surfaceThickness, float xFactor, float yFactor, float zFactor, float bailout, vector5Single c)
+bool gapFound(float currentDistance, float surfaceThickness, float xFactor, float yFactor, float zFactor, float bailout, Vector5 c)
 {
     float testDistance;
 
@@ -337,11 +336,11 @@ bool gapFound(float currentDistance, float surfaceThickness, float xFactor, floa
     return false;
 }
 
-void VectorTrans(float x, float y, float z, vector5Single *c)
+void VectorTrans(float x, float y, float z, Vector5 *c)
 {
     for (int col = 0; col < DimTotal; col++)
     {
-        (*c).coords[col] =
+        (*c).m[col] =
             m_Trans[0][col]*x +          // Transforms 3D image space at point x,y,z
             m_Trans[1][col]*y +          // into nD vector space at point c[]
             m_Trans[2][col]*z +
@@ -356,14 +355,13 @@ Vector5 ImageToFractalSpace(float distance, Vector3 coord)
     const float YPos = distance * coord.Y;
     const float ZPos = distance * coord.Z;
 
-    vector5Single c = { 0,0,0,0,0 };
+    Vector5 c = { 0,0,0,0,0 };
 
     // Transform 3D point x,y,z into nD fractal space at point c[]
     VectorTrans(XPos, YPos, ZPos, &c);
 
     // Return the 5D fractal space point
-    std::array<float, 5> arr = c.toArray();
-    return Vector5(arr[0], arr[1], arr[2], arr[3], arr[4]);
+    return c;
 }
 
 // Function to handle CUDA errors

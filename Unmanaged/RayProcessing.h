@@ -5,8 +5,7 @@
 #include <windows.h>
 #include "declares.h"
 #include "TracedRay.h"
-#include "Vectors.h"
-#include "vector5Single.h"
+#include "Vectors.cuh"
 #include "cuda_interface.h"
 
 ///////  CONSTANTS  ///////
@@ -31,6 +30,8 @@ extern float
 		m_Hue1, m_Saturation1, m_Lightness1,
 		m_Bailout;
 
+float vectorAngle(Vector5 A, Vector5 B, Vector5 C);
+
 typedef void (__stdcall *ProgressCallback)(int rayCount, int rowCount, RayDataTypeIntermediate* rayData);
 
 //////  SPHERE  //////
@@ -51,13 +52,13 @@ EXPORT float __stdcall FindBoundary(float samplingInterval, int binarySearchStep
 	float xFactor, float yFactor, float zFactor, float bailout);
 
 Vector5 ImageToFractalSpace (float distance, Vector3 coord);
-EXPORT bool __stdcall SamplePoint(float distance, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c);
+EXPORT bool __stdcall SamplePoint(float distance, float bailout, float xFactor, float yFactor, float zFactor, Vector5 c);
 
-bool ExternalPoint(vector5Single c, float bailout);
-bool ProcessPoint(float *Modulus, float *Angle, float bailout, vector5Single c);
-bool gapFound(float currentDistance, float surfaceThickness, float xFactor, float yFactor, float zFactor, float bailout, vector5Single c);
-bool SamplePoint(float distance, float *Modulus, float *Angle, float bailout, float xFactor, float yFactor, float zFactor, vector5Single c);
-void VectorTrans(float x, float y, float z, vector5Single *c);
+bool ExternalPoint(Vector5 c, float bailout);
+bool ProcessPoint(float *Modulus, float *Angle, float bailout, Vector5 c);
+bool gapFound(float currentDistance, float surfaceThickness, float xFactor, float yFactor, float zFactor, float bailout, Vector5 c);
+bool SamplePoint(float distance, float *Modulus, float *Angle, float bailout, float xFactor, float yFactor, float zFactor, Vector5 c);
+void VectorTrans(float x, float y, float z, Vector5 *c);
 
 //////  COLOUR  //////
 EXPORT void __stdcall HSVtoRGB(float h, float s, float v, BYTE *rval, BYTE *gval, BYTE *bval);

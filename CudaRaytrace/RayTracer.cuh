@@ -1,9 +1,7 @@
 #pragma once
 
 #include <cuda_runtime.h>
-#include "inline.cuh"
-#include "vector5Single.h"
-#include "vectors.cuh"
+#include "Vectors.cuh"
 #include "cuda_interface.h"
 
 // Constant memory declaration
@@ -25,13 +23,13 @@ namespace RayTracer {
         bool* externalPoint, float* Modulus, float* Angle,
         Vector3 rayPoint);
 
-    __device__ bool SamplePoint(float distance, float* Modulus, float* Angle, Vector3 rayPoint, vector5Single c);
+    __device__ bool SamplePoint(float distance, float* Modulus, float* Angle, Vector3 rayPoint, Vector5 c);
 
-    __device__ bool SamplePoint(float distance, Vector3 rayPoint, vector5Single c);
+    __device__ bool SamplePoint(float distance, Vector3 rayPoint, Vector5 c);
 
-    __device__ bool gapFound(float currentDistance, Vector3 rayPoint, vector5Single c);
+    __device__ bool gapFound(float currentDistance, Vector3 rayPoint, Vector5 c);
 
-    __device__ void VectorTrans(Vector3 imagePoint, vector5Single* c);
+    __device__ void VectorTrans(Vector3 imagePoint, Vector5* c);
 
-    __device__ float vectorAngle(const vector5Single& A, const vector5Single& B, const vector5Single& C);
+    __device__ float vectorAngle(const Vector5& A, const Vector5& B, const Vector5& C);
 }

@@ -7,7 +7,6 @@
 
 #include <vector>
 #include <cmath>
-#include "vectors.h"
 #include "cuda_interface.h"
 #include "Colour.h"
 

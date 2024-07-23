@@ -5,6 +5,8 @@
 
 #define MAX_POINTS 100
 
+#define DEG_TO_RAD 0.0174532925F
+
 enum class AxisPair
 {
     XY,

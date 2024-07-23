@@ -5,12 +5,10 @@
 #include <iostream>
 #include <stdio.h>
 #include "cuda_interface.h"
-#include "vectors.cuh"
+#include "Vectors.cuh"
 #include "RayTracer.cuh"
 #include "RayProcessing.cuh"
 //#include "Clipping.h" 
-
-__device__ const float DEG_TO_RAD = 0.0174532925F;
 
 __device__ void FillIntermediateResult(
     int* externalPoints, float* modulusValues, float* angleValues, float* distanceValues, 

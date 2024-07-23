@@ -1,7 +1,7 @@
 #include "Clipping.h"
 #include <cmath>
 #include <stdexcept>
-#include "Vectors.h"
+#include "Vectors.cuh"
 #include "RayProcessing.h"
 
 namespace Worlds5 {
@@ -35,7 +35,7 @@ namespace Worlds5 {
 
         // Determine the intersection parameter t based on the selected axis pair
         float t = getIntersection(axisPair, offset, viewpoint5D, direction5D);
-        float distance = std::abs(t * direction5D.Magnitude());
+        float distance = std::abs(t * direction5D.magnitude());
         return distance;
     }
 
@@ -43,24 +43,24 @@ namespace Worlds5 {
         float t = 0;
         switch (axisPair) {
         case AxisPair::XY:
-            if (direction.Z != 0) t = (offset - viewpoint.Z) / direction.Z;
+            if (direction.m[2] != 0) t = (offset - viewpoint.m[2]) / direction.m[2];
             break;
         case AxisPair::XZ:
-            if (direction.Y != 0) t = (offset - viewpoint.Y) / direction.Y;
+            if (direction.m[1] != 0) t = (offset - viewpoint.m[1]) / direction.m[1];
             break;
         case AxisPair::XW:
         case AxisPair::YW:
         case AxisPair::ZW:
-            if (direction.V != 0) t = (offset - viewpoint.V) / direction.V;
+            if (direction.m[4] != 0) t = (offset - viewpoint.m[4]) / direction.m[4];
             break;
         case AxisPair::XV:
         case AxisPair::YV:
         case AxisPair::ZV:
-            if (direction.W != 0) t = (offset - viewpoint.W) / direction.W;
+            if (direction.m[3] != 0) t = (offset - viewpoint.m[3]) / direction.m[3];
             break;
         case AxisPair::YZ:
         case AxisPair::WV:
-            if (direction.X != 0) t = (offset - viewpoint.X) / direction.X;
+            if (direction.m[0] != 0) t = (offset - viewpoint.m[0]) / direction.m[0];
             break;
         default:
             throw std::runtime_error("Invalid AxisPair");

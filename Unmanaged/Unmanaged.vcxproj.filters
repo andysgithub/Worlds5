@@ -56,9 +56,6 @@
     <ClInclude Include="RayProcessing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vectors.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Clipping.h">
       <Filter>Header Files</Filter>
     </ClInclude>

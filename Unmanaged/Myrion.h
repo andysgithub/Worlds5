@@ -6,7 +6,7 @@
  *	Andrew G Williams  April 1996
  */
 
-#include "vector5Single.h"
+#include "Vectors.cuh"
 
 #define v_mov(a,b)														\
 	b[0] = a[0];                                                        \

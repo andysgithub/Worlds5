@@ -10,7 +10,7 @@
 #include <limits>
 #include <iostream>
 #include <Windows.h>
-#include "vectors.h"
+#include "Vectors.cuh"
 #include "cuda_interface.h"
 
 // Constructor taking 4 references to vector objects
@@ -107,7 +107,7 @@ void TracedRay::SetColour() {
                     surfaceNormal = surfaceNormal.Normalize();
 
                     // Calculate the dot product
-                    float dotProduct = Vector3::Dot(lightDirection, surfaceNormal);
+                    float dotProduct = lightDirection.dot(surfaceNormal);
 
                     // Ensure the dot product is in the range [0, 1]
                     float tiltValue = std::max(0.0f, dotProduct);

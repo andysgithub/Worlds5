@@ -4,9 +4,6 @@
     <CudaCompile Include="kernel.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
-    <CudaCompile Include="helpers.cu">
-      <Filter>Source Files</Filter>
-    </CudaCompile>
     <CudaCompile Include="RayProcessing.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
@@ -15,25 +12,16 @@
     </CudaCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="inline.cuh">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="cuda_interface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="vector5Single.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RayTracer.cuh">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vectors.h">
+    <ClInclude Include="Vectors.cuh">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RayProcessing.cuh">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="vectors.cuh">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
