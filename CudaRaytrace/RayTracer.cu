@@ -25,7 +25,7 @@ namespace RayTracer {
         int* __restrict__ externalPoints, float* __restrict__ modulusValues,
         float* __restrict__ angles, float* __restrict__ distances) {
 
-        const vector5Single c = { 0, 0, 0, 0, 0 };
+        const Vector5 c( 0, 0, 0, 0, 0 );
         float Modulus, Angle, currentDistance = startDistance;
         int recordedPoints = 0, sampleCount = 0;
         bool externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, rayPoint, c);
@@ -53,8 +53,8 @@ namespace RayTracer {
                 bool shouldRecord = !externalPoint && previousPointExternal;
 
                 if (shouldRecord) {
-                    float sampleDistance = FindSurface(stepSize, stepFactor, currentDistance, rayPoint);
-                    //float sampleDistance = currentDistance;
+                    //float sampleDistance = FindSurface(stepSize, stepFactor, currentDistance, rayPoint);
+                    float sampleDistance = currentDistance;
 
                     bool foundGap = gapFound(sampleDistance, rayPoint, c);
 
@@ -114,7 +114,7 @@ namespace RayTracer {
         Vector3 rayPoint) {
 
         float sampleDistance = currentDistance;
-        const vector5Single c = { 0, 0, 0, 0, 0 };
+        const Vector5 c = { 0, 0, 0, 0, 0 };
 
         for (int i = 0; i < d_rayParams.binarySearchSteps; i++) {
             sampleDistance += stepSize;
@@ -131,12 +131,11 @@ namespace RayTracer {
     }
 
     __device__ float FindBoundary(float currentDistance, float previousAngle,
-        bool* externalPoint, float* Modulus, float* Angle,
-        Vector3 rayPoint) {
+        bool* externalPoint, float* Modulus, float* Angle, Vector3 rayPoint) {
 
         float stepSize = -d_rayParams.samplingInterval / 2;
         float sampleDistance = currentDistance;
-        const vector5Single c = { 0, 0, 0, 0, 0 };
+        const Vector5 c(0, 0, 0, 0, 0);
 
         #pragma unroll 1
         for (int i = 0; i < d_rayParams.binarySearchSteps; i++) {
@@ -154,7 +153,7 @@ namespace RayTracer {
         return sampleDistance;
     }
 
-    __device__ bool SamplePoint(float distance, float* Modulus, float* Angle, Vector3 rayPoint, vector5Single c) {
+    __device__ bool SamplePoint(float distance, float* Modulus, float* Angle, Vector3 rayPoint, Vector5 c) {
         // Determine the x,y,z coord for this point
         Vector3 imagePoint = Vector3(distance * rayPoint.X, distance * rayPoint.Y, distance * rayPoint.Z);
 
@@ -163,17 +162,17 @@ namespace RayTracer {
 
         constexpr float PI = 3.1415926536f;
         constexpr int MaxCount = 100;
-        vector5Single z = { 0 };
-        vector5Single diff;
+        Vector5 z;
+        Vector5 diff;
         float ModulusTotal = 0;
         float AngleTotal = PI;
 
-        z.coords[DimTotal - 2] = 0;
-        z.coords[DimTotal - 1] = 0;
-        v_mov(c.coords, z.coords);
+        z[DimTotal - 2] = 0;
+        z[DimTotal - 1] = 0;
+        z = c;
 
-        vector5Single vectorSet[3];
-        v_mov(z.coords, vectorSet[1].coords);
+        Vector5 vectorSet[3];
+        vectorSet[1] = z;
 
         float bailout_squared = d_rayParams.bailout * d_rayParams.bailout;
         int count = 0;
@@ -181,34 +180,36 @@ namespace RayTracer {
 
         #pragma unroll 1
         for (; count < MaxCount; count++) {
-            v_mandel(z.coords, c.coords);
-            v_mov(z.coords, vectorSet[2].coords);
+            z = z * z + c;
+            vectorSet[2] = z;
 
             if (count > 0 && count < 10) {
                 AngleTotal += vectorAngle(vectorSet[0], vectorSet[1], vectorSet[2]);
             }
 
-            v_subm(c.coords, z.coords, diff.coords);
-            float ModVal = v_mod(diff.coords);
+            diff = z - c;
+            float ModVal = diff.magnitude();
             ModulusTotal += ModVal;
 
+            // Stop accumulating values when modulus exceeds bailout value
             escaped = (ModVal > bailout_squared);
-            if (__any_sync(__activemask(), escaped)) {
-                if (!escaped) count = MaxCount;
+            if (escaped)
+            {
+                count++;
                 break;
             }
 
-            v_mov(vectorSet[1].coords, vectorSet[0].coords);
-            v_mov(vectorSet[2].coords, vectorSet[1].coords);
+            vectorSet[0] = vectorSet[1];
+            vectorSet[1] = vectorSet[2];
         }
 
-        *Modulus = ModulusTotal / (count + 1);
+        *Modulus = ModulusTotal / count;
         *Angle = AngleTotal / (count < 10 ? count + 1 : 10);
 
         return escaped;
     }
 
-    __device__ bool SamplePoint(float distance, Vector3 rayPoint, vector5Single c) {
+    __device__ bool SamplePoint(float distance, Vector3 rayPoint, Vector5 c) {
         // Determine the x,y,z coord for this point
         Vector3 imagePoint = Vector3(distance * rayPoint.X, distance * rayPoint.Y, distance * rayPoint.Z);
 
@@ -217,22 +218,22 @@ namespace RayTracer {
 
         // Determine orbit value for this point
         constexpr int MaxCount = 1000;  // Use int instead of long for better performance on GPUs
-        vector5Single z = { 0 };
-        vector5Single diff;
+        Vector5 z = { 0 };
+        Vector5 diff;
         float ModulusTotal = 0;
         float bailout_squared = d_rayParams.bailout * d_rayParams.bailout;
 
-        z.coords[DimTotal - 2] = 0;
-        z.coords[DimTotal - 1] = 0;
-        v_mov(c.coords, z.coords);
+        z[DimTotal - 2] = 0;
+        z[DimTotal - 1] = 0;
+        z = c;
 
         #pragma unroll 1
         for (int count = 0; count < MaxCount; ++count) {
-            v_mandel(z.coords, c.coords);  // z = z*z + c
+            z = z * z + c;
 
             // Determine modulus for this point in orbit
-            v_subm(c.coords, z.coords, diff.coords);  // Current orbit size = mod(z - c)
-            float ModVal = v_mod(diff.coords);
+            diff = z - c;  // Current orbit size = mod(z - c)
+            float ModVal = diff.magnitude();
 
             // Check if point has escaped
             if (ModVal > bailout_squared) return true;
@@ -244,7 +245,7 @@ namespace RayTracer {
         return false;
     }
 
-    __device__ bool gapFound(float currentDistance, Vector3 rayPoint, vector5Single c) {
+    __device__ bool gapFound(float currentDistance, Vector3 rayPoint, Vector5 c) {
         float testDistance;
 
         #pragma unroll
@@ -258,9 +259,9 @@ namespace RayTracer {
         return false;
     }
 
-    __device__ void VectorTrans(Vector3 imagePoint, vector5Single* c) {
+    __device__ void VectorTrans(Vector3 imagePoint, Vector5* c) {
         for (int col = 0; col < DimTotal; col++) {
-            (*c).coords[col] =
+            (*c)[col] =
                 cudaTrans[0][col] * imagePoint.X +
                 cudaTrans[1][col] * imagePoint.Y +
                 cudaTrans[2][col] * imagePoint.Z +
@@ -268,14 +269,14 @@ namespace RayTracer {
         }
     }
 
-    __device__ float vectorAngle(const vector5Single& A, const vector5Single& B, const vector5Single& C) {
+    __device__ float vectorAngle(const Vector5& A, const Vector5& B, const Vector5& C) {
         float v1[5], v2[5];
         float dot1 = 0.0f, dot2 = 0.0f, dotProduct = 0.0f;
 
         #pragma unroll
         for (int i = 0; i < 5; ++i) {
-            v1[i] = B.coords[i] - A.coords[i];
-            v2[i] = B.coords[i] - C.coords[i];
+            v1[i] = B[i] - A[i];
+            v2[i] = B[i] - C[i];
             dot1 += v1[i] * v1[i];
             dot2 += v2[i] * v2[i];
         }

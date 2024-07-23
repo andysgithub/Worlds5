@@ -56,10 +56,6 @@ __device__ void ProcessRayKernel(int rayCountX, int rayCountY, RayDataTypeInterm
         sinf(latRadians),
         cosf(latRadians) * cosf(-longRadians));
 
-    //float xFactor = cosf(latRadians) * sinf(-longRadians);
-    //float yFactor = sinf(latRadians);
-    //float zFactor = cosf(latRadians) * cosf(-longRadians);
-
     float startDistance = d_rayParams.sphereRadius;
 
     //if (rayParams.useClipping) {
@@ -91,6 +87,4 @@ __global__ void ProcessRaysKernel(int raysPerLine, int totalLines, RayDataTypeIn
 
     int index = rayCountY * raysPerLine + rayCountX;
     ProcessRayKernel(rayCountX, rayCountY, &results[index]);
-
-    //printf("Ray %d processed\n", index);
 }

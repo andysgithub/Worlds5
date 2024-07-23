@@ -1,7 +1,7 @@
 //#include <cuda_runtime.h>
 //#include <device_launch_parameters.h>
 //#include <stdexcept>
-//#include "vector5Single.h"
+//#include "Vector5.h"
 //#include "Vectors.h"
 //#include "RayTracer.cuh"
 //
@@ -19,7 +19,7 @@
 //    const float YPos = distance * coord.Y;
 //    const float ZPos = distance * coord.Z;
 //
-//    vector5Single c = { 0,0,0,0,0 };
+//    Vector5 c = { 0,0,0,0,0 };
 //
 //    // Transform 3D point x,y,z into nD fractal space at point c[]
 //    RayTracer::VectorTrans(XPos, YPos, ZPos, &c);

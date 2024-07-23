@@ -21,7 +21,7 @@
     <ClInclude Include="cuda_interface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="vector5Single.h">
+    <ClInclude Include="Vector5.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RayTracer.cuh">
