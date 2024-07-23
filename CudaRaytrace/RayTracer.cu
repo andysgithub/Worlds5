@@ -166,9 +166,6 @@ namespace RayTracer {
         Vector5 diff;
         float ModulusTotal = 0;
         float AngleTotal = PI;
-
-        z[DimTotal - 2] = 0;
-        z[DimTotal - 1] = 0;
         z = c;
 
         Vector5 vectorSet[3];
@@ -223,8 +220,6 @@ namespace RayTracer {
         float ModulusTotal = 0;
         float bailout_squared = d_rayParams.bailout * d_rayParams.bailout;
 
-        z[DimTotal - 2] = 0;
-        z[DimTotal - 1] = 0;
         z = c;
 
         #pragma unroll 1

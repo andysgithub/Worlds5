@@ -60,11 +60,11 @@ struct Vector5 {
     __host__ __device__ Vector5 operator+(const Vector5& o) const {
         Vector5 result;
 
-        result.m[0] = this->m[0] + o.m[0];
-        result.m[1] = this->m[1] + o.m[1];
-        result.m[2] = this->m[2] + o.m[2];
-        result.m[3] = this->m[3] + o.m[3];
-        result.m[4] = this->m[4] + o.m[4];
+        result.m[0] = m[0] + o.m[0];
+        result.m[1] = m[1] + o.m[1];
+        result.m[2] = m[2] + o.m[2];
+        result.m[3] = m[3] + o.m[3];
+        result.m[4] = m[4] + o.m[4];
 
         return result;
     }
@@ -72,11 +72,11 @@ struct Vector5 {
     __host__ __device__ Vector5 operator-(const Vector5& o) const {
         Vector5 result;
 
-        result.m[0] = this->m[0] - o.m[0];
-        result.m[1] = this->m[1] - o.m[1];
-        result.m[2] = this->m[2] - o.m[2];
-        result.m[3] = this->m[3] - o.m[3];
-        result.m[4] = this->m[4] - o.m[4];
+        result.m[0] = m[0] - o.m[0];
+        result.m[1] = m[1] - o.m[1];
+        result.m[2] = m[2] - o.m[2];
+        result.m[3] = m[3] - o.m[3];
+        result.m[4] = m[4] - o.m[4];
         
         return result;
     }
@@ -84,11 +84,11 @@ struct Vector5 {
     __host__ __device__ Vector5 operator*(float scalar) const {
         Vector5 result;
 
-        result.m[0] = this->m[0] * scalar;
-        result.m[1] = this->m[1] * scalar;
-        result.m[2] = this->m[2] * scalar;
-        result.m[3] = this->m[3] * scalar;
-        result.m[4] = this->m[4] * scalar;
+        result.m[0] = m[0] * scalar;
+        result.m[1] = m[1] * scalar;
+        result.m[2] = m[2] * scalar;
+        result.m[3] = m[3] * scalar;
+        result.m[4] = m[4] * scalar;
 
         return result;
     }
@@ -106,11 +106,11 @@ struct Vector5 {
     __host__ __device__ float dot(const Vector5& o) const {
         float result = 0;
 
-        result += this->m[0] * o.m[0];
-        result += this->m[1] * o.m[1];
-        result += this->m[2] * o.m[2];
-        result += this->m[3] * o.m[3];
-        result += this->m[4] * o.m[4];
+        result += m[0] * o.m[0];
+        result += m[1] * o.m[1];
+        result += m[2] * o.m[2];
+        result += m[3] * o.m[3];
+        result += m[4] * o.m[4];
 
         return result;
     }
@@ -135,16 +135,8 @@ struct Vector5 {
         return *this;
     }
 
-    __host__ __device__ float magnitude() const {
-        float sum = 0;
-
-        sum += m[0] * m[0];
-        sum += m[1] * m[1];
-        sum += m[2] * m[2];
-        sum += m[3] * m[3];
-        sum += m[4] * m[4];
-
-        return std::sqrt(sum);
+	__host__ __device__ float magnitude() const {
+        return m[0] * m[0] + m[1] * m[1] + m[2] * m[2] + m[3] * m[3] + m[4] * m[4];
     }
 
     __host__ __device__ static float clamp(float x, float lower, float upper) {
