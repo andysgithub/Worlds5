@@ -16,6 +16,18 @@ struct Vector3 {
         return Vector3(X + v.X, Y + v.Y, Z + v.Z);
     }
 
+    __device__ __host__ Vector3 operator+(const float scalar) const {
+        return Vector3(X + scalar, Y + scalar, Z + scalar);
+    }
+
+    __device__ __host__ Vector3 operator-(const Vector3& v) const {
+        return Vector3(X - v.X, Y - v.Y, Z - v.Z);
+    }
+
+    __device__ __host__ Vector3 operator-(const float scalar) const {
+        return Vector3(X - scalar, Y - scalar, Z - scalar);
+    }
+
     __device__ __host__ Vector3 operator*(float scalar) {
         return Vector3(scalar * X, scalar * Y, scalar * Z);
     }
@@ -24,12 +36,16 @@ struct Vector3 {
         return X * v.X + Y * v.Y + Z * v.Z;
     }
 
-    __device__ __host__ Vector3 Normalize() const {
-        const float magnitude = std::sqrt(X * X + Y * Y + Z * Z);
-        if (magnitude > 0) {
-            return Vector3(X / magnitude, Y / magnitude, Z / magnitude);
+    __device__ __host__ Vector3 normalize() const {
+        const float mag = magnitude();
+        if (mag > 0) {
+            return Vector3(X / mag, Y / mag, Z / mag);
         }
         return *this;
+    }
+
+    __device__ __host__ float magnitude() const {
+        return sqrtf(X * X + Y * Y + Z * Z);
     }
 };
 

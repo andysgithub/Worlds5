@@ -49,11 +49,11 @@ namespace RayTracer {
 
                 externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, rayPoint, c);
 
-                bool shouldRecord = !externalPoint && previousPointExternal;
+                bool crossedBoundary = !externalPoint && previousPointExternal;
 
-                if (shouldRecord) {
-                    //float sampleDistance = FindSurface(stepSize, stepFactor, currentDistance, rayPoint);
-                    float sampleDistance = currentDistance;
+                if (crossedBoundary) {
+                    float sampleDistance = FindSurface(stepSize, stepFactor, currentDistance, rayPoint);
+                    //float sampleDistance = currentDistance;
 
                     bool foundGap = gapFound(sampleDistance, rayPoint, c);
 
@@ -68,6 +68,7 @@ namespace RayTracer {
                     angles[recordedPoints] = Angle;
                     distances[recordedPoints] = sampleDistance;
                     recordedPoints++;
+                    break;
                 }
 
                 previousPointExternal = externalPoint;
@@ -112,6 +113,10 @@ namespace RayTracer {
         float stepSize, float stepFactor, float currentDistance,
         Vector3 rayPoint) {
 
+        Vector3 outsidePoint = rayPoint - currentDistance;
+
+
+
         float sampleDistance = currentDistance;
         const Vector5 c = { 0, 0, 0, 0, 0 };
 
@@ -155,7 +160,7 @@ namespace RayTracer {
 
     __device__ bool SamplePoint(float distance, float* Modulus, float* Angle, Vector3 rayPoint, Vector5 c) {
         // Determine the x,y,z coord for this point
-        Vector3 imagePoint = Vector3(distance * rayPoint.X, distance * rayPoint.Y, distance * rayPoint.Z);
+        Vector3 imagePoint = rayPoint * distance;
 
         // Transform 3D point x,y,z into nD fractal space at point c[]
         VectorTrans(imagePoint, &c);
@@ -213,7 +218,7 @@ namespace RayTracer {
         VectorTrans(imagePoint, &c);
 
         // Determine orbit value for this point
-        constexpr int MaxCount = 1000;  // Use int instead of long for better performance on GPUs
+        constexpr int MaxCount = 1000;
         Vector5 z = { 0 };
         Vector5 diff;
         float ModulusTotal = 0;
