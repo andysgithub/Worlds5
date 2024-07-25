@@ -210,7 +210,8 @@ bool ExternalPoint(Vector5 c, float bailout)
         ModulusTotal += ModVal;
 
         // Stop accumulating values when modulus exceeds bailout value
-        if (ModVal > bailout * bailout) {
+        if (ModVal > bailout * bailout)
+        {
             count++;
             break;
         }
