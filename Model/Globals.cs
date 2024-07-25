@@ -122,9 +122,9 @@ namespace Model
     /// Global structures for Worlds5.
     /// </summary>
     public class Globals
-	{
+    {
         public static string AppName = "Worlds 5";
-		public static int Dimensions = 5;	//  Total dimensions for the current location
+        public static int Dimensions = 5;    //  Total dimensions for the current location
         public static string CurrentAddress = "";
         public static clsSphere Sphere = null;
         public const float DEG_TO_RAD = 0.0174532925f;
@@ -150,5 +150,5 @@ namespace Model
             public int rgbGreen;
             public int rgbRed;
         }
-	}
+    }
 }

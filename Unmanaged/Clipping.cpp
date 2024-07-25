@@ -1,8 +1,9 @@
 #include "Clipping.h"
 #include <cmath>
 #include <stdexcept>
-#include "Vectors.cuh"
-#include "RayProcessing.h"
+#include "Parameters.h"
+#include "RayTracer.h"
+#include "Vectors.h"
 
 namespace Worlds5 {
 

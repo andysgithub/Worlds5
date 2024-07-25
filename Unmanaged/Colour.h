@@ -3,6 +3,8 @@
 #ifndef COLOUR_H
 #define COLOUR_H
 
+const float inv60 = (float)0.01667;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

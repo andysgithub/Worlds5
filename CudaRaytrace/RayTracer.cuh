@@ -2,7 +2,7 @@
 
 #include <cuda_runtime.h>
 #include "Vectors.cuh"
-#include "cuda_interface.h"
+#include "Parameters.h"
 
 // Constant memory declaration
 extern __constant__ float cudaTrans[6][DimTotal];

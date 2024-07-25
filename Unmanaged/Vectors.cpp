@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include <math.h>
-#include "Vectors.cuh"
+#include "Vectors.h"
 
 // Return angle between lines defined by vectors BA and BC
 float vectorAngle(Vector5 A, Vector5 B, Vector5 C)
@@ -70,4 +70,18 @@ float vectorAngle(Vector5 A, Vector5 B, Vector5 C)
 
     // Return the angle in radians
     return static_cast<float>(acos(dotProduct));
+}
+
+void v_mandel(float* a, const float* b) {
+    float a0 = a[0];
+    float a1 = a[1];
+    float a2 = a[2];
+    float a3 = a[3];
+    float a4 = a[4];
+
+    a[0] = a0 * a0 - a1 * a1 + 2 * a1 * (a2 - a3 + a4) + b[0];
+    a[1] = 2 * (a0 * a1 - a2 * a3 + a2 * a4) + a2 * a2 + b[1];
+    a[2] = 2 * (a0 * a2 + a3 * a4) - a3 * a3 + b[2];
+    a[3] = 2 * a0 * a3 + a4 * a4 + b[3];
+    a[4] = 2 * a0 * a4 + b[4];
 }

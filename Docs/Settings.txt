@@ -1,25 +1,25 @@
-Setting			Volume		Surface
-~~~~~~~			~~~~~~		~~~~~~~
+Setting            Volume        Surface
+~~~~~~~            ~~~~~~        ~~~~~~~
 
-Viewport Resolution	0.05	0.03
-Sphere Radius		1		8
-Centre Latitude		0		0
-Centre Longitude	0		0
-Viewport Height		20		20
-Viewport Width		20		20
+Viewport Resolution    0.05    0.03
+Sphere Radius        1        8
+Centre Latitude        0        0
+Centre Longitude    0        0
+Viewport Height        20        20
+Viewport Width        20        20
 
-Sampling Interval	0.05	0.005
-Surface Thickness	0.004	0.004
-Ray Points			90		90
-Maximum Samples		500		1000
-Boundary Interval	0.0005	0.0005
-Binary Search Steps	25		50
+Sampling Interval    0.05    0.005
+Surface Thickness    0.004    0.004
+Ray Points            90        90
+Maximum Samples        500        1000
+Boundary Interval    0.0005    0.0005
+Binary Search Steps    25        50
 
-Exposure Value		16.0	1.5
-Saturation			20		20
-Surface Contrast	80		60
-Lighting Angle		45		46.5
-Start Distance		1		8.5
-End Distance		15		12.5
-Bitmap Height		600		600
-Bitmap Width		600		600
+Exposure Value        16.0    1.5
+Saturation            20        20
+Surface Contrast    80        60
+Lighting Angle        45        46.5
+Start Distance        1        8.5
+End Distance        15        12.5
+Bitmap Height        600        600
+Bitmap Width        600        600

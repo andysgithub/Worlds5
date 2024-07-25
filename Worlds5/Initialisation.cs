@@ -14,11 +14,11 @@ namespace Worlds5
         public string State;
     }
 
-	sealed public class Initialisation 
-	{ 
-		//  Initialise settings from property settings
-		public static WindowState LoadSettings() 
-		{
+    sealed public class Initialisation 
+    { 
+        //  Initialise settings from property settings
+        public static WindowState LoadSettings() 
+        {
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string applicationPath = Path.Combine(appDataPath, "Worlds5");
             if (!Directory.Exists(applicationPath))
@@ -60,7 +60,7 @@ namespace Worlds5
                 Globals.SetUp.StatusBar = prefs.StatusBar; 
 
                 // Imaging settings
-				Globals.SetUp.FramesPerSec = imaging.FramesPerSec;
+                Globals.SetUp.FramesPerSec = imaging.FramesPerSec;
                 Globals.SetUp.AutoRepeat = imaging.AutoRepeat;
 
                 // Main window
@@ -72,13 +72,13 @@ namespace Worlds5
                 {
                     windowState.Left = Screen.PrimaryScreen.Bounds.Width - windowState.Width;
                 }
-				windowState.Top = mainWindow.MainTop; 
-			}
-			catch  
-			{ 
-			}
+                windowState.Top = mainWindow.MainTop; 
+            }
+            catch  
+            { 
+            }
             return windowState; 
-		}
+        }
 
         private static string DecodeTag(string setting)
         {
@@ -91,15 +91,15 @@ namespace Worlds5
             return decodedSetting;
         }
         
-		//  Save settings to property settings
-		public static void SaveSettings(int windowWidth, int windowHeight, int windowLeft, int windowTop, FormWindowState windowState) 
-		{
+        //  Save settings to property settings
+        public static void SaveSettings(int windowWidth, int windowHeight, int windowLeft, int windowTop, FormWindowState windowState) 
+        {
             SettingsData.Preferences prefs = new SettingsData.Preferences();
             SettingsData.Imaging imaging = new SettingsData.Imaging();
             SettingsData.MainWindow mainWindow = new SettingsData.MainWindow();
 
             try
-			{
+            {
                 // Preferences
                 prefs.NavPath = Globals.SetUp.NavPath;
                 prefs.SeqPath = Globals.SetUp.SeqPath;
@@ -114,20 +114,20 @@ namespace Worlds5
 
                 // Main window
                 if (windowState != FormWindowState.Minimized) 
-				{
+                {
                     mainWindow.MainState = windowState.ToString();
-					if (windowState != FormWindowState.Maximized) 
-					{
+                    if (windowState != FormWindowState.Maximized) 
+                    {
                         mainWindow.MainWidth = windowWidth;
                         mainWindow.MainHeight = windowHeight;
                         mainWindow.MainLeft = windowLeft;
                         mainWindow.MainTop = windowTop;
-					} 
-				} 
-			}
-			catch
-			{
-			}
+                    } 
+                } 
+            }
+            catch
+            {
+            }
 
             SettingsData.RootObject settingsRoot = new SettingsData.RootObject();
             settingsRoot.Preferences = prefs;
@@ -143,6 +143,6 @@ namespace Worlds5
                 string settingsJson = JsonConvert.SerializeObject(settingsRoot);
                 w.Write(settingsJson);
             }
-		} 
-	} 
+        } 
+    } 
 }

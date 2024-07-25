@@ -1,43 +1,43 @@
 ﻿Main.mnuLoad_Click()
 
-	Navigation.Navigate(Address)
-		LoadData(Address + ".nav")
-		
-	ImageRendering.PerformRayTracing()
-		// Initialise ray map
-		Model.Globals.Sphere.InitialiseRayMap()
-		// Perform raytracing using the background worker thread
-		lineThread[threadIndex].RunWorkerAsync()
+    Navigation.Navigate(Address)
+        LoadData(Address + ".nav")
+        
+    ImageRendering.PerformRayTracing()
+        // Initialise ray map
+        Model.Globals.Sphere.InitialiseRayMap()
+        // Perform raytracing using the background worker thread
+        lineThread[threadIndex].RunWorkerAsync()
 
-		bwThread_DoWork()       <-- increments Y
+        bwThread_DoWork()       <-- increments Y
             // Initialise the image rendering sphere
             ImageRendering.InitialiseSphere()
-			// Process this line
-			ImageRendering.PerformRayTracing(lineIndex)
+            // Process this line
+            ImageRendering.PerformRayTracing(lineIndex)
 
                 // Trace each ray for this latitude line and store in the sphere
-				ProcessLatitudeLine(rayCountY, latitude)        <-- increments X
-					// Trace the ray from the sphere sphereRadius outwards
-					TraceRay()
-					// Record the fractal value collection for this ray
-					tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);
-					// Add this ray to the ray map in the sphere
-					sphere.settings.RecordRay(tracedRay, rayCountX, rayCountY)
-					
-				DisplayLine(sphere, rayCountY, latitude)        <-- increments X
-					// For each longitude point on this line, get the ray from the ray map
-					tracedRay = sphere.RayMap[rayCountX++, rayCountY]
-					// Calculate the tilt values from the previous rays
-					sphere.settings.addTiltValues()
-					// Convert the fractal value collection into an rgb colour value
-					tracedRay.SetColour(sphere.settings.ExposureValue, sphere.settings.Saturation, sphere.settings.StartDistance, sphere.settings.EndDistance)
+                ProcessLatitudeLine(rayCountY, latitude)        <-- increments X
+                    // Trace the ray from the sphere sphereRadius outwards
+                    TraceRay()
+                    // Record the fractal value collection for this ray
+                    tracedRay = new TracedRay(externalPoints, modulusValues, angleValues, distanceValues);
+                    // Add this ray to the ray map in the sphere
+                    sphere.settings.RecordRay(tracedRay, rayCountX, rayCountY)
+                    
+                DisplayLine(sphere, rayCountY, latitude)        <-- increments X
+                    // For each longitude point on this line, get the ray from the ray map
+                    tracedRay = sphere.RayMap[rayCountX++, rayCountY]
+                    // Calculate the tilt values from the previous rays
+                    sphere.settings.addTiltValues()
+                    // Convert the fractal value collection into an rgb colour value
+                    tracedRay.SetColour(sphere.settings.ExposureValue, sphere.settings.Saturation, sphere.settings.StartDistance, sphere.settings.EndDistance)
 
 Unmanaged\RayTracer.cpp:
-	// Produce the collection of fractal point values for the given vector
-	TraceRay()
-		// Determine orbit value for the starting point
-		SamplePoint(currentDistance, &Modulus, &Angle, xFactor, yFactor, zFactor, c)
-			// Perform binary search between this and the previous point, to determine surface position
-			sampleDistance = FindSurface(samplingInterval, binarySearchSteps, currentDistance, xFactor, yFactor, zFactor)
-			// Determine orbit properties for this point
-			externalPoint = SamplePoint(sampleDistance, &Modulus, &Angle, xFactor, yFactor, zFactor, c)
+    // Produce the collection of fractal point values for the given vector
+    TraceRay()
+        // Determine orbit value for the starting point
+        SamplePoint(currentDistance, &Modulus, &Angle, xFactor, yFactor, zFactor, c)
+            // Perform binary search between this and the previous point, to determine surface position
+            sampleDistance = FindSurface(samplingInterval, binarySearchSteps, currentDistance, xFactor, yFactor, zFactor)
+            // Determine orbit properties for this point
+            externalPoint = SamplePoint(sampleDistance, &Modulus, &Angle, xFactor, yFactor, zFactor, c)

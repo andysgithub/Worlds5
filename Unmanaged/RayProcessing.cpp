@@ -8,7 +8,8 @@
 #include "RayProcessing.h"
 #include "TracedRay.h" 
 #include "Clipping.h" 
-#include "cuda_interface.h"
+#include "Parameters.h"
+#include "Vectors.h"
 
 class RayProcessing {
 
@@ -117,11 +118,7 @@ void ProcessRaysC(RayTracingParams rayParams, RenderingParams renderParams, int 
 
 // Example of how to use std::thread for parallel processing in C++
 EXPORT void __stdcall ProcessRays(RayTracingParams rayParams, RenderingParams renderParams, int raysPerLine, int totalLines, ProgressCallback callback) {
-    if (rayParams.cudaMode) {
-        // Call the CUDA kernel wrapper
-        LaunchProcessRaysKernel(raysPerLine, totalLines, callback);
-    }
-    else {
+
         ProcessRaysC(rayParams, renderParams, raysPerLine, totalLines, callback);
-    }
+    
 }

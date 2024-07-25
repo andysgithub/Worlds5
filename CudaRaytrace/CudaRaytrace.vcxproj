@@ -91,7 +91,7 @@
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="cuda_interface.h" />
+    <ClInclude Include="Parameters.h" />
     <ClInclude Include="RayProcessing.cuh" />
     <ClInclude Include="RayTracer.cuh" />
     <ClInclude Include="Vectors.cuh" />

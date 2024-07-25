@@ -14,7 +14,7 @@
         }
 
         "Raytracing": {
-			"Bailout": float
+            "Bailout": float
             "SamplingInterval": float
             "MaxSamples": int
             "BoundaryInterval": float
@@ -50,7 +50,7 @@
         }
 
         "PositionMatrix": float[6,5]
-		"RayMap": TracedRay[,]
+        "RayMap": TracedRay[,]
         "Boundary": ImageSettings
         "Volume": ImageSettings
     }

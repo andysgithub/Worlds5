@@ -12,7 +12,7 @@
     </CudaCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cuda_interface.h">
+    <ClInclude Include="Parameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RayTracer.cuh">

@@ -7,7 +7,7 @@
 
 #include <vector>
 #include <cmath>
-#include "cuda_interface.h"
+#include "Parameters.h"
 #include "Colour.h"
 
 struct RGB_QUAD {

@@ -18,8 +18,8 @@ namespace Worlds5
         private ImageDisplay imageDisplay;
 
         //  Sequence playback
-        // private static int m_CurrentKey;		// Current key frame for sequence
-        // private static int m_FrameCount;		// Frame to display for current key
+        // private static int m_CurrentKey;        // Current key frame for sequence
+        // private static int m_FrameCount;        // Frame to display for current key
 
         #endregion
 
@@ -67,12 +67,6 @@ namespace Worlds5
         static extern void InitSphere(float[,] PositionMatrix);
 
         [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool InitializeGPU(ref RayTracingParams rayParams, ref RenderingParams renderingParams);
-
-        [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool CopyTransformationMatrix([In] float[] positionMatrix);
-
-        [DllImport("Unmanaged.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ProcessRays(RayTracingParams rayParams, RenderingParams renderParams, int raysPerLine, int totalLines, ProgressCallback callback);
 
         #endregion
@@ -91,39 +85,7 @@ namespace Worlds5
 
             RayTracingParams rayParams = new RayTracingParams(sphere.settings);
             RenderingParams renderParams = new RenderingParams(sphere.settings);
-
-            if (rayParams.cudaMode)
-            {
-                bool success = InitializeGPU(ref rayParams, ref renderParams);
-                if (!success)
-                {
-                    Console.WriteLine("Failed to initialize GPU parameters");
-                }
-
-                success = CopyMatrix(sphere.settings.PositionMatrix);
-                if (!success)
-                {
-                    Console.WriteLine("Failed to set position matrix");
-                }
-            }
         }
-
-        public static bool CopyMatrix(float[,] positionMatrix)
-        {
-            int rows = positionMatrix.GetLength(0); // Should be 6
-            int cols = positionMatrix.GetLength(1); // Should be 5
-            float[] flatMatrix = new float[rows * cols];
-
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < cols; j++)
-                {
-                    flatMatrix[i * cols + j] = positionMatrix[i, j];
-                }
-            }
-            return CopyTransformationMatrix(flatMatrix);
-        }
-
         public async Task<bool> PerformRayTracing()
         {
             return await Task.Run(() =>

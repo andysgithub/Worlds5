@@ -4,7 +4,7 @@
 #include <math_constants.h>
 #include <cmath>
 #include <stdio.h>
-#include "cuda_interface.h"
+#include "Parameters.h"
 #include "Vectors.cuh"
 #include "RayTracer.cuh"
 

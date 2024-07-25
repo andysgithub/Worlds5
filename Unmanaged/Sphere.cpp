@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include <math.h>
 #include "RayProcessing.h"
-#include "declares.h"
+#include "Vectors.h"
 
 float  m_Trans[DimTotal + 1][DimTotal];
 

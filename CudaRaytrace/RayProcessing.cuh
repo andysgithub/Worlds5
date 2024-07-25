@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cuda_runtime.h>
-#include "cuda_interface.h"
+#include "Parameters.h"
 
 struct RayDataTypeIntermediate {
     int ExternalPoints[MAX_POINTS];

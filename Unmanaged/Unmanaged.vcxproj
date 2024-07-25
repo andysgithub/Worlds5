@@ -205,19 +205,15 @@
     <ClCompile Include="Vectors.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\CudaRaytrace\Parameters.h" />
     <ClInclude Include="Clipping.h" />
     <ClInclude Include="Colour.h" />
-    <ClInclude Include="Myrion.h" />
-    <ClInclude Include="Declares.h" />
+    <ClInclude Include="RayTracer.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="RayProcessing.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CudaRaytrace\CudaRaytrace.vcxproj">
-      <Project>{e2ff6630-8279-4ba8-b982-0d06aa3a22f5}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="..\CudaRaytrace\Vectors.h" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

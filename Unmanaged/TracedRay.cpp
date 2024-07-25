@@ -10,8 +10,8 @@
 #include <limits>
 #include <iostream>
 #include <Windows.h>
-#include "Vectors.cuh"
-#include "cuda_interface.h"
+#include "Vectors.h"
+#include "Parameters.h"
 
 // Constructor taking 4 references to vector objects
 TracedRay::TracedRay(
@@ -92,7 +92,7 @@ void TracedRay::SetColour() {
                         static_cast<float>(std::sin(lightingAngleXY) * std::cos(lightElevationAngle)),
                         static_cast<float>(std::sin(lightElevationAngle))
                     );
-                    lightDirection = lightDirection.Normalize();
+                    lightDirection = lightDirection.normalize();
 
                     // Get tilt values
                     float xTilt = !xTiltValues.empty() ? xTiltValues[i] : 0.0f;
@@ -104,7 +104,7 @@ void TracedRay::SetColour() {
                         static_cast<float>(-std::sin(yTilt)),
                         static_cast<float>(std::sqrt(1 - std::sin(xTilt) * std::sin(xTilt) - std::sin(yTilt) * std::sin(yTilt)))
                     );
-                    surfaceNormal = surfaceNormal.Normalize();
+                    surfaceNormal = surfaceNormal.normalize();
 
                     // Calculate the dot product
                     float dotProduct = lightDirection.dot(surfaceNormal);

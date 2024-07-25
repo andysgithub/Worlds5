@@ -7,7 +7,7 @@
 #include <cmath>
 #include <iostream>
 #include <stdio.h>
-#include "cuda_interface.h"
+#include "Parameters.h"
 #include "RayTracer.cuh"
 #include "RayProcessing.cuh"
 
