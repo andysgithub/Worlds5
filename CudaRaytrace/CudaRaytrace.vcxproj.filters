@@ -18,9 +18,6 @@
     <ClInclude Include="RayTracer.cuh">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vectors.cuh">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RayProcessing.cuh">
       <Filter>Header Files</Filter>
     </ClInclude>

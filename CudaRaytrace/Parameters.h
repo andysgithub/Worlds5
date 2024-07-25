@@ -6,6 +6,8 @@
 
 #define DEG_TO_RAD 0.0174532925F
 
+struct RayDataType;
+
 enum class AxisPair
 {
     XY,
@@ -57,7 +59,5 @@ struct RenderingParams {
 // Forward declarations
 struct RayTracingParams;
 struct RenderingParams;
-struct RayDataTypeIntermediate;
 
-// Define the callback type after RayDataTypeIntermediate is declared
-typedef void(__stdcall* ProgressCallback)(int rayCount, int rowCount, RayDataTypeIntermediate* rayData);
+typedef void(__stdcall* ProgressCallback)(int rayCount, int rowCount, RayDataType* rayData);

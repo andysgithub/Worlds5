@@ -29,9 +29,11 @@ public:
         float latRadians = latitude * DEG_TO_RAD;
         float longRadians = longitude * DEG_TO_RAD;
 
-        float xFactor = std::cos(latRadians) * std::sin(-longRadians);
-        float yFactor = std::sin(latRadians);
-        float zFactor = std::cos(latRadians) * std::cos(-longRadians);
+
+        Vector3 rayPoint = Vector3(
+            std::cos(latRadians) * std::sin(-longRadians),
+            std::sin(latRadians),
+            std::cos(latRadians) * std::cos(-longRadians));
 
         float startDistance = rayParams.sphereRadius;
 
@@ -41,7 +43,7 @@ public:
         }
 
         int points = TraceRay(startDistance, rayParams,
-            xFactor, yFactor, zFactor,
+            rayPoint,
             externalPoints.data(), modulusValues.data(), angleValues.data(), distanceValues.data());
 
         externalPoints.resize(points);
@@ -87,7 +89,7 @@ private:
     ProgressCallback progressCallback;
 };
 
-void ProcessRaysC(RayTracingParams rayParams, RenderingParams renderParams, int raysPerLine, int totalLines, ProgressCallback callback) {
+void ProcessRays(RayTracingParams rayParams, RenderingParams renderParams, int raysPerLine, int totalLines, ProgressCallback callback) {
 
     std::vector<std::vector<RayProcessing>> rayProc(raysPerLine, std::vector<RayProcessing>(totalLines));
     std::vector<std::thread> threads;
@@ -114,11 +116,4 @@ void ProcessRaysC(RayTracingParams rayParams, RenderingParams renderParams, int 
     for (auto& thread : threads) {
         thread.join();
     }
-}
-
-// Example of how to use std::thread for parallel processing in C++
-EXPORT void __stdcall ProcessRays(RayTracingParams rayParams, RenderingParams renderParams, int raysPerLine, int totalLines, ProgressCallback callback) {
-
-        ProcessRaysC(rayParams, renderParams, raysPerLine, totalLines, callback);
-    
 }

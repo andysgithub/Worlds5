@@ -94,7 +94,6 @@
     <ClInclude Include="Parameters.h" />
     <ClInclude Include="RayProcessing.cuh" />
     <ClInclude Include="RayTracer.cuh" />
-    <ClInclude Include="Vectors.cuh" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="kernel.cu">

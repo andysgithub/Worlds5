@@ -1,13 +1,8 @@
 ﻿using Model;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using static Model.TracedRay;
 
 namespace Worlds5
 {
@@ -45,25 +40,6 @@ namespace Worlds5
                 dstream.CopyTo(output);
             }
             return output.ToArray();
-        }
-
-        public static RayDataType ConvertFromIntermediate(RayDataTypeIntermediate intermediate)
-        {
-            RayDataType result = new RayDataType
-            {
-                BoundaryTotal = intermediate.BoundaryTotal,
-                ExternalPoints = new int[intermediate.ArraySize],
-                ModulusValues = new float[intermediate.ArraySize],
-                AngleValues = new float[intermediate.ArraySize],
-                DistanceValues = new float[intermediate.ArraySize]
-            };
-
-            Array.Copy(intermediate.ExternalPoints, result.ExternalPoints, intermediate.ArraySize);
-            Array.Copy(intermediate.ModulusValues, result.ModulusValues, intermediate.ArraySize);
-            Array.Copy(intermediate.AngleValues, result.AngleValues, intermediate.ArraySize);
-            Array.Copy(intermediate.DistanceValues, result.DistanceValues, intermediate.ArraySize);
-
-            return result;
         }
     }
 }

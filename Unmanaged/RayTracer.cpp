@@ -10,20 +10,8 @@
 
 const BYTE MAX_COLOURS = 255;
 
-// Error checking macro
-#define cudaCheckError(ans) { gpuAssert((ans), __FILE__, __LINE__); }
-inline void gpuAssert(cudaError_t code, const char* file, int line, bool abort = true)
-{
-    if (code != cudaSuccess)
-    {
-        fprintf(stderr, "GPUassert: %s %s %d\n", cudaGetErrorString(code), file, line);
-        if (abort) exit(code);
-    }
-}
-
 // Produce the collection of fractal point values for the given vector
-int TraceRay(float startDistance, RayTracingParams rayParams,
-    float xFactor, float yFactor, float zFactor,
+int TraceRay(float startDistance, RayTracingParams rayParams, Vector3 rayPoint,
     int externalPoints[], float modulusValues[], float angles[], float distances[])
 {
     float    Modulus, Angle;
@@ -34,7 +22,7 @@ int TraceRay(float startDistance, RayTracingParams rayParams,
     const Vector5 c = { 0, 0, 0, 0, 0 };                            // 5D vector for ray point coordinates
 
     // Determine orbit value for the starting point
-    bool externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, rayParams.bailout, xFactor, yFactor, zFactor, c);
+    bool externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, rayParams.bailout, rayPoint, c);
 
     // Record this point as the first sample
     externalPoints[recordedPoints] = externalPoint;
@@ -51,7 +39,7 @@ int TraceRay(float startDistance, RayTracingParams rayParams,
         sampleCount++;
 
         // Determine orbit properties for this point
-        externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, rayParams.bailout, xFactor, yFactor, zFactor, c);
+        externalPoint = SamplePoint(currentDistance, &Modulus, &Angle, rayParams.bailout, rayPoint, c);
 
         // If this is an internal point and previous point is external
         if (rayParams.activeIndex == 0 && !externalPoint && externalPoints[recordedPoints - 1] == 1)
@@ -61,10 +49,10 @@ int TraceRay(float startDistance, RayTracingParams rayParams,
             // Perform binary search between this and the previous point, to determine surface position
             float sampleDistance = FindSurface(
                 rayParams.samplingInterval, rayParams.surfaceSmoothing, rayParams.binarySearchSteps,
-                currentDistance, xFactor, yFactor, zFactor, rayParams.bailout);
+                currentDistance, rayPoint, rayParams.bailout);
             //float sampleDistance = currentDistance;
 
-            bool foundGap = gapFound(sampleDistance, rayParams.surfaceThickness, xFactor, yFactor, zFactor, rayParams.bailout, c);
+            bool foundGap = gapFound(sampleDistance, rayParams.surfaceThickness, rayPoint, rayParams.bailout, c);
 
             // Test point a short distance further along, to determine whether this is still in the set
             if (rayParams.surfaceThickness > 0 && foundGap) {
@@ -73,7 +61,7 @@ int TraceRay(float startDistance, RayTracingParams rayParams,
                 continue;
             }
             // Determine orbit properties for this point
-            externalPoint = SamplePoint(sampleDistance, &Modulus, &Angle, rayParams.bailout, xFactor, yFactor, zFactor, c);
+            externalPoint = SamplePoint(sampleDistance, &Modulus, &Angle, rayParams.bailout, rayPoint, c);
 
             // Save this point value in the ray collection
             externalPoints[recordedPoints] = externalPoint ? 1 : 0;
@@ -94,7 +82,7 @@ int TraceRay(float startDistance, RayTracingParams rayParams,
                 // Perform binary search between this and the recorded point, to determine boundary position
                 float sampleDistance = FindBoundary(rayParams.samplingInterval, rayParams.binarySearchSteps, currentDistance, angles[recordedPoints - 1],
                     rayParams.boundaryInterval, &externalPoint, &Modulus, &Angle,
-                    xFactor, yFactor, zFactor, rayParams.bailout);
+                    rayPoint, rayParams.bailout);
 
                 // Save this point value in the ray collection
                 externalPoints[recordedPoints] = externalPoint ? 1 : 0;
@@ -112,7 +100,7 @@ int TraceRay(float startDistance, RayTracingParams rayParams,
 
 EXPORT float __stdcall FindSurface(
     float samplingInterval, float surfaceSmoothing, int binarySearchSteps, float currentDistance, 
-    float xFactor, float yFactor, float zFactor, float bailout)
+    Vector3 rayPoint, float bailout)
 {
     float stepFactor = surfaceSmoothing / 10;
     float    stepSize = -samplingInterval * stepFactor;
@@ -127,7 +115,7 @@ EXPORT float __stdcall FindSurface(
         sampleDistance = sampleDistance + stepSize;
 
         // If this point is internal to the set
-        if (!SamplePoint(sampleDistance, bailout, xFactor, yFactor, zFactor, c))
+        if (!SamplePoint(sampleDistance, bailout, rayPoint, c))
         {
             // Step back next time
             stepSize = -fabs(stepSize) * stepFactor;
@@ -142,8 +130,7 @@ EXPORT float __stdcall FindSurface(
 }
 
 EXPORT float __stdcall FindBoundary(float samplingInterval, int binarySearchSteps, float currentDistance, float previousAngle,
-                                      float boundaryInterval, bool *externalPoint, float *Modulus, float *Angle, 
-                                      float xFactor, float yFactor, float zFactor, float bailout)
+    float boundaryInterval, bool *externalPoint, float *Modulus, float *Angle, Vector3 rayPoint, float bailout)
 {
     float stepSize = -samplingInterval / 2;
     float sampleDistance = currentDistance;
@@ -155,7 +142,7 @@ EXPORT float __stdcall FindBoundary(float samplingInterval, int binarySearchStep
         // Step back or forwards by half the distance
         sampleDistance = sampleDistance + stepSize;
         // Take a sample at this point
-        *externalPoint = SamplePoint(sampleDistance, Modulus, Angle, bailout, xFactor, yFactor, zFactor, c);
+        *externalPoint = SamplePoint(sampleDistance, Modulus, Angle, bailout, rayPoint, c);
 
         const float angleChange = fabs(*Angle - previousAngle);
 
@@ -174,15 +161,13 @@ EXPORT float __stdcall FindBoundary(float samplingInterval, int binarySearchStep
     return sampleDistance;
 }
 
-bool SamplePoint(float distance, float* Modulus, float* Angle, float bailout, float xFactor, float yFactor, float zFactor, Vector5 c)
+bool SamplePoint(float distance, float* Modulus, float* Angle, float bailout, Vector3 rayPoint, Vector5 c)
 {
     // Determine the x,y,z coord for this point
-    const float XPos = distance * xFactor;
-    const float YPos = distance * yFactor;
-    const float ZPos = distance * zFactor;
+    const Vector3 testPoint = rayPoint * distance;
 
     // Transform 3D point x,y,z into nD fractal space at point c[]
-    VectorTrans(XPos, YPos, ZPos, &c);
+    VectorTrans(testPoint, &c);
 
     // Determine orbit value for this point
     return ProcessPoint(Modulus, Angle, bailout, c) ? 1 : 0;
@@ -190,15 +175,13 @@ bool SamplePoint(float distance, float* Modulus, float* Angle, float bailout, fl
 
 // Transform 3D coordinates to 5D point c[] in fractal
 // Returns true if point is external to the set
-EXPORT bool __stdcall SamplePoint(float distance, float bailout, float xFactor, float yFactor, float zFactor, Vector5 c)
+EXPORT bool __stdcall SamplePoint(float distance, float bailout, Vector3 rayPoint, Vector5 c)
 {
   // Determine the x,y,z coord for this point
-  const float XPos = distance * xFactor;
-  const float YPos = distance * yFactor;
-  const float ZPos = distance * zFactor;
+  const Vector3 testPoint= rayPoint * distance;
 
   // Transform 3D point x,y,z into nD fractal space at point c[]
-  VectorTrans(XPos, YPos, ZPos, &c);
+  VectorTrans(testPoint, &c);
 
   // Determine orbit value for this point
   return ExternalPoint(c, bailout) ? 1 : 0;
@@ -208,8 +191,8 @@ EXPORT bool __stdcall SamplePoint(float distance, float bailout, float xFactor, 
 // Returns true if point is external to the set
 bool ExternalPoint(Vector5 c, float bailout)
 {
-    const long MaxCount = (long)(MAX_COLOURS);              // Iteration count for external points
-    Vector5 z;                                              // Temporary 5-D vector
+    const long MaxCount = (long)(MAX_COLOURS);          // Iteration count for external points
+    Vector5 z;                                          // Temporary 5-D vector
     float ModulusTotal = 0;
     long count;
 
@@ -293,7 +276,7 @@ bool ProcessPoint(float *Modulus, float *Angle, float bailout, Vector5 c)
     return (count < MaxCount);
 }
 
-bool gapFound(float currentDistance, float surfaceThickness, float xFactor, float yFactor, float zFactor, float bailout, Vector5 c)
+bool gapFound(float currentDistance, float surfaceThickness, Vector3 rayPoint, float bailout, Vector5 c)
 {
     float testDistance;
 
@@ -301,7 +284,7 @@ bool gapFound(float currentDistance, float surfaceThickness, float xFactor, floa
     {
         testDistance = currentDistance + surfaceThickness * factor / 4;
 
-        if (SamplePoint(testDistance, bailout, xFactor, yFactor, zFactor, c))
+        if (SamplePoint(testDistance, bailout, rayPoint, c))
         {
             return true;
         }
@@ -309,14 +292,14 @@ bool gapFound(float currentDistance, float surfaceThickness, float xFactor, floa
     return false;
 }
 
-void VectorTrans(float x, float y, float z, Vector5 *c)
+void VectorTrans(Vector3 imagePoint, Vector5 *c)
 {
     for (int col = 0; col < DimTotal; col++)
     {
         (*c).m[col] =
-            m_Trans[0][col]*x +          // Transforms 3D image space at point x,y,z
-            m_Trans[1][col]*y +          // into nD vector space at point c[]
-            m_Trans[2][col]*z +
+            m_Trans[0][col]* imagePoint.X +          // Transforms 3D image space at point x,y,z
+            m_Trans[1][col]* imagePoint.Y +          // into nD vector space at point c[]
+            m_Trans[2][col]* imagePoint.Z +
             m_Trans[5][col];
     }
 }
@@ -324,14 +307,12 @@ void VectorTrans(float x, float y, float z, Vector5 *c)
 Vector5 ImageToFractalSpace(float distance, Vector3 coord)
 {
     // Determine the x,y,z coord for this point
-    const float XPos = distance * coord.X;
-    const float YPos = distance * coord.Y;
-    const float ZPos = distance * coord.Z;
+    const Vector3 rayPoint = coord * distance;
 
     Vector5 c = { 0,0,0,0,0 };
 
     // Transform 3D point x,y,z into nD fractal space at point c[]
-    VectorTrans(XPos, YPos, ZPos, &c);
+    VectorTrans(rayPoint, &c);
 
     // Return the 5D fractal space point
     return c;

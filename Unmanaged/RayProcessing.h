@@ -42,22 +42,20 @@ EXPORT    void __stdcall InitSphere(float *pTransMatrix);
 EXPORT void __stdcall ProcessRays(RayTracingParams rayParams, RenderingParams renderParams,
     int raysPerLine, int totalLines, ProgressCallback progressCallback);
 
-int TraceRay(float startDistance, RayTracingParams rayParams,
-    float XFactor, float YFactor, float ZFactor,
+int TraceRay(float startDistance, RayTracingParams rayParams, Vector3 rayPoint,
     int externalPoints[], float modulusValues[], float angles[], float distances[]);
 
 EXPORT float __stdcall FindSurface(float samplingInterval, float surfaceSmoothing, int binarySearchSteps, float currentDistance,
-    float xFactor, float yFactor, float zFactor, float bailout);
+    Vector3 rayPoint, float bailout);
 EXPORT float __stdcall FindBoundary(float samplingInterval, int binarySearchSteps, float currentDistance, float previousAngle,
-    float boundaryInterval, bool *externalPoint, float *Modulus, float *Angle,
-    float xFactor, float yFactor, float zFactor, float bailout);
+    float boundaryInterval, bool *externalPoint, float *Modulus, float *Angle, Vector3 rayPoint, float bailout);
 
-EXPORT bool __stdcall SamplePoint(float distance, float bailout, float xFactor, float yFactor, float zFactor, Vector5 c);
+EXPORT bool __stdcall SamplePoint(float distance, float bailout, Vector3 rayPoint, Vector5 c);
 
 bool ExternalPoint(Vector5 c, float bailout);
 bool ProcessPoint(float *Modulus, float *Angle, float bailout, Vector5 c);
-bool gapFound(float currentDistance, float surfaceThickness, float xFactor, float yFactor, float zFactor, float bailout, Vector5 c);
-bool SamplePoint(float distance, float *Modulus, float *Angle, float bailout, float xFactor, float yFactor, float zFactor, Vector5 c);
+bool gapFound(float currentDistance, float surfaceThickness, Vector3 rayPoint, float bailout, Vector5 c);
+bool SamplePoint(float distance, float *Modulus, float *Angle, float bailout, Vector3 rayPoint, Vector5 c);
 void VectorTrans(float x, float y, float z, Vector5 *c);
 
 //////  COLOUR  //////
