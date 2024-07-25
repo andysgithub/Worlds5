@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 
 #include <vector>
 
@@ -6,7 +7,7 @@
 
 #define DEG_TO_RAD 0.0174532925F
 
-struct RayDataType;
+struct RayDataTypeIntermediate;
 
 enum class AxisPair
 {
@@ -30,7 +31,6 @@ struct RayTracingParams {
     float boundaryInterval;
     AxisPair clippingAxes;
     float clippingOffset;
-    bool cudaMode;
     float latitudeStart;
     float longitudeStart;
     int maxSamples;

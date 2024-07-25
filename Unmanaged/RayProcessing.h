@@ -56,7 +56,7 @@ bool ExternalPoint(Vector5 c, float bailout);
 bool ProcessPoint(float *Modulus, float *Angle, float bailout, Vector5 c);
 bool gapFound(float currentDistance, float surfaceThickness, Vector3 rayPoint, float bailout, Vector5 c);
 bool SamplePoint(float distance, float *Modulus, float *Angle, float bailout, Vector3 rayPoint, Vector5 c);
-void VectorTrans(float x, float y, float z, Vector5 *c);
+void VectorTrans(Vector3 imagePoint, Vector5 *c);
 
 //////  COLOUR  //////
 EXPORT void __stdcall HSVtoRGB(float h, float s, float v, BYTE *rval, BYTE *gval, BYTE *bval);

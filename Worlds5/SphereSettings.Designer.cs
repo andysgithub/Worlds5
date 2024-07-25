@@ -39,6 +39,8 @@
             this.updCompression = new System.Windows.Forms.NumericUpDown();
             this.btnApplyColour = new System.Windows.Forms.Button();
             this.tabRendering = new System.Windows.Forms.TabPage();
+            this.label30 = new System.Windows.Forms.Label();
+            this.updLightElevationAngle = new System.Windows.Forms.NumericUpDown();
             this.cmbRegion = new System.Windows.Forms.ComboBox();
             this.label16 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
@@ -112,14 +114,12 @@
             this.updClipRotate = new System.Windows.Forms.NumericUpDown();
             this.cmbClipPlane = new System.Windows.Forms.ComboBox();
             this.label26 = new System.Windows.Forms.Label();
-            this.chkCudaMode = new System.Windows.Forms.CheckBox();
-            this.label30 = new System.Windows.Forms.Label();
-            this.updLightElevationAngle = new System.Windows.Forms.NumericUpDown();
             this.tabColour.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updCompression)).BeginInit();
             this.tabRendering.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updLightElevationAngle)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updLightingAngle)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSurfaceContrast)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSaturation)).BeginInit();
@@ -154,7 +154,6 @@
             this.grpClipping.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updClipOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updClipRotate)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updLightElevationAngle)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOK
@@ -314,6 +313,38 @@
             this.tabRendering.TabIndex = 0;
             this.tabRendering.Text = "Rendering";
             this.tabRendering.UseVisualStyleBackColor = true;
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(35, 150);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(91, 13);
+            this.label30.TabIndex = 43;
+            this.label30.Text = "Lighting Elevation";
+            // 
+            // updLightElevationAngle
+            // 
+            this.updLightElevationAngle.DecimalPlaces = 1;
+            this.updLightElevationAngle.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.updLightElevationAngle.Location = new System.Drawing.Point(142, 148);
+            this.updLightElevationAngle.Maximum = new decimal(new int[] {
+            90,
+            0,
+            0,
+            0});
+            this.updLightElevationAngle.Name = "updLightElevationAngle";
+            this.updLightElevationAngle.Size = new System.Drawing.Size(93, 20);
+            this.updLightElevationAngle.TabIndex = 42;
+            this.updLightElevationAngle.Value = new decimal(new int[] {
+            45,
+            0,
+            0,
+            0});
             // 
             // cmbRegion
             // 
@@ -1418,56 +1449,12 @@
             this.label26.TabIndex = 44;
             this.label26.Text = "Plane";
             // 
-            // chkCudaMode
-            // 
-            this.chkCudaMode.AutoSize = true;
-            this.chkCudaMode.Location = new System.Drawing.Point(16, 273);
-            this.chkCudaMode.Name = "chkCudaMode";
-            this.chkCudaMode.Size = new System.Drawing.Size(71, 17);
-            this.chkCudaMode.TabIndex = 32;
-            this.chkCudaMode.Text = "Use GPU";
-            this.chkCudaMode.UseVisualStyleBackColor = true;
-            this.chkCudaMode.CheckedChanged += new System.EventHandler(this.chkCudaMode_CheckedChanged);
-            // 
-            // label30
-            // 
-            this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(35, 150);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(91, 13);
-            this.label30.TabIndex = 43;
-            this.label30.Text = "Lighting Elevation";
-            // 
-            // updLightElevationAngle
-            // 
-            this.updLightElevationAngle.DecimalPlaces = 1;
-            this.updLightElevationAngle.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.updLightElevationAngle.Location = new System.Drawing.Point(142, 148);
-            this.updLightElevationAngle.Maximum = new decimal(new int[] {
-            90,
-            0,
-            0,
-            0});
-            this.updLightElevationAngle.Name = "updLightElevationAngle";
-            this.updLightElevationAngle.Size = new System.Drawing.Size(93, 20);
-            this.updLightElevationAngle.TabIndex = 42;
-            this.updLightElevationAngle.Value = new decimal(new int[] {
-            45,
-            0,
-            0,
-            0});
-            // 
             // SphereSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(423, 308);
-            this.Controls.Add(this.chkCudaMode);
             this.Controls.Add(this.btnRaytrace);
             this.Controls.Add(this.tabSettings);
             this.Controls.Add(this.btnCancel);
@@ -1487,6 +1474,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.updCompression)).EndInit();
             this.tabRendering.ResumeLayout(false);
             this.tabRendering.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updLightElevationAngle)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updLightingAngle)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSurfaceContrast)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updSaturation)).EndInit();
@@ -1528,9 +1516,7 @@
             this.grpClipping.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updClipOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updClipRotate)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.updLightElevationAngle)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -1620,7 +1606,6 @@
         private System.Windows.Forms.CheckBox chkUseClipping;
         private System.Windows.Forms.Button btnClearNav;
         private System.Windows.Forms.Button btnClearClipping;
-        private System.Windows.Forms.CheckBox chkCudaMode;
         private System.Windows.Forms.Label label30;
         private System.Windows.Forms.NumericUpDown updLightElevationAngle;
     }

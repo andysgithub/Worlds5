@@ -205,15 +205,15 @@
     <ClCompile Include="Vectors.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\CudaRaytrace\Parameters.h" />
     <ClInclude Include="Clipping.h" />
     <ClInclude Include="Colour.h" />
+    <ClInclude Include="Parameters.h" />
     <ClInclude Include="RayTracer.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="RayProcessing.h" />
+    <ClInclude Include="Vectors.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\CudaRaytrace\Vectors.h" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

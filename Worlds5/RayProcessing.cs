@@ -17,7 +17,6 @@ namespace Worlds5
             public float boundaryInterval;
             public AxisPair clippingAxes;
             public float clippingOffset;
-            public bool cudaMode;
             public float latitudeStart;
             public float longitudeStart;
             public int maxSamples;
@@ -36,7 +35,6 @@ namespace Worlds5
                 boundaryInterval = settings.BoundaryInterval;
                 clippingAxes = settings.ClippingAxes;
                 clippingOffset = settings.ClippingOffset;
-                cudaMode = settings.CudaMode;
                 latitudeStart = settings.LatitudeStart;
                 longitudeStart = settings.LongitudeStart;
                 maxSamples = settings.MaxSamples[settings.ActiveIndex];

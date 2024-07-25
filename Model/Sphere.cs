@@ -58,8 +58,6 @@ namespace Model
             public float BoundaryInterval { get; set; }
             // Flag to indicate display of surface region / external region
             public int ActiveIndex { get; set; }
-            // Flag to indicate whether to render in C++ or Cuda
-            public bool CudaMode { get; set; }
 
             #endregion
 

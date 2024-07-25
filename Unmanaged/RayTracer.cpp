@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include "RayProcessing.h"
 
-#include <cuda_runtime.h>
 #include "Parameters.h"
 #include "Vectors.h"
 
